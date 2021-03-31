@@ -1,0 +1,107 @@
+// Base styles
+
+.header {
+	position: relative;
+	display: block;
+	height: auto !important;
+	z-index: $zindex-header;
+}
+
+.header-holder {
+	border-bottom-width: $header-border-width;
+	border-bottom-style: solid;
+	@include transition($header-transition);
+	@include theme-variant("light") {
+		background: $header-bg-light;
+		border-bottom-color: $header-border-color-light;
+	}
+	@include theme-variant("dark") {
+		background: $header-bg-dark;
+		border-bottom-color: $header-border-color-dark;
+	}
+}
+
+.header-container {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	width: 100%;
+	padding-top: $header-container-padding-y;
+	padding-bottom: $header-container-padding-y;
+}
+
+.header-wrap {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	white-space: nowrap;
+	// Fit wrapper to empty space
+	&.header-wrap-block {
+		flex: 1;
+	}
+}
+
+.header-title {
+	font-size: $header-title-font-size;
+	font-weight: $header-title-font-weight;
+	padding: 0;
+	margin: 0;
+	@include theme-variant("light") {
+		color: $header-title-color-light;
+	}
+	@include theme-variant("dark") {
+		color: $header-title-color-dark;
+	}
+}
+
+.header-brand {
+	font-size: $header-brand-font-size;
+	font-weight: $header-brand-font-weight;
+	padding: 0;
+	margin: 0;
+	@include theme-variant("light") {
+		color: $header-brand-color-light;
+	}
+	@include theme-variant("dark") {
+		color: $header-brand-color-dark;
+	}
+}
+
+.header-divider {
+	height: $header-divider-height;
+	width: $header-divider-width;
+	margin: 0 $header-divider-margin-x;
+	@include theme-variant("light") {
+		background: $header-divider-color-light;
+	}
+	@include theme-variant("dark") {
+		background: $header-divider-color-dark;
+	}
+}
+
+.sticky-header {
+	.sticky-inner-wrapper {
+		z-index: 9999;
+	}
+
+	&.active {
+		.sticky-inner-wrapper {
+			width: auto !important;
+			right: 0;
+			left: 0;
+			@include transition($header-transition);
+		}
+	}
+}
+// Breakpoints for hiding .header-holder element
+@include media-breakpoint-down("md") {
+	.header-holder-desktop {
+		display: none;
+	}
+}
+@include media-breakpoint-up("lg") {
+	.header-holder-mobile {
+		display: none;
+	}
+}

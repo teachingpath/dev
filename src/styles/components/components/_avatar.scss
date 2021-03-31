@@ -1,0 +1,152 @@
+// Base class
+
+.avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: $avatar-dimension;
+  height: $avatar-dimension;
+  padding: 0;
+  margin: 0 $avatar-spacer;
+  @include border-radius($avatar-border-radius);
+  @include theme-variant("light") {
+    background: $avatar-bg-light;
+  }
+  @include theme-variant("dark") {
+    background: $avatar-bg-dark;
+  }
+}
+
+.avatar-display {
+  display: block;
+  color: inherit;
+  font-size: $avatar-font-size;
+  font-weight: $avatar-font-weight;
+  overflow: hidden;
+  @include icon-size($avatar-icon-size);
+
+  > img {
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    @include border-radius($avatar-border-radius);
+  }
+}
+
+.avatar-badge,
+.avatar-icon {
+  position: relative;
+  border-width: $avatar-outline-width;
+  border-style: solid;
+  @include theme-variant("light") {
+    border-color: $avatar-outline-color-light;
+  }
+  @include theme-variant("dark") {
+    border-color: $avatar-outline-color-dark;
+  }
+}
+
+.avatar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $avatar-icon-dimension;
+  height: $avatar-icon-dimension;
+  padding: $avatar-icon-padding;
+  border-radius: 50%;
+  @include icon-size($avatar-addon-icon-size);
+  @include theme-variant("light") {
+    color: $avatar-icon-color-light;
+    background: $avatar-icon-bg-light;
+  }
+  @include theme-variant("dark") {
+    color: $avatar-icon-color-dark;
+    background: $avatar-icon-bg-dark;
+  }
+}
+// Avatar addon
+.avatar-addon {
+  z-index: 1;
+  position: absolute;
+}
+// Addon orientation
+.avatar-addon-top {
+  top: -#{$avatar-addon-offset};
+  left: -#{$avatar-addon-offset};
+
+  .avatar-badge {
+    bottom: $avatar-addon-offset / 2;
+    right: $avatar-addon-offset / 2;
+  }
+}
+
+.avatar-addon-bottom {
+  bottom: -#{$avatar-addon-offset};
+  right: -#{$avatar-addon-offset};
+
+  .avatar-badge {
+    top: $avatar-addon-offset / 2;
+    left: $avatar-addon-offset / 2;
+  }
+}
+// Circle avatar version
+.avatar-circle,
+.avatar-circle .avatar-display > img {
+  border-radius: 50% !important;
+}
+// Contextual color variations
+@each $color, $value in $theme-colors {
+  .avatar-#{$color} {
+    @include avatar-variant($value);
+  }
+
+  .avatar-label-#{$color} {
+    @include avatar-variant(rgba($value, .1), $value);
+  }
+  // Icon color variants
+  .avatar-icon-#{$color} {
+    @include avatar-icon-variant($value);
+  }
+}
+// Grouping avatars
+.avatar-group {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+
+  > .avatar {
+    margin: 0;
+    border-width: $avatar-outline-width;
+    border-style: solid;
+    @include theme-variant("light") {
+      border-color: $avatar-outline-color-light;
+    }
+    @include theme-variant("dark") {
+      border-color: $avatar-outline-color-dark;
+    }
+
+    + .avatar {
+      margin-left: -#{$avatar-group-offset};
+    }
+  }
+}
+// Sizes
+.avatar-group-lg > .avatar,
+.avatar-lg {
+  @include avatar-sizing($avatar-dimension-lg, $avatar-icon-size-lg, $avatar-font-size-lg, $avatar-border-radius-lg, $avatar-addon-offset-lg)
+}
+
+.avatar-group-sm > .avatar,
+.avatar-sm {
+  @include avatar-sizing($avatar-dimension-sm, $avatar-icon-size-sm, $avatar-font-size-sm, $avatar-border-radius-sm, $avatar-addon-offset-sm)
+}
+
+.avatar-group-lg > .avatar + .avatar {
+  margin-left: -#{$avatar-group-offset-lg};
+}
+
+.avatar-group-sm > .avatar + .avatar {
+  margin-left: -#{$avatar-group-offset-sm};
+}

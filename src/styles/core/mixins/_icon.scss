@@ -1,0 +1,22 @@
+@mixin icon-size($size) {
+  > i {
+    font-size: $size !important;
+  }
+
+  > svg {
+    &:not(.svg-inline--fa) {
+      width: $size !important;
+      height: $size !important;
+    }
+
+    &.svg-inline--fa {
+      font-size: $size !important;
+    }
+  }
+}
+@mixin icon-style {
+  > svg,
+  > i {
+    @content;
+  }
+}

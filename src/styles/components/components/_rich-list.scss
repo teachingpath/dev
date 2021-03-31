@@ -1,0 +1,212 @@
+// Base styles
+
+.rich-list {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.rich-list-item {
+	position: relative;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	background: transparent;
+	padding: $richlist-item-padding;
+	margin: 0;
+	cursor: default;
+	@include theme-variant("light") {
+		color: $richlist-item-color-light;
+	}
+	@include theme-variant("dark") {
+		color: $richlist-item-color-dark;
+	}
+	// Reset <a> tag styles
+	@at-root a#{&} {
+		text-decoration: none;
+		@include theme-variant("light") {
+			color: $richlist-item-color-light;
+		}
+		@include theme-variant("dark") {
+			color: $richlist-item-color-dark;
+		}
+	}
+}
+
+.rich-list-content {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.rich-list-paragraph,
+.rich-list-subtitle,
+.rich-list-title {
+	margin: 0;
+	padding: 0;
+	font-size: $richlist-content-font-size;
+	line-height: $richlist-content-line-height;
+	text-align: left;
+}
+
+.rich-list-title {
+	font-weight: $richlist-title-font-weight;
+	@include theme-variant("light") {
+		color: $richlist-title-color-light;
+	}
+	@include theme-variant("dark") {
+		color: $richlist-title-color-dark;
+	}
+}
+
+.rich-list-subtitle {
+	font-weight: $richlist-subtitle-font-weight;
+	@include theme-variant("light") {
+		color: $richlist-subtitle-color-light;
+	}
+	@include theme-variant("dark") {
+		color: $richlist-subtitle-color-dark;
+	}
+}
+
+.rich-list-paragraph {
+	font-weight: $richlist-paragraph-font-weight;
+	@include theme-variant("light") {
+		color: $richlist-paragraph-color-light;
+	}
+	@include theme-variant("dark") {
+		color: $richlist-paragraph-color-dark;
+	}
+}
+
+.rich-list-append,
+.rich-list-prepend {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	// Remove default avatar margin
+	> .avatar {
+		margin: 0;
+	}
+}
+
+.rich-list-prepend {
+	margin-right: $richlist-addon-spacer;
+}
+
+.rich-list-append {
+	margin-left: $richlist-addon-spacer;
+}
+// Border variations
+.rich-list-flush {
+	.rich-list-item {
+		+ .rich-list-item {
+			border-top-width: $richlist-border-width;
+			border-top-style: solid;
+			@include theme-variant("light") {
+				border-top-color: $richlist-border-color-light;
+			}
+			@include theme-variant("dark") {
+				border-top-color: $richlist-border-color-dark;
+			}
+		}
+	}
+}
+
+.rich-list-bordered {
+	.rich-list-item {
+		border-width: $richlist-border-width;
+		border-style: solid;
+		@include border-radius($richlist-border-radius);
+		@include theme-variant("light") {
+			border-color: $richlist-border-color-light;
+		}
+		@include theme-variant("dark") {
+			border-color: $richlist-border-color-dark;
+		}
+
+		+ .rich-list-item {
+			margin-top: $richlist-item-spacer;
+		}
+	}
+}
+// Add hover, active and disabled behavior
+.rich-list-action {
+	.rich-list-item {
+		cursor: pointer;
+
+		&:focus,
+		&:hover {
+			@include theme-variant("light") {
+				background: $richlist-item-hover-bg-light;
+
+				.rich-list-title {
+					color: $richlist-item-hover-color-light;
+				}
+			}
+			@include theme-variant("dark") {
+				background: $richlist-item-hover-bg-dark;
+
+				.rich-list-title {
+					color: $richlist-item-hover-color-dark;
+				}
+			}
+		}
+
+		&.active,
+		&:active {
+			@include theme-variant("light") {
+				background: $richlist-item-active-bg-light;
+
+				.rich-list-title {
+					color: $richlist-item-active-color-light;
+				}
+			}
+			@include theme-variant("dark") {
+				background: $richlist-item-active-bg-dark;
+
+				.rich-list-title {
+					color: $richlist-item-active-color-dark;
+				}
+			}
+		}
+
+		&.disabled,
+		&:disabled {
+			opacity: $richlist-item-disabled-opacity;
+			pointer-events: none;
+			cursor: default;
+			@include theme-variant("light") {
+				background: $richlist-item-disabled-bg-light;
+			}
+			@include theme-variant("dark") {
+				background: $richlist-item-disabled-bg-dark;
+			}
+		}
+	}
+}
+// SortableJS support
+.sortable.rich-list-bordered {
+	.sortable,
+	.sortable-item:not(:first-of-type) {
+		margin-top: $richlist-item-spacer;
+	}
+}
+
+.sortable.rich-list-flush {
+	.sortable,
+	.sortable-item:not(:first-of-type) {
+		border-top-width: $richlist-border-width;
+		border-top-style: solid;
+		@include theme-variant("light") {
+			border-top-color: $richlist-border-color-light;
+		}
+		@include theme-variant("dark") {
+			border-top-color: $richlist-border-color-dark;
+		}
+	}
+}

@@ -1,0 +1,24 @@
+.widget14 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: $widget14-padding-y $widget14-padding-x;
+}
+
+.widget14-icon {
+  width: $widget14-icon-dimension;
+  text-align: center;
+  margin-right: $widget14-icon-spacer;
+  @include icon-size($widget14-icon-size);
+}
+
+.widget14-text {
+  font-size: $widget14-text-font-size;
+  font-weight: $widget14-text-font-weight;
+  @include theme-variant("light") {
+    color: $widget14-text-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget14-text-color-dark;
+  }
+}

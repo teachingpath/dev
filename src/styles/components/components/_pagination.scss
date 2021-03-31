@@ -1,0 +1,100 @@
+// Base styles
+
+.pagination {
+  display: flex;
+  @include list-unstyled();
+  @include border-radius();
+}
+
+.page-link {
+  position: relative;
+  display: block;
+  padding: $pagination-padding-y $pagination-padding-x;
+  font-size: $pagination-font-size;
+  font-weight: $pagination-font-weight;
+  margin-left: -#{$pagination-border-width};
+  line-height: $pagination-line-height;
+  border-width: $pagination-border-width;
+  border-style: solid;
+  @include transition($pagination-transition);
+  @include theme-variant("light") {
+    color: $pagination-color-light;
+    background: $pagination-bg-light;
+    border-color: $pagination-border-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $pagination-color-dark;
+    background: $pagination-bg-dark;
+    border-color: $pagination-border-color-dark;
+  }
+
+  &:hover {
+    z-index: 2;
+    text-decoration: none;
+    @include theme-variant("light") {
+      color: $pagination-hover-color-light;
+      background: $pagination-hover-bg-light;
+      border-color: $pagination-hover-border-color-light;
+    }
+    @include theme-variant("dark") {
+      color: $pagination-hover-color-dark;
+      background: $pagination-hover-bg-dark;
+      border-color: $pagination-hover-border-color-dark;
+    }
+  }
+
+  &:focus {
+    z-index: 2;
+    outline: 0;
+  }
+}
+
+.page-item {
+  &:first-child .page-link {
+    margin-left: 0;
+    @include border-left-radius($pagination-border-radius);
+  }
+
+  &:last-child .page-link {
+    @include border-right-radius($pagination-border-radius);
+  }
+
+  &.active .page-link {
+    z-index: 1;
+    @include theme-variant("light") {
+      color: $pagination-active-color-light;
+      background: $pagination-active-bg-light;
+      border-color: $pagination-active-border-color-light;
+    }
+    @include theme-variant("dark") {
+      color: $pagination-active-color-dark;
+      background: $pagination-active-bg-dark;
+      border-color: $pagination-active-border-color-dark;
+    }
+  }
+
+  &.disabled .page-link {
+    pointer-events: none;
+    opacity: $pagination-disabled-opacity;
+    // Opinionated: remove the "hand" cursor set previously for .page-link
+    cursor: auto;
+    @include theme-variant("light") {
+      color: $pagination-disabled-color-light;
+      background: $pagination-disabled-bg-light;
+      border-color: $pagination-disabled-border-color-light;
+    }
+    @include theme-variant("dark") {
+      color: $pagination-disabled-color-dark;
+      background: $pagination-disabled-bg-dark;
+      border-color: $pagination-disabled-border-color-dark;
+    }
+  }
+}
+// Sizing
+.pagination-lg {
+  @include pagination-size($pagination-padding-y-lg, $pagination-padding-x-lg, $pagination-font-size-lg, $pagination-line-height, $pagination-border-radius-lg);
+}
+
+.pagination-sm {
+  @include pagination-size($pagination-padding-y-sm, $pagination-padding-x-sm, $pagination-font-size-sm, $pagination-line-height, $pagination-border-radius-sm);
+}

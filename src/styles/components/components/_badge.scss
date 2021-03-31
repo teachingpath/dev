@@ -1,0 +1,93 @@
+// Base class
+// Requires one of the contextual, color modifier classes for `color` and
+
+.badge {
+  display: inline-block;
+  padding: $badge-padding-y $badge-padding-x;
+  font-size: $badge-font-size;
+  font-weight: $badge-font-weight;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border: $badge-border-width solid transparent;
+  @include border-radius($badge-border-radius);
+  @include transition($badge-transition);
+  @at-root a#{&} {
+    &:focus,
+    &:hover {
+      text-decoration: none;
+    }
+  }
+  // Empty badges collapse automatically
+  &:empty {
+    display: none;
+  }
+}
+// Quick fix for badges in buttons
+.btn .badge {
+  position: relative;
+  top: -1px;
+}
+// Pill badges
+// Make them extra rounded with a modifier to replace v3's badges.
+
+.badge-pill {
+  padding-right: $badge-pill-padding-x;
+  padding-left: $badge-pill-padding-x;
+  @include border-radius($badge-pill-border-radius);
+}
+// Shaped badges
+.badge-circle,
+.badge-square {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: $badge-shape-dimension;
+  width: $badge-shape-dimension;
+  // Sizing for shaped badges
+  &.badge-lg {
+    height: $badge-shape-dimension-lg;
+    width: $badge-shape-dimension-lg;
+  }
+
+  &.badge-xl {
+    height: $badge-shape-dimension-xl;
+    width: $badge-shape-dimension-xl;
+  }
+}
+
+.badge-circle {
+  border-radius: 50%;
+}
+
+.badge-square {
+  @include border-radius($badge-border-radius);
+}
+// Colors
+// Contextual variations (linked badges get darker on :hover).
+@each $state, $color in $theme-colors {
+  .badge-#{$state} {
+    @include badge-variant($color, color-yiq($color), $color, darken($color, 10%), color-yiq($color), darken($color, 10%));
+  }
+
+  .badge-outline-#{$state} {
+    @include badge-variant(transparent, $color, $color, $color, color-yiq($color), $color);
+  }
+
+  .badge-label-#{$state} {
+    @include badge-variant(rgba($color, .1), $color, transparent, $color, color-yiq($color), $color);
+  }
+
+  .badge-text-#{$state} {
+    @include badge-variant(transparent, $color, transparent, $color, color-yiq($color), $color);
+  }
+}
+// Sizing
+.badge-lg {
+  font-size: $badge-font-size-lg;
+}
+
+.badge-xl {
+  font-size: $badge-font-size-xl;
+}

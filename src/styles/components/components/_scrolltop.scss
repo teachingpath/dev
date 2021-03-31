@@ -1,0 +1,11 @@
+.scrolltop {
+  display: none;
+  position: fixed;
+  bottom: $scrolltop-offset;
+  right: $scrolltop-offset;
+  z-index: $zindex-scrolltop;
+
+  &.active {
+    display: block;
+  }
+}

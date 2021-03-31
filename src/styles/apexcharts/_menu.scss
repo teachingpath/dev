@@ -1,0 +1,65 @@
+// Tool group on the top right of chart
+
+.apexcharts-toolbar {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: right;
+  padding: $apexchart-toolbar-padding-y $apexchart-toolbar-padding-x;
+  z-index: 11;
+}
+// Tool dropdown menu
+.apexcharts-menu {
+  position: absolute;
+  min-width: $apexchart-menu-min-width;
+  padding: $apexchart-menu-padding-y 0;
+  border-width: $apexchart-menu-border-width;
+  border-style: solid;
+  opacity: 0;
+  pointer-events: none;
+  top: 100%;
+  right: 0;
+  @include border-radius($apexchart-menu-border-radius);
+  @include transition($apexchart-menu-transition);
+  @include theme-variant("light") {
+    background: $apexchart-menu-bg-light;
+    border-color: $apexchart-menu-border-color-light;
+  }
+  @include theme-variant("dark") {
+    background: $apexchart-menu-bg-dark;
+    border-color: $apexchart-menu-border-color-dark;
+  }
+
+  &.apexcharts-menu-open {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+// Dropdown menu options
+.apexcharts-menu-item {
+  display: flex;
+  align-items: center;
+  font-size: $apexchart-menu-item-font-size;
+  font-weight: $apexchart-menu-item-font-weight;
+  padding: $apexchart-menu-item-padding-y $apexchart-menu-item-padding-x;
+  white-space: nowrap;
+  cursor: pointer;
+  @include theme-variant("light") {
+    color: $apexchart-menu-item-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $apexchart-menu-item-color-dark;
+  }
+
+  &:hover {
+    @include theme-variant("light") {
+      color: $apexchart-menu-item-hover-color-light;
+      background: $apexchart-menu-item-hover-bg-light;
+    }
+    @include theme-variant("dark") {
+      color: $apexchart-menu-item-hover-color-dark;
+      background: $apexchart-menu-item-hover-bg-dark;
+    }
+  }
+}

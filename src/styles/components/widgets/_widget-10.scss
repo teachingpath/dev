@@ -1,0 +1,82 @@
+.widget10 {
+  display: flex;
+  flex-direction: row;
+}
+
+.widget10-item {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: $widget10-item-padding;
+
+  + .widget10-item {
+    border-left-width: $widget10-border-width;
+    border-left-style: solid;
+    @include theme-variant("light") {
+      border-left-color: $widget10-border-color-light;
+    }
+    @include theme-variant("dark") {
+      border-left-color: $widget10-border-color-dark;
+    }
+  }
+}
+
+.widget10-content {
+  flex: 1;
+}
+
+.widget10-subtitle,
+.widget10-title {
+  padding: $widget10-content-spacer 0;
+  margin: 0;
+}
+
+.widget10-title {
+  font-size: $widget10-title-font-size;
+  font-weight: $widget10-title-font-weight;
+  @include theme-variant("light") {
+    color: $widget10-title-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget10-title-color-dark;
+  }
+}
+
+.widget10-subtitle {
+  font-size: $widget10-subtitle-font-size;
+  font-weight: $widget10-subtitle-font-weight;
+  @include theme-variant("light") {
+    color: $widget10-subtitle-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget10-subtitle-color-dark;
+  }
+}
+
+.widget10-addon {
+  white-space: nowrap;
+  margin-left: $widget10-addon-spacer;
+}
+@each $breakpoint in map-keys($grid-breakpoints) {
+  $next: breakpoint-next($breakpoint, $grid-breakpoints);
+  $infix: breakpoint-infix($next, $grid-breakpoints);
+
+  .widget10-vertical#{$infix} {
+    @include media-breakpoint-down($breakpoint) {
+      flex-direction: column;
+
+      .widget10-item + .widget10-item {
+        border-left: 0;
+        border-top-width: $widget10-border-width;
+        border-top-style: solid;
+        @include theme-variant("light") {
+          border-top-color: $widget10-border-color-light;
+        }
+        @include theme-variant("dark") {
+          border-top-color: $widget10-border-color-dark;
+        }
+      }
+    }
+  }
+}

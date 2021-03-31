@@ -1,0 +1,57 @@
+// Base styles
+
+.alert {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: $alert-font-size;
+  font-weight: $alert-font-weight;
+  line-height: $alert-line-height;
+  text-align: left;
+  padding: $alert-padding-y $alert-padding-x;
+  margin-bottom: $alert-margin-bottom;
+  border: $alert-border-width solid transparent;
+  @include border-radius($alert-border-radius);
+}
+
+.alert-content {
+  flex: 1;
+}
+
+.alert-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $alert-icon-dimension;
+  height: $alert-icon-dimension;
+  margin-right: $alert-icon-spacer;
+  @include icon-size($alert-icon-size);
+}
+// Headings for larger alerts
+.alert-heading {
+  // Specified to prevent conflicts of changing $headings-color
+  color: inherit;
+}
+// Provide class for links that match alerts
+.alert-link {
+  font-weight: $alert-link-font-weight;
+}
+
+.alert-dismiss {
+  align-self: flex-start;
+}
+// Alternate styles
+// Generate contextual modifier classes for colorizing the alert.
+@each $color, $value in $theme-colors {
+  .alert-#{$color} {
+    @include alert-variant($value, $value, color-yiq($value), color-yiq($value));
+  }
+
+  .alert-outline-#{$color} {
+    @include alert-variant(transparent, $value, $value);
+  }
+
+  .alert-label-#{$color} {
+    @include alert-variant(rgba($value, 0.1), transparent, $value, darken($value, 10%), $value);
+  }
+}

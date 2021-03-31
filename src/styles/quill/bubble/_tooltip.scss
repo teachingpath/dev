@@ -1,0 +1,157 @@
+.ql-bubble {
+  .ql-tooltip {
+    z-index: 2;
+    position: absolute;
+    padding: $quill-tooltip-padding-y $quill-tooltip-padding-x;
+    border-width: $quill-tooltip-border-width;
+    border-style: solid;
+    @include border-radius($quill-tooltip-border-radius);
+    @include theme-variant("light") {
+      color: $quill-tooltip-color-light;
+      background: $quill-tooltip-bg-light;
+      border-color: $quill-tooltip-border-color-light;
+    }
+    @include theme-variant("dark") {
+      color: $quill-tooltip-color-dark;
+      background: $quill-tooltip-bg-dark;
+      border-color: $quill-tooltip-border-color-dark;
+    }
+    // Tooltip arrow directions
+    &:not(.ql-flip) .ql-tooltip-arrow {
+      top: -#{$quill-tooltip-arrow-width - $quill-tooltip-border-width};
+
+      &:after {
+        border-bottom-width: $quill-tooltip-arrow-width;
+        border-bottom-style: solid;
+        @include theme-variant("light") {
+          border-bottom-color: $quill-tooltip-arrow-color-light;
+        }
+        @include theme-variant("dark") {
+          border-bottom-color: $quill-tooltip-arrow-color-dark;
+        }
+      }
+    }
+
+    &.ql-flip .ql-tooltip-arrow {
+      bottom: 0;
+
+      &:after {
+        border-top-width: $quill-tooltip-arrow-width;
+        border-top-style: solid;
+        @include theme-variant("light") {
+          border-top-color: $quill-tooltip-arrow-color-light;
+        }
+        @include theme-variant("dark") {
+          border-top-color: $quill-tooltip-arrow-color-dark;
+        }
+      }
+    }
+    // Editing mode tooltip
+    &.ql-editing {
+      .ql-tooltip-editor {
+        display: block;
+      }
+
+      .ql-toolbar {
+        display: none;
+      }
+    }
+  }
+  // Tooltip arrow
+  .ql-tooltip-arrow {
+    position: absolute;
+    margin-left: -#{$quill-tooltip-arrow-width};
+    left: 50%;
+
+    &:after {
+      content: "";
+      position: absolute;
+      display: block;
+      border-left: $quill-tooltip-arrow-width solid transparent;
+      border-right: $quill-tooltip-arrow-width solid transparent;
+    }
+  }
+  // Tooltip editing mode
+  .ql-tooltip-editor {
+    display: none;
+    // Input form for editing
+    input[type=text] {
+      height: 100%;
+      width: 100%;
+      background: transparent;
+      font-size: $quill-input-font-size;
+      padding: $quill-input-padding-y $quill-input-padding-x;
+      border: 0;
+      outline: 0;
+      @include theme-variant("light") {
+        color: $quill-tooltip-color-light;
+      }
+      @include theme-variant("dark") {
+        color: $quill-tooltip-color-dark;
+      }
+    }
+  }
+  // These styles will active when not disabled
+  &.ql-container:not(.ql-disabled) {
+    a {
+      position: relative;
+
+      &:after,
+      &:before {
+        display: none;
+        position: absolute;
+        margin-left: 50%;
+        left: 0;
+        transform: translate(-50%, -100%);
+      }
+      // Tooltip element
+      &:before {
+        content: attr(href);
+        font-size: $quill-bubble-link-tooltip-font-size;
+        font-weight: $quill-bubble-link-tooltip-font-weight;
+        font-style: normal;
+        padding: $quill-tooltip-padding-y $quill-tooltip-padding-x;
+        border-width: $quill-tooltip-border-width;
+        border-style: solid;
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        top: -#{$quill-bubble-link-tooltip-arrow-width};
+        z-index: 1;
+        @include border-radius($quill-tooltip-border-radius);
+        @include theme-variant("light") {
+          color: $quill-tooltip-color-light;
+          background: $quill-tooltip-bg-light;
+          border-color: $quill-tooltip-border-color-light;
+        }
+        @include theme-variant("dark") {
+          color: $quill-tooltip-color-dark;
+          background: $quill-tooltip-bg-dark;
+          border-color: $quill-tooltip-border-color-dark;
+        }
+      }
+      // Tooltip Arrow
+      &:after {
+        content: "";
+        width: 0;
+        height: 0;
+        border-left: $quill-bubble-link-tooltip-arrow-width solid transparent;
+        border-right: $quill-bubble-link-tooltip-arrow-width solid transparent;
+        top: 0;
+        @include theme-variant("light") {
+          border-top: $quill-bubble-link-tooltip-arrow-width solid $quill-bubble-link-tooltip-arrow-color-light;
+        }
+        @include theme-variant("dark") {
+          border-top: $quill-bubble-link-tooltip-arrow-width solid $quill-bubble-link-tooltip-arrow-color-dark;
+        }
+      }
+      // Show tooltip when hovering link
+      &:hover {
+        &:after,
+        &:before {
+          display: block;
+        }
+      }
+    }
+  }
+}

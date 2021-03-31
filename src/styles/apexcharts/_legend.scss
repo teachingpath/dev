@@ -1,0 +1,70 @@
+.apexcharts-legend {
+  direction: ltr;
+  display: flex;
+  overflow: auto;
+  padding: $apexchart-legend-padding-y $apexchart-legend-padding-x;
+
+  &.position-bottom,
+  &.position-top {
+    flex-wrap: wrap;
+  }
+
+  &.position-left,
+  &.position-right {
+    flex-direction: column;
+    bottom: 0;
+  }
+
+  &.position-bottom.apexcharts-align-left,
+  &.position-left,
+  &.position-right,
+  &.position-top.apexcharts-align-left {
+    justify-content: flex-start;
+  }
+
+  &.position-bottom.apexcharts-align-center,
+  &.position-top.apexcharts-align-center {
+    justify-content: center;
+  }
+
+  &.position-bottom.apexcharts-align-right,
+  &.position-top.apexcharts-align-right {
+    justify-content: flex-end;
+  }
+
+  &.position-bottom .apexcharts-legend-series,
+  &.position-top .apexcharts-legend-series {
+    display: flex;
+    align-items: center;
+  }
+
+  &.apexcharts-align-left .apexcharts-legend-series,
+  &.apexcharts-align-right .apexcharts-legend-series {
+    display: inline-block;
+  }
+  // Hide legend when series are empty
+  .apexcharts-hidden-null-series,
+  .apexcharts-hidden-zero-series {
+    display: none !important;
+  }
+}
+// Legend series
+.apexcharts-legend-series {
+  cursor: pointer;
+
+  &.apexcharts-no-click {
+    cursor: auto;
+  }
+}
+// Color marker beside the text
+.apexcharts-legend-marker {
+  position: relative;
+  display: inline-block;
+  border-style: solid;
+  margin-right: $apexchart-legend-marker-spacer;
+  cursor: pointer;
+}
+// Inactive class
+.apexcharts-inactive-legend {
+  opacity: $apexchart-legend-disabled-opacity;
+}

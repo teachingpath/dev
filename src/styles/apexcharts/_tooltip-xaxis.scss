@@ -1,0 +1,100 @@
+.apexcharts-xaxistooltip {
+  position: absolute;
+  font-size: $apexchart-xytooltip-font-size;
+  padding: $apexchart-tooltip-padding-y $apexchart-tooltip-padding-x;
+  border-width: $apexchart-tooltip-border-width;
+  border-style: solid;
+  text-align: center;
+  opacity: 0;
+  z-index: 10;
+  pointer-events: none;
+  @include border-radius($apexchart-xytooltip-border-radius);
+  @include transition($apexchart-xytooltip-transition);
+  @include theme-variant("light") {
+    color: $apexchart-xytooltip-color-light;
+    background: $apexchart-xytooltip-bg-light;
+    border-color: $apexchart-tooltip-border-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $apexchart-xytooltip-color-dark;
+    background: $apexchart-xytooltip-bg-dark;
+    border-color: $apexchart-tooltip-border-color-dark;
+  }
+  // Class to show tooltip
+  &.apexcharts-active {
+    opacity: 1;
+  }
+  // Tooltip arrow
+  &:after,
+  &:before {
+    content: "";
+    position: absolute;
+    height: 0;
+    width: 0;
+    left: 50%;
+    border-color: transparent;
+    border-style: solid;
+    pointer-events: none;
+  }
+
+  &:after {
+    border-width: $apexchart-tooltip-arrow-height;
+    margin-left: -#{$apexchart-tooltip-arrow-height};
+  }
+
+  &:before {
+    border-width: calc(#{$apexchart-tooltip-arrow-height} + #{$apexchart-tooltip-border-width});
+    margin-left: calc((#{$apexchart-tooltip-arrow-height} + #{$apexchart-tooltip-border-width}) * -1);
+  }
+}
+
+// Tooltip arrow positioning
+.apexcharts-xaxistooltip-bottom {
+  &:after,
+  &:before {
+    bottom: 100%;
+  }
+
+  &:after {
+    @include theme-variant("light") {
+      border-bottom-color: $apexchart-tooltip-arrow-color-light;
+    }
+    @include theme-variant("dark") {
+      border-bottom-color: $apexchart-tooltip-arrow-color-dark;
+    }
+  }
+
+  &:before {
+    @include theme-variant("light") {
+      border-bottom-color: $apexchart-tooltip-arrow-outer-color-light;
+    }
+    @include theme-variant("dark") {
+      border-bottom-color: $apexchart-tooltip-arrow-outer-color-dark;
+    }
+  }
+}
+
+.apexcharts-xaxistooltip-top {
+  &:after,
+  &:before {
+    top: 100%;
+  }
+
+  &:after {
+    @include theme-variant("light") {
+      border-top-color: $apexchart-tooltip-arrow-color-light;
+    }
+    @include theme-variant("dark") {
+      border-top-color: $apexchart-tooltip-arrow-color-dark;
+    }
+  }
+
+  &:before {
+    @include theme-variant("light") {
+      border-top-color: $apexchart-tooltip-arrow-outer-color-light;
+    }
+    @include theme-variant("dark") {
+      border-top-color: $apexchart-tooltip-arrow-outer-color-dark;
+    }
+  }
+}

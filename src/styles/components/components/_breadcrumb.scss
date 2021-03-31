@@ -1,0 +1,73 @@
+// Base styles
+
+.breadcrumb {
+	display: flex;
+	flex-wrap: nowrap;
+	background: transparent;
+	padding: $breadcrumb-padding-y $breadcrumb-padding-x;
+	margin: 0;
+	list-style: none;
+	white-space: nowrap;
+	overflow-x: auto;
+}
+
+.breadcrumb-item {
+	position: relative;
+	display: flex;
+	align-items: center;
+	@include theme-variant("light") {
+		color: $breadcrumb-link-color-light;
+	}
+	@include theme-variant("dark") {
+		color: $breadcrumb-link-color-dark;
+	}
+
+	+ .breadcrumb-item {
+		padding-left: $breadcrumb-item-spacer;
+		// Breadcrumb dot divider
+		&::before {
+			content: "";
+			position: absolute;
+			display: inline-block;
+			width: $breadcrumb-divider-dimension;
+			height: $breadcrumb-divider-dimension;
+			left: $breadcrumb-item-spacer / 2;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			border-radius: 50%;
+			@include theme-variant("light") {
+				background: $breadcrumb-divider-color-light;
+			}
+			@include theme-variant("dark") {
+				background: $breadcrumb-divider-color-dark;
+			}
+		}
+	}
+
+	&.active,
+	&:active,
+	&:focus,
+	&:hover {
+		text-decoration: none;
+		@include theme-variant("light") {
+			color: $breadcrumb-link-active-color-light;
+		}
+		@include theme-variant("dark") {
+			color: $breadcrumb-link-active-color-dark;
+		}
+	}
+}
+
+.breadcrumb-text {
+	color: inherit;
+	font-size: $breadcrumb-link-font-size;
+	font-weight: $breadcrumb-link-font-weight;
+}
+
+.breadcrumb-icon {
+	display: inline-block;
+	color: inherit;
+	line-height: 0;
+	margin-right: $breadcrumb-icon-spacer;
+	@include icon-size($breadcrumb-icon-size);
+}

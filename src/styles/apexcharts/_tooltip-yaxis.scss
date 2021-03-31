@@ -1,0 +1,105 @@
+.apexcharts-yaxistooltip {
+  position: absolute;
+  font-size: $apexchart-xytooltip-font-size;
+  padding: $tooltip-padding-y $tooltip-padding-x;
+  border-width: $apexchart-tooltip-border-width;
+  border-style: solid;
+  text-align: center;
+  opacity: 0;
+  z-index: 10;
+  pointer-events: none;
+  @include border-radius($apexchart-xytooltip-border-radius);
+  @include transition($apexchart-xytooltip-transition);
+  @include theme-variant("light") {
+    color: $apexchart-xytooltip-color-light;
+    background: $apexchart-xytooltip-bg-light;
+    border-color: $apexchart-tooltip-border-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $apexchart-xytooltip-color-dark;
+    background: $apexchart-xytooltip-bg-dark;
+    border-color: $apexchart-tooltip-border-color-dark;
+  }
+  // Class to show tooltip
+  &.apexcharts-active {
+    opacity: 1;
+  }
+  // Tooltip arrow
+  &:after,
+  &:before {
+    content: "";
+    position: absolute;
+    height: 0;
+    width: 0;
+    top: 50%;
+    border-color: transparent;
+    border-style: solid;
+    pointer-events: none;
+  }
+
+  &:after {
+    border-width: $apexchart-tooltip-arrow-height;
+    margin-top: -#{$apexchart-tooltip-arrow-height};
+  }
+
+  &:before {
+    border-width: calc(#{$apexchart-tooltip-arrow-height} + #{$apexchart-tooltip-border-width});
+    margin-top: calc((#{$apexchart-tooltip-arrow-height} + #{$apexchart-tooltip-border-width}) * -1);
+  }
+}
+
+// Tooltip arrow positioning
+.apexcharts-yaxistooltip-left {
+  &:after,
+  &:before {
+    left: 100%;
+  }
+
+  &:after {
+    @include theme-variant("light") {
+      border-left-color: $apexchart-tooltip-arrow-color-light;
+    }
+    @include theme-variant("dark") {
+      border-left-color: $apexchart-tooltip-arrow-color-dark;
+    }
+  }
+
+  &:before {
+    @include theme-variant("light") {
+      border-left-color: $apexchart-tooltip-arrow-outer-color-light;
+    }
+    @include theme-variant("dark") {
+      border-left-color: $apexchart-tooltip-arrow-outer-color-dark;
+    }
+  }
+}
+
+.apexcharts-yaxistooltip-right {
+  &:after,
+  &:before {
+    right: 100%;
+  }
+
+  &:after {
+    @include theme-variant("light") {
+      border-right-color: $apexchart-tooltip-arrow-color-light;
+    }
+    @include theme-variant("dark") {
+      border-right-color: $apexchart-tooltip-arrow-color-dark;
+    }
+  }
+
+  &:before {
+    @include theme-variant("light") {
+      border-right-color: $apexchart-tooltip-arrow-outer-color-light;
+    }
+    @include theme-variant("dark") {
+      border-right-color: $apexchart-tooltip-arrow-outer-color-dark;
+    }
+  }
+}
+
+// Class to hide tooltip when unused
+.apexcharts-yaxistooltip-hidden {
+  display: none;
+}

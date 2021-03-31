@@ -1,0 +1,32 @@
+@mixin nav-sizing($font-size, $padding-x, $padding-y, $spacer, $icon-size) {
+  .nav-link {
+    padding: $padding-y $padding-x;
+    font-size: $font-size;
+  }
+
+  .nav-icon > i {
+    font-size: $icon-size;
+  }
+
+  &.nav-pills {
+    &:not(.nav-vertical) {
+      .nav-item + .nav-item {
+        margin-left: $spacer;
+      }
+    }
+
+    &.nav-vertical {
+      .nav-item + .nav-item {
+        margin-top: $spacer;
+      }
+    }
+  }
+
+  &.nav-lines {
+    &.nav-vertical {
+      .nav-item + .nav-item {
+        margin-top: $nav-link-spacer;
+      }
+    }
+  }
+}

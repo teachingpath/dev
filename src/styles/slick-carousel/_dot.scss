@@ -1,0 +1,76 @@
+// Carousel dots indicator
+
+.slick-dots {
+  position: absolute;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: $slick-dot-offset;
+  padding: $slick-dot-padding;
+  border-radius: $slick-dot-border-radius;
+  list-style: none;
+  margin: 0;
+  z-index: 1;
+  @include theme-variant("light") {
+    background: $slick-dot-bg-light;
+  }
+  @include theme-variant("dark") {
+    background: $slick-dot-bg-dark;
+  }
+  // Button wrapper
+  li {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: $slick-dot-item-dimension;
+    width: $slick-dot-item-dimension;
+    margin: 0;
+    padding: 0;
+
+    + li {
+      margin-left: $slick-dot-item-spacer;
+    }
+
+    button {
+      display: block;
+      height: $slick-dot-dimension;
+      width: $slick-dot-dimension;
+      color: transparent;
+      padding: 0;
+      outline: 0;
+      border: 0;
+      border-radius: 50%;
+      @include transition($slick-dot-transition);
+      @include theme-variant("light") {
+        background: $slick-dot-item-bg-light;
+      }
+      @include theme-variant("dark") {
+        background: $slick-dot-item-bg-dark;
+      }
+
+      &:focus,
+      &:hover {
+        @include theme-variant("light") {
+          background: $slick-dot-item-hover-bg-light;
+        }
+        @include theme-variant("dark") {
+          background: $slick-dot-item-hover-bg-dark;
+        }
+      }
+    }
+    // Active state
+    &.slick-active button {
+      height: 100%;
+      width: 100%;
+      @include theme-variant("light") {
+        background: $slick-dot-item-active-bg-light;
+      }
+      @include theme-variant("dark") {
+        background: $slick-dot-item-active-bg-dark;
+      }
+    }
+  }
+}

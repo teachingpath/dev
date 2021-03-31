@@ -1,0 +1,51 @@
+@each $color, $value in $theme-colors {
+  @include bg-variant(".bg-#{$color}", $value);
+}
+
+.bg-white {
+  background-color: $white !important;
+}
+
+.bg-black {
+  background-color: $black !important;
+}
+
+.bg-level-1 {
+  @include theme-variant("light") {
+    background-color: $gray-100 !important;
+  }
+  @include theme-variant("dark") {
+    background-color: $gray-700 !important;
+  }
+}
+
+.bg-level-2 {
+  @include theme-variant("light") {
+    background-color: $gray-200 !important;
+  }
+  @include theme-variant("dark") {
+    background-color: $gray-600 !important;
+  }
+}
+
+.bg-level-3 {
+  @include theme-variant("light") {
+    background-color: $gray-300 !important;
+  }
+  @include theme-variant("dark") {
+    background-color: $gray-500 !important;
+  }
+}
+
+.bg-level-4 {
+  @include theme-variant("light") {
+    background-color: $gray-400 !important;
+  }
+  @include theme-variant("dark") {
+    background-color: $gray-400 !important;
+  }
+}
+
+.bg-transparent {
+  background-color: transparent !important;
+}

@@ -1,0 +1,13 @@
+npm install -g firebase-tools
+firebase login
+firebase init
+
+{
+  "hosting": {
+    "site": "teachingpath",
+    "public": "public",
+    ...
+  }
+}
+
+firebase deploy --only hosting:teachingpath

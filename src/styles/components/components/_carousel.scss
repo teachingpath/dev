@@ -1,0 +1,16 @@
+.carousel {
+	display: flex;
+	flex-direction: row;
+	width: calc(100% + #{$carousel-gutter * 2});
+	margin-right: -#{$carousel-gutter};
+	margin-left: -#{$carousel-gutter};
+
+	&.carousel-center {
+		padding: 0 $carousel-gutter;
+	}
+}
+
+.carousel-item {
+	width: 100%;
+	padding: 0 $carousel-gutter;
+}

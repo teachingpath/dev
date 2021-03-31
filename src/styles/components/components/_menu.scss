@@ -1,0 +1,180 @@
+// Base styles
+
+.menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.menu-item-link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: $menu-link-height;
+  max-height: $menu-link-height;
+  background: $menu-link-bg;
+  padding: 0 $menu-link-padding-x;
+  text-align: left;
+  border: 0;
+  outline: 0 !important;
+  @include theme-variant("light") {
+    color: $menu-link-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $menu-link-color-dark;
+  }
+  // Hover state
+  &:hover {
+    text-decoration: none;
+    @include theme-variant("light") {
+      color: $menu-link-hover-color-light;
+      background: $menu-link-hover-bg-light;
+    }
+    @include theme-variant("dark") {
+      color: $menu-link-hover-color-dark;
+      background: $menu-link-hover-bg-dark;
+    }
+  }
+  // Active and focus state
+  &.active,
+  &:not(.menu-item-toggle):focus {
+    @include theme-variant("light") {
+      color: $menu-link-active-color-light;
+      background: $menu-link-active-bg-light;
+    }
+    @include theme-variant("dark") {
+      color: $menu-link-active-color-dark;
+      background: $menu-link-active-bg-dark;
+    }
+    // Rotate caret
+    .menu-item-caret {
+      @include caret-transform(down);
+    }
+  }
+}
+
+.menu-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $menu-link-icon-dimension;
+  min-width: $menu-link-icon-dimension;
+  height: $menu-link-icon-dimension;
+  @include icon-size($menu-link-icon-size);
+  @include border-radius($border-radius);
+}
+
+.menu-item-bullet {
+  position: relative;
+  width: $menu-link-icon-dimension;
+  min-width: $menu-link-icon-dimension;
+  height: $menu-link-icon-dimension;
+
+  &:before {
+    content: "";
+    position: absolute;
+    display: block;
+    width: $menu-bullet-dimension;
+    height: $menu-bullet-dimension;
+    background: currentColor;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+  }
+}
+
+.menu-item-text {
+  width: 100%;
+  font-size: $menu-link-font-size;
+  font-weight: $menu-link-font-weight;
+  color: inherit;
+  padding: 0;
+  margin: 0 $menu-link-text-spacer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-item-addon {
+  white-space: nowrap;
+  margin: 0 $menu-link-addon-spacer;
+}
+
+.menu-item-caret {
+  margin: 0 $menu-link-caret-spacer;
+}
+// Section styles
+.menu-section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  min-height: $menu-section-height;
+  padding-left: $menu-section-spacer;
+}
+
+.menu-section-icon {
+  display: none;
+  width: 100%;
+  text-align: center;
+  @include icon-size($menu-section-icon-size);
+  @include theme-variant("light") {
+    color: $menu-section-icon-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $menu-section-icon-color-dark;
+  }
+}
+
+.menu-section-text {
+  font-size: $menu-section-font-size;
+  font-weight: $menu-section-font-weight;
+  padding: 0 $menu-section-text-spacer;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  @include theme-variant("light") {
+    color: $menu-section-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $menu-section-color-dark;
+  }
+}
+// Nesting submenu styles for 3 level
+.menu-submenu {
+  overflow: hidden;
+  @include transition($menu-submenu-transition);
+  @include theme-variant("light") {
+    background: $menu-submenu-bg-light;
+  }
+  @include theme-variant("dark") {
+    background: $menu-submenu-bg-dark;
+  }
+
+  & {
+    .menu-item-link {
+      padding-left: $menu-link-padding-x * 2;
+    }
+  }
+
+  #{&} {
+    .menu-item-link {
+      padding-left: $menu-link-padding-x * 3;
+    }
+  }
+
+  #{&} #{&} {
+    .menu-item-link {
+      padding-left: $menu-link-padding-x * 4;
+    }
+  }
+}

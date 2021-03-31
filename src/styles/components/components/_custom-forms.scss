@@ -1,0 +1,663 @@
+// Embedded icons from Open Iconic.
+// Released under MIT and copyright 2014 Waybury.
+// https://useiconic.com/open
+// Checkboxes and radios
+//
+// Base class takes care of all the key behavioral aspects.
+
+.custom-control {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  min-height: $custom-control-indicator-size;
+  padding-left: $custom-control-gutter + $custom-control-indicator-size;
+  margin: $custom-control-spacer-y 0;
+}
+
+.custom-control-inline {
+  display: inline-flex;
+  margin-right: $custom-control-spacer-x;
+}
+
+.custom-control-input {
+  position: absolute;
+  opacity: 0;
+  z-index: -1; // Put the input behind the label so it doesn't overlay text
+
+  &:checked ~ .custom-control-label::before {
+    @include theme-variant("light") {
+      color: $custom-control-indicator-checked-color-light;
+      background: $custom-control-indicator-checked-bg-light;
+      border-color: $custom-control-indicator-checked-border-color-light;
+    }
+    @include theme-variant("dark") {
+      color: $custom-control-indicator-checked-color-dark;
+      background: $custom-control-indicator-checked-bg-dark;
+      border-color: $custom-control-indicator-checked-border-color-dark;
+    }
+  }
+
+  &:focus:not(:checked) ~ .custom-control-label::before {
+    @include theme-variant("light") {
+      border-color: $custom-control-indicator-focus-border-color-light;
+    }
+    @include theme-variant("dark") {
+      border-color: $custom-control-indicator-focus-border-color-dark;
+    }
+  }
+
+  &:not(:disabled):active ~ .custom-control-label::before {
+    @include theme-variant("light") {
+      color: $custom-control-indicator-active-color-light;
+      background: $custom-control-indicator-active-bg-light;
+      border-color: $custom-control-indicator-active-border-color-light;
+    }
+    @include theme-variant("dark") {
+      color: $custom-control-indicator-active-color-dark;
+      background: $custom-control-indicator-active-bg-dark;
+      border-color: $custom-control-indicator-active-border-color-dark;
+    }
+  }
+
+  &:disabled ~ .custom-control-label::before {
+    @include theme-variant("light") {
+      color: $custom-control-label-disabled-color-light;
+      background: $custom-control-indicator-disabled-bg-light;
+      border-color: $custom-control-indicator-disabled-border-color-light;
+    }
+    @include theme-variant("dark") {
+      color: $custom-control-label-disabled-color-dark;
+      background: $custom-control-indicator-disabled-bg-dark;
+      border-color: $custom-control-indicator-disabled-border-color-dark;
+    }
+  }
+}
+// Custom control indicators
+//
+// Build the custom controls out of pseudo-elements.
+
+.custom-control-label {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-bottom: 0;
+  // background and (when enabled) gradient
+  &::before {
+    content: "";
+    position: absolute;
+    display: block;
+    width: $custom-control-indicator-size;
+    height: $custom-control-indicator-size;
+    border-width: $custom-control-indicator-border-width;
+    border-style: solid;
+    top: 50%;
+    left: -($custom-control-gutter + $custom-control-indicator-size);
+    transform: translateY(-50%);
+    pointer-events: none;
+    @include theme-variant("light") {
+      background: $custom-control-indicator-bg-light;
+      border-color: $custom-control-indicator-border-color-light;
+    }
+    @include theme-variant("dark") {
+      background: $custom-control-indicator-bg-dark;
+      border-color: $custom-control-indicator-border-color-dark;
+    }
+  }
+  // Foreground (icon)
+  &::after {
+    content: "";
+    position: absolute;
+    display: block;
+    width: $custom-control-indicator-size;
+    height: $custom-control-indicator-size;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 60%;
+    left: -($custom-control-gutter + $custom-control-indicator-size);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+// Checkboxes
+//
+// Tweak just a few things for checkboxes.
+
+.custom-checkbox {
+  .custom-control-label::before {
+    @include border-radius($custom-checkbox-indicator-border-radius);
+  }
+
+  .custom-control-input:checked ~ .custom-control-label {
+    &::after {
+      @include theme-variant("light") {
+        background-image: $custom-checkbox-indicator-icon-checked-light;
+      }
+      @include theme-variant("dark") {
+        background-image: $custom-checkbox-indicator-icon-checked-dark;
+      }
+    }
+  }
+
+  .custom-control-input:indeterminate ~ .custom-control-label {
+    &::before {
+      @include theme-variant("light") {
+        background: $custom-checkbox-indicator-indeterminate-bg-light;
+        border-color: $custom-checkbox-indicator-indeterminate-border-color-light;
+      }
+      @include theme-variant("dark") {
+        background: $custom-checkbox-indicator-indeterminate-bg-dark;
+        border-color: $custom-checkbox-indicator-indeterminate-border-color-dark;
+      }
+    }
+
+    &::after {
+      @include theme-variant("light") {
+        background-image: $custom-checkbox-indicator-icon-indeterminate-light;
+      }
+      @include theme-variant("dark") {
+        background-image: $custom-checkbox-indicator-icon-indeterminate-dark;
+      }
+    }
+  }
+
+  .custom-control-input:disabled {
+    &:checked ~ .custom-control-label::before,
+    &:indeterminate ~ .custom-control-label::before {
+      @include theme-variant("light") {
+        background: $custom-control-indicator-checked-disabled-bg-light;
+      }
+      @include theme-variant("dark") {
+        background: $custom-control-indicator-checked-disabled-bg-dark;
+      }
+    }
+  }
+}
+// Radios
+//
+// Tweak just a few things for radios.
+
+.custom-radio {
+  .custom-control-label::before {
+    @include border-radius($custom-radio-indicator-border-radius);
+  }
+
+  .custom-control-input:checked ~ .custom-control-label {
+    &::after {
+      @include theme-variant("light") {
+        background-image: $custom-radio-indicator-icon-checked-light;
+      }
+      @include theme-variant("dark") {
+        background-image: $custom-radio-indicator-icon-checked-dark;
+      }
+    }
+  }
+
+  .custom-control-input:disabled {
+    &:checked ~ .custom-control-label::before {
+      @include theme-variant("light") {
+        background: $custom-control-indicator-checked-disabled-bg-light;
+      }
+      @include theme-variant("dark") {
+        background: $custom-control-indicator-checked-disabled-bg-dark;
+      }
+    }
+  }
+}
+// Switches
+//
+// Tweak a few things for switches
+
+.custom-switch {
+  padding-left: $custom-switch-width + $custom-control-gutter;
+
+  .custom-control-label {
+    &::before {
+      width: $custom-switch-width;
+      left: -($custom-switch-width + $custom-control-gutter);
+      pointer-events: all;
+      @include border-radius($custom-switch-indicator-border-radius);
+    }
+
+    &::after {
+      width: $custom-switch-indicator-size;
+      height: $custom-switch-indicator-size;
+      left: calc(#{-($custom-switch-width + $custom-control-gutter)} + #{$custom-control-indicator-border-width * 2});
+      @include border-radius($custom-switch-indicator-border-radius);
+      @include transition(transform 0.15s ease-in-out, $custom-forms-transition);
+      @include theme-variant("light") {
+        background: $custom-control-indicator-border-color-light;
+      }
+      @include theme-variant("dark") {
+        background: $custom-control-indicator-border-color-dark;
+      }
+    }
+  }
+
+  .custom-control-input:checked ~ .custom-control-label {
+    &::after {
+      transform: translate($custom-switch-width - $custom-control-indicator-size, -50%);
+      @include theme-variant("light") {
+        background: $custom-control-indicator-bg-light;
+      }
+      @include theme-variant("dark") {
+        background: $custom-control-indicator-bg-dark;
+      }
+    }
+  }
+
+  .custom-control-input:disabled {
+    &:checked ~ .custom-control-label::before {
+      @include theme-variant("light") {
+        background: $custom-control-indicator-checked-disabled-bg-light;
+      }
+      @include theme-variant("dark") {
+        background: $custom-control-indicator-checked-disabled-bg-dark;
+      }
+    }
+  }
+}
+
+.custom-control-lg {
+  @include custom-control-sizing($custom-control-indicator-size-lg, $custom-switch-indicator-size-lg, $custom-switch-width-lg, $custom-switch-indicator-border-radius-lg);
+}
+
+.custom-control-sm {
+  @include custom-control-sizing($custom-control-indicator-size-sm, $custom-switch-indicator-size-sm, $custom-switch-width-sm, $custom-switch-indicator-border-radius-sm);
+}
+// Select
+//
+// Replaces the browser default select with a custom one, mostly pulled from
+// https://primer.github.io/.
+
+.custom-select {
+  display: inline-block;
+  width: 100%;
+  height: $custom-select-height;
+  font-family: $custom-select-font-family;
+  font-size: $custom-select-font-size;
+  font-weight: $custom-select-font-weight;
+  line-height: $custom-select-line-height;
+  vertical-align: middle;
+  padding: $custom-select-padding-y ($custom-select-padding-x + $custom-select-indicator-padding) $custom-select-padding-y $custom-select-padding-x;
+  border-width: $custom-select-border-width;
+  border-style: solid;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  @include border-radius($custom-select-border-radius, 0);
+  @include theme-variant("light") {
+    color: $custom-select-color-light;
+    background: $custom-select-background-light;
+    background-color: $custom-select-bg-light;
+    border-color: $custom-select-border-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $custom-select-color-dark;
+    background: $custom-select-background-dark;
+    background-color: $custom-select-bg-dark;
+    border-color: $custom-select-border-color-dark;
+  }
+
+  &:focus {
+    outline: 0;
+    @include theme-variant("light") {
+      border-color: $custom-select-focus-border-color-light;
+    }
+    @include theme-variant("dark") {
+      border-color: $custom-select-focus-border-color-dark;
+    }
+
+    &::-ms-value {
+      // For visual consistency with other platforms/browsers,
+      // suppress the default white text on blue background highlight given to
+      // the selected option text when the (still closed) <select> receives focus
+      // in IE and (under certain conditions) Edge.
+      // See https://github.com/twbs/bootstrap/issues/19398.
+      @include theme-variant("light") {
+        color: $input-color-light;
+        background: $input-bg-light;
+      }
+      @include theme-variant("dark") {
+        color: $input-color-dark;
+        background: $input-bg-dark;
+      }
+    }
+  }
+
+  &[multiple],
+  &[size]:not([size="1"]) {
+    height: auto;
+    background-image: none;
+    padding-right: $custom-select-padding-x;
+  }
+
+  &:disabled {
+    @include theme-variant("light") {
+      color: $custom-select-disabled-color-light;
+      background: $custom-select-disabled-bg-light;
+    }
+    @include theme-variant("dark") {
+      color: $custom-select-disabled-color-dark;
+      background: $custom-select-disabled-bg-dark;
+    }
+  }
+  // Hides the default caret in IE11
+  &::-ms-expand {
+    display: none;
+  }
+}
+
+.custom-select-sm {
+  height: $custom-select-height-sm;
+  font-size: $custom-select-font-size-sm;
+  padding-top: $custom-select-padding-y-sm;
+  padding-bottom: $custom-select-padding-y-sm;
+  padding-left: $custom-select-padding-x-sm;
+}
+
+.custom-select-lg {
+  height: $custom-select-height-lg;
+  font-size: $custom-select-font-size-lg;
+  padding-top: $custom-select-padding-y-lg;
+  padding-bottom: $custom-select-padding-y-lg;
+  padding-left: $custom-select-padding-x-lg;
+}
+// File
+//
+// Custom file input.
+
+.custom-file {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  height: $custom-file-height;
+  margin-bottom: 0;
+}
+
+.custom-file-input {
+  position: relative;
+  width: 100%;
+  height: $custom-file-height;
+  margin: 0;
+  opacity: 0;
+  z-index: 2;
+
+  &:focus ~ .custom-file-label {
+    @include theme-variant("light") {
+      border-color: $custom-file-focus-border-color-light;
+    }
+    @include theme-variant("dark") {
+      border-color: $custom-file-focus-border-color-dark;
+    }
+  }
+
+  &:disabled ~ .custom-file-label {
+    @include theme-variant("light") {
+      background: $custom-file-disabled-bg-light;
+    }
+    @include theme-variant("dark") {
+      background: $custom-file-disabled-bg-dark;
+    }
+  }
+  @each $lang, $value in $custom-file-text {
+    &:lang(#{$lang}) ~ .custom-file-label::after {
+      content: $value;
+    }
+  }
+
+  ~ .custom-file-label[data-browse]::after {
+    content: attr(data-browse);
+  }
+}
+
+.custom-file-label {
+  position: absolute;
+  height: $custom-file-height;
+  font-family: $custom-file-font-family;
+  font-weight: $custom-file-font-weight;
+  line-height: $custom-file-line-height;
+  padding: $custom-file-padding-y $custom-file-padding-x;
+  border-width: $custom-file-border-width;
+  border-style: solid;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  @include border-radius($custom-file-border-radius);
+  @include theme-variant("light") {
+    color: $custom-file-color-light;
+    background: $custom-file-bg-light;
+    border-color: $custom-file-border-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $custom-file-color-dark;
+    background: $custom-file-bg-dark;
+    border-color: $custom-file-border-color-dark;
+  }
+
+  &::after {
+    content: "Browse";
+    position: absolute;
+    display: block;
+    height: $custom-file-height-inner;
+    line-height: $custom-file-line-height;
+    padding: $custom-file-padding-y $custom-file-padding-x;
+    border-left: inherit;
+    top: 0;
+    right: 0;
+    z-index: 3;
+    bottom: 0;
+    @include border-radius(0 $custom-file-border-radius $custom-file-border-radius 0);
+    @include theme-variant("light") {
+      color: $custom-file-button-color-light;
+      background: $custom-file-button-bg-light;
+    }
+    @include theme-variant("dark") {
+      color: $custom-file-button-color-dark;
+      background: $custom-file-button-bg-dark;
+    }
+  }
+}
+// Range
+//
+// Style range inputs the same across browsers. Vendor-specific rules for pseudo
+// elements cannot be mixed. As such, there are no shared styles for focus or
+// active states on prefixed selectors.
+
+.custom-range {
+  width: 100%;
+  height: $custom-range-thumb-height;
+  background: transparent;
+  padding: 0; // Need to reset padding
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::-moz-focus-outer {
+    border: 0;
+  }
+
+  &::-webkit-slider-thumb {
+    width: $custom-range-thumb-width;
+    height: $custom-range-thumb-height;
+    border: $custom-range-thumb-border;
+    margin-top: ($custom-range-track-height - $custom-range-thumb-height) / 2; // Webkit specific
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    @include border-radius($custom-range-thumb-border-radius);
+    @include transition($custom-forms-transition);
+    @include theme-variant("light") {
+      background: $custom-range-thumb-bg-light;
+    }
+    @include theme-variant("dark") {
+      background: $custom-range-thumb-bg-dark;
+    }
+
+    &:active {
+      @include theme-variant("light") {
+        background: $custom-range-thumb-active-bg-light;
+      }
+      @include theme-variant("dark") {
+        background: $custom-range-thumb-active-bg-dark;
+      }
+    }
+  }
+
+  &::-webkit-slider-runnable-track {
+    width: $custom-range-track-width;
+    height: $custom-range-track-height;
+    color: transparent;
+    border-color: transparent;
+    cursor: $custom-range-track-cursor;
+    @include border-radius($custom-range-track-border-radius);
+    @include theme-variant("light") {
+      background: $custom-range-track-bg-light;
+    }
+    @include theme-variant("dark") {
+      background: $custom-range-track-bg-dark;
+    }
+  }
+
+  &::-moz-range-thumb {
+    width: $custom-range-thumb-width;
+    height: $custom-range-thumb-height;
+    border: $custom-range-thumb-border;
+    appearance: none;
+    @include border-radius($custom-range-thumb-border-radius);
+    @include transition($custom-forms-transition);
+    @include theme-variant("light") {
+      background: $custom-range-thumb-bg-light;
+    }
+    @include theme-variant("dark") {
+      background: $custom-range-thumb-bg-dark;
+    }
+
+    &:active {
+      @include theme-variant("light") {
+        background: $custom-range-thumb-active-bg-light;
+      }
+      @include theme-variant("dark") {
+        background: $custom-range-thumb-active-bg-dark;
+      }
+    }
+  }
+
+  &::-moz-range-track {
+    width: $custom-range-track-width;
+    height: $custom-range-track-height;
+    color: transparent;
+    border-color: transparent; // Firefox specific?
+    cursor: $custom-range-track-cursor;
+    @include border-radius($custom-range-track-border-radius);
+    @include theme-variant("light") {
+      background: $custom-range-track-bg-light;
+    }
+    @include theme-variant("dark") {
+      background: $custom-range-track-bg-dark;
+    }
+  }
+
+  &::-ms-thumb {
+    width: $custom-range-thumb-width;
+    height: $custom-range-thumb-height;
+    border: $custom-range-thumb-border;
+    margin-top: 0; // Edge specific
+    appearance: none;
+    @include border-radius($custom-range-thumb-border-radius);
+    @include transition($custom-forms-transition);
+    @include theme-variant("light") {
+      background: $custom-range-thumb-bg-light;
+    }
+    @include theme-variant("dark") {
+      background: $custom-range-thumb-bg-dark;
+    }
+
+    &:active {
+      @include theme-variant("light") {
+        background: $custom-range-thumb-active-bg-light;
+      }
+      @include theme-variant("dark") {
+        background: $custom-range-thumb-active-bg-dark;
+      }
+    }
+  }
+
+  &::-ms-track {
+    width: $custom-range-track-width;
+    height: $custom-range-track-height;
+    color: transparent;
+    background: transparent;
+    border-color: transparent;
+    border-width: $custom-range-thumb-height / 2;
+    cursor: $custom-range-track-cursor;
+  }
+
+  &::-ms-fill-lower {
+    @include border-radius($custom-range-track-border-radius);
+    @include theme-variant("light") {
+      background: $custom-range-track-bg-light;
+    }
+    @include theme-variant("dark") {
+      background: $custom-range-track-bg-dark;
+    }
+  }
+
+  &::-ms-fill-upper {
+    margin-right: 15px;
+    @include border-radius($custom-range-track-border-radius);
+    @include theme-variant("light") {
+      background: $custom-range-track-bg-light;
+    }
+    @include theme-variant("dark") {
+      background: $custom-range-track-bg-dark;
+    }
+  }
+
+  &:disabled {
+    &::-webkit-slider-thumb {
+      @include theme-variant("light") {
+        background: $custom-range-thumb-disabled-bg-light;
+      }
+      @include theme-variant("dark") {
+        background: $custom-range-thumb-disabled-bg-dark;
+      }
+    }
+
+    &::-webkit-slider-runnable-track {
+      cursor: default;
+    }
+
+    &::-moz-range-thumb {
+      @include theme-variant("light") {
+        background: $custom-range-thumb-disabled-bg-light;
+      }
+      @include theme-variant("dark") {
+        background: $custom-range-thumb-disabled-bg-dark;
+      }
+    }
+
+    &::-moz-range-track {
+      cursor: default;
+    }
+
+    &::-ms-thumb {
+      @include theme-variant("light") {
+        background: $custom-range-thumb-disabled-bg-light;
+      }
+      @include theme-variant("dark") {
+        background: $custom-range-thumb-disabled-bg-dark;
+      }
+    }
+  }
+}
+
+.custom-control-label::before,
+.custom-file-label,
+.custom-select {
+  @include transition($custom-forms-transition);
+}

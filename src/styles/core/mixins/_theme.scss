@@ -1,0 +1,7 @@
+@mixin theme-variant($variant) {
+  @at-root {
+    .theme-#{$variant} & {
+      @content
+    }
+  }
+}

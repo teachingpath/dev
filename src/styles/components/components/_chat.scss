@@ -1,0 +1,130 @@
+// Base styles
+
+.chat {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-item {
+  display: flex;
+  margin: $chat-spacer 0;
+}
+
+.chat-content {
+  display: flex;
+  flex-direction: column;
+  max-width: $chat-content-width;
+}
+
+.chat-bubble {
+  display: block;
+  text-align: inherit;
+  padding: $chat-bubble-padding;
+  margin: 0;
+  @include border-radius($chat-border-radius);
+  @include theme-variant("light") {
+    color: $chat-bubble-color-light;
+    background: rgba($chat-bubble-bg-light, $chat-bubble-opacity);
+  }
+  @include theme-variant("dark") {
+    color: $chat-bubble-color-dark;
+    background: rgba($chat-bubble-bg-dark, $chat-bubble-opacity);
+  }
+  // Add space between the bubbles
+  + .chat-bubble {
+    margin-top: $chat-spacer;
+  }
+
+  .chat-bubble {
+    margin-bottom: $chat-spacer;
+  }
+}
+// Chat item orientations
+.chat-item-right {
+  flex-direction: row-reverse;
+  text-align: right;
+
+  .chat-content {
+    align-items: flex-end;
+  }
+}
+
+.chat-item-left {
+  flex-direction: row;
+  text-align: left;
+
+  .chat-content {
+    align-items: flex-start;
+  }
+}
+// Chat bubble background color variants
+@each $color, $value in $theme-colors {
+  .chat-bubble-#{$color} {
+    @include theme-variant("light") {
+      background: rgba($value, $chat-bubble-opacity);
+    }
+    @include theme-variant("dark") {
+      background: rgba($value, $chat-bubble-opacity);
+    }
+  }
+}
+// Avatar wrapper
+.chat-avatar {
+  padding: $chat-content-padding;
+}
+
+.chat-image {
+  display: block;
+  max-width: $chat-image-max-width;
+  width: 100%;
+  margin-bottom: $chat-spacer;
+  @include border-radius($chat-border-radius);
+}
+
+.chat-author {
+  display: block;
+  font-size: $chat-author-font-size;
+  font-weight: $chat-author-font-weight;
+  padding: $chat-content-padding;
+  @include theme-variant("light") {
+    color: $chat-author-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $chat-author-color-dark;
+  }
+}
+
+.chat-time {
+  display: block;
+  font-size: $chat-time-font-size;
+  font-weight: $chat-time-font-weight;
+  padding: $chat-content-padding;
+  @include theme-variant("light") {
+    color: $chat-time-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $chat-time-color-dark;
+  }
+}
+// Chat section marker
+.chat-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: $chat-spacer 0;
+}
+
+.chat-section-text {
+  font-size: $chat-section-font-size;
+  font-weight: $chat-section-font-weight;
+  padding: $chat-section-padding-y $chat-section-padding-x;
+  @include border-radius($chat-section-border-radius);
+  @include theme-variant("light") {
+    color: $chat-section-color-light;
+    background: $chat-section-bg-light;
+  }
+  @include theme-variant("dark") {
+    color: $chat-section-color-dark;
+    background: $chat-section-bg-dark;
+  }
+}

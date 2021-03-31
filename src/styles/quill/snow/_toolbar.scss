@@ -1,0 +1,240 @@
+.ql-toolbar.ql-snow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: $quill-snow-toolbar-padding-y $quill-snow-toolbar-padding-x;
+  border-width: $quill-snow-toolbar-border-width;
+  border-style: solid;
+  @include border-top-radius($quill-snow-toolbar-border-radius);
+  @include theme-variant("light") {
+    border-color: $quill-snow-toolbar-border-color-light;
+  }
+  @include theme-variant("dark") {
+    border-color: $quill-snow-toolbar-border-color-dark;
+  }
+  // Button styles
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: $quill-control-dimension;
+    width: $quill-control-dimension;
+    margin: $quill-control-spacer;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+    @include border-radius($quill-control-border-radius);
+    @include theme-variant("light") {
+      color: $quill-control-color-light;
+      background: $quill-control-bg-light;
+    }
+    @include theme-variant("dark") {
+      color: $quill-control-color-dark;
+      background: $quill-control-bg-dark;
+    }
+
+    &:focus,
+    &:hover {
+      @include theme-variant("light") {
+        color: $quill-control-hover-color-light;
+        background: $quill-control-hover-bg-light;
+      }
+      @include theme-variant("dark") {
+        color: $quill-control-hover-color-dark;
+        background: $quill-control-hover-bg-dark;
+      }
+    }
+
+    &.ql-active {
+      @include theme-variant("light") {
+        color: $quill-control-active-color-light;
+        background: $quill-control-active-bg-light;
+      }
+      @include theme-variant("dark") {
+        color: $quill-control-active-color-dark;
+        background: $quill-control-active-bg-dark;
+      }
+    }
+  }
+  // Icon styles
+  svg {
+    height: $quill-icon-size;
+    color: inherit;
+  }
+  // Button group in toolbar
+  .ql-formats {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    margin-right: $quill-control-group-spacer;
+  }
+  // Tool dropdown
+  .ql-picker {
+    position: relative;
+    display: inline-block;
+    width: $quill-control-dimension;
+    height: $quill-control-dimension;
+    margin: 0 $quill-control-spacer;
+    // Opened state
+    &.ql-expanded {
+      .ql-picker-label {
+        z-index: 2;
+        @include theme-variant("light") {
+          color: $quill-control-active-color-light;
+          background: $quill-control-active-bg-light;
+        }
+        @include theme-variant("dark") {
+          color: $quill-control-active-color-dark;
+          background: $quill-control-active-bg-dark;
+        }
+      }
+
+      .ql-picker-options {
+        display: block;
+        top: 100%;
+        z-index: 1;
+      }
+    }
+
+    &.ql-font,
+    &.ql-header,
+    &.ql-size {
+      width: $quill-control-wide-width;
+    }
+  }
+  // Tool dropdown toggle
+  .ql-picker-label {
+    position: relative;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+    font-size: $quill-control-font-size;
+    font-weight: $quill-control-font-weight;
+    padding: 0 $quill-control-padding-x;
+    outline: 0;
+    cursor: pointer;
+    @include border-radius($quill-control-border-radius);
+    @include theme-variant("light") {
+      color: $quill-control-color-light;
+      background: $quill-control-bg-light;
+    }
+    @include theme-variant("dark") {
+      color: $quill-control-color-dark;
+      background: $quill-control-bg-dark;
+    }
+
+    &:hover {
+      @include theme-variant("light") {
+        color: $quill-control-hover-color-light;
+        background: $quill-control-hover-bg-light;
+      }
+      @include theme-variant("dark") {
+        color: $quill-control-hover-color-dark;
+        background: $quill-control-hover-bg-dark;
+      }
+    }
+  }
+  // Tool dropdown menu
+  .ql-picker-options {
+    position: absolute;
+    display: none;
+    min-width: 100%;
+    padding: $quill-dropdown-padding-y 0;
+    white-space: nowrap;
+    border-width: $quill-dropdown-border-width;
+    border-style: solid;
+    @include border-radius($quill-dropdown-border-radius);
+    @include theme-variant("light") {
+      background: $quill-dropdown-bg-light;
+      border-color: $quill-dropdown-border-color-light;
+    }
+    @include theme-variant("dark") {
+      background: $quill-dropdown-bg-dark;
+      border-color: $quill-dropdown-border-color-dark;
+    }
+  }
+  // Tool dropdown item
+  .ql-picker-item {
+    display: flex;
+    align-items: center;
+    padding: $quill-dropdown-item-padding-y $quill-dropdown-item-padding-x;
+    outline: 0;
+    cursor: pointer;
+    @include theme-variant("light") {
+      color: $quill-dropdown-item-color-light;
+    }
+    @include theme-variant("dark") {
+      color: $quill-dropdown-item-color-dark;
+    }
+
+    &:hover {
+      @include theme-variant("light") {
+        color: $quill-dropdown-item-hover-color-light;
+        background: $quill-dropdown-item-hover-bg-light;
+      }
+      @include theme-variant("dark") {
+        color: $quill-dropdown-item-hover-color-dark;
+        background: $quill-dropdown-item-hover-bg-dark;
+      }
+    }
+  }
+  // Icon only Dropdown toggle
+  .ql-color-picker,
+  .ql-icon-picker {
+    .ql-picker-label {
+      justify-content: center;
+      padding: 0;
+    }
+  }
+  // Restyles dropdown item for only icon content
+  .ql-icon-picker {
+    .ql-picker-item {
+      justify-content: center;
+      height: $quill-control-dimension;
+      width: $quill-control-dimension;
+      padding: 0;
+    }
+  }
+  // Restyles dropdown for color picker
+  .ql-color-picker {
+    .ql-picker-options {
+      padding: $quill-dropdown-padding-y $quill-dropdown-padding-x;
+      width: ($quill-control-color-dimension + 2 * $quill-control-color-margin) * $quill-control-color-num-per-row + 2 * $quill-control-padding-x + 2;
+    }
+
+    .ql-picker-item {
+      height: $quill-control-color-dimension;
+      width: $quill-control-color-dimension;
+      margin: $quill-control-color-margin;
+      padding: 0;
+      float: left;
+    }
+
+    &.ql-background {
+      .ql-picker-item {
+        background: $white;
+      }
+    }
+
+    &.ql-color {
+      .ql-picker-item {
+        background: $black;
+      }
+    }
+  }
+  // Remove border-top on editor
+  + .ql-container {
+    border-top: 0;
+    @include border-top-radius(0);
+  }
+  // Hide default file input in toolbar
+  input.ql-image[type=file] {
+    display: none;
+  }
+}

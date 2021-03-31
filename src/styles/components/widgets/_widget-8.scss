@@ -1,0 +1,81 @@
+.widget8 {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+}
+
+.widget8-content {
+  padding: $widget8-content-y $widget8-content-x;
+}
+
+.widget8-avatar {
+  height: $widget8-avatar-dimension;
+  width: $widget8-avatar-dimension;
+  font-size: $widget8-avatar-font-size;
+  margin-bottom: $widget8-avatar-spacer;
+}
+
+.widget8-highlight,
+.widget8-subtitle,
+.widget8-title {
+  display: block;
+  padding: $widget8-content-spacer 0;
+  margin: 0;
+}
+
+.widget8-highlight {
+  font-size: $widget8-highlight-font-size;
+  font-weight: $widget8-highlight-font-weight;
+  @include theme-variant("light") {
+    color: $widget8-highlight-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget8-highlight-color-dark;
+  }
+
+  &.widget8-highlight-lg {
+    font-size: $widget8-highlight-font-size-lg;
+  }
+}
+
+.widget8-title {
+  font-size: $widget8-title-font-size;
+  font-weight: $widget8-title-font-weight;
+  @include theme-variant("light") {
+    color: $widget8-title-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget8-title-color-dark;
+  }
+}
+
+.widget8-subtitle {
+  font-size: $widget8-subtitle-font-size;
+  font-weight: $widget8-subtitle-font-weight;
+  margin-top: $widget8-subtitle-spacer;
+  @include theme-variant("light") {
+    color: $widget8-subtitle-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget8-subtitle-color-dark;
+  }
+}
+
+.widget8-addon {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $widget8-icon-color;
+  padding: $widget8-addon-padding-y $widget8-addon-padding-x;
+  top: 0;
+  left: 0;
+  @include icon-size($widget8-icon-size);
+
+  &:hover {
+    color: $widget8-icon-hover-color;
+  }
+}

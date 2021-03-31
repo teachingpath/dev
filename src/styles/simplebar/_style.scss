@@ -1,0 +1,71 @@
+.simplebar-scrollbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+
+  &:before {
+    content: '';
+    position: absolute;
+    left: $simplebar-padding;
+    right: $simplebar-padding;
+    background: $simplebar-color;
+    opacity: 0;
+    @include border-radius($simplebar-border-radius);
+    @include transition($simplebar-transition);
+  }
+
+  &.simplebar-visible:before {
+    opacity: $simplebar-opacity;
+  }
+}
+
+.simplebar-track {
+  &.simplebar-vertical {
+    top: 0;
+    width: $simplebar-width;
+
+    .simplebar-scrollbar:before {
+      top: $simplebar-padding;
+      bottom: $simplebar-padding;
+    }
+  }
+
+  &.simplebar-horizontal {
+    left: 0;
+    height: $simplebar-width;
+
+    .simplebar-scrollbar {
+      top: $simplebar-padding;
+      bottom: $simplebar-padding;
+
+      &:before {
+        height: 100%;
+        left: $simplebar-padding;
+        right: $simplebar-padding;
+      }
+    }
+  }
+}
+
+.simplebar-solid-track {
+  .simplebar-track {
+    @include theme-variant("light") {
+      background: $simplebar-bg-light;
+    }
+    @include theme-variant("dark") {
+      background: $simplebar-bg-dark;
+    }
+  }
+}
+
+.simplebar-hover-track {
+  &.simplebar-dragging .simplebar-track,
+  .simplebar-hover.simplebar-track {
+    @include theme-variant("light") {
+      background: $simplebar-bg-light;
+    }
+    @include theme-variant("dark") {
+      background: $simplebar-bg-dark;
+    }
+  }
+}

@@ -1,0 +1,20 @@
+// Marker
+@mixin marker-sizing($dimension) {
+  &.marker-dot {
+    width: $dimension;
+    height: $dimension;
+  }
+
+  &.marker-pill {
+    width: $dimension * $marker-pill-width-ratio;
+    height: $dimension;
+    border-radius: $dimension / 2;
+  }
+
+  &.marker-circle {
+    $border-width: $dimension * $marker-circle-border-ratio;
+    width: calc(#{$dimension} + #{$border-width});
+    height: calc(#{$dimension} + #{$border-width});
+    border: $border-width solid currentColor;
+  }
+}

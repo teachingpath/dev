@@ -1,0 +1,56 @@
+.widget6 {
+  display: block;
+  text-align: center;
+  padding: $widget6-padding-y $widget6-padding-x;
+  border-width: $widget6-border-width;
+  border-style: solid;
+  cursor: pointer;
+  @include border-radius($widget6-border-radius);
+  @include theme-variant("light") {
+    background: $widget6-bg-light;
+    border-color: $widget6-border-color-light;
+  }
+  @include theme-variant("dark") {
+    background: $widget6-bg-dark;
+    border-color: $widget6-border-color-dark;
+  }
+
+  &:hover {
+    @include theme-variant("light") {
+      background: $widget6-hover-bg-light;
+      border-color: $widget6-hover-border-color-light;
+    }
+    @include theme-variant("dark") {
+      background: $widget6-hover-bg-dark;
+      border-color: $widget6-hover-border-color-dark;
+    }
+  }
+}
+
+.widget6-subtitle,
+.widget6-title {
+  margin: 0;
+  padding: $widget6-content-spacer 0;
+}
+
+.widget6-title {
+  font-size: $widget6-title-font-size;
+  font-weight: $widget6-title-font-weight;
+  @include theme-variant("light") {
+    color: $widget6-title-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget6-title-color-dark;
+  }
+}
+
+.widget6-subtitle {
+  font-size: $widget6-subtitle-font-size;
+  font-weight: $widget6-subtitle-font-weight;
+  @include theme-variant("light") {
+    color: $widget6-subtitle-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget6-subtitle-color-dark;
+  }
+}

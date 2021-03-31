@@ -1,0 +1,21 @@
+.widget15 {
+  color: $widget15-color;
+  font-size: $widget15-font-size;
+  font-weight: $widget15-font-weight;
+  margin-bottom: 0;
+}
+@include media-breakpoint-up("sm") {
+  .widget15 {
+    font-size: $widget15-font-size-sm;
+  }
+}
+@include media-breakpoint-up("md") {
+  .widget15 {
+    font-size: $widget15-font-size-md;
+  }
+}
+@include media-breakpoint-up("lg") {
+  .widget15 {
+    font-size: $widget15-font-size-lg;
+  }
+}

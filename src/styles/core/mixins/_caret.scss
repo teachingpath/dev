@@ -1,0 +1,58 @@
+@mixin caret($direction: down, $element: after) {
+  position: relative;
+  @if $enable-caret {
+    &:#{$element} {
+      content: "";
+      position: relative;
+      display: inline-block;
+      color: inherit;
+      width: $caret-size;
+      height: $caret-size;
+      border: solid currentColor;
+      border-width: 0 $caret-border-width $caret-border-width 0;
+      border-bottom-right-radius: $caret-border-radius;
+      @include transition($caret-transition);
+      @if $direction == down {
+        @include caret-transform-down;
+      } @else if $direction == up {
+        @include caret-transform-up;
+      } @else if $direction == right {
+        @include caret-transform-right;
+      } @else if $direction == left {
+        @include caret-transform-left;
+      }
+      @content;
+    }
+  }
+}
+@mixin caret-transform($direction: down) {
+  @if $enable-caret {
+    &::after {
+      @if $direction == down {
+        @include caret-transform-down;
+      } @else if $direction == up {
+        @include caret-transform-up;
+      } @else if $direction == right {
+        @include caret-transform-right;
+      } @else if $direction == left {
+        @include caret-transform-left;
+      }
+    }
+  }
+}
+@mixin caret-transform-down {
+  transform: rotate(45deg);
+  bottom: $caret-offset;
+}
+@mixin caret-transform-up {
+  transform: rotate(-135deg);
+  bottom: -#{$caret-offset};
+}
+@mixin caret-transform-right {
+  transform: rotate(-45deg);
+  bottom: $caret-offset / 2;
+}
+@mixin caret-transform-left {
+  transform: rotate(-225deg);
+  bottom: $caret-offset / 2;
+}

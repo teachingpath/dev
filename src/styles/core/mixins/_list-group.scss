@@ -1,0 +1,45 @@
+// List Groups
+@mixin list-group-item-variant($color, $bg: rgba($color, 0.1), $border: $list-group-border-color-light, $hover-color: $color, $hover-bg: rgba($color, 0.2), $hover-border: $border, $active-bg: $color, $active-color: color-yiq($active-bg), $active-border: $active-bg) {
+  @include theme-variant("light") {
+    color: $color;
+    background-color: $bg;
+    border-color: $border;
+  }
+  @include theme-variant("dark") {
+    color: $color;
+    background-color: $bg;
+    border-color: $border;
+  }
+
+  &.list-group-item-action,
+  .list-group-action & {
+    &:focus,
+    &:hover {
+      &:not(.active) {
+        @include theme-variant("light") {
+          color: $hover-color;
+          background-color: $hover-bg;
+          border-color: $hover-border;
+        }
+        @include theme-variant("dark") {
+          color: $hover-color;
+          background-color: $hover-bg;
+          border-color: $hover-border;
+        }
+      }
+    }
+
+    &.active {
+      @include theme-variant("light") {
+        color: $active-color;
+        background-color: $active-bg;
+        border-color: $active-border;
+      }
+      @include theme-variant("dark") {
+        color: $active-color;
+        background-color: $active-bg;
+        border-color: $active-border;
+      }
+    }
+  }
+}
