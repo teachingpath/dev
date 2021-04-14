@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst Widget7Time = createBasicComponent(\"span\", \"widget7-time\", \"Widget7Time\");\nexport default Widget7Time;","map":null,"metadata":{},"sourceType":"module"}

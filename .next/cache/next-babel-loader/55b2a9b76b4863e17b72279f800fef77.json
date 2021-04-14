@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar Footer = createBasicComponent(\"div\", \"footer\", \"Footer\");\nexport default Footer;","map":null,"metadata":{},"sourceType":"module"}

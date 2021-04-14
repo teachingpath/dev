@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst SidemenuAddon = createBasicComponent(\"div\", \"sidemenu-addon\", \"SidemenuAddon\");\nexport default SidemenuAddon;","map":null,"metadata":{},"sourceType":"module"}

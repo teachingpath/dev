@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst BlockquoteFooter = createBasicComponent(\"footer\", \"blockquote-footer\", \"BlockquoteFooter\");\nexport default BlockquoteFooter;","map":null,"metadata":{},"sourceType":"module"}

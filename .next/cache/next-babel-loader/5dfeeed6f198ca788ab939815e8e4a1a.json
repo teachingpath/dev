@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst Widget10Item = createBasicComponent(\"div\", \"widget10-item\", \"Widget10Item\");\nexport default Widget10Item;","map":null,"metadata":{},"sourceType":"module"}

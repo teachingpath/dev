@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst CardIcon = createBasicComponent(\"div\", \"card-icon\", \"CardIcon\");\nexport default CardIcon;","map":null,"metadata":{},"sourceType":"module"}

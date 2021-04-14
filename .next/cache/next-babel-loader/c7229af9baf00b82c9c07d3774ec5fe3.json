@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst Widget9GridText = createBasicComponent(\"span\", \"widget9-grid-text\", \"Widget9GridText\");\nexport default Widget9GridText;","map":null,"metadata":{},"sourceType":"module"}

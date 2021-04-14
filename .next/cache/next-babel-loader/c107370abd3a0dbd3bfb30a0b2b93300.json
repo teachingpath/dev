@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar Widget9ListAddon = createBasicComponent(\"div\", \"widget9-list-addon\", \"Widget9ListAddon\");\nexport default Widget9ListAddon;","map":null,"metadata":{},"sourceType":"module"}

@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst AsideTitle = createBasicComponent(\"h3\", \"aside-title\", \"AsideTitle\");\nexport default AsideTitle;","map":null,"metadata":{},"sourceType":"module"}

@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst ChatTime = createBasicComponent(\"span\", \"chat-time\", \"ChatTime\");\nexport default ChatTime;","map":null,"metadata":{},"sourceType":"module"}

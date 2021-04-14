@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar ModalBody = createBasicComponent(\"div\", \"modal-body\", \"ModalBody\");\nexport default ModalBody;","map":null,"metadata":{},"sourceType":"module"}

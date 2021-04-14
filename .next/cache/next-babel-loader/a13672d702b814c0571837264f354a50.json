@@ -1,1 +1,0 @@
-{"ast":null,"code":"import TYPES from \"store/types\";\nexport function firebaseChange(payload) {\n  return {\n    type: TYPES.FIREBASE_CHANGE,\n    payload: payload\n  };\n}","map":null,"metadata":{},"sourceType":"module"}

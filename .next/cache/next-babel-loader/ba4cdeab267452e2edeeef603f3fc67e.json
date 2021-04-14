@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst ButtonMarker = createBasicComponent(\"span\", \"btn-marker\", \"ButtonMarker\");\nexport default ButtonMarker;","map":null,"metadata":{},"sourceType":"module"}

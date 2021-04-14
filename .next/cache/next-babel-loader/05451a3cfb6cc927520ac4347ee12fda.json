@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar AccordionCaret = createBasicComponent(\"i\", \"caret accordion-caret\", \"AccordionCaret\");\nexport default AccordionCaret;","map":null,"metadata":{},"sourceType":"module"}

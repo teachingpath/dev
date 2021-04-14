@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar RichListContent = createBasicComponent(\"div\", \"rich-list-content\", \"RichListContent\");\nexport default RichListContent;","map":null,"metadata":{},"sourceType":"module"}

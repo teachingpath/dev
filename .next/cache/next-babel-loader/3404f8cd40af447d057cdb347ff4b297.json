@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar CardGroup = createBasicComponent(\"div\", \"card-group\", \"CardGroup\");\nexport default CardGroup;","map":null,"metadata":{},"sourceType":"module"}

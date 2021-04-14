@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst AvatarDisplay = createBasicComponent(\"div\", \"avatar-display\", \"AvatarDisplay\");\nexport default AvatarDisplay;","map":null,"metadata":{},"sourceType":"module"}

@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst GridNavTitle = createBasicComponent(\"h4\", \"grid-nav-title\", \"GridNavTitle\");\nexport default GridNavTitle;","map":null,"metadata":{},"sourceType":"module"}

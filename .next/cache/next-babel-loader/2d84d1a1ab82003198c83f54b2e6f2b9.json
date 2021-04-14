@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar CardText = createBasicComponent(\"p\", \"card-text\", \"CardText\");\nexport default CardText;","map":null,"metadata":{},"sourceType":"module"}

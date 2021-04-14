@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar CardTitle = createBasicComponent(\"h3\", \"card-title\", \"CardTitle\");\nexport default CardTitle;","map":null,"metadata":{},"sourceType":"module"}

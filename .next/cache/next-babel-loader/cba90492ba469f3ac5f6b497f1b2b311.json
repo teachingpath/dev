@@ -1,1 +1,0 @@
-{"ast":null,"code":"import SweetAlert2 from \"./sweetalert2\";\nexport default SweetAlert2;","map":null,"metadata":{},"sourceType":"module"}

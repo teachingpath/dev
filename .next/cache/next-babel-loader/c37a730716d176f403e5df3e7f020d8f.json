@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar DropdownSubmenu = createBasicComponent(\"div\", \"dropdown-submenu\", \"DropdownSubmenu\");\nexport default DropdownSubmenu;","map":null,"metadata":{},"sourceType":"module"}

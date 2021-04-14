@@ -1,1 +1,0 @@
-{"ast":null,"code":"import TYPES from \"store/types\";\nexport function pageChangeHeaderTitle(payload) {\n  return {\n    type: TYPES.PAGE_CHANGE_HEADER_TITLE,\n    payload: payload\n  };\n}\nexport function pageChangeTheme(payload) {\n  return {\n    type: TYPES.PAGE_CHANGE_THEME,\n    payload: payload\n  };\n}","map":null,"metadata":{},"sourceType":"module"}

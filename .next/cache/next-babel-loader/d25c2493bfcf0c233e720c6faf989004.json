@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar Widget9Icon = createBasicComponent(\"span\", \"widget9-icon\", \"Widget9Icon\");\nexport default Widget9Icon;","map":null,"metadata":{},"sourceType":"module"}

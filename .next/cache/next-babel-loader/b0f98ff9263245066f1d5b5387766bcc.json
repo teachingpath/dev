@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst CarouselItem = createBasicComponent(\"div\", \"carousel-item\", \"CarouselItem\");\nexport default CarouselItem;","map":null,"metadata":{},"sourceType":"module"}

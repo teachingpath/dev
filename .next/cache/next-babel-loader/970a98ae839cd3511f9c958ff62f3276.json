@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst Widget4Addon = createBasicComponent(\"div\", \"widget4-addon\", \"Widget4Addon\");\nexport default Widget4Addon;","map":null,"metadata":{},"sourceType":"module"}

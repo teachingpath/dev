@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst Widget4Highlight = createBasicComponent(\"h2\", \"widget4-hightlight\", \"Widget4Highlight\");\nexport default Widget4Highlight;","map":null,"metadata":{},"sourceType":"module"}

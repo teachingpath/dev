@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar GridNavSubtitle = createBasicComponent(\"span\", \"grid-nav-subtitle\", \"GridNavSubtitle\");\nexport default GridNavSubtitle;","map":null,"metadata":{},"sourceType":"module"}

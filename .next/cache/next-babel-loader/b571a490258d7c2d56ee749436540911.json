@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst RichListSubtitle = createBasicComponent(\"span\", \"rich-list-subtitle\", \"RichListSubtitle\");\nexport default RichListSubtitle;","map":null,"metadata":{},"sourceType":"module"}

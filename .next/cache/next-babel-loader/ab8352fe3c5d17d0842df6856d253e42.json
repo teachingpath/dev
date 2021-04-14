@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst DropdownDivider = createBasicComponent(\"div\", \"dropdown-divider\", \"DropdownDivider\");\nexport default DropdownDivider;","map":null,"metadata":{},"sourceType":"module"}

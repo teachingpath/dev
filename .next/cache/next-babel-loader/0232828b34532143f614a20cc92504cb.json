@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst AsideAddon = createBasicComponent(\"div\", \"aside-addon\", \"AsideAddon\");\nexport default AsideAddon;","map":null,"metadata":{},"sourceType":"module"}

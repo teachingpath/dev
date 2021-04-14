@@ -1,1 +1,0 @@
-{"ast":null,"code":"import TYPES from \"store/types\";\nconst initialState = [];\n\nfunction breadcrumbReducer(state = initialState, action) {\n  switch (action.type) {\n    case TYPES.BREADCRUMB_CHANGE:\n      return action.payload;\n\n    default:\n      return state;\n  }\n}\n\nexport default breadcrumbReducer;","map":null,"metadata":{},"sourceType":"module"}

@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst InputGroupText = createBasicComponent(\"span\", \"input-group-text\", \"InputGroupText\");\nexport default InputGroupText;","map":null,"metadata":{},"sourceType":"module"}

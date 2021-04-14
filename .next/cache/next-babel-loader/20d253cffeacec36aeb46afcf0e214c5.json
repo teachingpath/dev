@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst HeaderBrand = createBasicComponent(\"h3\", \"header-brand\", \"HeaderBrand\");\nexport default HeaderBrand;","map":null,"metadata":{},"sourceType":"module"}

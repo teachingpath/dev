@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst CardSubtitle = createBasicComponent(\"span\", \"card-subtitle\", \"CardSubtitle\");\nexport default CardSubtitle;","map":null,"metadata":{},"sourceType":"module"}

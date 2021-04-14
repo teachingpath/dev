@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar Widget4Group = createBasicComponent(\"div\", \"widget4-group\", \"Widget4Group\");\nexport default Widget4Group;","map":null,"metadata":{},"sourceType":"module"}

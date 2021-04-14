@@ -1,1 +1,0 @@
-{"ast":null,"code":"var __jsx = React.createElement;\nimport React from \"react\";\nimport Dropdown from \"./Dropdown\";\n\nvar InputGroupButtonDropdown = function InputGroupButtonDropdown(props) {\n  return __jsx(Dropdown, props);\n};\n\nexport default InputGroupButtonDropdown;","map":null,"metadata":{},"sourceType":"module"}
