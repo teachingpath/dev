@@ -1,0 +1,1 @@
+{"ast":null,"code":"import TYPES from \"store/types\";\nconst initialState = null;\n\nfunction firebaseReducer(state = initialState, action) {\n  switch (action.type) {\n    case TYPES.FIREBASE_CHANGE:\n      return action.payload;\n\n    default:\n      return state;\n  }\n}\n\nexport default firebaseReducer;","map":null,"metadata":{},"sourceType":"module"}

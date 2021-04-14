@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst NavContent = createBasicComponent(\"span\", \"nav-content\", \"NavContent\");\nexport default NavContent;","map":null,"metadata":{},"sourceType":"module"}

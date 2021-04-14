@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst Widget1DialogContent = createBasicComponent(\"div\", \"widget1-dialog-content\", \"Widget1DialogContent\");\nexport default Widget1DialogContent;","map":null,"metadata":{},"sourceType":"module"}

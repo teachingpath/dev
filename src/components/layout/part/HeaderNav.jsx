@@ -1,7 +1,6 @@
-import { Nav, Badge, Caret, Dropdown, GridNav } from "@panely/components"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import * as RegularIcon from "@fortawesome/free-regular-svg-icons"
-import * as SolidIcon from "@fortawesome/free-solid-svg-icons"
+import { Nav, Badge, Caret, Dropdown, GridNav } from "@panely/components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
 function HeaderNav(props) {
   return (
@@ -9,48 +8,29 @@ function HeaderNav(props) {
       {/* BEGIN Dropdown */}
       <Dropdown.Uncontrolled nav>
         <Dropdown.Toggle nav active>
-          Apps
+          Manager
         </Dropdown.Toggle>
         <Dropdown.Menu animated>
-          <Dropdown.Item
-            icon={<FontAwesomeIcon icon={SolidIcon.faBoxes} />}
-            addon={<Badge pill variant="warning" children="20" />}
-          >
-            Inventory Manager
-          </Dropdown.Item>
           {/* BEGIN Dropdown Submenu */}
           <Dropdown.Submenu>
             <Dropdown.Item
-              icon={<FontAwesomeIcon icon={SolidIcon.faProjectDiagram} />}
+              icon={<FontAwesomeIcon icon={SolidIcon.faRoute} />}
               addon={<Caret />}
             >
-              Project manager
+              Pathway manager
             </Dropdown.Item>
             <Dropdown.SubmenuMenu>
-              <Dropdown.Item bullet>Create project</Dropdown.Item>
-              <Dropdown.Item bullet>Delete project</Dropdown.Item>
-              <Dropdown.Item bullet>Ongoing project</Dropdown.Item>
-              <Dropdown.Item bullet>Completed project</Dropdown.Item>
-              <Dropdown.Item bullet>Urgent project</Dropdown.Item>
+              <Dropdown.Item bullet>Create pathway</Dropdown.Item>
+              <Dropdown.Item bullet>Incomplete pathway</Dropdown.Item>
+              <Dropdown.Item bullet>Pathway archived</Dropdown.Item>
             </Dropdown.SubmenuMenu>
           </Dropdown.Submenu>
           {/* END Dropdown Submenu */}
-          {/* BEGIN Dropdown Submenu */}
-          <Dropdown.Submenu>
-            <Dropdown.Item icon={<FontAwesomeIcon icon={SolidIcon.faTasks} />} addon={<Caret />}>
-              Task manager
-            </Dropdown.Item>
-            <Dropdown.SubmenuMenu>
-              <Dropdown.Item bullet>Show task</Dropdown.Item>
-              <Dropdown.Item bullet>Assign task</Dropdown.Item>
-              <Dropdown.Item bullet>Assign member</Dropdown.Item>
-              <Dropdown.Item bullet>Completed task</Dropdown.Item>
-              <Dropdown.Item bullet>Urgent task</Dropdown.Item>
-            </Dropdown.SubmenuMenu>
-          </Dropdown.Submenu>
-          {/* END Dropdown Submenu */}
-          <Dropdown.Item icon={<FontAwesomeIcon icon={SolidIcon.faDollarSign} />}>
-            Invoice
+
+          <Dropdown.Item
+            icon={<FontAwesomeIcon icon={SolidIcon.faUserFriends} />}
+          >
+            Students
           </Dropdown.Item>
           <Dropdown.Item icon={<FontAwesomeIcon icon={SolidIcon.faUserCog} />}>
             My Account
@@ -66,9 +46,10 @@ function HeaderNav(props) {
             <Dropdown.Col className="d-flex flex-column align-items-start justify-content-center bg-primary text-white">
               <h2 className="font-weight-bolder">Welcome back!</h2>
               <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium, commodi hic
-                qui aspernatur doloremque quos tempora placeat culpa illum, voluptatibus delectus
-                provident cumque aliquid enim, laborum aliquam. Quod, perferendis unde.
+                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Accusantium, commodi hic qui aspernatur doloremque quos tempora
+                placeat culpa illum, voluptatibus delectus provident cumque
+                aliquid enim, laborum aliquam. Quod, perferendis unde.
               </p>
             </Dropdown.Col>
             <Dropdown.Col>
@@ -76,25 +57,41 @@ function HeaderNav(props) {
               {/* BEGIN Grid Nav */}
               <GridNav action>
                 <GridNav.Row>
-                  <GridNav.Item icon={<FontAwesomeIcon icon={RegularIcon.faWindowRestore} />}>
-                    Dashboard
+                  <GridNav.Item
+                    icon={
+                      <FontAwesomeIcon icon={SolidIcon.faRoute} />
+                    }
+                  >
+                    Pathway
                   </GridNav.Item>
-                  <GridNav.Item icon={<FontAwesomeIcon icon={RegularIcon.faClipboard} />}>
-                    TODO List
+                  <GridNav.Item
+                    icon={<FontAwesomeIcon icon={SolidIcon.faRoad} />}
+                  >
+                    Runner
                   </GridNav.Item>
-                  <GridNav.Item icon={<FontAwesomeIcon icon={RegularIcon.faQuestionCircle} />}>
-                    Help Center
+                  <GridNav.Item
+                    icon={
+                      <FontAwesomeIcon icon={SolidIcon.faListOl} />
+                    }
+                  >
+                    Track
                   </GridNav.Item>
                 </GridNav.Row>
                 <GridNav.Row>
-                  <GridNav.Item icon={<FontAwesomeIcon icon={RegularIcon.faImages} />}>
-                    Galery
+                  <GridNav.Item
+                    icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
+                  >
+                    Trophy
                   </GridNav.Item>
-                  <GridNav.Item icon={<FontAwesomeIcon icon={RegularIcon.faChartBar} />}>
-                    Scrumboard
+                  <GridNav.Item
+                    icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
+                  >
+                    Quiz
                   </GridNav.Item>
-                  <GridNav.Item icon={<FontAwesomeIcon icon={RegularIcon.faBookmark} />}>
-                    Docs
+                  <GridNav.Item
+                    icon={<FontAwesomeIcon icon={SolidIcon.faPlaneDeparture} />}
+                  >
+                    Journey
                   </GridNav.Item>
                 </GridNav.Row>
               </GridNav>
@@ -102,18 +99,18 @@ function HeaderNav(props) {
             </Dropdown.Col>
             <Dropdown.Col className="border-left">
               <Dropdown.Header size="lg">Tools</Dropdown.Header>
-              <Dropdown.Item bullet>Components</Dropdown.Item>
-              <Dropdown.Item bullet>Form Wizard</Dropdown.Item>
+              <Dropdown.Item bullet>Forum</Dropdown.Item>
+              <Dropdown.Item bullet>Slack group</Dropdown.Item>
               <Dropdown.Item bullet>Documentation</Dropdown.Item>
               <Dropdown.Item bullet>Knowledge Base</Dropdown.Item>
-              <Dropdown.Item bullet>Inventory Manager</Dropdown.Item>
+              <Dropdown.Item bullet>Testimonials</Dropdown.Item>
             </Dropdown.Col>
           </Dropdown.Row>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>
       {/* END Dropdown */}
     </Nav>
-  )
+  );
 }
 
-export default HeaderNav
+export default HeaderNav;

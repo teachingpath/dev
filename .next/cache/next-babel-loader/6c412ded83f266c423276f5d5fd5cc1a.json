@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst ChatContent = createBasicComponent(\"div\", \"chat-content\", \"ChatContent\");\nexport default ChatContent;","map":null,"metadata":{},"sourceType":"module"}

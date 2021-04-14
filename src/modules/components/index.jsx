@@ -26,6 +26,7 @@ import CardGroup from "./CardGroup"
 import CardDeck from "./CardDeck"
 import CardColumns from "./CardColumns"
 import CustomInput from "./CustomInput"
+import CustomFileInput from "./CustomFileInput"
 import Header from "./Header"
 import Layout from "./Layout"
 import Footer from "./Footer"
@@ -97,6 +98,7 @@ export {
   CardDeck,
   CardColumns,
   CustomInput,
+  CustomFileInput,
   Header,
   Layout,
   Footer,

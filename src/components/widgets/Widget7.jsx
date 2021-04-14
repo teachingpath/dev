@@ -4,16 +4,28 @@ function Widget7Component() {
   return (
     <Portlet>
       <Portlet.Body>
+      <Row>
+         
+         <Col sm="6">
+             <Widget7Display title="Hacking track" highlight="3" className="mb-3" />
+             <Widget7Display title="Training track" highlight="10" />
+           </Col>
+           <Col sm="6">
+             <Widget7Display title="Learning track" highlight="3" className="mb-3" />
+             <Widget7Display title="Q&A track" highlight="10" />
+           </Col>
+         </Row>
         <Row>
+         
           <Col sm="6">
-            <Widget7Display title="Completed Transactions" highlight="54,234" className="mb-3" />
-            <Widget7Display title="New Orders" highlight="242" />
+            <Widget7Display title="Bonuses delivered" highlight="5,434" className="mb-3" />
+            <Widget7Display title="Pathways completed" highlight="242" />
           </Col>
           <Col sm="6">
-            <Widget7Display title="Avarage Product Price" highlight="$67,50" className="mb-3" />
-            <Widget7Progress title="Satisfication Rate" highlight="90%" progress={90} />
+            <Widget7Display title="Badges delivered" highlight="20" className="mb-3" />
           </Col>
         </Row>
+        
       </Portlet.Body>
     </Portlet>
   )

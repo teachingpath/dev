@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar PortletIcon = createBasicComponent(\"div\", \"portlet-icon\", \"PortletIcon\");\nexport default PortletIcon;","map":null,"metadata":{},"sourceType":"module"}

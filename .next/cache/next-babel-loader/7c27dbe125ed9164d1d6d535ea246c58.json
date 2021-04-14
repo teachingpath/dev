@@ -1,0 +1,1 @@
+{"ast":null,"code":"import dynamic from \"next/dynamic\";\nconst Chart = dynamic(() => import(\"./react-apexcharts\"), {\n  ssr: false,\n  loadableGenerated: {\n    webpack: () => [require.resolveWeak(\"./react-apexcharts\")],\n    modules: [\"./react-apexcharts\"]\n  }\n});\nexport default Chart;","map":null,"metadata":{},"sourceType":"module"}

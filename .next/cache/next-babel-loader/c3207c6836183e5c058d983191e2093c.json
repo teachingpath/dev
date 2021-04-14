@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar NavIcon = createBasicComponent(\"div\", \"nav-icon\", \"NavIcon\");\nexport default NavIcon;","map":null,"metadata":{},"sourceType":"module"}

@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst DemoWrapper = createBasicComponent(\"div\", \"overflow-auto text-nowrap py-3\", \"DemoWrapper\");\nexport default DemoWrapper;","map":null,"metadata":{},"sourceType":"module"}

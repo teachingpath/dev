@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst Widget1Offset = createBasicComponent(\"div\", \"widget1-offset\", \"Widget1Offset\");\nexport default Widget1Offset;","map":null,"metadata":{},"sourceType":"module"}

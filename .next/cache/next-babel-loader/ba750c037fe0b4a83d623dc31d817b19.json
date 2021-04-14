@@ -1,0 +1,1 @@
+{"ast":null,"code":"function* themeSaga() {\n  console.log(\"Theme changed\");\n}\n\nexport default themeSaga;","map":null,"metadata":{},"sourceType":"module"}

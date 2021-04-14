@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar Widget4Subtitle = createBasicComponent(\"h6\", \"widget4-subtitle\", \"Widget4Subtitle\");\nexport default Widget4Subtitle;","map":null,"metadata":{},"sourceType":"module"}

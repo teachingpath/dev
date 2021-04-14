@@ -8,7 +8,6 @@ import {
   Portlet,
   Spinner,
   Container,
-  CustomInput,
   FloatLabel,
   Widget12
 } from "@panely/components"

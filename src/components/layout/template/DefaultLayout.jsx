@@ -5,7 +5,6 @@ import FloatButton from "components/layout/part/FloatButton"
 import Scrolltop from "components/layout/part/Scrolltop"
 import Footer from "components/layout/part/Footer"
 import Header from "components/layout/part/Header"
-import Aside from "components/layout/part/Aside"
 import PAGE from "config/page.config"
 
 /*
@@ -18,7 +17,6 @@ import PAGE from "config/page.config"
 class DefaultLayout extends React.Component {
   render() {
     const {
-      enableAside,
       enableHeader,
       enableFooter,
       enableScrolltop,
@@ -28,7 +26,6 @@ class DefaultLayout extends React.Component {
 
     return (
       <Layout type="holder">
-        {enableAside ? <Aside /> : null}
         <Layout type="wrapper">
           {enableHeader ? <Header /> : null}
           <Layout type="content">

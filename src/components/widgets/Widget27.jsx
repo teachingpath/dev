@@ -1,4 +1,4 @@
-import { Avatar, Portlet, RichList, Dropdown } from "@panely/components"
+import { Portlet, RichList, Dropdown } from "@panely/components"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { connect } from "react-redux"
 import * as BrandsIcon from "@fortawesome/free-brands-svg-icons"
@@ -9,40 +9,24 @@ class Widget27Component extends React.Component {
   state = {
     data: [
       {
-        avatar: () => (
-          <Avatar display variant="label-warning">
-            <FontAwesomeIcon icon={BrandsIcon.faPython} />
-          </Avatar>
-        ),
+      
         brand: "Python",
-        category: "Programming language"
+        category: "220 Students"
       },
       {
-        avatar: () => (
-          <Avatar display variant="label-primary">
-            <FontAwesomeIcon icon={BrandsIcon.faFacebook} />
-          </Avatar>
-        ),
+      
         brand: "Facebook",
-        category: "Social media"
+        category: "240 Students"
       },
       {
-        avatar: () => (
-          <Avatar display variant="label-success">
-            <FontAwesomeIcon icon={BrandsIcon.faAndroid} />
-          </Avatar>
-        ),
+      
         brand: "Android",
-        category: "Operating system"
+        category: "150 Students"
       },
       {
-        avatar: () => (
-          <Avatar display variant="label-secondary">
-            <FontAwesomeIcon icon={BrandsIcon.faApple} />
-          </Avatar>
-        ),
+      
         brand: "Apple",
-        category: "Technology brand"
+        category: "100 Students"
       }
     ]
   }
@@ -54,7 +38,7 @@ class Widget27Component extends React.Component {
           <Portlet.Icon>
             <FontAwesomeIcon icon={SolidIcon.faBullhorn} />
           </Portlet.Icon>
-          <Portlet.Title>Trends</Portlet.Title>
+          <Portlet.Title>Most used pathways</Portlet.Title>
           <Portlet.Addon>
             {/* BEGIN Dropdown */}
             <Dropdown.Uncontrolled>
@@ -85,13 +69,10 @@ class Widget27Component extends React.Component {
           {/* BEGIN Rich List */}
           <RichList flush>
             {this.state.data.map((data, index) => {
-              const { avatar: WidgetAvatar, brand, category } = data
+              const { brand, category } = data
 
               return (
                 <RichList.Item key={index}>
-                  <RichList.Addon addonType="prepend">
-                    <WidgetAvatar />
-                  </RichList.Addon>
                   <RichList.Content>
                     <RichList.Title children={brand} />
                     <RichList.Subtitle children={category} />
@@ -138,7 +119,7 @@ class Widget27Chart extends React.Component {
           show: false
         },
         y: {
-          formatter: val => `${val} Visited` // Format chart tooltip value
+          formatter: val => `${val}` // Format chart tooltip value
         }
       },
       xaxis: {
@@ -151,7 +132,7 @@ class Widget27Chart extends React.Component {
     // Chart series data
     series: [
       {
-        name: "Unique",
+        name: "Students",
         data: [6400, 4000, 7600, 6200, 9800, 6400, 8600, 7000]
       }
     ]

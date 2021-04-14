@@ -15,9 +15,7 @@ import { firebaseChange } from "store/actions"
 import { connect } from "react-redux"
 import * as RegularIcon from "@fortawesome/free-regular-svg-icons"
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons"
-import verifyCookie from "components/firebase/firebaseVerifyCookie"
 import swalContent from "sweetalert2-react-content"
-import SimpleBar from "simplebar"
 import Router from "next/router"
 import Swal from "@panely/sweetalert2"
 import PAGE from "config/page.config"
@@ -43,7 +41,7 @@ class HeaderUser extends React.Component {
     ),
     name: "Guest",
     email: "No email",
-    count: 6,
+    count: '34K',
     navs: [
       [
         {
@@ -57,20 +55,6 @@ class HeaderUser extends React.Component {
         {
           icon: () => <FontAwesomeIcon icon={RegularIcon.faClone} />,
           title: "Activities"
-        }
-      ],
-      [
-        {
-          icon: () => <FontAwesomeIcon icon={RegularIcon.faCalendarCheck} />,
-          title: "Tasks"
-        },
-        {
-          icon: () => <FontAwesomeIcon icon={RegularIcon.faStickyNote} />,
-          title: "Notes"
-        },
-        {
-          icon: () => <FontAwesomeIcon icon={RegularIcon.faBell} />,
-          title: "Notification"
         }
       ]
     ]
@@ -103,14 +87,14 @@ class HeaderUser extends React.Component {
   }
 
   render() {
-    const { avatar: WidgetAvatar, name, email, count, navs } = this.state
+    const { avatar: WidgetAvatar,   name, email, count, navs } = this.state
     const { dispatch, firebase, firebaseChange, ...attributes } = this.props
 
     return (
       <Dropdown.Uncontrolled {...attributes}>
         <Widget13 dropdown variant="flat-primary">
           <Widget13.Text>
-            Hi <strong>User</strong>
+            Hi <strong>{name}</strong>
           </Widget13.Text>
           {/* BEGIN Avatar */}
           <Widget13.Avatar variant="info">

@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst CardAddon = createBasicComponent(\"div\", \"card-addon\", \"CardAddon\");\nexport default CardAddon;","map":null,"metadata":{},"sourceType":"module"}

@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar AlertHeader = createBasicComponent(\"h4\", \"alert-header\", \"AlertHeader\");\nexport default AlertHeader;","map":null,"metadata":{},"sourceType":"module"}

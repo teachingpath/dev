@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar SidemenuTitle = createBasicComponent(\"h3\", \"sidemenu-title\", \"SidemenuTitle\");\nexport default SidemenuTitle;","map":null,"metadata":{},"sourceType":"module"}

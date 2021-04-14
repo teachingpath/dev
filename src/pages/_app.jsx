@@ -18,7 +18,6 @@ import { connect } from "react-redux"
 import DefaultLayout from "components/layout/template/DefaultLayout"
 import BlankLayout from "components/layout/template/BlankLayout"
 import ProgressBar from "@panely/progressbar"
-import Router from "next/router"
 import App from "next/app"
 
 class MyApp extends App {

@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst ChatAuthor = createBasicComponent(\"span\", \"chat-author\", \"ChatAuthor\");\nexport default ChatAuthor;","map":null,"metadata":{},"sourceType":"module"}

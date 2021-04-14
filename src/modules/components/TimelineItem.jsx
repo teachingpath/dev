@@ -31,6 +31,7 @@ const TimelineItem = props => {
     timeTag: TimeTag,
     pinTag: PinTag,
     time,
+    date,
     pin,
     tag: Tag,
     ...attributes
@@ -43,7 +44,7 @@ const TimelineItem = props => {
 
   return (
     <Tag {...attributes} className={containerClasses}>
-      {time ? <TimeTag className={timeClasses}>{time}</TimeTag> : null}
+      {time ? <TimeTag className={timeClasses} title={date?.toLocaleString()|| ""}>{time}</TimeTag> : null}
       {pin ? <PinTag className={pinClasses}>{pin}</PinTag> : null}
       <ContentTag className={contentClasses}>{children}</ContentTag>
     </Tag>

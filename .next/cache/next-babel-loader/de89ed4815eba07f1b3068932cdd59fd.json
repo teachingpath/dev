@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar CardColumns = createBasicComponent(\"div\", \"card-columns\", \"CardColumns\");\nexport default CardColumns;","map":null,"metadata":{},"sourceType":"module"}

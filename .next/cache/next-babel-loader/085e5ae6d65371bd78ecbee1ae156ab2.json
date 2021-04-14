@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar CardFooter = createBasicComponent(\"div\", \"card-footer\", \"CardFooter\");\nexport default CardFooter;","map":null,"metadata":{},"sourceType":"module"}

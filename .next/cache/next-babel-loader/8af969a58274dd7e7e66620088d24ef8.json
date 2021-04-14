@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar HeaderDivider = createBasicComponent(\"i\", \"header-divider\", \"HeaderDivider\");\nexport default HeaderDivider;","map":null,"metadata":{},"sourceType":"module"}

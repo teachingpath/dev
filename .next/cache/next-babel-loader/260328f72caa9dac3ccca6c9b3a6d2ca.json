@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar DropdownRow = createBasicComponent(\"div\", \"dropdown-row\", \"DropdownRow\");\nexport default DropdownRow;","map":null,"metadata":{},"sourceType":"module"}

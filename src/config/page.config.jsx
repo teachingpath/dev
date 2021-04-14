@@ -8,8 +8,6 @@ const PAGE = {
   dashboardPagePath: "/",
   favicon: "/images/favicon.ico",
   layout: {
-    enableAside: true,
-    minimizedAside: false,
     enableHeader: true,
     enableFooter: true,
     enableScrolltop: true,

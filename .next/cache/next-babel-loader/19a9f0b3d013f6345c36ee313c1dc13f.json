@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar DropdownDivider = createBasicComponent(\"div\", \"dropdown-divider\", \"DropdownDivider\");\nexport default DropdownDivider;","map":null,"metadata":{},"sourceType":"module"}

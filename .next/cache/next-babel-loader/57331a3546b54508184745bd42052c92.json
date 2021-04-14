@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar ChatImg = createBasicComponent(\"img\", \"chat-image\", \"ChatImg\");\nexport default ChatImg;","map":null,"metadata":{},"sourceType":"module"}

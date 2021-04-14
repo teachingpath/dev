@@ -1,47 +1,53 @@
-import { Badge, Avatar, Portlet, Dropdown, RichList } from "@panely/components"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import * as SolidIcon from "@fortawesome/free-solid-svg-icons"
+import { Badge, Portlet, Dropdown, RichList, Button } from "@panely/components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
+import Router from "next/router";
+import { firestoreClient } from "components/firebase/firebaseClient";
 
 class Widget14Component extends React.Component {
-  state = {
-    data: [
-      {
-        avatar: () => (
-          <Avatar display variant="label-info">
-            <FontAwesomeIcon icon={SolidIcon.faFileInvoice} />
-          </Avatar>
-        ),
-        content: "New report has been received",
-        time: "2 min ago"
-      },
-      {
-        avatar: () => (
-          <Avatar display variant="label-success">
-            <FontAwesomeIcon icon={SolidIcon.faShoppingBasket} />
-          </Avatar>
-        ),
-        content: "Last order was completed",
-        time: "1 hrs ago"
-      },
-      {
-        avatar: () => (
-          <Avatar display variant="label-danger">
-            <FontAwesomeIcon icon={SolidIcon.faUsers} />
-          </Avatar>
-        ),
-        content: "Company meeting canceled",
-        time: "5 hrs ago"
-      },
-      {
-        avatar: () => (
-          <Avatar display variant="label-warning">
-            <FontAwesomeIcon icon={SolidIcon.faPaperPlane} />
-          </Avatar>
-        ),
-        content: "New feedback received",
-        time: "6 hrs ago"
-      }
-    ]
+  constructor(props) {
+    super(props);
+    this.state = { data: [] };
+  }
+
+  componentDidMount() {
+    firestoreClient
+      .collection("pathways")
+      .where("leaderId", "==", this.props.firebase.user_id)
+      .get()
+      .then((querySnapshot) => {
+        const list = [];
+        querySnapshot.forEach((doc) => {
+          list.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+        this.setState({ data: list });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+  }
+
+  onDelete(pathwayId) {
+    firestoreClient
+      .collection("pathways")
+      .doc(pathwayId)
+      .delete()
+      .then(() => {
+        console.log("Document successfully deleted!");
+        this.componentDidMount();
+        this.props.activityChange({
+          type: "edit_pathway",
+          pathwayId: pathwayId,
+          type: "delete_pathway"
+        });
+
+      })
+      .catch((error) => {
+        console.error("Error removing document: ", error);
+      });
   }
 
   render() {
@@ -49,27 +55,30 @@ class Widget14Component extends React.Component {
       <Portlet>
         <Portlet.Header>
           <Portlet.Icon>
-            <FontAwesomeIcon icon={SolidIcon.faBell} />
+            <FontAwesomeIcon icon={SolidIcon.faRoute} />
           </Portlet.Icon>
-          <Portlet.Title>Notification</Portlet.Title>
+          <Portlet.Title>Pathways</Portlet.Title>
+          <Portlet.Addon>
+            <Button
+              onClick={() => {
+                Router.push("/pathway/create");
+              }}
+            >
+              New
+            </Button>
+          </Portlet.Addon>
           <Portlet.Addon>
             {/* BEGIN Dropdown */}
             <Dropdown.Uncontrolled>
               <Dropdown.Toggle caret variant="label-primary">
-                All
+                Status
               </Dropdown.Toggle>
               <Dropdown.Menu right animated>
                 <Dropdown.Item href="#">
-                  <Badge variant="label-primary">Personal</Badge>
+                  <Badge variant="label-success">Published</Badge>
                 </Dropdown.Item>
                 <Dropdown.Item href="#">
-                  <Badge variant="label-info">Work</Badge>
-                </Dropdown.Item>
-                <Dropdown.Item href="#">
-                  <Badge variant="label-success">Important</Badge>
-                </Dropdown.Item>
-                <Dropdown.Item href="#">
-                  <Badge variant="label-danger">Company</Badge>
+                  <Badge variant="label-info">In draft</Badge>
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown.Uncontrolled>
@@ -80,16 +89,13 @@ class Widget14Component extends React.Component {
           {/* BEGIN Rich List */}
           <RichList bordered action>
             {this.state.data.map((data, index) => {
-              const { avatar: UserAvatar, content, time } = data
+              const { name, description, id } = data;
 
               return (
                 <RichList.Item key={index}>
-                  <RichList.Addon addonType="prepend">
-                    <UserAvatar />
-                  </RichList.Addon>
                   <RichList.Content>
-                    <RichList.Title children={content} />
-                    <RichList.Subtitle children={time} />
+                    <RichList.Title children={name} />
+                    <RichList.Subtitle children={description} />
                   </RichList.Content>
                   <RichList.Addon addonType="append">
                     {/* BEGIN Dropdown */}
@@ -98,32 +104,53 @@ class Widget14Component extends React.Component {
                         <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
                       </Dropdown.Toggle>
                       <Dropdown.Menu right animated>
-                        <Dropdown.Item href="#" icon={<FontAwesomeIcon icon={SolidIcon.faCheck} />}>
-                          Mark as read
+                        <Dropdown.Item
+                           href="javascript:void(0)"
+                           onClick={() => {
+                             Router.push({
+                               pathname: "/pathway/edit",
+                               query: { pathwayId: id },
+                             });
+                           }}
+                          icon={<FontAwesomeIcon icon={SolidIcon.faEdit} />}
+                        >
+                          Editar
                         </Dropdown.Item>
                         <Dropdown.Item
-                          href="#"
+                          href="javascript:void(0)"
+                          onClick={() => {
+                            this.onDelete(id);
+                          }}
                           icon={<FontAwesomeIcon icon={SolidIcon.faTrashAlt} />}
                         >
                           Delete
                         </Dropdown.Item>
                         <Dropdown.Divider />
-                        <Dropdown.Item href="#" icon={<FontAwesomeIcon icon={SolidIcon.faCog} />}>
-                          Settings
+                        <Dropdown.Item
+                          href="javascript:void(0)"
+                          onClick={() => {
+                            Router.push({
+                              pathname: "/runner/create",
+                              query: { pathwayId: id },
+                            });
+                          }}
+                          icon={<FontAwesomeIcon icon={SolidIcon.faRunning} />}
+                        >
+                          Add runner
                         </Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown.Uncontrolled>
                     {/* END Dropdown */}
                   </RichList.Addon>
                 </RichList.Item>
-              )
+              );
             })}
           </RichList>
           {/* END Rich List */}
         </Portlet.Body>
       </Portlet>
-    )
+    );
   }
 }
 
-export default Widget14Component
+export default Widget14Component;

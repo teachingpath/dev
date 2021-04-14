@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar Widget9GridIcon = createBasicComponent(\"div\", \"widget9-grid-icon\", \"Widget9GridIcon\");\nexport default Widget9GridIcon;","map":null,"metadata":{},"sourceType":"module"}

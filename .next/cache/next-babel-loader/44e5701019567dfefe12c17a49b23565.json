@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar HeaderTitle = createBasicComponent(\"h4\", \"header-title\", \"HeaderTitle\");\nexport default HeaderTitle;","map":null,"metadata":{},"sourceType":"module"}

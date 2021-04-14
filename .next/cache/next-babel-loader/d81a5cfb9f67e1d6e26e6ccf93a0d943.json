@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nvar Widget9Degree = createBasicComponent(\"sup\", \"widget9-degree\", \"Widget9Degree\");\nexport default Widget9Degree;","map":null,"metadata":{},"sourceType":"module"}

@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst PortletTitle = createBasicComponent(\"h3\", \"portlet-title\", \"PortletTitle\");\nexport default PortletTitle;","map":null,"metadata":{},"sourceType":"module"}

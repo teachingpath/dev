@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { createBasicComponent } from \"./utils\";\nconst RichListParagraph = createBasicComponent(\"p\", \"rich-list-paragraph\", \"RichListParagraph\");\nexport default RichListParagraph;","map":null,"metadata":{},"sourceType":"module"}
