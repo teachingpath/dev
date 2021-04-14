@@ -14,7 +14,6 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
-import Avatar from "react-avatar-edit";
 import { useState } from "react";
 
 const ReactSwal = swalContent(Swal);
@@ -91,23 +90,7 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
       });
   };
 
-  const onClose = () => {
-    setImage({ preview: null });
-  };
-
-  const onCrop = (preview) => {
-    setImage({ preview });
-  };
-
-  const onBeforeFileLoad = (elem) => {
-    if (elem.target.files[0].size > 71680) {
-      toast.fire({
-        icon: "error",
-        title: "The image is very large",
-      });
-      elem.target.value = "";
-    }
-  };
+ 
 
   return (
     <Form
@@ -116,24 +99,7 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
       })}
     >
       <Row>
-        <Col xs="6">
-          <Form.Group>
-            <Avatar
-              width={130}
-              height={130}
-              onCrop={onCrop}
-              onClose={onClose}
-              onBeforeFileLoad={onBeforeFileLoad}
-              src={image.src}
-              label={"Badget icon"}
-            />
-          </Form.Group>
-        </Col>
-        <Col xs="6">
-          <Form.Group>
-            {image.preview && <img src={image.preview} alt="Preview" />}
-          </Form.Group>
-        </Col>
+        
         <Col xs="12">
           {/* BEGIN Form Group */}
           <Form.Group>

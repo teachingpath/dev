@@ -12,7 +12,6 @@ import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Router from "next/router";
-import Avatar from "react-avatar-edit";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 const ReactSwal = swalContent(Swal);
@@ -56,47 +55,13 @@ function PathwayForm({ onSave, data }) {
     },
   });
 
-  const onClose = () => {
-    setImage({ preview: null });
-  };
-
-  const onCrop = (preview) => {
-    setImage({ preview });
-  };
-
-  const onBeforeFileLoad = (elem) => {
-    if (elem.target.files[0].size > 71680) {
-      toast.fire({
-        icon: "error",
-        title: "The image is very large",
-      });
-      elem.target.value = "";
-    }
-  };
 
   return (
     <Form onSubmit={handleSubmit((data) => {
       onSave({...data, image: image})
     })}>
       <Row>
-        <Col xs="6">
-          <Form.Group>
-            <Avatar
-              width={130}
-              height={130}
-              onCrop={onCrop}
-              onClose={onClose}
-              onBeforeFileLoad={onBeforeFileLoad}
-              src={image.src}
-              label={"Pathway icon"}
-            />
-          </Form.Group>
-        </Col>
-        <Col xs="6">
-          <Form.Group>
-            {image.preview && <img src={image.preview} alt="Preview" />}
-          </Form.Group>
-        </Col>
+        
         <Col xs="12">
           {/* BEGIN Form Group */}
           <Form.Group>
