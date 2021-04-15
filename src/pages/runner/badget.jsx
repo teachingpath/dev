@@ -14,7 +14,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
-import { useState } from "react";
+import { useRef } from "react";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -68,7 +68,7 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
       .doc(runnerId)
       .update({
         badget: {
-          ...data
+          ...data,
         },
       })
       .then((docRef) => {
@@ -90,16 +90,18 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
       });
   };
 
- 
-
   return (
     <Form
       onSubmit={handleSubmit((data) => {
-        onSubmit({ ...data, image: image });
+        imageRef.current.getImage().then((url) => {
+          onSubmit({ ...data, image: url });
+        });
       })}
     >
       <Row>
-        
+        <Form.Group>
+          <ImageEditor ref={imageRef} image={data?.image} />
+        </Form.Group>
         <Col xs="12">
           {/* BEGIN Form Group */}
           <Form.Group>

@@ -6,13 +6,16 @@ import {
   Input,
   Button,
   FloatLabel,
+  ImageEditor,
 } from "@panely/components";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Router from "next/router";
+import AvatarEditor from "react-avatar-editor";
 import Swal from "@panely/sweetalert2";
+import Dropzone from "react-dropzone";
 import swalContent from "sweetalert2-react-content";
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -28,10 +31,7 @@ const toast = ReactSwal.mixin({
 });
 
 function PathwayForm({ onSave, data }) {
-  const [image, setImage] = useState({
-    preview: data?.image?.preview || "",
-    src: "",
-  });
+  const imageRef = useRef(null);
   // Define Yup schema for form validation
   const schema = yup.object().shape({
     name: yup
@@ -55,13 +55,18 @@ function PathwayForm({ onSave, data }) {
     },
   });
 
-
   return (
-    <Form onSubmit={handleSubmit((data) => {
-      onSave({...data, image: image})
-    })}>
+    <Form
+      onSubmit={handleSubmit((data) => {
+        imageRef.current.getImage().then((url) => {
+          onSave({ ...data, image: url });
+        });
+      })}
+    >
+      <Form.Group>
+        <ImageEditor ref={imageRef} image={data?.image} />
+      </Form.Group>
       <Row>
-        
         <Col xs="12">
           {/* BEGIN Form Group */}
           <Form.Group>

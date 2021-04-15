@@ -68,6 +68,7 @@ import Widget12 from "./Widget12"
 import Widget13 from "./Widget13"
 import Widget14 from "./Widget14"
 import Widget15 from "./Widget15"
+import ImageEditor from "./ImageEditor";
 
 export {
   Container,
@@ -139,5 +140,6 @@ export {
   Widget12,
   Widget13,
   Widget14,
-  Widget15
+  Widget15,
+  ImageEditor
 }

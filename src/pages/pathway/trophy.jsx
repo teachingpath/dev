@@ -6,7 +6,7 @@ import {
   Input,
   Button,
   FloatLabel,
-  CustomInput,
+  ImageEditor,
 } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import { useForm, Controller } from "react-hook-form";
@@ -14,7 +14,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
-import { useState } from "react";
+import { useRef } from "react";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -30,10 +30,8 @@ const toast = ReactSwal.mixin({
 });
 
 function TrophyForm({ pathwayId, saved, data, activityChange }) {
-  const [image, setImage] = useState({
-    preview: data?.image?.preview || "",
-    src: "",
-  });
+  const imageRef = useRef(null);
+
   // Define Yup schema for form validation
   const schema = yup.object().shape({
     name: yup
@@ -90,16 +88,18 @@ function TrophyForm({ pathwayId, saved, data, activityChange }) {
       });
   };
 
-  
-
   return (
     <Form
       onSubmit={handleSubmit((data) => {
-        onSubmit({ ...data, image: image });
+        imageRef.current.getImage().then((url) => {
+          onSubmit({ ...data, image: url });
+        });
       })}
     >
+      <Form.Group>
+        <ImageEditor ref={imageRef} image={data?.image} />
+      </Form.Group>
       <Row>
-        
         <Col xs="12">
           {/* BEGIN Form Group */}
 
