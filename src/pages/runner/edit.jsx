@@ -34,16 +34,15 @@ class FormBasePage extends React.Component {
     super(props);
     if (!Router.query.pathwayId || !Router.query.runnerId) {
       Router.push("/pathway/create");
-    } else {
-      this.state = {
-        pathwayId: Router.query.pathwayId,
-        runnerId: Router.query.runnerId,
-        saved: false,
-      };
-
-      this.onEdit = this.onEdit.bind(this);
-      this.loadData = this.loadData.bind(this);
     }
+    this.state = {
+      pathwayId: Router.query.pathwayId,
+      runnerId: Router.query.runnerId,
+      saved: false,
+    };
+
+    this.onEdit = this.onEdit.bind(this);
+    this.loadData = this.loadData.bind(this);
   }
 
   componentDidMount() {
@@ -87,7 +86,7 @@ class FormBasePage extends React.Component {
   }
 
   onEdit(data) {
-   return firestoreClient
+    return firestoreClient
       .collection("runners")
       .doc(this.state.runnerId)
       .update({

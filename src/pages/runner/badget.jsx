@@ -6,7 +6,7 @@ import {
   Input,
   Button,
   FloatLabel,
-  CustomInput,
+  ImageEditor,
 } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
@@ -30,10 +30,7 @@ const toast = ReactSwal.mixin({
 });
 function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
   const { badget } = data;
-  const [image, setImage] = useState({
-    preview: badget?.image?.preview || "",
-    src: "",
-  });
+  const imageRef = useRef(null);
   // Define Yup schema for form validation
   const schema = yup.object().shape({
     name: yup
@@ -98,10 +95,11 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
         });
       })}
     >
-      <Row>
         <Form.Group>
-          <ImageEditor ref={imageRef} image={data?.image} />
+          <ImageEditor ref={imageRef} image={badget?.image} withPreview/>
         </Form.Group>
+      <Row>
+      
         <Col xs="12">
           {/* BEGIN Form Group */}
           <Form.Group>

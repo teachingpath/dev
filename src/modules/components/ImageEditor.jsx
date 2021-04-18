@@ -28,34 +28,65 @@ class ImageEditor extends React.Component {
   render() {
     return (
       <Row>
-        <Col xs="6">
-          <Dropzone
-            onDrop={this.handleDrop}
-            noClick
-            noKeyboard
-            style={{ width: "150px", height: "150px" }}
-          >
-            {({ getRootProps, getInputProps }) => (
-              <div {...getRootProps()}>
-                <AvatarEditor
-                  ref={this.setEditorRef}
-                  width={150}
-                  height={150}
-                  border="12"
-                  scale="1.2"
-                  image={this.state.image}
+        {this.props.withPreview ? (
+          <>
+            <Col xs="6">
+              <DropDownImage
+                {...this.props}
+                {...this.state}
+                setEditorRef={this.setEditorRef}
+                handleDrop={this.handleDrop}
+              />
+            </Col>
+            <Col xs="6">
+              {this.state.image && (
+                <img
+                  src={this.state.image}
+                  alt="Preview"
+                  className="mx-auto d-block mg-thumbnail avatar-circle"
                 />
-                <input {...getInputProps()} />
-              </div>
-            )}
-          </Dropzone>
-        </Col>
-        <Col xs="6">
-          {this.state.image && <img src={this.state.image} alt="Preview" />}
-        </Col>
+              )}
+            </Col>
+          </>
+        ) : (
+          <Col xs="12">
+            <DropDownImage
+              {...this.props}
+              {...this.state}
+              setEditorRef={this.setEditorRef}
+              handleDrop={this.handleDrop}
+            />{" "}
+          </Col>
+        )}
       </Row>
     );
   }
 }
+
+const DropDownImage = (props) => {
+  const { handleDrop, width, height, setEditorRef, image } = props;
+  return (
+    <Dropzone
+      onDrop={handleDrop}
+      noClick
+      noKeyboard
+      style={{ width: width || "120px", height: height || "120px" }}
+    >
+      {({ getRootProps, getInputProps }) => (
+        <div {...getRootProps()}>
+          <AvatarEditor
+            ref={setEditorRef}
+            width={width || 125}
+            height={height || 125}
+            scale="1.2"
+            className="mx-auto d-block mg-thumbnail"
+            image={image}
+          />
+          <input {...getInputProps()} />
+        </div>
+      )}
+    </Dropzone>
+  );
+};
 
 export default ImageEditor;

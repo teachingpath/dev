@@ -39,16 +39,15 @@ const toast = ReactSwal.mixin({
 class FormBasePage extends React.Component {
   constructor(props) {
     super(props);
-    if (!Router.query.pathwayId) {
+    if (Router.query.pathwayId) {
       Router.push("/pathway/create");
-    } else {
-      this.state = {
-        id: Router.query.pathwayId,
-        saved: false,
-      };
-
-      this.onEdit = this.onEdit.bind(this);
     }
+    this.state = {
+      id: Router.query.pathwayId,
+      saved: false,
+    };
+
+    this.onEdit = this.onEdit.bind(this);
   }
 
   componentDidMount() {
@@ -89,7 +88,7 @@ class FormBasePage extends React.Component {
       .collection("pathways")
       .doc(this.state.id)
       .update({
-        ...data
+        ...data,
       })
       .then((docRef) => {
         this.setState({
@@ -104,8 +103,8 @@ class FormBasePage extends React.Component {
         this.props.activityChange({
           pathwayId: this.state.id,
           type: "edit_pathway",
-          msn: "The \""+data.name+"\" pathway was changed.",
-          ...data
+          msn: 'The "' + data.name + '" pathway was changed.',
+          ...data,
         });
       })
       .catch((error) => {

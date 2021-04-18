@@ -1,9 +1,4 @@
-import {
-  Container,
-  Row,
-  Col,
-  Portlet,
-} from "@panely/components";
+import { Container, Row, Col, Portlet } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
@@ -40,14 +35,13 @@ class FormBasePage extends React.Component {
     super(props);
     if (!Router.query.runnerId) {
       Router.push("/pathway/create");
-    } else {
-      this.state = {
-        runnerId: Router.query.runnerId,
-        pathwayId: Router.query.pathwayId,
-        saved: false,
-        questions: [],
-      };
     }
+    this.state = {
+      runnerId: Router.query.runnerId,
+      pathwayId: Router.query.pathwayId,
+      saved: false,
+      questions: [],
+    };
   }
 
   componentDidMount() {
@@ -123,7 +117,8 @@ class FormBasePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                  Add all the questions related to this runner, these questions should help validate the knowledge.
+                    Add all the questions related to this runner, these
+                    questions should help validate the knowledge.
                   </p>
                   <hr />
                   <QuizForm
@@ -146,7 +141,9 @@ class FormBasePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                  This badge is awarded to the trainee if they successfully complete the Quiz.                  </p>
+                    This badge is awarded to the trainee if they successfully
+                    complete the Quiz.{" "}
+                  </p>
                   <hr />
                   <BadgetForm
                     activityChange={this.props.activityChange}
@@ -166,8 +163,6 @@ class FormBasePage extends React.Component {
     );
   }
 }
-
-
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(

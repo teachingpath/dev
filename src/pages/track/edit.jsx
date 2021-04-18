@@ -36,16 +36,15 @@ class FormBasePage extends React.Component {
 
     if (!Router.query.runnerId || !Router.query.trackId) {
       Router.push("/pathway/create");
-    } else {
-      this.state = {
-        pathwayId: Router.query.pathwayId,
-        runnerId: Router.query.runnerId,
-        trackId: Router.query.trackId,
-        saved: false,
-      };
-
-      this.onEdit = this.onEdit.bind(this);
     }
+    this.state = {
+      pathwayId: Router.query.pathwayId,
+      runnerId: Router.query.runnerId,
+      trackId: Router.query.trackId,
+      saved: false,
+    };
+
+    this.onEdit = this.onEdit.bind(this);
   }
 
   componentDidMount() {

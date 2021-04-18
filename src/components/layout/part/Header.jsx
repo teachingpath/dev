@@ -1,16 +1,17 @@
 import { Header, Button, Marker } from "@panely/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { asideToggle, sidemenuToggle } from "store/actions";
+import { sidemenuToggle } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import * as RegularIcon from "@fortawesome/free-regular-svg-icons";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
+
 import HeaderBreadcrumb from "./HeaderBreadcrumb";
 import HeaderUser from "./HeaderUser";
 import HeaderNav from "./HeaderNav";
 import Sticky from "react-stickynode";
 
 function HeaderComponent(props) {
-  const { headerTitle, sidemenuToggle, asideToggle } = props;
+  const { headerTitle, sidemenuToggle } = props;
 
   return (
     <Header>
@@ -23,20 +24,20 @@ function HeaderComponent(props) {
         {/* BEGIN Header Holder */}
         <Header.Holder desktop>
           <Header.Container fluid>
-            <Header.Wrap  justify="start" className="pr-3">
+            <Header.Wrap justify="start" className="pr-3">
               <Header.Brand>Teaching Path</Header.Brand>
             </Header.Wrap>
             <Header.Wrap block justify="start">
               <HeaderNav />
             </Header.Wrap>
-            <Header.Wrap >
+            <Header.Wrap>
               <Button
                 icon
                 variant="label-primary"
                 className="ml-2"
                 onClick={() => sidemenuToggle("setting")}
               >
-                <FontAwesomeIcon icon={RegularIcon.faListAlt} />
+                <FontAwesomeIcon icon={SolidIcon.faCog} />
               </Button>
               <HeaderUser className="ml-2" />
             </Header.Wrap>
@@ -68,13 +69,13 @@ function HeaderComponent(props) {
               <Header.Brand>Teaching Path</Header.Brand>
             </Header.Wrap>
             <Header.Wrap>
-            <Button
+              <Button
                 icon
                 variant="label-primary"
                 className="ml-2"
                 onClick={() => sidemenuToggle("setting")}
               >
-                <FontAwesomeIcon icon={RegularIcon.faListAlt} />
+                <FontAwesomeIcon icon={SolidIcon.faCog} />
               </Button>
               <HeaderUser className="ml-2" />
             </Header.Wrap>
@@ -102,7 +103,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ asideToggle, sidemenuToggle }, dispatch);
+  return bindActionCreators({ sidemenuToggle }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderComponent);

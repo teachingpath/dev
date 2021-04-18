@@ -10,7 +10,11 @@ import {
   FloatLabel,
 } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
-import { pageChangeHeaderTitle, breadcrumbChange, activityChange } from "store/actions";
+import {
+  pageChangeHeaderTitle,
+  breadcrumbChange,
+  activityChange,
+} from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import withLayout from "components/layout/withLayout";
@@ -43,15 +47,14 @@ class FormBasePage extends React.Component {
     super(props);
     if (!Router.query.pathwayId) {
       Router.push("/pathway/create");
-    } else {
-      this.state = {
-        pathwayId: Router.query.pathwayId,
-        runnerId: null,
-        saved: false,
-      };
-
-      this.onCreate = this.onCreate.bind(this);
     }
+    this.state = {
+      pathwayId: Router.query.pathwayId,
+      runnerId: null,
+      saved: false,
+    };
+
+    this.onCreate = this.onCreate.bind(this);
   }
 
   componentDidMount() {
@@ -72,7 +75,7 @@ class FormBasePage extends React.Component {
       .set({
         level: 1,
         pathwayId: this.state.pathwayId,
-        ...data
+        ...data,
       })
       .then((docRef) => {
         this.setState({
@@ -88,8 +91,8 @@ class FormBasePage extends React.Component {
         this.props.activityChange({
           pathwayId: this.state.pathwayId,
           type: "new_runner",
-          msn: "The \""+data.name+"\" runner was created.",
-          ...data
+          msn: 'The "' + data.name + '" runner was created.',
+          ...data,
         });
       })
       .catch((error) => {
@@ -117,8 +120,9 @@ class FormBasePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                  The runners are the objectives that contain tasks or
-                   tracks to achieve that objective, each objective must be created a quiz.
+                    The runners are the objectives that contain tasks or tracks
+                    to achieve that objective, each objective must be created a
+                    quiz.
                   </p>
                   <hr />
                   <RunnerForm onSave={this.onCreate} />
@@ -170,7 +174,10 @@ class FormBasePage extends React.Component {
                   <Portlet.Title>Runners</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
-                  <RunnerList pathwayId={this.state.pathwayId} item={this.state} />
+                  <RunnerList
+                    pathwayId={this.state.pathwayId}
+                    item={this.state}
+                  />
                 </Portlet.Body>
               </Portlet>
             </Col>

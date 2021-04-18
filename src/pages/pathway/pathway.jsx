@@ -64,7 +64,7 @@ function PathwayForm({ onSave, data }) {
       })}
     >
       <Form.Group>
-        <ImageEditor ref={imageRef} image={data?.image} />
+        <ImageEditor ref={imageRef} image={data?.image} width={360} height={180} />
       </Form.Group>
       <Row>
         <Col xs="12">

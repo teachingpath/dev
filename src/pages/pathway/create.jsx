@@ -1,15 +1,13 @@
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Portlet,
-} from "@panely/components";
+import { Container, Row, Col, Button, Portlet } from "@panely/components";
 import {
   firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
-import { pageChangeHeaderTitle, breadcrumbChange, activityChange } from "store/actions";
+import {
+  pageChangeHeaderTitle,
+  breadcrumbChange,
+  activityChange,
+} from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import withLayout from "components/layout/withLayout";
@@ -78,8 +76,8 @@ class FormBasePage extends React.Component {
         this.props.activityChange({
           pathwayId: this.state.id,
           type: "new_pathway",
-          msn: "The \""+data.name+"\" pathway was created.",
-          ...data
+          msn: 'The "' + data.name + '" pathway was created.',
+          ...data,
         });
       })
       .catch((error) => {
@@ -135,32 +133,34 @@ class FormBasePage extends React.Component {
               </Portlet>
               {/* END Portlet */}
             </Col>
-            <Col md="6">
-              {/* BEGIN Portlet */}
-              <Portlet>
-                <Portlet.Header bordered>
-                  <Portlet.Title>Trophy</Portlet.Title>
-                </Portlet.Header>
-                <Portlet.Body>
-                  <p>This is the trophy that goes to the end of the pathway.</p>
-                  <hr />
-                  <TrophyForm
-                    activityChange={this.props.activityChange}
-                    pathwayId={this.state.id}
-                    saved={this.state.saved}
-                  />
-                </Portlet.Body>
-               
-              </Portlet>
-              {/* END Portlet */}
-            </Col>
+            {this.state.saved && (
+              <Col md="6">
+                {/* BEGIN Portlet */}
+                <Portlet>
+                  <Portlet.Header bordered>
+                    <Portlet.Title>Trophy</Portlet.Title>
+                  </Portlet.Header>
+                  <Portlet.Body>
+                    <p>
+                      This is the trophy that goes to the end of the pathway.
+                    </p>
+                    <hr />
+                    <TrophyForm
+                      activityChange={this.props.activityChange}
+                      pathwayId={this.state.id}
+                      saved={this.state.saved}
+                    />
+                  </Portlet.Body>
+                </Portlet>
+                {/* END Portlet */}
+              </Col>
+            )}
           </Row>
         </Container>
       </React.Fragment>
     );
   }
 }
-
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(

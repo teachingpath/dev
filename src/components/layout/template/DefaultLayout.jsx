@@ -1,6 +1,5 @@
 import { Layout } from "@panely/components"
 import SidemenuSetting from "components/layout/part/SidemenuSetting"
-import SidemenuAgenda from "components/layout/part/SidemenuAgenda"
 import FloatButton from "components/layout/part/FloatButton"
 import Scrolltop from "components/layout/part/Scrolltop"
 import Footer from "components/layout/part/Footer"
@@ -36,7 +35,6 @@ class DefaultLayout extends React.Component {
         {enableScrolltop ? <Scrolltop /> : null}
         {enableFloatButton ? <FloatButton /> : null}
         {enableHeader ? <SidemenuSetting /> : null}
-        {enableHeader ? <SidemenuAgenda /> : null}
       </Layout>
     )
   }

@@ -37,15 +37,14 @@ class FormBasePage extends React.Component {
 
     if (!Router.query.runnerId) {
       Router.push("/pathway/create");
-    } else {
-      this.state = {
-        pathwayId: Router.query.pathwayId,
-        runnerId: Router.query.runnerId,
-        saved: false,
-      };
-
-      this.onCreate = this.onCreate.bind(this);
     }
+    this.state = {
+      pathwayId: Router.query.pathwayId,
+      runnerId: Router.query.runnerId,
+      saved: false,
+    };
+
+    this.onCreate = this.onCreate.bind(this);
   }
 
   componentDidMount() {
@@ -117,7 +116,8 @@ class FormBasePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                  Create each track to evaluate the competencies within the runner.
+                    Create each track to evaluate the competencies within the
+                    runner.
                   </p>
                   <hr />
                   <TrackForm onSave={this.onCreate} />

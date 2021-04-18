@@ -88,6 +88,8 @@ function TrophyForm({ pathwayId, saved, data, activityChange }) {
       });
   };
 
+
+
   return (
     <Form
       onSubmit={handleSubmit((data) => {
@@ -97,7 +99,7 @@ function TrophyForm({ pathwayId, saved, data, activityChange }) {
       })}
     >
       <Form.Group>
-        <ImageEditor ref={imageRef} image={data?.image} />
+        <ImageEditor ref={imageRef} image={data?.image} withPreview />
       </Form.Group>
       <Row>
         <Col xs="12">
