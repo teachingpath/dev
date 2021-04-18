@@ -93,7 +93,7 @@ class JourneyGeneralPage extends React.Component {
         </Head>
         <Container fluid>
           <Row portletFill="xl">
-            <Col>
+            <Col md="6">
               {this.state?.id && (
                 <StatusProgress
                   progress={this.state.progress}
@@ -101,7 +101,7 @@ class JourneyGeneralPage extends React.Component {
                 />
               )}
             </Col>
-            <Col >
+            <Col md="6">
               {this.state?.runners && <Runners runners={this.state.runners} />}
             </Col>
           </Row>

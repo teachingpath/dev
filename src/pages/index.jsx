@@ -53,10 +53,10 @@ class DashboardPage extends React.Component {
           )}
           {user?.profile === "trainee" && (
             <Row portletFill="xl">
-              <Col>
+               <Col md="6">
                <Journeys {...this.props}/>
               </Col>
-              <Col>
+              <Col md="6">
                 Logros
               </Col>
             </Row>

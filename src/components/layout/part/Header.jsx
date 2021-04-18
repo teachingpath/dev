@@ -25,7 +25,10 @@ function HeaderComponent(props) {
         <Header.Holder desktop>
           <Header.Container fluid>
             <Header.Wrap justify="start" className="pr-3">
-              <Header.Brand>Teaching Path</Header.Brand>
+              <Header.Brand>
+              <img src="/images/logo.png" alt="teaching path"/>
+
+              </Header.Brand>
             </Header.Wrap>
             <Header.Wrap block justify="start">
               <HeaderNav />

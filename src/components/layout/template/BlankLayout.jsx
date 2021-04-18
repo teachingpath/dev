@@ -12,7 +12,7 @@ function BlankLayout({ children }) {
   const { enableFloatButton } = PAGE.layout
 
   return (
-    <Layout type="holder">
+    <Layout type="holder road-background">
       <Layout type="wrapper">
         <Layout type="content">
           {children}

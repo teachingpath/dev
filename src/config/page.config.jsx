@@ -5,13 +5,14 @@
 
 const PAGE = {
   loginPagePath: "/login",
+  homePagePath: "/home",
   dashboardPagePath: "/",
   favicon: "/images/favicon.ico",
   layout: {
     enableHeader: true,
     enableFooter: true,
     enableScrolltop: true,
-    enableFloatButton: true,
+    enableFloatButton: false,
   }
 }
 

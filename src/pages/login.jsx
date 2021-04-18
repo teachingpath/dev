@@ -57,14 +57,7 @@ function LoginPage() {
               <Portlet.Body>
                 <div className="text-center mt-2 mb-4">
                   {/* BEGIN Widget */}
-                  <Widget12
-                    display
-                    circle
-                    variant="label-primary"
-                    className="mb-4"
-                  >
-                    <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
-                  </Widget12>
+                  <img src="/images/logo.png" alt="teaching path"/>
                   {/* END Widget */}
                 </div>
                 <LoginForm />

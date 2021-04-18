@@ -106,14 +106,11 @@ class HeaderUser extends React.Component {
             }
           }}
         >
-          <Widget13.Text>
-            Hi <strong>{name}</strong>
-          </Widget13.Text>
-          {/* BEGIN Avatar */}
+         
           <Widget13.Avatar variant="info">
             <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
           </Widget13.Avatar>
-          {/* END Avatar */}
+          
         </Widget13>
         {uid && (
           <Dropdown.Menu wide right animated className="overflow-hidden py-0">
