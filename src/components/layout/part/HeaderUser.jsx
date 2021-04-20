@@ -76,21 +76,30 @@ class HeaderUser extends React.Component {
   };
 
   componentDidMount() {
-    const user = firebaseClient.auth().currentUser;
-    if (user) {
-      const { displayName, email, uid } = user;
+    if (this.props.firebase) {
+      const { name, email, user_id } = this.props.firebase;
+      this.setState({
+        ...this.state,
+        name,
+        email,
+        uid: user_id,
+      });
+    } else if (firebaseClient.auth().currentUser) {
+      const { displayName, email, uid } = firebaseClient.auth().currentUser;
       this.setState({
         ...this.state,
         name: displayName,
         email,
-        uid,
+        uid: uid,
       });
+    } else {
+      console.log("no user selected ");
     }
   }
 
   render() {
     const { avatar: WidgetAvatar, name, email, count, navs, uid } = this.state;
-    const {  ...attributes } = this.props;
+    const { ...attributes } = this.props;
 
     return (
       <Dropdown.Uncontrolled {...attributes}>
@@ -106,11 +115,9 @@ class HeaderUser extends React.Component {
             }
           }}
         >
-         
           <Widget13.Avatar variant="info">
             <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
           </Widget13.Avatar>
-          
         </Widget13>
         {uid && (
           <Dropdown.Menu wide right animated className="overflow-hidden py-0">
@@ -177,12 +184,12 @@ class HeaderUser extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    firebase: state.firebase
-  }
+    firebase: state.firebase,
+  };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ firebaseChange }, dispatch)
+  return bindActionCreators({ firebaseChange }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HeaderUser)
+export default connect(mapStateToProps, mapDispatchToProps)(HeaderUser);

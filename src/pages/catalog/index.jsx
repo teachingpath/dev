@@ -5,16 +5,17 @@ import {
   Portlet,
   Container,
   CardColumns,
-  Button
+  Button,
 } from "@panely/components";
 import { pageChangeHeaderTitle, breadcrumbChange } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import withLayout from "components/layout/withLayout";
-import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
 import Router from "next/router";
+import Link from "next/link";
+import Badge from "@panely/components/Badge";
 
 class CatalogPage extends React.Component {
   constructor(props) {
@@ -23,17 +24,22 @@ class CatalogPage extends React.Component {
   }
 
   componentDidMount() {
-    // Set header title
+    const q = Router.query.q;
+    const tags = Router.query.tags;
+
     this.props.pageChangeHeaderTitle("Pathways");
-    // Set breadcrumb data
     this.props.breadcrumbChange([
       { text: "Catalog", link: "/catalog" },
       { text: "Pathways" },
     ]);
-    firestoreClient
-      .collection("pathways")
-      //      .where("leaderId", "==", this.props.firebase.user_id)
-      .get()
+    let db = firestoreClient.collection("pathways");
+    if (q) {
+      db = db.where("name", ">=", q).where("name", "<=", q + "\uf8ff");
+    }
+    if (tags) {
+      db = db.where("tags", "array-contains", tags);
+    }
+    db.get()
       .then((querySnapshot) => {
         const list = [];
         querySnapshot.forEach((doc) => {
@@ -75,21 +81,34 @@ class CatalogPage extends React.Component {
                           <Card.Body>
                             <Card.Title>{data.name}</Card.Title>
                             <Card.Text>{data.description}</Card.Text>
-                            <Button className="float-right" onClick={() => {
-                              Router.push({
-                                pathname: "/catalog/pathway",
-                                query: {
-                                  id: data.id,
-                                },
-                              });
-                            }}>Start</Button>
+                            <Button
+                              className="float-right"
+                              onClick={() => {
+                                Router.push({
+                                  pathname: "/catalog/pathway",
+                                  query: {
+                                    id: data.id,
+                                  },
+                                });
+                              }}
+                            >
+                              Start
+                            </Button>
 
                             <Card.Text>
-                              <small className="text-muted">
-                                Tags: {data.tags}
-                              </small>
+                              <span className="text-muted">
+                                Tags:{" "}
+                                {data.tags.map((tag, index) => {
+                                  return (
+                                    <Badge className="mr-1">
+                                      <Link href={"/catalog?tag=" + tag}>
+                                        {tag}
+                                      </Link>
+                                    </Badge>
+                                  );
+                                })}
+                              </span>
                             </Card.Text>
-                            
                           </Card.Body>
                         </Card>
                       );

@@ -198,7 +198,7 @@ const StatusProgress = ({ progress, journeyId }) => {
     <Widget1.Group>
       <Widget1.Title>
         <h4>Progress</h4>
-        <Progress striped value={progress} className="mr-5 w-50">
+        <Progress striped value={progress} className="mr-5 w-80">
           {progress}%
         </Progress>
       </Widget1.Title>

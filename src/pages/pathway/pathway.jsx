@@ -43,7 +43,6 @@ function PathwayForm({ onSave, data }) {
       .min(5, "Please enter at least 5 characters")
       .required("Please enter your description"),
   });
-
   const { control, handleSubmit, errors } = useForm({
     // Apply Yup as resolver for react-hook-form
     resolver: yupResolver(schema),
@@ -51,7 +50,7 @@ function PathwayForm({ onSave, data }) {
     defaultValues: {
       name: data?.name || "",
       description: data?.description || "",
-      tags: data?.tags || "",
+      tags: data?.tags ? data?.tags.join(",") : "",
     },
   });
 

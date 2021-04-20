@@ -26,8 +26,7 @@ function HeaderComponent(props) {
           <Header.Container fluid>
             <Header.Wrap justify="start" className="pr-3">
               <Header.Brand>
-              <img src="/images/logo.png" alt="teaching path"/>
-
+                <img src="/images/logo.png" alt="teaching path" />
               </Header.Brand>
             </Header.Wrap>
             <Header.Wrap block justify="start">
@@ -69,7 +68,7 @@ function HeaderComponent(props) {
         <Header.Holder mobile>
           <Header.Container fluid>
             <Header.Wrap block justify="start" className="px-3">
-              <Header.Brand>Teaching Path</Header.Brand>
+              <img src="/images/icon.png" alt="teaching path" />
             </Header.Wrap>
             <Header.Wrap>
               <Button

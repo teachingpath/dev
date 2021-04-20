@@ -54,11 +54,16 @@ class FormBasePage extends React.Component {
 
   onCreate(data) {
     const user = firebaseClient.auth().currentUser;
+    const tags = data.tags.split(",").map((item) => {
+      return item.trim().toLowerCase();
+    });
     firestoreClient
       .collection("pathways")
       .doc(this.state.id)
       .set({
         ...data,
+        name: data.name.toLowerCase(),
+        tags: tags,
         draft: true,
         leaderId: user.uid,
         date: new Date(),

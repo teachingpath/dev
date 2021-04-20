@@ -33,6 +33,7 @@ class PathwayComponent extends React.Component {
       name: "Loading",
       id: null,
     };
+    this.runnersRef = React.createRef();
   }
 
   componentDidMount() {
@@ -65,7 +66,13 @@ class PathwayComponent extends React.Component {
     return (
       <Widget1>
         <Widget1.Display top size="lg" className="bg-dark text-white">
-          {id && <Status pathwayId={id} />}
+          {id && (
+            <Status
+              pathwayId={id}
+              {...this.state}
+              runnersRef={this.runnersRef}
+            />
+          )}
           <Widget1.Dialog>
             <Widget1.DialogContent>
               <h1 className="display-3" children={name} />
@@ -81,7 +88,7 @@ class PathwayComponent extends React.Component {
         </Widget1.Display>
         <Widget1.Body className="pt-5">
           <h3>Runners</h3>
-          {id && <RunnerTab pathwayId={this.state.id} />}
+          {id && <RunnerTab ref={this.runnersRef} pathwayId={this.state.id} />}
         </Widget1.Body>
       </Widget1>
     );
@@ -121,16 +128,36 @@ class Status extends React.Component {
 
   onCreateJourney(pathwayId) {
     const user = firebaseClient.auth().currentUser;
+    const tabs = this.props.runnersRef.current.state.tabs;
     firestoreClient
       .collection("journeys")
       .add({
-        process: 0,
+        progress: 1,
         pathwayId: pathwayId,
         userId: user.uid,
         date: new Date(),
+        breadcrumbs: tabs.map((data) => {
+          return {
+            id: data.id,
+            name: data.title,
+            description: data.subtitle,
+            tracks: data.data.map((item) => {
+              return {
+                ...item,
+                dateEnd: null,
+                status: "wait",
+              };
+            }),
+          };
+        }),
       })
       .then((doc) => {
-        console.log(doc.id);
+        Router.push({
+          pathname: "/catalog/journey",
+          query: {
+            id: doc.id,
+          },
+        });
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
@@ -325,7 +352,9 @@ const StatusProgress = ({ progress, journeyId }) => {
               },
             });
           }}
-        >Go to journey</Button>
+        >
+          Go to journey
+        </Button>
         {/* BEGIN Dropdown */}
 
         {/* END Dropdown */}

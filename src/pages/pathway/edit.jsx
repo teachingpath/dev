@@ -39,7 +39,7 @@ const toast = ReactSwal.mixin({
 class FormBasePage extends React.Component {
   constructor(props) {
     super(props);
-    if (Router.query.pathwayId) {
+    if (!Router.query.pathwayId) {
       Router.push("/pathway/create");
     }
     this.state = {
@@ -51,9 +51,7 @@ class FormBasePage extends React.Component {
   }
 
   componentDidMount() {
-    // Set header title
     this.props.pageChangeHeaderTitle("Update Pathway");
-    // Set breadcrumb data
     this.props.breadcrumbChange([
       { text: "Pathway", link: "/" },
       { text: "Update" },
@@ -65,11 +63,12 @@ class FormBasePage extends React.Component {
       .get()
       .then((doc) => {
         if (doc.exists) {
-          this.setState({
+          const data = {
             id: this.state.id,
             saved: true,
             ...doc.data(),
-          });
+          }
+          this.setState({...data});
         } else {
           console.log("No such document!");
         }
@@ -84,17 +83,26 @@ class FormBasePage extends React.Component {
   }
 
   onEdit(data) {
+
+    const tags = data.tags.split(",").map((item) => {
+      return item.trim().toLowerCase();
+    });
+
     firestoreClient
       .collection("pathways")
       .doc(this.state.id)
       .update({
         ...data,
+        name: data.name.toLowerCase(),
+        tags: tags
       })
       .then((docRef) => {
         this.setState({
           id: this.state.id,
           saved: true,
           ...data,
+          name: data.name.toLowerCase(),
+          tags: tags
         });
         toast.fire({
           icon: "success",

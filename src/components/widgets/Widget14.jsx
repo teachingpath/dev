@@ -104,6 +104,7 @@ class Widget14Component extends React.Component {
                         <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
                       </Dropdown.Toggle>
                       <Dropdown.Menu right animated>
+                 
                         <Dropdown.Item
                            href="javascript:void(0)"
                            onClick={() => {
@@ -137,6 +138,18 @@ class Widget14Component extends React.Component {
                           icon={<FontAwesomeIcon icon={SolidIcon.faRunning} />}
                         >
                           Add runner
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                           href="javascript:void(0)"
+                           onClick={() => {
+                             Router.push({
+                               pathname: "/catalog/pathway/",
+                               query: { id: id },
+                             });
+                           }}
+                          icon={<FontAwesomeIcon icon={SolidIcon.faThList} />}
+                        >
+                          Catalog
                         </Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown.Uncontrolled>
