@@ -4,6 +4,20 @@ import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Router from "next/router";
 import { firestoreClient } from "components/firebase/firebaseClient";
 
+import swalContent from "sweetalert2-react-content";
+import Swal from "@panely/sweetalert2";
+
+const ReactSwal = swalContent(Swal);
+
+// Set SweetAlert options
+const swal = ReactSwal.mixin({
+  customClass: {
+    confirmButton: "btn btn-label-success btn-wide mx-1",
+    cancelButton: "btn btn-label-danger btn-wide mx-1",
+  },
+  buttonsStyling: false,
+});
+
 class Widget14Component extends React.Component {
   constructor(props) {
     super(props);
@@ -30,6 +44,111 @@ class Widget14Component extends React.Component {
       });
   }
 
+  publishPathway(pathwayId) {
+    firestoreClient
+      .collection("pathways")
+      .doc(pathwayId)
+      .get()
+      .then(async (doc) => {
+        if (doc.exists) {
+          const data = doc.data();
+
+          if (!Object.keys(data.trophy || {}).length) {
+            swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "The pathway requires a trophy to publish it.",
+            });
+            return;
+          }
+          const runners = await firestoreClient
+            .collection("runners")
+            .where("pathwayId", "==", pathwayId)
+            .orderBy("level")
+            .get()
+            .then((querySnapshot) => {
+              const list = [];
+              querySnapshot.forEach((doc) => {
+                list.push({
+                  id: doc.id,
+                  ...doc.data(),
+                });
+              });
+              return list;
+            });
+
+          for (const key in runners) {
+            if (!Object.keys(runners[key].badget || {}).length) {
+              swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text:
+                  'The runner "' +
+                  runners[key].name +
+                  '" requires a badget to publish this pathway.',
+              });
+              return;
+            }
+
+            const tracks = await firestoreClient
+              .collection("runners")
+              .doc(runners[key].id)
+              .collection("tracks")
+              .orderBy("level")
+              .get()
+              .then((querySnapshot) => {
+                const list = [];
+                querySnapshot.forEach((doc) => {
+                  list.push({
+                    id: doc.id,
+                    ...doc.data(),
+                  });
+                });
+                return list;
+              });
+
+            if (tracks.length < 2) {
+              swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text:
+                  'The runner "' +
+                  runners[key].name +
+                  '" requires a minimum of 3 tracks to be able to publish the pathway.',
+              });
+              return;
+            }
+          }
+
+          this.onPublish(pathwayId, data.name);
+        } else {
+          console.log("No such document!");
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+  }
+
+  onPublish(pathwayId, name) {
+    firestoreClient
+      .collection("pathways")
+      .doc(pathwayId)
+      .update({ draft: false })
+      .then(() => {
+        console.log("Document successfully deleted!");
+        this.componentDidMount();
+        this.props.activityChange({
+          type: "publish_pathway",
+          pathwayId: pathwayId,
+          msn: "The pathway \""+name+"\" is published.",
+        });
+      })
+      .catch((error) => {
+        console.error("Error removing document: ", error);
+      });
+  }
+
   onDelete(pathwayId) {
     firestoreClient
       .collection("pathways")
@@ -39,11 +158,10 @@ class Widget14Component extends React.Component {
         console.log("Document successfully deleted!");
         this.componentDidMount();
         this.props.activityChange({
-          type: "edit_pathway",
+          type: "delete_pathway",
           pathwayId: pathwayId,
-          type: "delete_pathway"
+          msn: "The pathway deleted.",
         });
-
       })
       .catch((error) => {
         console.error("Error removing document: ", error);
@@ -67,35 +185,26 @@ class Widget14Component extends React.Component {
               New
             </Button>
           </Portlet.Addon>
-          <Portlet.Addon>
-            {/* BEGIN Dropdown */}
-            <Dropdown.Uncontrolled>
-              <Dropdown.Toggle caret variant="label-primary">
-                Status
-              </Dropdown.Toggle>
-              <Dropdown.Menu right animated>
-                <Dropdown.Item href="#">
-                  <Badge variant="label-success">Published</Badge>
-                </Dropdown.Item>
-                <Dropdown.Item href="#">
-                  <Badge variant="label-info">In draft</Badge>
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown.Uncontrolled>
-            {/* END Dropdown */}
-          </Portlet.Addon>
         </Portlet.Header>
         <Portlet.Body>
           {/* BEGIN Rich List */}
           <RichList bordered action>
             {this.state.data.map((data, index) => {
-              const { name, description, id } = data;
-
+              const { name, description, id, draft } = data;
               return (
                 <RichList.Item key={index}>
                   <RichList.Content>
                     <RichList.Title children={name} />
                     <RichList.Subtitle children={description} />
+                    <RichList.Subtitle
+                      children={
+                        draft ? (
+                          <Badge variant="label-info">In draft</Badge>
+                        ) : (
+                          <Badge variant="label-success">Published</Badge>
+                        )
+                      }
+                    />
                   </RichList.Content>
                   <RichList.Addon addonType="append">
                     {/* BEGIN Dropdown */}
@@ -104,15 +213,14 @@ class Widget14Component extends React.Component {
                         <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
                       </Dropdown.Toggle>
                       <Dropdown.Menu right animated>
-                 
                         <Dropdown.Item
-                           href="javascript:void(0)"
-                           onClick={() => {
-                             Router.push({
-                               pathname: "/pathway/edit",
-                               query: { pathwayId: id },
-                             });
-                           }}
+                          href="javascript:void(0)"
+                          onClick={() => {
+                            Router.push({
+                              pathname: "/pathway/edit",
+                              query: { pathwayId: id },
+                            });
+                          }}
                           icon={<FontAwesomeIcon icon={SolidIcon.faEdit} />}
                         >
                           Editar
@@ -139,18 +247,31 @@ class Widget14Component extends React.Component {
                         >
                           Add runner
                         </Dropdown.Item>
-                        <Dropdown.Item
-                           href="javascript:void(0)"
-                           onClick={() => {
-                             Router.push({
-                               pathname: "/catalog/pathway/",
-                               query: { id: id },
-                             });
-                           }}
-                          icon={<FontAwesomeIcon icon={SolidIcon.faThList} />}
-                        >
-                          Catalog
-                        </Dropdown.Item>
+
+                        {draft ? (
+                          <Dropdown.Item
+                            href="javascript:void(0)"
+                            onClick={() => this.publishPathway(id)}
+                            icon={
+                              <FontAwesomeIcon icon={SolidIcon.faShareSquare} />
+                            }
+                          >
+                            Publish
+                          </Dropdown.Item>
+                        ) : (
+                          <Dropdown.Item
+                            href="javascript:void(0)"
+                            onClick={() => {
+                              Router.push({
+                                pathname: "/catalog/pathway/",
+                                query: { id: id },
+                              });
+                            }}
+                            icon={<FontAwesomeIcon icon={SolidIcon.faThList} />}
+                          >
+                            Catalog
+                          </Dropdown.Item>
+                        )}
                       </Dropdown.Menu>
                     </Dropdown.Uncontrolled>
                     {/* END Dropdown */}

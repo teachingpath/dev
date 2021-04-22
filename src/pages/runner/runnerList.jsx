@@ -145,7 +145,7 @@ class RunnerList extends React.Component {
                         }}
                         icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
                       >
-                        Add Quiz
+                        Add Quiz (Badget)
                       </Dropdown.Item>
                       <Dropdown.Item
                         href="javascript:void(0)"

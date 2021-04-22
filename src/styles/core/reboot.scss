@@ -71,7 +71,10 @@ body {
 }
 
 .road-background {
-  background: url(/images/banner/road1.jpg) !important;
+  background-image: url(/images/banner/road1.jpg) !important;
+  background-position: center; 
+  background-repeat: no-repeat; 
+  background-size: cover; 
 }
 // Suppress the focus outline on elements that cannot be accessed via keyboard.
 // This prevents an unwanted focus outline from appearing around elements that

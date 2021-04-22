@@ -54,7 +54,7 @@ class JourneyListComponent extends React.Component {
                 Router.push("/catalog");
               }}
             >
-              Seach
+              Search
             </Button>
           </Portlet.Addon>
         </Portlet.Header>

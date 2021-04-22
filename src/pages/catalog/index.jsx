@@ -32,7 +32,7 @@ class CatalogPage extends React.Component {
       { text: "Catalog", link: "/catalog" },
       { text: "Pathways" },
     ]);
-    let db = firestoreClient.collection("pathways");
+    let db = firestoreClient.collection("pathways").where("draft", "==", false);
     if (q) {
       db = db.where("name", ">=", q).where("name", "<=", q + "\uf8ff");
     }
@@ -100,7 +100,7 @@ class CatalogPage extends React.Component {
                                 Tags:{" "}
                                 {data.tags.map((tag, index) => {
                                   return (
-                                    <Badge className="mr-1">
+                                    <Badge variant="label-info" className="mr-1">
                                       <Link href={"/catalog?tag=" + tag}>
                                         {tag}
                                       </Link>

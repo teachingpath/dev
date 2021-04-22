@@ -136,16 +136,19 @@ class Status extends React.Component {
         pathwayId: pathwayId,
         userId: user.uid,
         date: new Date(),
-        breadcrumbs: tabs.map((data) => {
+        current: 0,
+        breadcrumbs: tabs.map((data, runnerIndex) => {
           return {
             id: data.id,
             name: data.title,
             description: data.subtitle,
-            tracks: data.data.map((item) => {
+            current: runnerIndex === 0 ? 0 : null,
+            tracks: data.data.map((item, trackIndex) => {
               return {
                 ...item,
-                dateEnd: null,
-                status: "wait",
+                time: item.time * 6000000,
+                status:
+                  runnerIndex === 0 && trackIndex === 0 ? "process" : "wait",
               };
             }),
           };
