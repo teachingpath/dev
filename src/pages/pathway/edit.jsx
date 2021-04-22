@@ -1,7 +1,6 @@
 import { Container, Row, Col, Button, Portlet } from "@panely/components";
 import {
   firestoreClient,
-  firebaseClient,
 } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
@@ -19,7 +18,6 @@ import Router from "next/router";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import RunnerList from "../runner/runnerList";
-import TrophyForm from "./trophy";
 import PathwayForm from "./pathway";
 import Spinner from "@panely/components/Spinner";
 
@@ -39,11 +37,9 @@ const toast = ReactSwal.mixin({
 class FormBasePage extends React.Component {
   constructor(props) {
     super(props);
-    if (!Router.query.pathwayId) {
-      Router.push("/pathway/create");
-    }
+   
     this.state = {
-      id: Router.query.pathwayId,
+      id: null,
       saved: false,
     };
 
@@ -51,20 +47,23 @@ class FormBasePage extends React.Component {
   }
 
   componentDidMount() {
+    if (!Router.query.pathwayId) {
+      Router.push("/pathway/create");
+    }
     this.props.pageChangeHeaderTitle("Update Pathway");
     this.props.breadcrumbChange([
-      { text: "Pathway", link: "/" },
-      { text: "Update" },
+      { text: "Home", link: "/" },
+      { text: "Pathway" },
     ]);
 
     firestoreClient
       .collection("pathways")
-      .doc(this.state.id)
+      .doc(Router.query.pathwayId)
       .get()
       .then((doc) => {
         if (doc.exists) {
           const data = {
-            id: this.state.id,
+            id: Router.query.pathwayId,
             saved: true,
             ...doc.data(),
           }
@@ -88,7 +87,7 @@ class FormBasePage extends React.Component {
       return item.trim().toLowerCase();
     });
 
-    firestoreClient
+    return firestoreClient
       .collection("pathways")
       .doc(this.state.id)
       .update({
@@ -150,27 +149,26 @@ class FormBasePage extends React.Component {
                     data={this.state}
                   />
                 </Portlet.Body>
+                <Portlet.Footer>
+                  
+                  <Button
+                    type="button"
+                    className="float-right mr-2"
+                    onClick={() => {
+                      Router.push({
+                        pathname: "/pathway/trophy",
+                        query: { pathwayId: this.state.id },
+                      });
+                    }}
+                  >
+                    Add Trophy
+                    <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
+                  </Button>
+                </Portlet.Footer>
               </Portlet>
               {/* END Portlet */}
             </Col>
             <Col md="6">
-              {/* BEGIN Portlet */}
-              <Portlet>
-                <Portlet.Header bordered>
-                  <Portlet.Title>Trophy</Portlet.Title>
-                </Portlet.Header>
-                <Portlet.Body>
-                  <TrophyForm
-                    activityChange={this.props.activityChange}
-                    pathwayId={this.state.id}
-                    data={this.state.trophy}
-                    saved={this.state.saved}
-                  />
-                </Portlet.Body>
-              </Portlet>
-              {/* END Portlet */}
-            </Col>
-            <Col md="12">
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>

@@ -34,13 +34,10 @@ class FormBasePage extends React.Component {
   constructor(props) {
     super(props);
 
-    if (!Router.query.runnerId || !Router.query.trackId) {
-      Router.push("/pathway/create");
-    }
     this.state = {
-      pathwayId: Router.query.pathwayId,
-      runnerId: Router.query.runnerId,
-      trackId: Router.query.trackId,
+      pathwayId: null,
+      runnerId: null,
+      trackId: null,
       saved: false,
     };
 
@@ -48,31 +45,39 @@ class FormBasePage extends React.Component {
   }
 
   componentDidMount() {
-    // Set header title
+    if (!Router.query.runnerId || !Router.query.trackId) {
+      Router.push("/pathway/create");
+    }
     this.props.pageChangeHeaderTitle("Update Pathway");
-    // Set breadcrumb data
     this.props.breadcrumbChange([
-      { text: "Pathway", link: "/" },
+      { text: "Home", link: "/" },
+      {
+        text: "Pathway",
+        link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
+      },
       {
         text: "Runner",
         link: "/runner/create?pathwayId=" + Router.query.pathwayId,
       },
       { text: "Track" },
     ]);
-    this.loadData();
+    this.loadData(Router.query);
   }
 
-  loadData() {
+  loadData({ pathwayId, runnerId, trackId }) {
     firestoreClient
       .collection("runners")
-      .doc(this.state.runnerId)
+      .doc(runnerId)
       .collection("tracks")
-      .doc(this.state.trackId)
+      .doc(trackId)
       .get()
       .then((doc) => {
         if (doc.exists) {
           this.setState({
-            id: this.state.trackId,
+            id: trackId,
+            pathwayId,
+            runnerId,
+            trackId,
             saved: true,
             ...doc.data(),
           });
@@ -93,6 +98,7 @@ class FormBasePage extends React.Component {
     const runnersDb = firestoreClient
       .collection("runners")
       .doc(this.state.runnerId);
+      console.log(data);
     return runnersDb
       .collection("tracks")
       .doc(this.state.trackId)

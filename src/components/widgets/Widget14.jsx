@@ -141,7 +141,7 @@ class Widget14Component extends React.Component {
         this.props.activityChange({
           type: "publish_pathway",
           pathwayId: pathwayId,
-          msn: "The pathway \""+name+"\" is published.",
+          msn: 'The pathway "' + name + '" is published.',
         });
       })
       .catch((error) => {
@@ -246,6 +246,18 @@ class Widget14Component extends React.Component {
                           icon={<FontAwesomeIcon icon={SolidIcon.faRunning} />}
                         >
                           Add runner
+                        </Dropdown.Item>
+                        <Dropdown.Item
+                          href="javascript:void(0)"
+                          onClick={() => {
+                            Router.push({
+                              pathname: "/pathway/trophy",
+                              query: { pathwayId: id },
+                            });
+                          }}
+                          icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
+                        >
+                          Add Trophy
                         </Dropdown.Item>
 
                         {draft ? (

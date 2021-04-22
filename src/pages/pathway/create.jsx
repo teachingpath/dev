@@ -19,8 +19,8 @@ import Router from "next/router";
 import uuid from "components/helpers/uuid";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
-import TrophyForm from "./trophy";
 import PathwayForm from "./pathway";
+import Alert from "@panely/components/Alert";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -47,8 +47,8 @@ class FormBasePage extends React.Component {
   componentDidMount() {
     this.props.pageChangeHeaderTitle("Create Pathway");
     this.props.breadcrumbChange([
-      { text: "Pathway", link: "/" },
-      { text: "Create" },
+      { text: "Home", link: "/" },
+      { text: "Pathway" },
     ]);
   }
 
@@ -57,7 +57,7 @@ class FormBasePage extends React.Component {
     const tags = data.tags.split(",").map((item) => {
       return item.trim().toLowerCase();
     });
-    firestoreClient
+    return firestoreClient
       .collection("pathways")
       .doc(this.state.id)
       .set({
@@ -120,46 +120,52 @@ class FormBasePage extends React.Component {
                   />
                 </Portlet.Body>
                 <Portlet.Footer>
-                  <Button
-                    type="button"
-                    disabled={!this.state.saved}
-                    className="float-right"
-                    onClick={() => {
-                      Router.push({
-                        pathname: "/runner/create",
-                        query: { pathwayId: this.state.id },
-                      });
-                    }}
-                  >
-                    Add Runner
-                    <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
-                  </Button>
+                  {this.state.saved && (
+                    <Alert
+                      variant="outline-info"
+                      icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
+                    >
+                      Add the trophy or runner of the created pathway.
+                      <Button
+                        type="button"
+                        disabled={!this.state.saved}
+                        className="float-right"
+                        onClick={() => {
+                          Router.push({
+                            pathname: "/runner/create",
+                            query: { pathwayId: this.state.id },
+                          });
+                        }}
+                      >
+                        Add Runner
+                        <FontAwesomeIcon
+                          className="ml-2"
+                          icon={SolidIcon.faPlus}
+                        />
+                      </Button>
+                      <Button
+                        type="button"
+                        disabled={!this.state.saved}
+                        className="float-right mr-2"
+                        onClick={() => {
+                          Router.push({
+                            pathname: "/pathway/trophy",
+                            query: { pathwayId: this.state.id },
+                          });
+                        }}
+                      >
+                        Add Trophy
+                        <FontAwesomeIcon
+                          className="ml-2"
+                          icon={SolidIcon.faPlus}
+                        />
+                      </Button>
+                    </Alert>
+                  )}
                 </Portlet.Footer>
               </Portlet>
               {/* END Portlet */}
             </Col>
-            {this.state.saved && (
-              <Col md="6">
-                {/* BEGIN Portlet */}
-                <Portlet>
-                  <Portlet.Header bordered>
-                    <Portlet.Title>Trophy</Portlet.Title>
-                  </Portlet.Header>
-                  <Portlet.Body>
-                    <p>
-                      This is the trophy that goes to the end of the pathway.
-                    </p>
-                    <hr />
-                    <TrophyForm
-                      activityChange={this.props.activityChange}
-                      pathwayId={this.state.id}
-                      saved={this.state.saved}
-                    />
-                  </Portlet.Body>
-                </Portlet>
-                {/* END Portlet */}
-              </Col>
-            )}
           </Row>
         </Container>
       </React.Fragment>

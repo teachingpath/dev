@@ -28,6 +28,8 @@ import RunnerList from "./runnerList";
 import RunnerForm from "./runner";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Alert from "@panely/components/Alert";
+import Spinner from "@panely/components/Spinner";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -45,11 +47,9 @@ const toast = ReactSwal.mixin({
 class FormBasePage extends React.Component {
   constructor(props) {
     super(props);
-    if (!Router.query.pathwayId) {
-      Router.push("/pathway/create");
-    }
+
     this.state = {
-      pathwayId: Router.query.pathwayId,
+      pathwayId: null,
       runnerId: null,
       saved: false,
     };
@@ -58,13 +58,22 @@ class FormBasePage extends React.Component {
   }
 
   componentDidMount() {
-    // Set header title
+    if (!Router.query.pathwayId) {
+      Router.push("/pathway/create");
+    }
     this.props.pageChangeHeaderTitle("Update Pathway");
-    // Set breadcrumb data
     this.props.breadcrumbChange([
-      { text: "Pathway", link: "/" },
+      { text: "Home", link: "/" },
+      {
+        text: "Pathway",
+        link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
+      },
       { text: "Runner" },
     ]);
+    this.setState({
+      ...this.state,
+      pathwayId: Router.query.pathwayId,
+    });
   }
 
   onCreate(data) {
@@ -105,6 +114,9 @@ class FormBasePage extends React.Component {
   }
 
   render() {
+    if (!this.state.pathwayId) {
+      return <Spinner>Loading</Spinner>;
+    }
     return (
       <React.Fragment>
         <Head>
@@ -129,40 +141,54 @@ class FormBasePage extends React.Component {
                   {/* END Portlet */}
                 </Portlet.Body>
                 <Portlet.Footer>
-                  <Button
-                    type="button"
-                    disabled={!this.state.saved}
-                    className="float-right ml-2"
-                    onClick={() => {
-                      Router.push({
-                        pathname: "/runner/quiz",
-                        query: {
-                          runnerId: this.state.runnerId,
-                          pathwayId: this.props.pathwayId,
-                        },
-                      });
-                    }}
-                  >
-                    Add Quiz
-                    <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
-                  </Button>
-                  <Button
-                    type="button"
-                    disabled={!this.state.saved}
-                    className="float-right"
-                    onClick={() => {
-                      Router.push({
-                        pathname: "/track/create",
-                        query: {
-                          runnerId: this.state.runnerId,
-                          pathwayId: this.props.pathwayId,
-                        },
-                      });
-                    }}
-                  >
-                    Add Tracks
-                    <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
-                  </Button>
+                  {this.state.saved && (
+                    <Alert
+                      variant="outline-info"
+                      icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
+                    >
+                      Add the quiz or tracks of the created runner.
+                      <Button
+                        type="button"
+                        disabled={!this.state.saved}
+                        className="float-right ml-2"
+                        onClick={() => {
+                          Router.push({
+                            pathname: "/runner/quiz",
+                            query: {
+                              runnerId: this.state.runnerId,
+                              pathwayId: this.state.pathwayId,
+                            },
+                          });
+                        }}
+                      >
+                        Add Quiz
+                        <FontAwesomeIcon
+                          className="ml-2"
+                          icon={SolidIcon.faPlus}
+                        />
+                      </Button>
+                      <Button
+                        type="button"
+                        disabled={!this.state.saved}
+                        className="float-right"
+                        onClick={() => {
+                          Router.push({
+                            pathname: "/track/create",
+                            query: {
+                              runnerId: this.state.runnerId,
+                              pathwayId: this.state.pathwayId,
+                            },
+                          });
+                        }}
+                      >
+                        Add Tracks
+                        <FontAwesomeIcon
+                          className="ml-2"
+                          icon={SolidIcon.faPlus}
+                        />
+                      </Button>
+                    </Alert>
+                  )}
                 </Portlet.Footer>
               </Portlet>
             </Col>

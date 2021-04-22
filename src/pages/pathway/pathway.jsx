@@ -32,7 +32,7 @@ const toast = ReactSwal.mixin({
 
 function PathwayForm({ onSave, data }) {
   const imageRef = useRef(null);
-  // Define Yup schema for form validation
+  const isNew = data === null || data === undefined;
   const schema = yup.object().shape({
     name: yup
       .string()
@@ -43,10 +43,8 @@ function PathwayForm({ onSave, data }) {
       .min(5, "Please enter at least 5 characters")
       .required("Please enter your description"),
   });
-  const { control, handleSubmit, errors } = useForm({
-    // Apply Yup as resolver for react-hook-form
+  const { control, handleSubmit, errors, reset } = useForm({
     resolver: yupResolver(schema),
-    // Define the default values for all input forms
     defaultValues: {
       name: data?.name || "",
       description: data?.description || "",
@@ -58,12 +56,21 @@ function PathwayForm({ onSave, data }) {
     <Form
       onSubmit={handleSubmit((data) => {
         imageRef.current.getImage().then((url) => {
-          onSave({ ...data, image: url });
+          onSave({ ...data, image: url }).then(() => {
+            if (isNew) {
+              reset();
+            }
+          });
         });
       })}
     >
       <Form.Group>
-        <ImageEditor ref={imageRef} image={data?.image} width={360} height={180} />
+        <ImageEditor
+          ref={imageRef}
+          image={data?.image}
+          width={360}
+          height={180}
+        />
       </Form.Group>
       <Row>
         <Col xs="12">
@@ -123,7 +130,7 @@ function PathwayForm({ onSave, data }) {
         </Col>
       </Row>
       <Button type="submit" variant="primary">
-        {data === null || data === undefined ? "Create" : "Update"}
+        {isNew ? "Create" : "Update"}
       </Button>
       <Button
         type="button"

@@ -32,12 +32,8 @@ const toast = ReactSwal.mixin({
 class FormBasePage extends React.Component {
   constructor(props) {
     super(props);
-    if (!Router.query.pathwayId || !Router.query.runnerId) {
-      Router.push("/pathway/create");
-    }
+
     this.state = {
-      pathwayId: Router.query.pathwayId,
-      runnerId: Router.query.runnerId,
       saved: false,
     };
 
@@ -46,29 +42,36 @@ class FormBasePage extends React.Component {
   }
 
   componentDidMount() {
-    // Set header title
+    if (!Router.query.pathwayId || !Router.query.runnerId) {
+      Router.push("/pathway/create");
+    }
     this.props.pageChangeHeaderTitle("Update Pathway");
-    // Set breadcrumb data
     this.props.breadcrumbChange([
-      { text: "Pathway", link: "/" },
+      { text: "Home", link: "/" },
+      {
+        text: "Pathway",
+        link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
+      },
       {
         text: "Runner",
         link: "/runner/create?pathwayId=" + Router.query.pathwayId,
       },
       { text: "Edit" },
     ]);
-    this.loadData();
+    this.loadData(Router.query.pathwayId, Router.query.runnerId);
   }
 
-  loadData() {
+  loadData(pathwayId, runnerId) {
     firestoreClient
       .collection("runners")
-      .doc(this.state.runnerId)
+      .doc(runnerId)
       .get()
       .then((doc) => {
         if (doc.exists) {
           this.setState({
-            id: this.state.runnerId,
+            id: runnerId,
+            pathwayId: pathwayId,
+            runnerId: runnerId,
             saved: true,
             ...doc.data(),
           });

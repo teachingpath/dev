@@ -45,11 +45,13 @@ class FormBasePage extends React.Component {
   }
 
   componentDidMount() {
-    // Set header title
     this.props.pageChangeHeaderTitle("Update Pathway");
-    // Set breadcrumb data
     this.props.breadcrumbChange([
-      { text: "Pathway", link: "/" },
+      { text: "Home", link: "/" },
+      {
+        text: "Pathway",
+        link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
+      },
       {
         text: "Runner",
         link: "/runner/create?pathwayId=" + Router.query.pathwayId,

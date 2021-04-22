@@ -73,18 +73,20 @@ function TrackForm({ onSave, data }) {
       content: data?.content || "",
       guidelines: data?.guidelines || "",
       criteria: data?.criteria || "",
-      training: data?.training || {},
-      questions: data?.questions || {},
+      training: data?.training || [],
+      questions: data?.questions || [],
     },
   });
 
   const watchFields = watch(["type"]);
   return (
-    <Form onSubmit={handleSubmit((data) => {
-      onSave(data).then(() => {
-        reset();
-      })
-    })}>
+    <Form
+      onSubmit={handleSubmit((data) => {
+        onSave(data).then(() => {
+          reset();
+        });
+      })}
+    >
       {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel>
@@ -280,7 +282,7 @@ function TrackForm({ onSave, data }) {
                   control={control}
                   render={({ onChange, onBlur, value, name, ref }) => (
                     <TrainingForm
-                      data={value || {}}
+                      data={value || []}
                       innerRef={ref}
                       onBlur={onBlur}
                       id="training"
@@ -316,9 +318,10 @@ function TrackForm({ onSave, data }) {
 
 function TrainingForm({ data, onChange }) {
   const [value, setValue] = useState(data);
+
   const { control } = useForm({
     defaultValues: {
-      options: [],
+      options: data || [],
     },
   });
 
@@ -366,7 +369,14 @@ function TrainingForm({ data, onChange }) {
                               onChange={onChange}
                               onBlur={onBlur}
                               onKeyUp={(data) => {
-                                onChangeContent(index, value);
+                                if (value.name) {
+                                  onChangeContent(index, value);
+                                } else {
+                                  onChangeContent(index, {
+                                    name: value,
+                                    id: index,
+                                  });
+                                }
                               }}
                               style={{ minHeight: "20rem" }}
                             />
@@ -384,7 +394,9 @@ function TrainingForm({ data, onChange }) {
                       onClick={() => {
                         optionsRemove(index);
                         delete value[index];
-                        setValue(value);
+                        const dataValues = value.filter(d => d);
+                        setValue(dataValues);
+                        onChange(dataValues);
                       }}
                     >
                       <FontAwesomeIcon icon={SolidIcon.faTrash} />
@@ -418,7 +430,7 @@ function QuestionForm({ data, onChange }) {
   const [value, setValue] = useState(data);
   const { control } = useForm({
     defaultValues: {
-      options: [],
+      options: data || [],
     },
   });
 
@@ -434,7 +446,6 @@ function QuestionForm({ data, onChange }) {
     setValue(value);
     onChange(value);
   };
-
 
   return (
     <>
@@ -452,7 +463,7 @@ function QuestionForm({ data, onChange }) {
                   <Col xs="11">
                     <Form.Group>
                       <FloatLabel>
-                      <Controller
+                        <Controller
                           id={`options_${index}_.name`}
                           name={`options[${index}].name`}
                           control={control}
@@ -466,7 +477,14 @@ function QuestionForm({ data, onChange }) {
                               onChange={onChange}
                               onBlur={onBlur}
                               onKeyUp={(data) => {
-                                onChangeContent(index, value);
+                                if (value.name) {
+                                  onChangeContent(index, value);
+                                } else {
+                                  onChangeContent(index, {
+                                    name: value,
+                                    id: index,
+                                  });
+                                }
                               }}
                             />
                           )}
@@ -483,7 +501,9 @@ function QuestionForm({ data, onChange }) {
                       onClick={() => {
                         optionsRemove(index);
                         delete value[index];
-                        setValue(value);
+                        const dataValues = value.filter(d => d);
+                        setValue(dataValues);
+                        onChange(dataValues);
                       }}
                     >
                       <FontAwesomeIcon icon={SolidIcon.faTrash} />
