@@ -13,9 +13,7 @@ import {
 } from "@panely/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm, Controller } from "react-hook-form";
-import {
-  firebaseClient
-} from "components/firebase/firebaseClient";
+import { firebaseClient } from "components/firebase/firebaseClient";
 import { yupResolver } from "@hookform/resolvers";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import * as yup from "yup";
@@ -53,16 +51,34 @@ function LoginPage() {
         >
           <Col sm="8" md="6" lg="4">
             {/* BEGIN Portlet */}
-            <Portlet>
-              <Portlet.Body>
-                <div className="text-center mt-2 mb-4">
-                  {/* BEGIN Widget */}
-                  <img src="/images/logo.png" alt="teaching path"/>
-                  {/* END Widget */}
-                </div>
-                <LoginForm />
+            <Col md="12">
+              <Portlet.Body className="d-flex flex-column justify-content-center align-items-start h-100 bg-primary text-white">
+                <h2>Welcome back!</h2>
+                <p>
+                  In this site you can find the best science and technology
+                  pathways, learn programming, English and calculus, etc. Also
+                  create your pathways and help others to follow your path.
+                </p>
+                <Link href="/catalog">
+                  <Button pill variant="outline-light" size="lg" width="widest">
+                    See catalog
+                  </Button>
+                </Link>
               </Portlet.Body>
-            </Portlet>
+            </Col>
+            <Col md="12">
+              <Portlet>
+                <Portlet.Body className="h-100">
+                  <div className="text-center mt-2 mb-4">
+                    {/* BEGIN Widget */}
+                    <img src="/images/logo.png" alt="teaching path" />
+                    {/* END Widget */}
+                  </div>
+                  <Label>Sing in</Label>
+                  <LoginForm />
+                </Portlet.Body>
+              </Portlet>
+            </Col>
             {/* END Portlet */}
           </Col>
         </Row>
