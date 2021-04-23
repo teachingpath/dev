@@ -6,7 +6,6 @@ import {
   Tab,
   Portlet,
   RichList,
-  Dropdown,
   Widget1,
   Widget2,
   Progress,
@@ -15,8 +14,6 @@ import {
   firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { pageChangeHeaderTitle, breadcrumbChange } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -129,42 +126,62 @@ class Status extends React.Component {
   onCreateJourney(pathwayId) {
     const user = firebaseClient.auth().currentUser;
     const tabs = this.props.runnersRef.current.state.tabs;
-    firestoreClient
-      .collection("journeys")
-      .add({
-        progress: 1,
-        pathwayId: pathwayId,
-        userId: user.uid,
-        date: new Date(),
-        current: 0,
-        breadcrumbs: tabs.map((data, runnerIndex) => {
+
+    const breadcrumbs = tabs.map(async (data, runnerIndex) => {
+      const quiz = await firestoreClient
+        .collection("runners")
+        .doc(data.id)
+        .collection("questions")
+        .get()
+        .then((querySnapshot) => {
+          const questions = [];
+          querySnapshot.forEach((doc) => {
+            questions.push({
+              id: doc.id,
+              ...doc.data(),
+            });
+          });
+          return questions;
+        });
+
+      return {
+        id: data.id,
+        name: data.title,
+        description: data.subtitle,
+        current: runnerIndex === 0 ? 0 : null,
+        quiz: quiz,
+        tracks: data.data.map((item, trackIndex) => {
           return {
-            id: data.id,
-            name: data.title,
-            description: data.subtitle,
-            current: runnerIndex === 0 ? 0 : null,
-            tracks: data.data.map((item, trackIndex) => {
-              return {
-                ...item,
-                time: item.time * 6000000,
-                status:
-                  runnerIndex === 0 && trackIndex === 0 ? "process" : "wait",
-              };
-            }),
+            ...item,
+            time: item.time * 3600000,
+            status: runnerIndex === 0 && trackIndex === 0 ? "process" : "wait",
           };
         }),
-      })
-      .then((doc) => {
-        Router.push({
-          pathname: "/catalog/journey",
-          query: {
-            id: doc.id,
-          },
+      };
+    });
+    return Promise.all(breadcrumbs).then((dataResolved) => {
+      return firestoreClient
+        .collection("journeys")
+        .add({
+          progress: 1,
+          pathwayId: pathwayId,
+          userId: user.uid,
+          date: new Date(),
+          current: 0,
+          breadcrumbs: dataResolved,
+        })
+        .then((doc) => {
+          Router.push({
+            pathname: "/catalog/journey",
+            query: {
+              id: doc.id,
+            },
+          });
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
         });
-      })
-      .catch((error) => {
-        console.error("Error adding document: ", error);
-      });
+    });
   }
 
   render() {

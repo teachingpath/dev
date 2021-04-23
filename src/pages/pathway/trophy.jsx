@@ -260,7 +260,7 @@ function TrophyForm({ pathwayId, data, activityChange }) {
         </Col>
       </Row>
       <Button type="submit" variant="primary">
-        {data === null || data === undefined ? "Add" : "Update"}
+        {data === null || data === undefined ? "Save" : "Update"}
       </Button>
     </Form>
   );

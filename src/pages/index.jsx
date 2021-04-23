@@ -17,8 +17,8 @@ import Head from "next/head";
 
 class DashboardPage extends React.Component {
   componentDidMount() {
-    this.props.pageChangeHeaderTitle("Pathway");
-    this.props.breadcrumbChange([{ text: "Pathway", link: "/" }]);
+    this.props.pageChangeHeaderTitle("Control Panel");
+    this.props.breadcrumbChange([{ text: "Home", link: "/" }]);
   }
 
   render() {
