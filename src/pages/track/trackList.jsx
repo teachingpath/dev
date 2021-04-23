@@ -91,7 +91,7 @@ class TrackList extends React.Component {
             const { title, subtitle, type, id } = data;
 
             return (
-              <RichList.Item key={index} href="javascript:void(0)">
+              <RichList.Item key={index}>
                 <RichList.Addon addonType="prepend">
                   {/* BEGIN Avatar */}
                   <Avatar display>
@@ -112,13 +112,11 @@ class TrackList extends React.Component {
                     <Dropdown.Toggle
                       icon
                       variant="text-secondary"
-                      href="javascript:void(0)"
                     >
                       <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
                     </Dropdown.Toggle>
                     <Dropdown.Menu right animated>
                       <Dropdown.Item
-                        href="javascript:void(0)"
                         onClick={() => {
                           Router.push({
                             pathname: "/track/edit",
@@ -134,7 +132,6 @@ class TrackList extends React.Component {
                         Editar
                       </Dropdown.Item>
                       <Dropdown.Item
-                        href="javascript:void(0)"
                         onClick={() => {
                           this.onDelete(id);
                         }}

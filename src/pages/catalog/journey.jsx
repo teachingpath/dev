@@ -30,6 +30,9 @@ import Button from "@panely/components/Button";
 import Countdown, { zeroPad } from "react-countdown";
 import QuestionForm from "./question";
 import Training from "./training";
+import Hacking from "./hacking";
+
+
 
 class JourneyGeneralPage extends React.Component {
   componentDidMount() {
@@ -81,6 +84,8 @@ class JourneyGeneralPage extends React.Component {
                 <StatusProgress
                   progress={this.state.progress}
                   journeyId={this.state.id}
+                  runners={this.state?.runners}
+                  pathwayId={this.state.pathwayId}
                 />
               )}
             </Col>
@@ -196,9 +201,18 @@ class Tracks extends React.Component {
             status={activeQuiz ? "process" : "wait"}
             title={"Quiz"}
             description={
-              <>
+              <div>
                 <p>Present Quiz to validate knowledge.</p>
-              </>
+                <Button disabled={!activeQuiz} onClick={() => {
+                  Router.push({
+                    pathname: "/catalog/quiz",
+                    query: {
+                      id: journeyId,
+                      runnerId: runnerId
+                    }
+                  })
+                }}>Take quiz</Button>
+              </div>
             }
           />
         )}
@@ -207,7 +221,64 @@ class Tracks extends React.Component {
   }
 }
 
-const StatusProgress = ({ progress, journeyId }) => {
+const StatusProgress = ({ progress, journeyId, pathwayId, runners }) => {
+  const onReCreateJourney = (pathwayId, journeyId, runners) => {
+    const user = firebaseClient.auth().currentUser;
+
+    const breadcrumbs = runners.map(async (data, runnerIndex) => {
+      const quiz = await firestoreClient
+        .collection("runners")
+        .doc(data.id)
+        .collection("questions")
+        .get()
+        .then((querySnapshot) => {
+          const questions = [];
+          querySnapshot.forEach((doc) => {
+            questions.push({
+              id: doc.id,
+              ...doc.data(),
+            });
+          });
+          return questions;
+        });
+
+      return {
+        id: data.id,
+        name: data.name,
+        description: data.description,
+        current: runnerIndex === 0 ? 0 : null,
+        quiz: quiz,
+        tracks: data.tracks.map((item, trackIndex) => {
+          return {
+            ...item,
+            isRunning: false,
+            time: item.timeLimit * 3600000,
+            status: runnerIndex === 0 && trackIndex === 0 ? "process" : "wait",
+          };
+        }),
+      };
+    });
+    return Promise.all(breadcrumbs).then((dataResolved) => {
+      return firestoreClient
+        .collection("journeys")
+        .doc(journeyId)
+        .set({
+          progress: 1,
+          pathwayId: pathwayId,
+          userId: user.uid,
+          date: new Date(),
+          current: 0,
+          breadcrumbs: dataResolved,
+        })
+        .then((doc) => {
+          window.location.reload();
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
+    });
+  }
+
   return (
     <Widget1.Group>
       <Widget1.Title>
@@ -221,7 +292,9 @@ const StatusProgress = ({ progress, journeyId }) => {
         <Dropdown.Uncontrolled>
           <Dropdown.Toggle caret children="Option" />
           <Dropdown.Menu right animated>
-            <Dropdown.Item icon={<FontAwesomeIcon icon={SolidIcon.faRedo} />}>
+            <Dropdown.Item icon={<FontAwesomeIcon icon={SolidIcon.faRedo} />} onClick={() => {
+                onReCreateJourney(pathwayId, journeyId, runners);
+            }}>
               Reset
             </Dropdown.Item>
             <Dropdown.Item icon={<FontAwesomeIcon icon={SolidIcon.faShare} />}>
@@ -301,7 +374,7 @@ class ContentModal extends React.Component {
 
     tracks[trackIndex].time = 0;
     tracks[trackIndex].status = "finish";
-    if (tracks.length > trackIndex) {
+    if ((tracks.length - 1) > trackIndex) {
       tracks[trackIndex + 1].status = "process";
     }
 
@@ -315,7 +388,7 @@ class ContentModal extends React.Component {
   renderer = ({ hours, minutes, seconds, completed, total }) => {
     const { runnerIndex, trackIndex, journeyId, runners } = this.props;
     if (completed) {
-      complete();
+      this.complete();
       return <span> 00:00:00 h</span>;
     } else {
       if (minutes % 2 === 0 && minutes !== this.time) {
@@ -343,7 +416,7 @@ class ContentModal extends React.Component {
     const { name, type, isRunning, timeLimit } = this.state;
     const { time } = this.props;
     const titleButton = timeLimit
-      ? "time limit [" + timeLimit + " h]"
+      ? "Time limit [" + timeLimit + " hour]"
       : "Start this track";
     const date = this.countdownRef?.current?.props?.date
       ? this.countdownRef?.current?.props?.date
@@ -375,13 +448,16 @@ class ContentModal extends React.Component {
                 ),
                 q_and_A: <Questions data={this.state} />,
                 training: <Training data={this.state} />,
+                hacking: <Hacking data={this.state} />,
               }[type]
             }
           </Modal.Body>
           <Modal.Footer>
+            <strong className="mr-2">{titleButton}</strong>
             <Button
               variant="primary"
               className="mr-2"
+              title={"I have completed this track"}
               onClick={() => {
                 this.complete().then(() => {
                   window.location.reload();

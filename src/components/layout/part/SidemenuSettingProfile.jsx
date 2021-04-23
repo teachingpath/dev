@@ -1,9 +1,12 @@
 import { Form, Portlet, CustomInput } from "@panely/components";
 import {  firestoreClient } from "../../firebase/firebaseClient";
+import { bindActionCreators } from "redux";
+import {  pageChangeTheme, userChange } from "store/actions";
+import { connect } from "react-redux";
 
 class SidemenuSettingProfile extends React.Component {
   // Handle switch element
-  handleClick = (e) => {
+  handleProfileClick = (e) => {
     const userUpdated = {
       ...this.props.user,
       profile: e.target.checked ? "trainee" : "coach",
@@ -19,11 +22,18 @@ class SidemenuSettingProfile extends React.Component {
       });
   };
 
+  handleLayautClick = (e) => {
+    const { theme, pageChangeTheme } = this.props
+    const darkModeActive = theme === "dark"
+    pageChangeTheme(!darkModeActive ? "dark" : "light");
+  }
+
   render() {
-    const { user } = this.props;
+    const { user, theme} = this.props;
+    const darkModeActive = theme === "dark"
 
     return (
-      <Portlet bordered {...this.props}>
+      <Portlet bordered >
         <Portlet.Header bordered>
           <Portlet.Title>Profile</Portlet.Title>
         </Portlet.Header>
@@ -34,7 +44,16 @@ class SidemenuSettingProfile extends React.Component {
               id="customerSetting1"
               label="Activate trainee mode"
               checked={user?.profile === "trainee"}
-              onChange={this.handleClick}
+              onChange={this.handleProfileClick}
+            />
+          </Form.Group>
+          <Form.Group>
+            <CustomInput
+              type="switch"
+              id="customerSetting2"
+              label={"Enable "+(!darkModeActive ? "dark" : "light")+" mode"}
+              checked={darkModeActive}
+              onChange={this.handleLayautClick}
             />
           </Form.Group>
         </Portlet.Body>
@@ -43,4 +62,16 @@ class SidemenuSettingProfile extends React.Component {
   }
 }
 
-export default SidemenuSettingProfile;
+
+function mapStateToProps(state) {
+  return {
+    theme: state.page.theme
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ pageChangeTheme, userChange }, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SidemenuSettingProfile);
+

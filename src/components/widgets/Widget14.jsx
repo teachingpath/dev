@@ -214,7 +214,6 @@ class Widget14Component extends React.Component {
                       </Dropdown.Toggle>
                       <Dropdown.Menu right animated>
                         <Dropdown.Item
-                          href="javascript:void(0)"
                           onClick={() => {
                             Router.push({
                               pathname: "/pathway/edit",
@@ -226,7 +225,6 @@ class Widget14Component extends React.Component {
                           Editar
                         </Dropdown.Item>
                         <Dropdown.Item
-                          href="javascript:void(0)"
                           onClick={() => {
                             this.onDelete(id);
                           }}
@@ -236,7 +234,6 @@ class Widget14Component extends React.Component {
                         </Dropdown.Item>
                         <Dropdown.Divider />
                         <Dropdown.Item
-                          href="javascript:void(0)"
                           onClick={() => {
                             Router.push({
                               pathname: "/runner/create",
@@ -248,7 +245,6 @@ class Widget14Component extends React.Component {
                           Add runner
                         </Dropdown.Item>
                         <Dropdown.Item
-                          href="javascript:void(0)"
                           onClick={() => {
                             Router.push({
                               pathname: "/pathway/trophy",
@@ -262,7 +258,6 @@ class Widget14Component extends React.Component {
 
                         {draft ? (
                           <Dropdown.Item
-                            href="javascript:void(0)"
                             onClick={() => this.publishPathway(id)}
                             icon={
                               <FontAwesomeIcon icon={SolidIcon.faShareSquare} />
@@ -272,7 +267,6 @@ class Widget14Component extends React.Component {
                           </Dropdown.Item>
                         ) : (
                           <Dropdown.Item
-                            href="javascript:void(0)"
                             onClick={() => {
                               Router.push({
                                 pathname: "/catalog/pathway/",

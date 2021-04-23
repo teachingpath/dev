@@ -1,7 +1,7 @@
 import { Button, Sidemenu } from "@panely/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { bindActionCreators } from "redux";
-import { sidemenuToggle, userChange } from "store/actions";
+import { sidemenuToggle } from "store/actions";
 import { connect } from "react-redux";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import SidemenuSettingUser from "./SidemenuSettingUser";
@@ -17,7 +17,7 @@ class SidemenuSetting extends React.Component {
   }
 
   render() {
-    const { show, sidemenuToggle, user, userChange } = this.props;
+    const { show, sidemenuToggle, user } = this.props;
 
     return (
       <Sidemenu
@@ -42,12 +42,10 @@ class SidemenuSetting extends React.Component {
           <SidemenuSettingUser
             className="mb-3"
             user={user}
-            userChange={userChange}
           />
           <SidemenuSettingProfile
             className="mb-3"
             user={user}
-            userChange={userChange}
           />
         </Sidemenu.Body>
       </Sidemenu>
@@ -63,7 +61,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ sidemenuToggle, userChange }, dispatch);
+  return bindActionCreators({ sidemenuToggle }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SidemenuSetting);

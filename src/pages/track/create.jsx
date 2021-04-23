@@ -68,8 +68,8 @@ class FormBasePage extends React.Component {
     const runnersDb = firestoreClient
       .collection("runners")
       .doc(this.state.runnerId);
-      console.log(data);
-    return runnersDb
+
+      return runnersDb
       .collection("tracks")
       .doc(trackId)
       .set({

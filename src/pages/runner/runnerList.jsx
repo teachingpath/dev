@@ -84,7 +84,7 @@ class RunnerList extends React.Component {
             const { title, subtitle, id } = data;
 
             return (
-              <RichList.Item key={index} href="javascript:void(0)">
+              <RichList.Item key={index} >
                 <RichList.Addon addonType="prepend">
                   {/* BEGIN Avatar */}
                   <Avatar display>
@@ -102,13 +102,11 @@ class RunnerList extends React.Component {
                     <Dropdown.Toggle
                       icon
                       variant="text-secondary"
-                      href="javascript:void(0)"
                     >
                       <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
                     </Dropdown.Toggle>
                     <Dropdown.Menu right animated>
                       <Dropdown.Item
-                        href="javascript:void(0)"
                         onClick={() => {
                           Router.push({
                             pathname: "/runner/edit",
@@ -123,7 +121,6 @@ class RunnerList extends React.Component {
                         Editar
                       </Dropdown.Item>
                       <Dropdown.Item
-                        href="javascript:void(0)"
                         onClick={() => {
                           this.onDelete(id);
                         }}
@@ -133,7 +130,6 @@ class RunnerList extends React.Component {
                       </Dropdown.Item>
                       <Dropdown.Divider />
                       <Dropdown.Item
-                        href="javascript:void(0)"
                         onClick={() => {
                           Router.push({
                             pathname: "/runner/quiz",
@@ -148,7 +144,6 @@ class RunnerList extends React.Component {
                         Add Quiz (Badget)
                       </Dropdown.Item>
                       <Dropdown.Item
-                        href="javascript:void(0)"
                         onClick={() => {
                           Router.push({
                             pathname: "/track/create",

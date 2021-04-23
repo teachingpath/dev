@@ -99,10 +99,8 @@ class HeaderUser extends React.Component {
 
   render() {
     const { avatar: WidgetAvatar, name, email, count, navs, uid } = this.state;
-    const { ...attributes } = this.props;
-
     return (
-      <Dropdown.Uncontrolled {...attributes}>
+      <Dropdown.Uncontrolled >
         <Widget13
           dropdown
           variant="flat-primary"

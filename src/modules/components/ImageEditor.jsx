@@ -26,6 +26,8 @@ class ImageEditor extends React.Component {
   };
 
   render() {
+    const { width, height } = this.props;
+
     return (
       <Row>
         {this.props.withPreview ? (
@@ -36,16 +38,24 @@ class ImageEditor extends React.Component {
                 {...this.state}
                 setEditorRef={this.setEditorRef}
                 handleDrop={this.handleDrop}
+                getImage={this.getImage}
               />
             </Col>
-            <Col xs="6">
-              {this.state.image && (
-                <img
-                  src={this.state.image}
-                  alt="Preview"
-                  className="mx-auto d-block mg-thumbnail avatar-circle"
-                />
-              )}
+            <Col xs="6" >
+              <br />
+              <p>
+                {this.state.image && (
+                  <img
+                    src={this.state.image}
+                    alt="Preview"
+                    className=" mg-thumbnail avatar-circle"
+                  />
+                )}
+              </p>
+              <p className="text-muted"> 
+                Preview image to save
+              </p>
+
             </Col>
           </>
         ) : (
@@ -55,6 +65,7 @@ class ImageEditor extends React.Component {
               {...this.state}
               setEditorRef={this.setEditorRef}
               handleDrop={this.handleDrop}
+              getImage={this.getImage}
             />{" "}
           </Col>
         )}
@@ -64,28 +75,37 @@ class ImageEditor extends React.Component {
 }
 
 const DropDownImage = (props) => {
-  const { handleDrop, width, height, setEditorRef, image } = props;
+  const { handleDrop, width, height, setEditorRef, image, getImage } = props;
   return (
-    <Dropzone
-      onDrop={handleDrop}
-      noClick
-      noKeyboard
-      style={{ width: width || "120px", height: height || "120px" }}
-    >
-      {({ getRootProps, getInputProps }) => (
-        <div {...getRootProps()}>
-          <AvatarEditor
-            ref={setEditorRef}
-            width={width || 125}
-            height={height || 125}
-            scale="1.2"
-            className="mx-auto d-block mg-thumbnail"
-            image={image}
-          />
-          <input {...getInputProps()} />
-        </div>
-      )}
-    </Dropzone>
+    <>
+      <Dropzone
+        onDrop={handleDrop}
+        noClick
+        noKeyboard
+        style={{ width: width || "120px", height: height || "120px" }}
+      >
+        {({ getRootProps, getInputProps }) => (
+          <div {...getRootProps()}>
+            <AvatarEditor
+              ref={setEditorRef}
+              width={width || 125}
+              height={height || 125}
+              scale={1.2}
+              className="mg-thumbnail"
+              image={image}
+            />
+            <input {...getInputProps()} />
+          </div>
+        )}
+      </Dropzone>
+      <input type="file" name="image" accept="image/*" onChange={(e) => {
+        handleDrop(e.target.files);
+        getImage().then();
+      }} />
+      <p>
+        <small className="text-muted">Required image size  {width || 125}x{height || 125}px</small>
+      </p>
+    </>
   );
 };
 

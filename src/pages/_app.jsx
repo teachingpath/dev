@@ -10,6 +10,7 @@ import "styles/sortablejs/sortablejs.scss";
 import "styles/sweetalert2/index.scss";
 import "styles/slick-carousel/index.scss";
 import "rc-steps/assets/index.css";
+import "styles/quiz/styles.css";
 
 import { AuthProvider } from "components/firebase/firebaseAuth";
 import { bindActionCreators } from "redux";
@@ -27,9 +28,9 @@ class MyApp extends App {
     // Check whether dark mode support is available or not
     const darkModeActive = window.matchMedia("(prefers-color-scheme: dark)")
       .matches;
-
-    // Enable/disable dark mode
-    this.props.pageChangeTheme(darkModeActive ? "dark" : "light");
+    
+    // TODO: change for window drive
+    this.props.pageChangeTheme("light");
   }
 
   componentDidUpdate(prevProps) {

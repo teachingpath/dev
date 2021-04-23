@@ -153,6 +153,7 @@ class Status extends React.Component {
         tracks: data.data.map((item, trackIndex) => {
           return {
             ...item,
+            timeLimit: item.time,
             time: item.time * 3600000,
             status: runnerIndex === 0 && trackIndex === 0 ? "process" : "wait",
           };
@@ -343,7 +344,7 @@ class PathwayGeneralPage extends React.Component {
         </Head>
         <Container fluid>
           <Row portletFill="xl">
-            <Col xl="4">
+            <Col xl="12">
               <PathwayComponent />
             </Col>
           </Row>

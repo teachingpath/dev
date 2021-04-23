@@ -8,27 +8,13 @@ import {
   FloatLabel,
   ImageEditor,
 } from "@panely/components";
-import { useState, useRef } from "react";
+import {  useRef } from "react";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Router from "next/router";
-import AvatarEditor from "react-avatar-editor";
-import Swal from "@panely/sweetalert2";
-import Dropzone from "react-dropzone";
-import swalContent from "sweetalert2-react-content";
-const ReactSwal = swalContent(Swal);
-const toast = ReactSwal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: (toast) => {
-    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
-    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
-  },
-});
+
+
 
 function PathwayForm({ onSave, data }) {
   const imageRef = useRef(null);

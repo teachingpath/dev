@@ -156,7 +156,6 @@ function TrophyForm({ pathwayId, data, activityChange }) {
     },
   });
 
-  console.log(data);
   // Handle form submit event
   const onSubmit = (data) => {
     firestoreClient
