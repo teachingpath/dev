@@ -31,10 +31,10 @@ import Countdown, { zeroPad } from "react-countdown";
 import QuestionForm from "./question";
 import Training from "./training";
 import Hacking from "./hacking";
-
-
+import CardColumns from "@panely/components/CardColumns";
 
 class JourneyGeneralPage extends React.Component {
+  state = { name: "Loading", trophy: {}, progress: 0, badgets: [] };
   componentDidMount() {
     if (!Router.query.id) {
       Router.push("/catalog");
@@ -49,7 +49,7 @@ class JourneyGeneralPage extends React.Component {
       .collection("journeys")
       .doc(Router.query.id)
       .get()
-      .then(async (doc) => {
+      .then((doc) => {
         if (doc.exists) {
           const data = {
             ...doc.data(),
@@ -62,8 +62,25 @@ class JourneyGeneralPage extends React.Component {
             { text: "Pathway", link: "/catalog/pathway?id=" + data.pathwayId },
             { text: "My Journey" },
           ]);
+          return firestoreClient
+            .collection("journeys")
+            .doc(Router.query.id)
+            .collection("badgets")
+            .get();
         } else {
           console.log("No such document!");
+        }
+      })
+      .then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+          const list = [];
+          querySnapshot.forEach((doc) => {
+            list.push(doc.data());
+          });
+          this.setState({
+            ...this.state,
+            badgets: list,
+          });
         }
       })
       .catch((error) => {
@@ -72,6 +89,8 @@ class JourneyGeneralPage extends React.Component {
   }
 
   render() {
+    const { name, trophy, progress } = this.state;
+    const isFinish = progress >= 100;
     return (
       <React.Fragment>
         <Head>
@@ -79,24 +98,67 @@ class JourneyGeneralPage extends React.Component {
         </Head>
         <Container fluid>
           <Row portletFill="xl">
-            <Col md="6">
-              {this.state?.id && (
-                <StatusProgress
-                  progress={this.state.progress}
-                  journeyId={this.state.id}
-                  runners={this.state?.runners}
-                  pathwayId={this.state.pathwayId}
-                />
-              )}
-            </Col>
-            <Col md="6">
-              {this.state?.runners && (
-                <Runners
-                  current={this.state.current}
-                  runners={this.state.runners}
-                  journeyId={this.state.id}
-                />
-              )}
+            <Col xl="12">
+              <Widget1 fluid>
+                <Widget1.Display
+                  top
+                  size="lg"
+                  className="bg-dark text-white mb-5"
+                >
+                  {this.state?.id && (
+                    <StatusProgress
+                      progress={this.state.progress}
+                      journeyId={this.state.id}
+                      runners={this.state?.runners}
+                      pathwayId={this.state.pathwayId}
+                    />
+                  )}
+
+                  <Widget1.Dialog>
+                    <Widget1.DialogContent>
+                      <h1
+                        className="display-3"
+                        children={name?.toUpperCase()}
+                      />
+                    </Widget1.DialogContent>
+                  </Widget1.Dialog>
+                  {Object.keys(trophy).length > 0 && (
+                    <Widget1.Offset
+                      className={isFinish ? "" : "bg-light p-2 rounded"}
+                    >
+                      <img
+                        src={trophy?.image}
+                        alt="loading"
+                        className="p-2 border mx-auto d-block mg-thumbnail avatar-circle"
+                      />
+                      <h4 className="text-black mx-auto d-block text-center">
+                        {progress === 100 ? trophy?.name : "Not available"}
+                      </h4>
+                      <small className="text-muted mx-auto d-block text-center">
+                        {progress === 100 ? trophy?.description : ""}
+                      </small>
+                    </Widget1.Offset>
+                  )}
+                </Widget1.Display>
+                <Widget1.Body style={{ marginTop: "60px" }}>
+                  <Row>
+                    <Col md="6">
+                      {this.state?.id && (
+                        <BadgetList badgets={this.state?.badgets} />
+                      )}
+                    </Col>
+                    <Col md="6">
+                      {this.state?.runners && (
+                        <Runners
+                          current={this.state.current}
+                          runners={this.state.runners}
+                          journeyId={this.state.id}
+                        />
+                      )}
+                    </Col>
+                  </Row>
+                </Widget1.Body>
+              </Widget1>
             </Col>
           </Row>
         </Container>
@@ -203,15 +265,20 @@ class Tracks extends React.Component {
             description={
               <div>
                 <p>Present Quiz to validate knowledge.</p>
-                <Button disabled={!activeQuiz} onClick={() => {
-                  Router.push({
-                    pathname: "/catalog/quiz",
-                    query: {
-                      id: journeyId,
-                      runnerId: runnerId
-                    }
-                  })
-                }}>Take quiz</Button>
+                <Button
+                  disabled={!activeQuiz}
+                  onClick={() => {
+                    Router.push({
+                      pathname: "/catalog/quiz",
+                      query: {
+                        id: journeyId,
+                        runnerId: runnerId,
+                      },
+                    });
+                  }}
+                >
+                  Take quiz
+                </Button>
               </div>
             }
           />
@@ -222,6 +289,7 @@ class Tracks extends React.Component {
 }
 
 const StatusProgress = ({ progress, journeyId, pathwayId, runners }) => {
+  const isFinish = progress >= 100;
   const onReCreateJourney = (pathwayId, journeyId, runners) => {
     const user = firebaseClient.auth().currentUser;
 
@@ -277,34 +345,92 @@ const StatusProgress = ({ progress, journeyId, pathwayId, runners }) => {
           console.error("Error adding document: ", error);
         });
     });
-  }
+  };
 
   return (
-    <Widget1.Group>
-      <Widget1.Title>
-        <h4>Progress</h4>
-        <Progress striped value={progress} className="mr-5 w-80">
-          {progress}%
-        </Progress>
-      </Widget1.Title>
-      <Widget1.Addon>
-        {/* BEGIN Dropdown */}
-        <Dropdown.Uncontrolled>
-          <Dropdown.Toggle caret children="Option" />
-          <Dropdown.Menu right animated>
-            <Dropdown.Item icon={<FontAwesomeIcon icon={SolidIcon.faRedo} />} onClick={() => {
-                onReCreateJourney(pathwayId, journeyId, runners);
-            }}>
-              Reset
-            </Dropdown.Item>
-            <Dropdown.Item icon={<FontAwesomeIcon icon={SolidIcon.faShare} />}>
-              Share
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown.Uncontrolled>
-        {/* END Dropdown */}
-      </Widget1.Addon>
-    </Widget1.Group>
+    <>
+      <Widget1.Group>
+        {!isFinish ? (
+          <Widget1.Title>
+            <h4>Progress</h4>
+            <Progress striped value={progress} className="mr-5 w-50">
+              {progress}%
+            </Progress>
+          </Widget1.Title>
+        ) : (
+          <h4 className="mr-5 w-100">Pathway Successful</h4>
+        )}
+
+        <Widget1.Addon>
+          {/* BEGIN Dropdown */}
+          <Dropdown.Uncontrolled>
+            <Dropdown.Toggle caret children="Option" />
+            <Dropdown.Menu right animated>
+              <Dropdown.Item
+                icon={<FontAwesomeIcon icon={SolidIcon.faRedo} />}
+                onClick={() => {
+                  onReCreateJourney(pathwayId, journeyId, runners);
+                }}
+              >
+                Reset
+              </Dropdown.Item>
+              <Dropdown.Item
+                icon={<FontAwesomeIcon icon={SolidIcon.faShare} />}
+              >
+                Share
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown.Uncontrolled>
+          {/* END Dropdown */}
+        </Widget1.Addon>
+      </Widget1.Group>
+    </>
+  );
+};
+
+const BadgetList = ({ badgets }) => {
+  return (
+    <>
+      <div className="mt-3">
+        <h4>Badgets</h4>
+        <CardColumns>
+          {badgets.map((data) => {
+            if (data.disabled) {
+              return (
+                <Card className="text-center bg-light">
+                  <Card.Img
+                    top
+                    className=" mg-thumbnail avatar-circle p-2 border border-warning"
+                    src={data.image}
+                    alt="Badget Image"
+                  />
+                  <Card.Body>
+                    <Card.Title>Not available</Card.Title>
+                  </Card.Body>
+                </Card>
+              );
+            } else {
+              return (
+                <Card className="text-center">
+                  <Card.Img
+                    top
+                    className=" mg-thumbnail avatar-circle p-2"
+                    src={data.image}
+                    alt="Badget Image"
+                  />
+                  <Card.Body>
+                    <Card.Title>{data.name}</Card.Title>
+                    <Card.Text>
+                      <small className="text-muted">{data.description}</small>
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              );
+            }
+          })}
+        </CardColumns>
+      </div>
+    </>
   );
 };
 
@@ -356,8 +482,7 @@ class ContentModal extends React.Component {
       breadcrumbs: runners,
     };
     let tracksCompleted = 1;
-    let tracksTotal = 0;
-
+    let tracksTotal = data.breadcrumbs.length;
     data.breadcrumbs.forEach((runner) => {
       if (runner.tracks) {
         runner.tracks.forEach((track) => {
@@ -374,7 +499,7 @@ class ContentModal extends React.Component {
 
     tracks[trackIndex].time = 0;
     tracks[trackIndex].status = "finish";
-    if ((tracks.length - 1) > trackIndex) {
+    if (tracks.length - 1 > trackIndex) {
       tracks[trackIndex + 1].status = "process";
     }
 
@@ -433,7 +558,12 @@ class ContentModal extends React.Component {
           )) || <>Start</>}
         </Button>
         {/* BEGIN Modal */}
-        <Modal scrollable isOpen={this.state.isOpen} toggle={this.toggle} className="modal-xl">
+        <Modal
+          scrollable
+          isOpen={this.state.isOpen}
+          toggle={this.toggle}
+          className="modal-xl"
+        >
           <Modal.Header toggle={this.toggle}>
             {name || "Loading"}
             <small className="text-muted"> {type || ""}</small>
@@ -460,7 +590,7 @@ class ContentModal extends React.Component {
               title={"I have completed this track"}
               onClick={() => {
                 this.complete().then(() => {
-                  window.location.reload();
+                  Router.reload();
                 });
               }}
             >

@@ -1,5 +1,5 @@
 .react-quiz-container {
-  margin: 20px;
+  margin: 5px;
   width: 500px;
 }
 
@@ -11,7 +11,6 @@
   margin-bottom: 0;
   font-weight: 600;
   text-align: center;
-  padding: 11px 12px;
   vertical-align: middle;
   touch-action: manipulation;
   cursor: pointer;
@@ -28,9 +27,7 @@
 .react-quiz-container .questionWrapper .btn {
   margin-top: 10px;
   margin-bottom: 10px;
-  border-radius: 4px;
   border: 1px solid #e8e8e8;;
-  font-size: 15px;
   display: block;
   white-space: normal;
   text-align: unset;
@@ -67,8 +64,6 @@
 }
 
 .react-quiz-container .startQuizWrapper .startQuizBtn {
-  font-size: 15px;
-  border-radius: 2px;
   line-height: 1.35135;
   color: rgba(0,0,0,0.65);
   background-color: #fff;
@@ -93,17 +88,17 @@
 }
 
 .react-quiz-container .result-answer-wrapper .explanation {
-  padding: 20px;
-  margin: 0px 20px 20px 20px;
+  padding: 10px;
+  margin: 0px 10px 10px 10px;
   border: 1px solid #e8e8e8;
 }
 
 .react-quiz-container .result-answer-wrapper .tag-container {
-  margin: 20px;
+  margin: 10px;
 }
 
 .react-quiz-container .result-answer {
-  padding: 0px 20px;
+  padding: 0px 10px;
 }
 
 .react-quiz-container .quiz-synopsis {

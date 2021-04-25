@@ -21,6 +21,7 @@ import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
 import Button from "@panely/components/Button";
+import uuid from "components/helpers/uuid"
 
 class PathwayComponent extends React.Component {
   constructor(props) {
@@ -58,7 +59,7 @@ class PathwayComponent extends React.Component {
   }
 
   render() {
-    const { name, id } = this.state;
+    const { name, id} = this.state;
 
     return (
       <Widget1>
@@ -123,7 +124,7 @@ class Status extends React.Component {
     }
   }
 
-  onCreateJourney(pathwayId) {
+  onCreateJourney(pathwayId, journeyId, trophy, name) {
     const user = firebaseClient.auth().currentUser;
     const tabs = this.props.runnersRef.current.state.tabs;
 
@@ -142,6 +143,16 @@ class Status extends React.Component {
             });
           });
           return questions;
+        });
+
+      await firestoreClient
+        .collection("journeys")
+        .doc(journeyId)
+        .collection("badgets")
+        .doc(data.id)
+        .set({
+          ...data.badget,
+          disabled: true
         });
 
       return {
@@ -163,7 +174,10 @@ class Status extends React.Component {
     return Promise.all(breadcrumbs).then((dataResolved) => {
       return firestoreClient
         .collection("journeys")
-        .add({
+        .doc(journeyId)
+        .set({
+          name: name,
+          trophy: trophy,
           progress: 1,
           pathwayId: pathwayId,
           userId: user.uid,
@@ -175,7 +189,7 @@ class Status extends React.Component {
           Router.push({
             pathname: "/catalog/journey",
             query: {
-              id: doc.id,
+              id: journeyId,
             },
           });
         })
@@ -187,13 +201,13 @@ class Status extends React.Component {
 
   render() {
     const user = firebaseClient.auth().currentUser;
-    const { pathwayId } = this.props;
-
+    const { pathwayId, trophy, name } = this.props;
+    const journeyId = uuid()
     const Start = () => {
       return (
         <Button
           className="w-25"
-          onClick={() => this.onCreateJourney(pathwayId)}
+          onClick={() => this.onCreateJourney(pathwayId, journeyId, trophy, name)}
         >
           Start Pathway
         </Button>
@@ -261,6 +275,7 @@ class RunnerTab extends React.Component {
             id: doc.id,
             title: doc.data().name,
             subtitle: doc.data().description,
+            badget: doc.data().badget,
             data: data,
           });
           this.setState({

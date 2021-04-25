@@ -1,114 +1,6 @@
 import Quiz from "@panely/quiz";
 
-export const quiz = {
-    "quizTitle": "React Quiz Component Demo",
-    "quizSynopsis": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim",
-    "questions": [
-        {
-            "question": "How can you access the state of a component from inside of a member function?",
-            "questionType": "text",
-            "questionPic": "https://dummyimage.com/600x400/000/fff&text=X", // if you need to display Picture in Question
-            "answerSelectionType": "single",
-            "answers": [
-                "this.getState()",
-                "this.prototype.stateValue",
-                "this.state",
-                "this.values"
-            ],
-            "correctAnswer": "3",
-            "messageForCorrectAnswer": "Correct answer. Good job.",
-            "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-            "explanation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-            "point": "20"
-        },
-        {
-            "question": "ReactJS is developed by _____?",
-            "questionType": "text",
-            "answerSelectionType": "single",
-            "answers": [
-                "Google Engineers",
-                "Facebook Engineers"
-            ],
-            "correctAnswer": "2",
-            "messageForCorrectAnswer": "Correct answer. Good job.",
-            "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-            "explanation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-            "point": "20"
-        },
-        {
-            "question": "ReactJS is an MVC based framework?",
-            "questionType": "text",
-            "answerSelectionType": "single",
-            "answers": [
-                "True",
-                "False"
-            ],
-            "correctAnswer": "2",
-            "messageForCorrectAnswer": "Correct answer. Good job.",
-            "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-            "explanation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-            "point": "10"
-        },
-        {
-            "question": "Which of the following concepts is/are key to ReactJS?",
-            "questionType": "text",
-            "answerSelectionType": "single",
-            "answers": [
-                "Component-oriented design",
-                "Event delegation model",
-                "Both of the above",
-            ],
-            "correctAnswer": "3",
-            "messageForCorrectAnswer": "Correct answer. Good job.",
-            "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-            "explanation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-            "point": "30"
-        },
-        {
-            "question": "Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
-            "questionType": "photo",
-            "answerSelectionType": "single",
-            "answers": [
-                "https://dummyimage.com/600x400/000/fff&text=A",
-                "https://dummyimage.com/600x400/000/fff&text=B",
-                "https://dummyimage.com/600x400/000/fff&text=C",
-                "https://dummyimage.com/600x400/000/fff&text=D"
-            ],
-            "correctAnswer": "1",
-            "messageForCorrectAnswer": "Correct answer. Good job.",
-            "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-            "explanation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-            "point": "20"
-        },
-        {
-            "question": "What are the advantages of React JS?",
-            "questionType": "text",
-            "answerSelectionType": "multiple",
-            "answers": [
-                "React can be used on client and as well as server side too",
-                "Using React increases readability and makes maintainability easier. Component, Data patterns improves readability and thus makes it easier for manitaining larger apps",
-                "React components have lifecycle events that fall into State/Property Updates",
-                "React can be used with any other framework (Backbone.js, Angular.js) as it is only a view layer"
-            ],
-            "correctAnswer": [1, 2, 4],
-            "messageForCorrectAnswer": "Correct answer. Good job.",
-            "messageForIncorrectAnswer": "Incorrect answer. Please try again.",
-            "explanation": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-            "point": "20"
-        },
-    ]
-}
-
-
-
-import {
-    Row,
-    Col,
-    Card,
-    Portlet,
-    Container,
-    Button,
-} from "@panely/components";
+import { Row, Col, Card, Portlet, Container, Button } from "@panely/components";
 import { pageChangeHeaderTitle, breadcrumbChange } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -116,63 +8,230 @@ import { firestoreClient } from "components/firebase/firebaseClient";
 import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
-
+import Alert from "@panely/components/Alert";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Label from "@panely/components/Label";
 
 class QuizPage extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+  constructor(props) {
+    super(props);
+    this.state = {
+      quizTitle: "Check your knowledge of the runner",
+      quizSynopsis:
+        "Welcome to the Knowledge Verification Quiz for the Runner, by passing this Quiz you can get the pathway trophy. Solve the Quiz in the shortest time.",
+      questions: [],
+    };
+  }
 
-    componentDidMount() {
-        if (!Router.query.id) {
-            Router.push("/catalog");
-        }
-        this.props.pageChangeHeaderTitle("Pathway");
-        this.props.breadcrumbChange([
-            { text: "Catalog", link: "/catalog" },
-            { text: "My Journey", link: "/catalog/journey?id=" + Router.query.id },
-            { text: "Quiz" },
-        ]);
+  componentDidMount() {
+    if (!Router.query.id) {
+      Router.push("/catalog");
     }
+    this.props.pageChangeHeaderTitle("Pathway");
+    this.props.breadcrumbChange([
+      { text: "Catalog", link: "/catalog" },
+      { text: "My Journey", link: "/catalog/journey?id=" + Router.query.id },
+      { text: "Quiz" },
+    ]);
 
-    render() {
-        return (
-            <React.Fragment>
-                <Head>
-                    <title>Quiz | Teaching Path</title>
-                </Head>
-                <Container fluid>
-                    <Row>
-                        <Col md="12">
-                            <Portlet>
-                                <Portlet.Header bordered>
-                                    <Portlet.Title>Validation runner</Portlet.Title>
-                                </Portlet.Header>
-                                <Portlet.Body>
-                                    <p>
-                                        You can see the pathways here but in order to apply you must
-                                        have a user account.
-                    </p>
-                                    <Quiz quiz={quiz} showDefaultResult={false} />
-                                </Portlet.Body>
-                            </Portlet>
-                        </Col>
-                    </Row>
-                </Container>
-            </React.Fragment>
-        );
-    }
+    firestoreClient
+      .collection("runners")
+      .doc(Router.query.runnerId)
+      .collection("questions")
+      .get()
+      .then((querySnapshot) => {
+        const questions = [];
+
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const type = data.type;
+          let correctAnswer = null;
+          const answers = data.options.map((opt) => {
+            return opt.name;
+          });
+          data.options.forEach((opt, index) => {
+            if (type == "single" && opt.isCorrect === true) {
+              correctAnswer = index + 1 + "";
+              return;
+            }
+            if (type == "multiple" && opt.isCorrect === true) {
+              if (correctAnswer === null) {
+                correctAnswer = [];
+              }
+              correctAnswer.push(index + 1);
+            }
+          });
+          questions.push({
+            question: data.question,
+            questionType: "text",
+            answerSelectionType: type,
+            answers: answers,
+            correctAnswer: correctAnswer,
+            point: "10",
+          });
+        });
+        this.setState({
+          ...this.state,
+          questions: questions,
+        });
+        console.log(questions);
+      });
+  }
+
+  renderCustomResultPage = ({
+    numberOfCorrectAnswers,
+    numberOfQuestions,
+    totalPoints,
+  }) => {
+    const pass = numberOfCorrectAnswers === numberOfQuestions;
+    return pass === true ? (
+      <Alert
+        variant={"outline-success"}
+        icon={<FontAwesomeIcon icon={SolidIcon.faCheckCircle} />}
+      >
+        Congratulations you passed the Quiz. You have gotten {totalPoints}{" "}
+        bonuses.
+        <h4 className="mt-3">Result</h4>
+        <div>
+          <Label>
+            Number of correct answers:{" "}
+            <strong>
+              {numberOfCorrectAnswers}/{numberOfQuestions}
+            </strong>
+          </Label>
+        </div>
+        <p>
+          <Button
+            onClick={() => {
+              firestoreClient
+                .collection("journeys")
+                .doc(Router.query.id)
+                .get()
+                .then((doc) => {
+                  const data = doc.data();
+                  if (data.progress >= 100) {
+                    Router.push({
+                      pathname: "/catalog/journey",
+                      query: {
+                        id: Router.query.id,
+                      },
+                    });
+                  } else {
+                    let tracksCompleted = 1;
+                    let tracksTotal = data.breadcrumbs.length;
+                    data.breadcrumbs.forEach((runner) => {
+                      if (runner.tracks) {
+                        runner.tracks.forEach((track) => {
+                          tracksTotal++;
+                          if (track.status === "finish") {
+                            tracksCompleted++;
+                          }
+                        });
+                      }
+                    });
+                    data.progress = (tracksCompleted / tracksTotal) * 100;
+                    data.current = data.current + 1;
+
+                    firestoreClient
+                      .collection("journeys")
+                      .doc(Router.query.id)
+                      .collection("badgets")
+                      .doc(Router.query.runnerId)
+                      .update({
+                        disabled: false,
+                        date: new Date(),
+                      })
+                      .then((doc) => {
+                        return firestoreClient
+                          .collection("journeys")
+                          .doc(Router.query.id)
+                          .update(data)
+                          .then((docRef) => {
+                            Router.push({
+                              pathname: "/catalog/journey",
+                              query: {
+                                id: Router.query.id,
+                              },
+                            });
+                          });
+                      })
+                      .catch((error) => {
+                        console.error("Error adding document: ", error);
+                      });
+                  }
+                });
+            }}
+          >
+            Finish
+          </Button>
+        </p>
+      </Alert>
+    ) : (
+      <Alert
+        variant={"outline-danger"}
+        icon={<FontAwesomeIcon icon={SolidIcon.faTimes} />}
+      >
+        The Quiz was not passed, you must try again in order to get the Runner's
+        Badget. Cheer up and try again.
+        <h4 className="mt-3">Result</h4>
+        <div>
+          <Label>
+            Number of correct answers:{" "}
+            <strong>
+              {numberOfCorrectAnswers} / {numberOfQuestions}
+            </strong>
+          </Label>
+        </div>
+        <p>
+          <Button
+            onClick={() => {
+              Router.reload();
+            }}
+          >
+            Retry Quiz
+          </Button>
+        </p>
+      </Alert>
+    );
+  };
+
+  render() {
+    return (
+      <React.Fragment>
+        <Head>
+          <title>Quiz | Teaching Path</title>
+        </Head>
+        <Container fluid>
+          <Row>
+            <Col md="12">
+              <Portlet>
+                <Portlet.Header bordered>
+                  <Portlet.Title>Validation runner</Portlet.Title>
+                </Portlet.Header>
+                <Portlet.Body>
+                  {this.state.questions.length > 0 && (
+                    <Quiz
+                      quiz={this.state}
+                      showDefaultResult={false}
+                      customResultPage={this.renderCustomResultPage}
+                    />
+                  )}
+                </Portlet.Body>
+              </Portlet>
+            </Col>
+          </Row>
+        </Container>
+      </React.Fragment>
+    );
+  }
 }
 
 function mapDispathToProps(dispatch) {
-    return bindActionCreators(
-        { pageChangeHeaderTitle, breadcrumbChange },
-        dispatch
-    );
+  return bindActionCreators(
+    { pageChangeHeaderTitle, breadcrumbChange },
+    dispatch
+  );
 }
 
-export default connect(
-    null,
-    mapDispathToProps
-)(withLayout(QuizPage, "public"));
-
+export default connect(null, mapDispathToProps)(withLayout(QuizPage, "public"));

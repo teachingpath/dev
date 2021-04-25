@@ -215,7 +215,7 @@ function QuizForm({ runnerId, pathwayId, saved, data, activityChange }) {
                 <option value="default">Select your type</option>
                 <option value="multiple">Multiple</option>
                 <option value="single">Single</option>
-                <option value="yes_no">Yes/No</option>
+                <option value="single">Yes/No</option>
               </Controller>
               {errors.type && <Form.Feedback children={errors.type.message} />}
             </Form.Group>

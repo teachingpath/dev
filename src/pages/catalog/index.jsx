@@ -76,7 +76,7 @@ class CatalogPage extends React.Component {
                   <CardColumns>
                     {this.state.data.map((data, index) => {
                       return (
-                        <Card id={"pathwayId-" + index}>
+                        <Card key={"pathwayId-" + index}>
                           <Card.Img top src={data.image} alt="Pathway Image" />
                           <Card.Body>
                             <Card.Title>{data.name}</Card.Title>
