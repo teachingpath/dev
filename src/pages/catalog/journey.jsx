@@ -8,13 +8,9 @@ import {
   Progress,
   Collapse,
   Accordion,
-  Modal,
-  Timeline,
-  Marker,
 } from "@panely/components";
 import {
   firestoreClient,
-  firebaseClient,
 } from "components/firebase/firebaseClient";
 import { pageChangeHeaderTitle, breadcrumbChange } from "store/actions";
 import { bindActionCreators } from "redux";
@@ -27,11 +23,8 @@ import withAuth from "components/firebase/firebaseWithAuth";
 import Router from "next/router";
 import Steps from "rc-steps";
 import Button from "@panely/components/Button";
-import Countdown, { zeroPad } from "react-countdown";
-import QuestionForm from "./question";
-import Training from "./training";
-import Hacking from "./hacking";
-import CardColumns from "@panely/components/CardColumns";
+import TrackModal from "./trackModal";
+import BadgetList from "./badgetList";
 
 class JourneyGeneralPage extends React.Component {
   state = { name: "Loading", trophy: {}, progress: 0, badgets: [] };
@@ -39,7 +32,7 @@ class JourneyGeneralPage extends React.Component {
     if (!Router.query.id) {
       Router.push("/catalog");
     }
-    this.props.pageChangeHeaderTitle("Pathway");
+    this.props.pageChangeHeaderTitle("Pathways");
     this.props.breadcrumbChange([
       { text: "Catalog", link: "/catalog" },
       { text: "My Journey" },
@@ -62,25 +55,8 @@ class JourneyGeneralPage extends React.Component {
             { text: "Pathway", link: "/catalog/pathway?id=" + data.pathwayId },
             { text: "My Journey" },
           ]);
-          return firestoreClient
-            .collection("journeys")
-            .doc(Router.query.id)
-            .collection("badgets")
-            .get();
         } else {
           console.log("No such document!");
-        }
-      })
-      .then((querySnapshot) => {
-        if (!querySnapshot.empty) {
-          const list = [];
-          querySnapshot.forEach((doc) => {
-            list.push(doc.data());
-          });
-          this.setState({
-            ...this.state,
-            badgets: list,
-          });
         }
       })
       .catch((error) => {
@@ -144,7 +120,7 @@ class JourneyGeneralPage extends React.Component {
                   <Row>
                     <Col md="6">
                       {this.state?.id && (
-                        <BadgetList badgets={this.state?.badgets} />
+                        <BadgetList journeyId={this.state?.id}/>
                       )}
                     </Col>
                     <Col md="6">
@@ -241,7 +217,7 @@ class Tracks extends React.Component {
                 <div>
                   <p>{item.subtitle}</p>
                   {item.status === "process" && (
-                    <ContentModal
+                    <TrackModal
                       runnerId={runnerId}
                       runnerIndex={runnerIndex}
                       trackId={item.id}
@@ -250,7 +226,7 @@ class Tracks extends React.Component {
                       isRunning={item.isRunning || false}
                       runners={runners}
                       journeyId={journeyId}
-                    ></ContentModal>
+                    />
                   )}
                 </div>
               }
@@ -291,7 +267,6 @@ class Tracks extends React.Component {
 const StatusProgress = ({ progress, journeyId, pathwayId, runners }) => {
   const isFinish = progress >= 100;
   const onReCreateJourney = (pathwayId, journeyId, runners) => {
-    const user = firebaseClient.auth().currentUser;
 
     const breadcrumbs = runners.map(async (data, runnerIndex) => {
       const quiz = await firestoreClient
@@ -326,14 +301,14 @@ const StatusProgress = ({ progress, journeyId, pathwayId, runners }) => {
         }),
       };
     });
+
     return Promise.all(breadcrumbs).then((dataResolved) => {
       return firestoreClient
         .collection("journeys")
         .doc(journeyId)
-        .set({
+        .update({
           progress: 1,
           pathwayId: pathwayId,
-          userId: user.uid,
           date: new Date(),
           current: 0,
           breadcrumbs: dataResolved,
@@ -388,324 +363,7 @@ const StatusProgress = ({ progress, journeyId, pathwayId, runners }) => {
   );
 };
 
-const BadgetList = ({ badgets }) => {
-  return (
-    <>
-      <div className="mt-3">
-        <h4>Badgets</h4>
-        <CardColumns>
-          {badgets.map((data) => {
-            if (data.disabled) {
-              return (
-                <Card className="text-center bg-light">
-                  <Card.Img
-                    top
-                    className=" mg-thumbnail avatar-circle p-2 border border-warning"
-                    src={data.image}
-                    alt="Badget Image"
-                  />
-                  <Card.Body>
-                    <Card.Title>Not available</Card.Title>
-                  </Card.Body>
-                </Card>
-              );
-            } else {
-              return (
-                <Card className="text-center">
-                  <Card.Img
-                    top
-                    className=" mg-thumbnail avatar-circle p-2"
-                    src={data.image}
-                    alt="Badget Image"
-                  />
-                  <Card.Body>
-                    <Card.Title>{data.name}</Card.Title>
-                    <Card.Text>
-                      <small className="text-muted">{data.description}</small>
-                    </Card.Text>
-                  </Card.Body>
-                </Card>
-              );
-            }
-          })}
-        </CardColumns>
-      </div>
-    </>
-  );
-};
 
-class ContentModal extends React.Component {
-  time = 0;
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      isOpen: false,
-      isRunning: props.isRunning || false,
-    };
-    this.countdownRef = React.createRef();
-  }
-  toggle = () => {
-    this.setState({ isOpen: !this.state.isOpen });
-    if (!this.state.isOpen) {
-      this.loadData();
-    }
-  };
-
-  loadData() {
-    firestoreClient
-      .collection("runners")
-      .doc(this.props.runnerId)
-      .collection("tracks")
-      .doc(this.props.trackId)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          this.setState({
-            isOpen: true,
-            isRunning: true,
-            id: this.props.trackId,
-            ...doc.data(),
-          });
-        } else {
-          console.log("No such document!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-  }
-
-  complete = () => {
-    const { runnerIndex, trackIndex, journeyId, runners } = this.props;
-    const data = {
-      breadcrumbs: runners,
-    };
-    let tracksCompleted = 1;
-    let tracksTotal = data.breadcrumbs.length;
-    data.breadcrumbs.forEach((runner) => {
-      if (runner.tracks) {
-        runner.tracks.forEach((track) => {
-          tracksTotal++;
-          if (track.status === "finish") {
-            tracksCompleted++;
-          }
-        });
-      }
-    });
-    data.progress = (tracksCompleted / tracksTotal) * 100;
-
-    const tracks = data.breadcrumbs[runnerIndex].tracks;
-
-    tracks[trackIndex].time = 0;
-    tracks[trackIndex].status = "finish";
-    if (tracks.length - 1 > trackIndex) {
-      tracks[trackIndex + 1].status = "process";
-    }
-
-    return firestoreClient
-      .collection("journeys")
-      .doc(journeyId)
-      .update(data)
-      .then((docRef) => {});
-  };
-
-  renderer = ({ hours, minutes, seconds, completed, total }) => {
-    const { runnerIndex, trackIndex, journeyId, runners } = this.props;
-    if (completed) {
-      this.complete();
-      return <span> 00:00:00 h</span>;
-    } else {
-      if (minutes % 2 === 0 && minutes !== this.time) {
-        this.time = minutes;
-        const data = {
-          breadcrumbs: runners,
-        };
-        data.breadcrumbs[runnerIndex].tracks[trackIndex].time = total;
-        data.breadcrumbs[runnerIndex].tracks[trackIndex].isRunning = true;
-        firestoreClient
-          .collection("journeys")
-          .doc(journeyId)
-          .update(data)
-          .then((docRef) => {});
-      }
-      return (
-        <span>
-          Running [{zeroPad(hours)}:{zeroPad(minutes)}:{zeroPad(seconds)} h]
-        </span>
-      );
-    }
-  };
-
-  render() {
-    const { name, type, isRunning, timeLimit } = this.state;
-    const { time } = this.props;
-    const titleButton = timeLimit
-      ? "Time limit [" + timeLimit + " hour]"
-      : "Start this track";
-    const date = this.countdownRef?.current?.props?.date
-      ? this.countdownRef?.current?.props?.date
-      : Date.now() + time;
-    return (
-      <React.Fragment>
-        <Button title={titleButton} onClick={this.toggle}>
-          {(isRunning && (
-            <Countdown
-              ref={this.countdownRef}
-              date={date}
-              renderer={this.renderer}
-            />
-          )) || <>Start</>}
-        </Button>
-        {/* BEGIN Modal */}
-        <Modal
-          scrollable
-          isOpen={this.state.isOpen}
-          toggle={this.toggle}
-          className="modal-xl"
-        >
-          <Modal.Header toggle={this.toggle}>
-            {name || "Loading"}
-            <small className="text-muted"> {type || ""}</small>
-          </Modal.Header>
-          <Modal.Body>
-            {
-              {
-                learning: (
-                  <div
-                    dangerouslySetInnerHTML={{ __html: this.state.content }}
-                  />
-                ),
-                q_and_A: <Questions data={this.state} />,
-                training: <Training data={this.state} />,
-                hacking: <Hacking data={this.state} />,
-              }[type]
-            }
-          </Modal.Body>
-          <Modal.Footer>
-            <strong className="mr-2">{titleButton}</strong>
-            <Button
-              variant="primary"
-              className="mr-2"
-              title={"I have completed this track"}
-              onClick={() => {
-                this.complete().then(() => {
-                  Router.reload();
-                });
-              }}
-            >
-              Complete
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        {/* END Modal */}
-      </React.Fragment>
-    );
-  }
-}
-
-class Questions extends React.Component {
-  // Default active card id
-  state = { activeCard: 0, list: [] };
-
-  // Handle toggling accordion
-  toggle = (id) => {
-    if (this.state.activeCard === id) {
-      this.setState({ activeCard: null });
-    } else {
-      this.setState({ activeCard: id });
-    }
-  };
-
-  componentDidMount() {
-    const {
-      data: { id },
-    } = this.props;
-    firestoreClient
-      .collection("track-answers")
-      .orderBy("date")
-      .where("trackId", "==", id)
-      .limit(30)
-      .get()
-      .then((querySnapshot) => {
-        if (!querySnapshot.empty) {
-          const list = [];
-          querySnapshot.forEach((doc) => {
-            list.push(doc.data());
-          });
-          this.setState({
-            ...this.state,
-            list: list,
-          });
-        } else {
-          console.log("No such journeys!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting journeys: ", error);
-      });
-  }
-
-  render() {
-    const { activeCard } = this.state;
-    const {
-      data: { questions, id },
-    } = this.props;
-    return (
-      <Accordion>
-        {questions.map((question, index) => {
-          return (
-            <Card>
-              <Card.Header
-                collapsed={!(activeCard === index)}
-                onClick={() => this.toggle(index)}
-              >
-                <Card.Title>{question.name}</Card.Title>
-              </Card.Header>
-              <Collapse isOpen={activeCard === index}>
-                <Card.Body>
-                  <QuestionForm
-                    onSave={(data) => {
-                      const user = firebaseClient.auth().currentUser;
-                      return firestoreClient
-                        .collection("track-answers")
-                        .add({
-                          id: question.id,
-                          trackId: id,
-                          ...data,
-                          userId: user.uid,
-                          date: Date.now(),
-                        })
-                        .then(() => {
-                          this.componentDidMount();
-                        });
-                    }}
-                  />
-
-                  <Timeline>
-                    {this.state.list.map((data, index) => {
-                      const { date, answer } = data;
-
-                      return (
-                        <Timeline.Item
-                          key={index}
-                          date={date}
-                          pin={<Marker type="circle" />}
-                        >
-                          {answer}
-                        </Timeline.Item>
-                      );
-                    })}
-                  </Timeline>
-                </Card.Body>
-              </Collapse>
-            </Card>
-          );
-        })}
-      </Accordion>
-    );
-  }
-}
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(

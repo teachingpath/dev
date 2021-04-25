@@ -12,6 +12,7 @@ import Carusel from "components/widgets/Widget36";
 import Activities from "components/widgets/Widget13";
 import Pathways from "components/widgets/Widget14";
 import Journeys from "./catalog/journeyList";
+import BadgetList from "./catalog/badgetList"
 import Widget33 from "components/widgets/Widget33";
 import Head from "next/head";
 
@@ -57,7 +58,7 @@ class DashboardPage extends React.Component {
                <Journeys {...this.props}/>
               </Col>
               <Col md="6">
-                Logros
+                <BadgetList/>
               </Col>
             </Row>
           )}
