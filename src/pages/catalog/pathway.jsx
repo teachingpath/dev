@@ -21,7 +21,8 @@ import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
 import Button from "@panely/components/Button";
-import uuid from "components/helpers/uuid"
+import uuid from "components/helpers/uuid";
+import Spinner from "@panely/components/Spinner";
 
 class PathwayComponent extends React.Component {
   constructor(props) {
@@ -59,7 +60,7 @@ class PathwayComponent extends React.Component {
   }
 
   render() {
-    const { name, id} = this.state;
+    const { name, id } = this.state;
 
     return (
       <Widget1>
@@ -96,6 +97,7 @@ class PathwayComponent extends React.Component {
 class Status extends React.Component {
   state = {
     journeyId: null,
+    loading: null,
   };
   componentDidMount() {
     const { pathwayId } = this.props;
@@ -152,7 +154,7 @@ class Status extends React.Component {
         .doc(data.id)
         .set({
           ...data.badget,
-          disabled: true
+          disabled: true,
         });
 
       return {
@@ -202,14 +204,22 @@ class Status extends React.Component {
   render() {
     const user = firebaseClient.auth().currentUser;
     const { pathwayId, trophy, name } = this.props;
-    const journeyId = uuid()
+    const { loading } = this.state;
+    const journeyId = uuid();
     const Start = () => {
       return (
         <Button
           className="w-25"
-          onClick={() => this.onCreateJourney(pathwayId, journeyId, trophy, name)}
+          disabled={loading}
+          onClick={() => {
+            this.setState({
+              ...this.state,
+              loading: true,
+            });
+            this.onCreateJourney(pathwayId, journeyId, trophy, name);
+          }}
         >
-          Start Pathway
+          {loading && <Spinner className="mr-2" />} Start Pathway
         </Button>
       );
     };

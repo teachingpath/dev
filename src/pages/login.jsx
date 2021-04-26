@@ -9,13 +9,10 @@ import {
   Spinner,
   Container,
   FloatLabel,
-  Widget12,
 } from "@panely/components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm, Controller } from "react-hook-form";
 import { firebaseClient } from "components/firebase/firebaseClient";
 import { yupResolver } from "@hookform/resolvers";
-import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import * as yup from "yup";
 import verifyCookie from "components/firebase/firebaseVerifyCookie";
 import withLayout from "components/layout/withLayout";

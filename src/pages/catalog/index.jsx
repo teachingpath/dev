@@ -16,11 +16,12 @@ import Head from "next/head";
 import Router from "next/router";
 import Link from "next/link";
 import Badge from "@panely/components/Badge";
+import Spinner from "@panely/components/Spinner";
 
 class CatalogPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { data: [] };
+    this.state = { data: null };
   }
 
   componentDidMount() {
@@ -56,6 +57,9 @@ class CatalogPage extends React.Component {
   }
 
   render() {
+    if (this.state.data === null) {
+      return <Spinner className="m-5">Loading</Spinner>;
+    }
     return (
       <React.Fragment>
         <Head>
@@ -74,6 +78,12 @@ class CatalogPage extends React.Component {
                     have a user account.
                   </p>
                   <CardColumns>
+                    {this.state.data.length === 0 && (
+                      <p className="p-5">
+                        There is no match to display.{" "}
+                        <Link href="/catalog?q=">Show all</Link>
+                      </p>
+                    )}
                     {this.state.data.map((data, index) => {
                       return (
                         <Card key={"pathwayId-" + index}>
@@ -100,7 +110,10 @@ class CatalogPage extends React.Component {
                                 Tags:{" "}
                                 {data.tags.map((tag, index) => {
                                   return (
-                                    <Badge variant="label-info" className="mr-1">
+                                    <Badge
+                                      variant="label-info"
+                                      className="mr-1"
+                                    >
                                       <Link href={"/catalog?tag=" + tag}>
                                         {tag}
                                       </Link>

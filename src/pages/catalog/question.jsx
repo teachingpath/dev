@@ -1,4 +1,19 @@
-import { Form, Label, Input, Button, FloatLabel } from "@panely/components";
+import {
+  Form,
+  Label,
+  Input,
+  Button,
+  FloatLabel,
+  Card,
+  Collapse,
+  Accordion,
+  Timeline,
+  Marker,
+} from "@panely/components";
+import {
+  firestoreClient,
+  firebaseClient,
+} from "components/firebase/firebaseClient";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
@@ -57,4 +72,107 @@ function QuestionForm({ onSave }) {
   );
 }
 
-export default QuestionForm;
+class Questions extends React.Component {
+  // Default active card id
+  state = { activeCard: 0, list: [] };
+
+  // Handle toggling accordion
+  toggle = (id) => {
+    if (this.state.activeCard === id) {
+      this.setState({ activeCard: null });
+    } else {
+      this.setState({ activeCard: id });
+    }
+  };
+
+  componentDidMount() {
+    const {
+      data: { id },
+    } = this.props;
+    firestoreClient
+      .collection("track-answers")
+      .orderBy("date")
+      .where("trackId", "==", id)
+      .limit(30)
+      .get()
+      .then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+          const list = [];
+          querySnapshot.forEach((doc) => {
+            list.push(doc.data());
+          });
+          this.setState({
+            ...this.state,
+            list: list,
+          });
+        } else {
+          console.log("No such journeys!");
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting journeys: ", error);
+      });
+  }
+
+  render() {
+    const { activeCard } = this.state;
+    const {
+      data: { questions, id },
+    } = this.props;
+    return (
+      <Accordion>
+        {questions.map((question, index) => {
+          return (
+            <Card>
+              <Card.Header
+                collapsed={!(activeCard === index)}
+                onClick={() => this.toggle(index)}
+              >
+                <Card.Title>{question.name}</Card.Title>
+              </Card.Header>
+              <Collapse isOpen={activeCard === index}>
+                <Card.Body>
+                  <QuestionForm
+                    onSave={(data) => {
+                      const user = firebaseClient.auth().currentUser;
+                      return firestoreClient
+                        .collection("track-answers")
+                        .add({
+                          id: question.id,
+                          trackId: id,
+                          ...data,
+                          userId: user.uid,
+                          date: Date.now(),
+                        })
+                        .then(() => {
+                          this.componentDidMount();
+                        });
+                    }}
+                  />
+
+                  <Timeline>
+                    {this.state.list.map((data, index) => {
+                      const { date, answer } = data;
+
+                      return (
+                        <Timeline.Item
+                          key={index}
+                          date={date}
+                          pin={<Marker type="circle" />}
+                        >
+                          {answer}
+                        </Timeline.Item>
+                      );
+                    })}
+                  </Timeline>
+                </Card.Body>
+              </Collapse>
+            </Card>
+          );
+        })}
+      </Accordion>
+    );
+  }
+}
+
+export default Questions;
