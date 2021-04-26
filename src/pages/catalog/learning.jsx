@@ -1,4 +1,3 @@
-import Steps from "rc-steps";
 import {
   Form,
   Label,
@@ -19,18 +18,18 @@ import { yupResolver } from "@hookform/resolvers";
 import Row from "@panely/components/Row";
 import Col from "@panely/components/Col";
 
-function SolutionForm({ onSave }) {
+function FeedbackForm({ onSave }) {
   const schema = yup.object().shape({
-    solution: yup
+    feedback: yup
       .string()
       .min(5, "Please enter at least 5 characters")
-      .required("Please enter your solution"),
+      .required("Please enter your feedback"),
   });
 
   const { control, errors, handleSubmit, reset } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      solution: "",
+        feedback: "",
     },
   });
   return (
@@ -48,22 +47,22 @@ function SolutionForm({ onSave }) {
               <Controller
                 as={Input}
                 type="textarea"
-                id="solution"
-                name="solution"
+                id="feedback"
+                name="feedback"
                 control={control}
-                invalid={Boolean(errors.solution)}
-                placeholder="Insert your solution"
+                invalid={Boolean(errors.feedback)}
+                placeholder="Insert your feedback"
               />
-              <Label for="name">My Solution</Label>
-              {errors.solution && (
-                <Form.Feedback children={errors.solution.message} />
+              <Label for="name">My Feedback</Label>
+              {errors.feedback && (
+                <Form.Feedback children={errors.feedback.message} />
               )}
             </FloatLabel>
           </Form.Group>
         </Col>
         <Col sm="12">
           <Button type="submit" variant="primary">
-            Respond
+            Send
           </Button>
         </Col>
       </Row>
@@ -71,7 +70,7 @@ function SolutionForm({ onSave }) {
   );
 }
 
-class Hacking extends React.Component {
+class Learning extends React.Component {
   state = { list: [] };
 
   componentDidMount() {
@@ -82,7 +81,7 @@ class Hacking extends React.Component {
       .collection("track-answers")
       .orderBy("date")
       .where("trackId", "==", id)
-      .limit(10)
+      .limit(20)
       .get()
       .then((querySnapshot) => {
         if (!querySnapshot.empty) {
@@ -107,36 +106,12 @@ class Hacking extends React.Component {
     const id = data.id;
     return (
       <>
-        <Card>
-          <Card.Header>Guidelines</Card.Header>
-          <Card.Body>
-            <Card.Subtitle>
-              Take into account the following guide to carry out the hacking
-            </Card.Subtitle>
-            <Card.Text>
-              <div dangerouslySetInnerHTML={{ __html: data.guidelines }} />
-            </Card.Text>
-          </Card.Body>
-        </Card>
-
-        <Card className="mt-3">
-          <Card.Header>Criteria</Card.Header>
-          <Card.Body>
-            <Card.Subtitle>
-              Hacking should be assessed as follows:
-            </Card.Subtitle>
-            <Card.Text>
-              <div dangerouslySetInnerHTML={{ __html: data.criteria }} />
-            </Card.Text>
-          </Card.Body>
-        </Card>
+        <div dangerouslySetInnerHTML={{ __html: data.content }} />
         <div>
-          <h3 className="mt-3">Solution</h3>
-          <p>
-            Add here your hacking answer, add links, repositories or comments.
-          </p>
+          <h3 className="mt-3">Feedback</h3>
+          <p>Write a feedback about what you learned.</p>
 
-          <SolutionForm
+          <FeedbackForm
             onSave={(data) => {
               const user = firebaseClient.auth().currentUser;
               return firestoreClient
@@ -156,11 +131,11 @@ class Hacking extends React.Component {
           />
           <Timeline>
             {this.state.list.map((data, index) => {
-              const { date, solution } = data;
+              const { date, feedback } = data;
 
               return (
                 <Timeline.Item date={date} pin={<Marker type="dot" />}>
-                  {solution}
+                  {feedback}
                 </Timeline.Item>
               );
             })}
@@ -171,4 +146,4 @@ class Hacking extends React.Component {
   }
 }
 
-export default Hacking;
+export default Learning;

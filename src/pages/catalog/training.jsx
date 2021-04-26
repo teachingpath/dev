@@ -1,5 +1,13 @@
 import Steps from "rc-steps";
-import { Form, Label, Input, Button, FloatLabel } from "@panely/components";
+import {
+  Form,
+  Label,
+  Input,
+  Button,
+  FloatLabel,
+  Timeline,
+  Marker
+} from "@panely/components";
 import {
   firestoreClient,
   firebaseClient,
@@ -12,7 +20,7 @@ import Col from "@panely/components/Col";
 
 function SolutionForm({ onSave }) {
   const schema = yup.object().shape({
-    answer: yup
+    result: yup
       .string()
       .min(5, "Please enter at least 5 characters")
       .required("Please enter your result"),
@@ -45,19 +53,19 @@ function SolutionForm({ onSave }) {
                 invalid={Boolean(errors.result)}
                 placeholder="Insert your result"
               />
-              <Label for="name">Result</Label>
+              <Label for="name">My Result</Label>
               {errors.result && (
                 <Form.Feedback children={errors.result.message} />
               )}
             </FloatLabel>
           </Form.Group>
         </Col>
-        <Col sm="2">
-          <Button type="submit" variant="primary" className="ml-2" onClick={() => {
-        console.log("asdasdas");
-
-          }}>
-            Send
+        <Col sm="12">
+          <Button
+            type="submit"
+            variant="primary"
+          >
+            Reply
           </Button>
         </Col>
       </Row>
@@ -66,13 +74,38 @@ function SolutionForm({ onSave }) {
 }
 
 class Training extends React.Component {
-  state = { current: 0 };
-  componentDidMount(){
-
+  state = { current: 0, list: [] };
+  componentDidMount() {
+    const {
+      data: { id },
+    } = this.props;
+    firestoreClient
+      .collection("track-answers")
+      .orderBy("date")
+      .where("trackId", "==", id)
+      .limit(20)
+      .get()
+      .then((querySnapshot) => {
+        if (!querySnapshot.empty) {
+          const list = [];
+          querySnapshot.forEach((doc) => {
+            list.push(doc.data());
+          });
+          this.setState({
+            ...this.state,
+            list: list,
+          });
+        } else {
+          console.log("No such journeys!");
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting journeys: ", error);
+      });
   }
   render() {
     const {
-      data: { training },
+      data: { training, id },
     } = this.props;
     return (
       <Steps current={this.state.current} direction="vertical">
@@ -87,7 +120,10 @@ class Training extends React.Component {
                   {this.state.current === index && (
                     <Button
                       onClick={() => {
-                        this.setState({ current: this.state.current + 1 });
+                        this.setState({
+                          ...this.state,
+                          current: this.state.current + 1,
+                        });
                       }}
                     >
                       Done
@@ -103,7 +139,10 @@ class Training extends React.Component {
           title={"Result"}
           description={
             <>
-              <p>Add here the result of your work.</p>
+              <p>
+                Add here your training answer, add links, repositories or
+                comments.
+              </p>
               {this.state.current === training?.length && (
                 <>
                   <SolutionForm
@@ -124,6 +163,20 @@ class Training extends React.Component {
                         });
                     }}
                   />
+                  <Timeline>
+                    {this.state.list.map((data, index) => {
+                      const { date, result } = data;
+
+                      return (
+                        <Timeline.Item
+                          date={date}
+                          pin={<Marker type="dot" />}
+                        >
+                          {result}
+                        </Timeline.Item>
+                      );
+                    })}
+                  </Timeline>
                 </>
               )}
             </>

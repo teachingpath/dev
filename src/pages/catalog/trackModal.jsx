@@ -6,6 +6,7 @@ import Countdown, { zeroPad } from "react-countdown";
 import Questions from "./question";
 import Training from "./training";
 import Hacking from "./hacking";
+import Learning from "./learning";
 
 class TrackModal extends React.Component {
   time = 0;
@@ -14,6 +15,7 @@ class TrackModal extends React.Component {
     super(props);
     this.state = {
       isOpen: false,
+      dataTime: null,
       isRunning: props.isRunning || false,
     };
     this.countdownRef = React.createRef();
@@ -85,6 +87,7 @@ class TrackModal extends React.Component {
 
   renderer = ({ hours, minutes, seconds, completed, total }) => {
     const { runnerIndex, trackIndex, journeyId, runners } = this.props;
+   
     if (completed) {
       this.complete();
       return <span> 00:00:00 h</span>;
@@ -100,7 +103,12 @@ class TrackModal extends React.Component {
           .collection("journeys")
           .doc(journeyId)
           .update(data)
-          .then((docRef) => {});
+          .then((docRef) => {
+            this.setState({
+                ...this.state,
+                dataTime: zeroPad(hours)+":"+zeroPad(minutes)
+            })
+          });
       }
       return (
         <span>
@@ -111,7 +119,7 @@ class TrackModal extends React.Component {
   };
 
   render() {
-    const { name, type, isRunning, timeLimit } = this.state;
+    const { name, type, isRunning, timeLimit, dataTime } = this.state;
     const { time } = this.props;
     const titleButton = timeLimit
       ? "Time limit [" + timeLimit + " hour]"
@@ -144,11 +152,7 @@ class TrackModal extends React.Component {
           <Modal.Body>
             {
               {
-                learning: (
-                  <div
-                    dangerouslySetInnerHTML={{ __html: this.state.content }}
-                  />
-                ),
+                learning: <Learning data={this.state} />,
                 q_and_A: <Questions data={this.state} />,
                 training: <Training data={this.state} />,
                 hacking: <Hacking data={this.state} />,
@@ -156,7 +160,7 @@ class TrackModal extends React.Component {
             }
           </Modal.Body>
           <Modal.Footer>
-            <strong className="mr-2">{titleButton}</strong>
+            <strong className="mr-2">Time to finish {dataTime} hours.</strong>
             <Button
               variant="primary"
               className="mr-2"
