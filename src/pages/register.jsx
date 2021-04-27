@@ -163,6 +163,7 @@ function RegisterForm() {
                         email: email,
                         firstName: firstName,
                         lastName: lastName,
+                        point: 5
                       });
                   })
                   .catch((err) => {

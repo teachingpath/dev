@@ -1,6 +1,5 @@
 import { Layout } from "@panely/components"
-import FloatButton from "components/layout/part/FloatButton"
-import PAGE from "config/page.config"
+
 
 /*
  * Blank Layout
@@ -9,8 +8,6 @@ import PAGE from "config/page.config"
  */
 
 function BlankLayout({ children }) {
-  const { enableFloatButton } = PAGE.layout
-
   return (
     <Layout type="holder road-background">
       <Layout type="wrapper">
@@ -18,7 +15,6 @@ function BlankLayout({ children }) {
           {children}
         </Layout>
       </Layout>
-      {enableFloatButton ? <FloatButton /> : null}
     </Layout>
   )
 }

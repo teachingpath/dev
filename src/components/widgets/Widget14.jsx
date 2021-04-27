@@ -189,6 +189,7 @@ class Widget14Component extends React.Component {
         <Portlet.Body>
           {/* BEGIN Rich List */}
           <RichList bordered action>
+            {this.state.data.length ===0 && <p className="text-center">Empty pathways</p>}
             {this.state.data.map((data, index) => {
               const { name, description, id, draft } = data;
               return (

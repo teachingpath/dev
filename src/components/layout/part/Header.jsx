@@ -41,7 +41,7 @@ function HeaderComponent(props) {
               >
                 <FontAwesomeIcon icon={SolidIcon.faCog} />
               </Button>
-              <HeaderUser className="ml-2" />
+              <HeaderUser />
             </Header.Wrap>
           </Header.Container>
         </Header.Holder>

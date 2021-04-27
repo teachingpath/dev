@@ -78,7 +78,7 @@ class Learning extends React.Component {
       data: { id },
     } = this.props;
     firestoreClient
-      .collection("track-answers")
+      .collection("track-response")
       .orderBy("date")
       .where("trackId", "==", id)
       .limit(20)
@@ -115,7 +115,7 @@ class Learning extends React.Component {
             onSave={(data) => {
               const user = firebaseClient.auth().currentUser;
               return firestoreClient
-                .collection("track-answers")
+                .collection("track-response")
                 .add({
                   id: 1,
                   trackId: id,

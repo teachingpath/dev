@@ -15,7 +15,7 @@ class TrackModal extends React.Component {
     super(props);
     this.state = {
       isOpen: false,
-      dataTime: null,
+      dataTime: zeroPad(props.timeLimit)+":00",
       isRunning: props.isRunning || false,
     };
     this.countdownRef = React.createRef();
@@ -86,10 +86,12 @@ class TrackModal extends React.Component {
   };
 
   renderer = ({ hours, minutes, seconds, completed, total }) => {
-    const { runnerIndex, trackIndex, journeyId, runners } = this.props;
+    const { runnerIndex, trackIndex, journeyId, runners, onComplete } = this.props;
    
     if (completed) {
-      this.complete();
+      complete().then(() => {
+        onComplete();
+      });
       return <span> 00:00:00 h</span>;
     } else {
       if (minutes % 2 === 0 && minutes !== this.time) {
@@ -120,13 +122,14 @@ class TrackModal extends React.Component {
 
   render() {
     const { name, type, isRunning, timeLimit, dataTime } = this.state;
-    const { time } = this.props;
+    const { time, onComplete } = this.props;
     const titleButton = timeLimit
       ? "Time limit [" + timeLimit + " hour]"
       : "Start this track";
     const date = this.countdownRef?.current?.props?.date
       ? this.countdownRef?.current?.props?.date
       : Date.now() + time;
+      
     return (
       <React.Fragment>
         <Button title={titleButton} onClick={this.toggle}>
@@ -167,7 +170,7 @@ class TrackModal extends React.Component {
               title={"I have completed this track"}
               onClick={() => {
                 this.complete().then(() => {
-                  Router.reload();
+                  onComplete();
                 });
               }}
             >

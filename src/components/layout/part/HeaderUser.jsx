@@ -41,7 +41,7 @@ class HeaderUser extends React.Component {
     ),
     name: "Guest",
     email: "No email",
-    count: "34K",
+    point: "0",
     uid: null,
     navs: [
       [
@@ -75,32 +75,12 @@ class HeaderUser extends React.Component {
       });
   };
 
-  componentDidMount() {
-    if (this.props.firebase) {
-      const { name, email, user_id } = this.props.firebase;
-      this.setState({
-        ...this.state,
-        name,
-        email,
-        uid: user_id,
-      });
-    } else if (firebaseClient.auth().currentUser) {
-      const { displayName, email, uid } = firebaseClient.auth().currentUser;
-      this.setState({
-        ...this.state,
-        name: displayName,
-        email,
-        uid: uid,
-      });
-    } else {
-      console.log("no user selected ");
-    }
-  }
-
   render() {
-    const { avatar: WidgetAvatar, name, email, count, navs, uid } = this.state;
+    const { avatar: WidgetAvatar, navs } = this.state;
+    const { name, email, uid , point} = this.props.user;
+
     return (
-      <Dropdown.Uncontrolled >
+      <Dropdown.Uncontrolled className="ml-2">
         <Widget13
           dropdown
           variant="flat-primary"
@@ -139,7 +119,7 @@ class HeaderUser extends React.Component {
                       variant="warning"
                       shape="square"
                       size="lg"
-                      children={count}
+                      children={point}
                     />
                   </RichList.Addon>
                 </RichList.Item>
@@ -182,7 +162,7 @@ class HeaderUser extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    firebase: state.firebase,
+    user: state.user,
   };
 }
 

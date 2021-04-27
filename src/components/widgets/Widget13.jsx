@@ -56,6 +56,7 @@ class Widget13Component extends React.Component {
         </Portlet.Header>
         <Portlet.Body>
           {/* BEGIN Timeline */}
+          {this.state.data.length ===0 && <p className="text-center">Empty activities</p>}
           <Timeline timed>
             {this.state.data.map((data, index) => {
               const { time, date, color, content: Content } = data;

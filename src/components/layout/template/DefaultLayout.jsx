@@ -1,6 +1,5 @@
 import { Layout } from "@panely/components"
 import SidemenuSetting from "components/layout/part/SidemenuSetting"
-import FloatButton from "components/layout/part/FloatButton"
 import Scrolltop from "components/layout/part/Scrolltop"
 import Footer from "components/layout/part/Footer"
 import Header from "components/layout/part/Header"
@@ -19,7 +18,6 @@ class DefaultLayout extends React.Component {
       enableHeader,
       enableFooter,
       enableScrolltop,
-      enableFloatButton,
     } = PAGE.layout
     const { children } = this.props
 
@@ -33,7 +31,6 @@ class DefaultLayout extends React.Component {
           {enableFooter ? <Footer /> : null}
         </Layout>
         {enableScrolltop ? <Scrolltop /> : null}
-        {enableFloatButton ? <FloatButton /> : null}
         {enableHeader ? <SidemenuSetting /> : null}
       </Layout>
     )

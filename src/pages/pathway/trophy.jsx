@@ -138,11 +138,7 @@ function TrophyForm({ pathwayId, data, activityChange }) {
     description: yup
       .string()
       .min(5, "Please enter at least 5 characters")
-      .required("Please enter your description"),
-    points: yup
-      .number()
-      .min(100, "Please enter at least 10 points")
-      .required("Please enter your points"),
+      .required("Please enter your description")
   });
 
   const { control, handleSubmit, errors } = useForm({
@@ -152,7 +148,6 @@ function TrophyForm({ pathwayId, data, activityChange }) {
     defaultValues: {
       name: data?.name || "",
       description: data?.description || "",
-      points: data?.points || 100,
     },
   });
 
@@ -232,26 +227,6 @@ function TrophyForm({ pathwayId, data, activityChange }) {
               <Label for="trophy-description">Description</Label>
               {errors.description && (
                 <Form.Feedback children={errors.description.message} />
-              )}
-            </FloatLabel>
-          </Form.Group>
-          {/* END Form Group */}
-
-          {/* BEGIN Form Group */}
-          <Form.Group>
-            <FloatLabel>
-              <Controller
-                as={Input}
-                type="number"
-                id="trophy-points"
-                name="points"
-                control={control}
-                invalid={Boolean(errors.points)}
-                placeholder="Insert your points"
-              />
-              <Label for="trophy-points">Points</Label>
-              {errors.points && (
-                <Form.Feedback children={errors.points.message} />
               )}
             </FloatLabel>
           </Form.Group>

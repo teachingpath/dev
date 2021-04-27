@@ -6,6 +6,7 @@ import { firestoreClient } from "./firebaseClient";
 import verifyCookie from "components/firebase/firebaseVerifyCookie";
 import Router from "next/router";
 import PAGE from "config/page.config";
+import Spinner from "@panely/components/Spinner";
 
 function firebaseWithAuth(AuthComponent) {
   class Authentication extends React.Component {
@@ -52,13 +53,16 @@ function firebaseWithAuth(AuthComponent) {
           if (doc.exists) {
             this.props.userChange({
               ...doc.data(),
-              uid: this.props.firebase?.user_id
+              uid: this.props.firebase?.user_id,
             });
           }
         });
     }
 
     render() {
+      if (this.props.user === null) {
+        return <Spinner className="m-5"></Spinner>;
+      }
       return <AuthComponent {...this.props} />;
     }
   }
@@ -66,8 +70,12 @@ function firebaseWithAuth(AuthComponent) {
   function mapDispatchToProps(dispatch) {
     return bindActionCreators({ firebaseChange, userChange }, dispatch);
   }
-
-  return connect(null, mapDispatchToProps)(Authentication);
+  function mapStateToProps(state) {
+    return {
+      user: state.user,
+    };
+  }
+  return connect(mapStateToProps, mapDispatchToProps)(Authentication);
 }
 
 export default firebaseWithAuth;

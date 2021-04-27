@@ -9,10 +9,8 @@ import {
   Collapse,
   Accordion,
 } from "@panely/components";
-import {
-  firestoreClient,
-} from "components/firebase/firebaseClient";
-import { pageChangeHeaderTitle, breadcrumbChange } from "store/actions";
+import { firestoreClient } from "components/firebase/firebaseClient";
+import { pageChangeHeaderTitle, breadcrumbChange, activityChange } from "store/actions";
 import { bindActionCreators } from "redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
@@ -99,18 +97,26 @@ class JourneyGeneralPage extends React.Component {
                     </Widget1.DialogContent>
                   </Widget1.Dialog>
                   {Object.keys(trophy).length > 0 && (
-                    <Widget1.Offset
-                      className={isFinish ? "" : "bg-light p-2 rounded"}
-                    >
+                    <Widget1.Offset>
                       <img
                         src={trophy?.image}
                         alt="loading"
                         className="p-2 border mx-auto d-block mg-thumbnail avatar-circle"
                       />
-                      <h4 className="text-black mx-auto d-block text-center">
-                        {progress === 100 ? trophy?.name : "Not available"}
+                      <h4
+                        className={
+                          (isFinish ? "text-black " : "text-muted") +
+                          " mx-auto d-block text-center "
+                        }
+                      >
+                        {trophy?.name}
                       </h4>
-                      <small className="text-muted mx-auto d-block text-center">
+                      <small
+                        className={
+                          (isFinish ? "" : "text-muted") +
+                          " mx-auto d-block text-center "
+                        }
+                      >
                         {progress === 100 ? trophy?.description : ""}
                       </small>
                     </Widget1.Offset>
@@ -120,7 +126,7 @@ class JourneyGeneralPage extends React.Component {
                   <Row>
                     <Col md="6">
                       {this.state?.id && (
-                        <BadgetList journeyId={this.state?.id}/>
+                        <BadgetList journeyId={this.state?.id} />
                       )}
                     </Col>
                     <Col md="6">
@@ -129,6 +135,14 @@ class JourneyGeneralPage extends React.Component {
                           current={this.state.current}
                           runners={this.state.runners}
                           journeyId={this.state.id}
+                          onComplete={(data) => {
+                            this.props.activityChange({
+                              type: "complete_track",
+                              msn: 'Track "' + data.name + '" completed.',
+                              ...data
+                            });
+                            this.componentDidMount();
+                          }}
                         />
                       )}
                     </Col>
@@ -158,7 +172,7 @@ class Runners extends React.Component {
 
   render() {
     const { activeCard } = this.state;
-    const { runners, journeyId } = this.props;
+    const { runners, journeyId, onComplete } = this.props;
     return (
       <Accordion {...this.props}>
         {runners.map((item, index) => {
@@ -174,6 +188,9 @@ class Runners extends React.Component {
                 <Card.Body>{item.description}</Card.Body>
                 <Card.Body>
                   <Tracks
+                    onComplete={() => {
+                      onComplete(item);
+                    }}
                     runnerIndex={index}
                     tracks={item.tracks}
                     quiz={item.quiz}
@@ -202,6 +219,7 @@ class Tracks extends React.Component {
       journeyId,
       runners,
       quiz,
+      onComplete,
     } = this.props;
     const activeQuiz = tracks.every((track) => {
       return track.status === "finish";
@@ -222,9 +240,11 @@ class Tracks extends React.Component {
                       runnerIndex={runnerIndex}
                       trackId={item.id}
                       trackIndex={index}
+                      timeLimit={item.timeLimit}
                       time={item.time}
                       isRunning={item.isRunning || false}
                       runners={runners}
+                      onComplete={onComplete}
                       journeyId={journeyId}
                     />
                   )}
@@ -267,7 +287,6 @@ class Tracks extends React.Component {
 const StatusProgress = ({ progress, journeyId, pathwayId, runners }) => {
   const isFinish = progress >= 100;
   const onReCreateJourney = (pathwayId, journeyId, runners) => {
-
     const breadcrumbs = runners.map(async (data, runnerIndex) => {
       const quiz = await firestoreClient
         .collection("runners")
@@ -363,11 +382,9 @@ const StatusProgress = ({ progress, journeyId, pathwayId, runners }) => {
   );
 };
 
-
-
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
     dispatch
   );
 }

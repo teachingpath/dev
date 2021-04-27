@@ -28,7 +28,7 @@ class MyApp extends App {
     // Check whether dark mode support is available or not
     const darkModeActive = window.matchMedia("(prefers-color-scheme: dark)")
       .matches;
-    
+
     // TODO: change for window drive
     this.props.pageChangeTheme("light");
   }
@@ -48,30 +48,43 @@ class MyApp extends App {
 
   render() {
     const { Component, pageProps } = this.props;
-    let Layout;
-
+    console.log(pageProps.layout);
     switch (pageProps.layout) {
       case "default":
-        Layout = DefaultLayout;
-        break;
+        return (
+          <AuthProvider>
+            <DefaultLayout>
+              <ProgressBar />
+              <Component {...pageProps} />
+            </DefaultLayout>
+          </AuthProvider>
+        );
       case "blank":
-        Layout = BlankLayout;
-        break;
+        return (
+          <AuthProvider>
+            <BlankLayout>
+              <ProgressBar />
+              <Component {...pageProps} />
+            </BlankLayout>
+          </AuthProvider>
+        );
       case "public":
-        Layout = PublicLayout;
-        break;
+        return (
+          <PublicLayout>
+            <ProgressBar />
+            <Component {...pageProps} />
+          </PublicLayout>
+        );
       default:
-        Layout = BlankLayout;
+        return (
+          <AuthProvider>
+            <DefaultLayout>
+              <ProgressBar />
+              <Component {...pageProps} />
+            </DefaultLayout>
+          </AuthProvider>
+        );
     }
-
-    return (
-      <AuthProvider>
-        <Layout>
-          <ProgressBar />
-          <Component {...pageProps} />
-        </Layout>
-      </AuthProvider>
-    );
   }
 }
 

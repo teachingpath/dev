@@ -14,7 +14,7 @@ import {
   firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
-import { pageChangeHeaderTitle, breadcrumbChange } from "store/actions";
+import { pageChangeHeaderTitle, breadcrumbChange, activityChange } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import withLayout from "components/layout/withLayout";
@@ -69,6 +69,7 @@ class PathwayComponent extends React.Component {
             <Status
               pathwayId={id}
               {...this.state}
+              activityChange={this.props.activityChange}
               runnersRef={this.runnersRef}
             />
           )}
@@ -188,6 +189,10 @@ class Status extends React.Component {
           breadcrumbs: dataResolved,
         })
         .then((doc) => {
+          this.props.activityChange({
+            type: "start_pathway",
+            msn: 'Start pathway "' + name + '".',
+          });
           Router.push({
             pathname: "/catalog/journey",
             query: {
@@ -429,7 +434,7 @@ const Login = () => {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
     dispatch
   );
 }

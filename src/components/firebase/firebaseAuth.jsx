@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import { firebaseClient } from "./firebaseClient";
 import nookies from "nookies";
+import Spinner from "@panely/components/Spinner";
 
 // Set authentication context
 const AuthContext = createContext({
@@ -14,11 +15,8 @@ export function AuthProvider({ children }) {
     // Set Cookie when firebase authentication token is changed
     return firebaseClient.auth().onIdTokenChanged(async (user) => {
       const cookieExpireIn = 30 * 24 * 60 * 60;
-
-      // Check whether user has logged in
       if (!user) {
         setUser(null);
-
         // Remove token from cookie
         nookies.set(null, "token", "", {
           maxAge: cookieExpireIn,
@@ -35,17 +33,10 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
-  // Force refresh the token every 40 minutes
-  useEffect(() => {
-    const handle = setInterval(async () => {
-      const user = firebaseClient.auth().currentUser;
-      if (user) {
-        await user.getIdToken(true);
-      }
-    }, 40 * 60 * 1000);
 
-    return () => clearInterval(handle);
-  }, []);
+  if(user === null) {
+    return <Spinner className="m-5"></Spinner>
+  }
 
   return (
     <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>

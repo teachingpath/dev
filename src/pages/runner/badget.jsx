@@ -40,11 +40,7 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
     description: yup
       .string()
       .min(5, "Please enter at least 5 characters")
-      .required("Please enter your description"),
-    points: yup
-      .number()
-      .min(10, "Please enter at least 10 points")
-      .required("Please enter your points"),
+      .required("Please enter your description")
   });
 
   const { control, handleSubmit, errors } = useForm({
@@ -54,7 +50,6 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
     defaultValues: {
       name: badget?.name || "",
       description: badget?.description || "",
-      points: badget?.points || 10,
     },
   });
 
@@ -138,25 +133,7 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
             </FloatLabel>
           </Form.Group>
           {/* END Form Group */}
-          {/* BEGIN Form Group */}
-          <Form.Group>
-            <FloatLabel>
-              <Controller
-                as={Input}
-                type="number"
-                id="badget-points"
-                name="points"
-                control={control}
-                invalid={Boolean(errors.points)}
-                placeholder="Insert your points"
-              />
-              <Label for="badget-points">Points</Label>
-              {errors.points && (
-                <Form.Feedback children={errors.points.message} />
-              )}
-            </FloatLabel>
-          </Form.Group>
-          {/* END Form Group */}
+       
         </Col>
       </Row>
       <Button type="submit" variant="primary" disabled={!saved}>

@@ -2,12 +2,8 @@ import {
   Container,
   Row,
   Col,
-  Form,
-  Label,
-  Input,
   Button,
   Portlet,
-  FloatLabel,
 } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import {

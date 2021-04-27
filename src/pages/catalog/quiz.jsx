@@ -1,7 +1,7 @@
 import Quiz from "@panely/quiz";
 
 import { Row, Col, Card, Portlet, Container, Button } from "@panely/components";
-import { pageChangeHeaderTitle, breadcrumbChange } from "store/actions";
+import { pageChangeHeaderTitle, breadcrumbChange, activityChange} from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { firestoreClient } from "components/firebase/firebaseClient";
@@ -68,7 +68,7 @@ class QuizPage extends React.Component {
             answerSelectionType: type,
             answers: answers,
             correctAnswer: correctAnswer,
-            point: "10",
+            point: "2",
           });
         });
         this.setState({
@@ -117,7 +117,9 @@ class QuizPage extends React.Component {
                         id: Router.query.id,
                       },
                     });
+
                   } else {
+
                     let tracksCompleted = 1;
                     let tracksTotal = data.breadcrumbs.length;
                     data.breadcrumbs.forEach((runner) => {
@@ -132,6 +134,9 @@ class QuizPage extends React.Component {
                     });
                     data.progress = (tracksCompleted / tracksTotal) * 100;
                     data.current = data.current + 1;
+                    const currentRunner = data.breadcrumbs.filter(runner => {
+                        return runner.id === Router.query.runnerId
+                    })[0];
 
                     firestoreClient
                       .collection("journeys")
@@ -141,6 +146,7 @@ class QuizPage extends React.Component {
                       .update({
                         disabled: false,
                         date: new Date(),
+                        totalPoints: totalPoints
                       })
                       .then((doc) => {
                         return firestoreClient
@@ -148,6 +154,21 @@ class QuizPage extends React.Component {
                           .doc(Router.query.id)
                           .update(data)
                           .then((docRef) => {
+                            this.props.activityChange({
+                              type: "complete_quiz",
+                              msn: 'Runner "' + currentRunner.name + '" completed.',
+                              point: totalPoints,
+                              ...data
+                            });
+
+                            if(data.progress >= 100){
+                              this.props.activityChange({
+                                type: "complete_pathway",
+                                msn: 'Pathway "' + data.name + '" completed.',
+                                ...data
+                              });
+                            }
+
                             Router.push({
                               pathname: "/catalog/journey",
                               query: {
@@ -229,7 +250,7 @@ class QuizPage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
     dispatch
   );
 }
