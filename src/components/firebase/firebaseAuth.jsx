@@ -33,11 +33,6 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
-
-  if(user === null) {
-    return <Spinner className="m-5"></Spinner>
-  }
-
   return (
     <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
   );

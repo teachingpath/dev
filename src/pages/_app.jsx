@@ -17,6 +17,7 @@ import { bindActionCreators } from "redux";
 import { pageChangeTheme } from "store/actions";
 import { wrapper } from "store";
 import { connect } from "react-redux";
+import { firebaseClient } from "components/firebase/firebaseClient";
 import DefaultLayout from "components/layout/template/DefaultLayout";
 import BlankLayout from "components/layout/template/BlankLayout";
 import PublicLayout from "components/layout/template/PublicLayout";
@@ -48,7 +49,7 @@ class MyApp extends App {
 
   render() {
     const { Component, pageProps } = this.props;
-    console.log(pageProps.layout);
+
     switch (pageProps.layout) {
       case "default":
         return (

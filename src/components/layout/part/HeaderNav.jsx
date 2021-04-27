@@ -1,10 +1,10 @@
-import { Nav, Badge, Caret, Dropdown, GridNav } from "@panely/components";
+import { Nav, Dropdown, GridNav } from "@panely/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
 function HeaderNav(props) {
   return (
-    <Nav pills {...props}>
+    <Nav pills  className="ml-2">
       
       {/* BEGIN Dropdown */}
       <Dropdown.Uncontrolled nav>
@@ -13,11 +13,10 @@ function HeaderNav(props) {
           <Dropdown.Row>
             <Dropdown.Col className="d-flex flex-column align-items-start justify-content-center bg-primary text-white">
               <h2 className="font-weight-bolder">Welcome back!</h2>
-              <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Accusantium, commodi hic qui aspernatur doloremque quos tempora
-                placeat culpa illum, voluptatibus delectus provident cumque
-                aliquid enim, laborum aliquam. Quod, perferendis unde.
+              <p>   
+              Develop knowledge and skills at your own pace through sequential learning experiences that include 
+              learning, training, quizzes, and hacking.
+           
               </p>
             </Dropdown.Col>
             <Dropdown.Col>

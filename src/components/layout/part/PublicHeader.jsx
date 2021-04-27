@@ -5,6 +5,8 @@ import HeaderBreadcrumb from "./HeaderBreadcrumb";
 import HeaderSearch from "./HeaderSearch";
 import Sticky from "react-stickynode";
 import HeaderUser from "./HeaderUser";
+import HeaderNav from "./HeaderNav";
+import { Link } from "react-feather";
 
 function HeaderComponent(props) {
   const { headerTitle } = props;
@@ -22,18 +24,22 @@ function HeaderComponent(props) {
           <Header.Container fluid>
             <Header.Wrap justify="start" className="pr-3">
               <Header.Brand>
+                <a href="/" >
                 <img
                   src="/images/logo.png"
                   alt="teaching path"
                   style={{ height: "40px" }}
                 />
+                </a>
+               
               </Header.Brand>
             </Header.Wrap>
             <Header.Wrap block>
               <HeaderSearch />
             </Header.Wrap>
             <Header.Wrap>
-              <HeaderUser className="ml-2" />
+              <HeaderNav />
+              <HeaderUser />
             </Header.Wrap>
           </Header.Container>
         </Header.Holder>
