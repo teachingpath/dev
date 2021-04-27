@@ -77,7 +77,6 @@ class HeaderUser extends React.Component {
 
   render() {
     const { avatar: WidgetAvatar, navs } = this.state;
-    const { name, email, uid , point} = this.props.user;
 
     return (
       <Dropdown.Uncontrolled className="ml-2">
@@ -85,7 +84,8 @@ class HeaderUser extends React.Component {
           dropdown
           variant="flat-primary"
           onClick={() => {
-            if (!uid) {
+            const user = firebaseClient.auth().currentUser;
+            if (!user) {
               Router.push({
                 pathname: PAGE.loginPagePath,
                 query: { redirect: window.location.href },
@@ -97,7 +97,7 @@ class HeaderUser extends React.Component {
             <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
           </Widget13.Avatar>
         </Widget13>
-        {uid && (
+        {this.props.user?.uid && (
           <Dropdown.Menu wide right animated className="overflow-hidden py-0">
             {/* BEGIN Portlet */}
             <Portlet scroll className="border-0">
@@ -108,10 +108,10 @@ class HeaderUser extends React.Component {
                     <WidgetAvatar />
                   </RichList.Addon>
                   <RichList.Content>
-                    <RichList.Title className="text-white" children={name} />
+                    <RichList.Title className="text-white" children={this.props.user.name} />
                     <RichList.Subtitle
                       className="text-white"
-                      children={email}
+                      children={this.props.user.email}
                     />
                   </RichList.Content>
                   <RichList.Addon addonType="append">
@@ -119,7 +119,7 @@ class HeaderUser extends React.Component {
                       variant="warning"
                       shape="square"
                       size="lg"
-                      children={point}
+                      children={this.props.user.point}
                     />
                   </RichList.Addon>
                 </RichList.Item>

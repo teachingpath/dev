@@ -5,42 +5,10 @@ import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 function HeaderNav(props) {
   return (
     <Nav pills {...props}>
+      
       {/* BEGIN Dropdown */}
       <Dropdown.Uncontrolled nav>
-        <Dropdown.Toggle nav active>
-          Manager
-        </Dropdown.Toggle>
-        <Dropdown.Menu animated>
-          {/* BEGIN Dropdown Submenu */}
-          <Dropdown.Submenu>
-            <Dropdown.Item
-              icon={<FontAwesomeIcon icon={SolidIcon.faRoute} />}
-              addon={<Caret />}
-            >
-              Pathway manager
-            </Dropdown.Item>
-            <Dropdown.SubmenuMenu>
-              <Dropdown.Item bullet>Create pathway</Dropdown.Item>
-              <Dropdown.Item bullet>Incomplete pathway</Dropdown.Item>
-              <Dropdown.Item bullet>Pathway archived</Dropdown.Item>
-            </Dropdown.SubmenuMenu>
-          </Dropdown.Submenu>
-          {/* END Dropdown Submenu */}
-
-          <Dropdown.Item
-            icon={<FontAwesomeIcon icon={SolidIcon.faUserFriends} />}
-          >
-            Students
-          </Dropdown.Item>
-          <Dropdown.Item icon={<FontAwesomeIcon icon={SolidIcon.faUserCog} />}>
-            My Account
-          </Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown.Uncontrolled>
-      {/* END Dropdown */}
-      {/* BEGIN Dropdown */}
-      <Dropdown.Uncontrolled nav>
-        <Dropdown.Toggle nav>Features</Dropdown.Toggle>
+        <Dropdown.Toggle nav active>Show more</Dropdown.Toggle>
         <Dropdown.Menu animated wide className="overflow-hidden">
           <Dropdown.Row>
             <Dropdown.Col className="d-flex flex-column align-items-start justify-content-center bg-primary text-white">

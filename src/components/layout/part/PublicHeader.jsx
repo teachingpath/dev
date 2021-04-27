@@ -22,8 +22,11 @@ function HeaderComponent(props) {
           <Header.Container fluid>
             <Header.Wrap justify="start" className="pr-3">
               <Header.Brand>
-              <img src="/images/logo.png" alt="teaching path"/>
-
+                <img
+                  src="/images/logo.png"
+                  alt="teaching path"
+                  style={{ height: "40px" }}
+                />
               </Header.Brand>
             </Header.Wrap>
             <Header.Wrap block>

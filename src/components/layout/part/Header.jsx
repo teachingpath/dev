@@ -26,13 +26,13 @@ function HeaderComponent(props) {
           <Header.Container fluid>
             <Header.Wrap justify="start" className="pr-3">
               <Header.Brand>
-                <img src="/images/logo.png" alt="teaching path" />
+                <img src="/images/logo.png" alt="teaching path" style={{height: "40px"}} />
               </Header.Brand>
             </Header.Wrap>
-            <Header.Wrap block justify="start">
-              <HeaderNav />
-            </Header.Wrap>
+            <Header.Wrap block justify="start"></Header.Wrap>
             <Header.Wrap>
+            <HeaderNav />
+
               <Button
                 icon
                 variant="label-primary"
@@ -68,7 +68,7 @@ function HeaderComponent(props) {
         <Header.Holder mobile>
           <Header.Container fluid>
             <Header.Wrap block justify="start" className="px-3">
-              <img src="/images/icon.png" alt="teaching path" />
+            <img src="/images/logo.png" alt="teaching path" style={{height: "40px"}} />
             </Header.Wrap>
             <Header.Wrap>
               <Button
