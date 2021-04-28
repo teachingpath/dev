@@ -75,18 +75,19 @@ class PathwayComponent extends React.Component {
           )}
           <Widget1.Dialog>
             <Widget1.DialogContent>
-              <h1 className="display-3" children={name} />
+              <h1 className="display-3" children={name.toUpperCase()} />
             </Widget1.DialogContent>
           </Widget1.Dialog>
           <Widget1.Offset>
             <img
               src={this.state?.trophy?.image}
               alt="trophy"
-              className="mx-auto d-block mg-thumbnail avatar-circle"
-            />
+              className="bg-dark p-2 border mx-auto d-block mg-thumbnail avatar-circle"
+              />
           </Widget1.Offset>
         </Widget1.Display>
         <Widget1.Body className="pt-5">
+          <br ></br>
           <h3>Runners</h3>
           {id && <RunnerTab ref={this.runnersRef} pathwayId={this.state.id} />}
         </Widget1.Body>

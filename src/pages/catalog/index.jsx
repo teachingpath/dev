@@ -80,8 +80,7 @@ class CatalogPage extends React.Component {
                   <CardColumns>
                     {this.state.data.length === 0 && (
                       <p className="p-5">
-                        There is no match to display.{" "}
-                        <Link href="/catalog?q=">Show all</Link>
+                        There is no match to display.
                       </p>
                     )}
                     {this.state.data.map((data, index) => {
@@ -89,7 +88,7 @@ class CatalogPage extends React.Component {
                         <Card key={"pathwayId-" + index}>
                           <Card.Img top src={data.image} alt="Pathway Image" />
                           <Card.Body>
-                            <Card.Title>{data.name}</Card.Title>
+                            <Card.Title>{data.name.toUpperCase()}</Card.Title>
                             <Card.Text>{data.description}</Card.Text>
                             <Button
                               className="float-right"

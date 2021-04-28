@@ -15,7 +15,7 @@ class TrackModal extends React.Component {
     super(props);
     this.state = {
       isOpen: false,
-      dataTime: zeroPad(props.timeLimit)+":00",
+      dataTime: zeroPad(props.timeLimit) + ":00",
       isRunning: props.isRunning || false,
     };
     this.countdownRef = React.createRef();
@@ -86,8 +86,14 @@ class TrackModal extends React.Component {
   };
 
   renderer = ({ hours, minutes, seconds, completed, total }) => {
-    const { runnerIndex, trackIndex, journeyId, runners, onComplete } = this.props;
-   
+    const {
+      runnerIndex,
+      trackIndex,
+      journeyId,
+      runners,
+      onComplete,
+    } = this.props;
+
     if (completed) {
       complete().then(() => {
         onComplete();
@@ -107,9 +113,9 @@ class TrackModal extends React.Component {
           .update(data)
           .then((docRef) => {
             this.setState({
-                ...this.state,
-                dataTime: zeroPad(hours)+":"+zeroPad(minutes)
-            })
+              ...this.state,
+              dataTime: zeroPad(hours) + ":" + zeroPad(minutes),
+            });
           });
       }
       return (
@@ -129,7 +135,7 @@ class TrackModal extends React.Component {
     const date = this.countdownRef?.current?.props?.date
       ? this.countdownRef?.current?.props?.date
       : Date.now() + time;
-      
+
     return (
       <React.Fragment>
         <Button title={titleButton} onClick={this.toggle}>
@@ -175,6 +181,16 @@ class TrackModal extends React.Component {
               }}
             >
               Complete
+            </Button>
+            <Button
+              variant="secondary"
+              className="mr-2"
+              title={"Close modal"}
+              onClick={() => {
+                this.toggle();
+              }}
+            >
+              Cerrar
             </Button>
           </Modal.Footer>
         </Modal>

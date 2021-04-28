@@ -189,13 +189,22 @@ class Widget14Component extends React.Component {
         <Portlet.Body>
           {/* BEGIN Rich List */}
           <RichList bordered action>
-            {this.state.data.length ===0 && <p className="text-center">Empty pathways</p>}
+            {this.state.data.length === 0 && (
+              <p className="text-center">Empty pathways</p>
+            )}
             {this.state.data.map((data, index) => {
               const { name, description, id, draft } = data;
               return (
                 <RichList.Item key={index}>
-                  <RichList.Content>
-                    <RichList.Title children={name} />
+                  <RichList.Content
+                    onClick={() => {
+                      Router.push({
+                        pathname: "/pathway/edit",
+                        query: { pathwayId: id },
+                      });
+                    }}
+                  >
+                    <RichList.Title children={name.toUpperCase()} />
                     <RichList.Subtitle children={description} />
                     <RichList.Subtitle
                       children={

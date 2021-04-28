@@ -10,7 +10,11 @@ import {
   Accordion,
 } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
-import { pageChangeHeaderTitle, breadcrumbChange, activityChange } from "store/actions";
+import {
+  pageChangeHeaderTitle,
+  breadcrumbChange,
+  activityChange,
+} from "store/actions";
 import { bindActionCreators } from "redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
@@ -101,7 +105,7 @@ class JourneyGeneralPage extends React.Component {
                       <img
                         src={trophy?.image}
                         alt="loading"
-                        className="p-2 border mx-auto d-block mg-thumbnail avatar-circle"
+                        className="bg-dark p-2 border mx-auto d-block mg-thumbnail avatar-circle"
                       />
                       <h4
                         className={
@@ -111,13 +115,8 @@ class JourneyGeneralPage extends React.Component {
                       >
                         {trophy?.name}
                       </h4>
-                      <small
-                        className={
-                          (isFinish ? "" : "text-muted") +
-                          " mx-auto d-block text-center "
-                        }
-                      >
-                        {progress === 100 ? trophy?.description : ""}
+                      <small className={" mx-auto d-block text-center text-muted"}>
+                        {isFinish ? trophy?.description : ""}
                       </small>
                     </Widget1.Offset>
                   )}
@@ -139,7 +138,7 @@ class JourneyGeneralPage extends React.Component {
                             this.props.activityChange({
                               type: "complete_track",
                               msn: 'Track "' + data.name + '" completed.',
-                              ...data
+                              ...data,
                             });
                             this.componentDidMount();
                           }}

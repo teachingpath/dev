@@ -38,7 +38,7 @@ function addActivity(user, payload) {
 }
 
 function addPoint(user, point) {
-  const increment = firebase.firestore.FieldValue.increment(point);
+  const increment = firebaseClient.firestore.FieldValue.increment(point);
 
   firestoreClient
     .collection("users")

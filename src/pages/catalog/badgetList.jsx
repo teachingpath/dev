@@ -63,14 +63,16 @@ class BadgetListComponent extends React.Component {
       <>
         <div>
           <h4>Badgets</h4>
-          <CardColumns>
+          {this.state.data.length === 0 && <p className="text-center text-muted">Empty badgets</p>}
+
+          <CardColumns column={5}>
             {this.state.data.map((data) => {
               if (data.disabled) {
                 return (
                   <Card className="text-center bg-light">
                     <Card.Img
                       top
-                      className=" mg-thumbnail avatar-circle p-2 border border-warning"
+                      className=" mg-thumbnail avatar-circle p-4 border border-warning"
                       src={data.image}
                       alt="Badget Image"
                     />
@@ -84,7 +86,7 @@ class BadgetListComponent extends React.Component {
                   <Card className="text-center">
                     <Card.Img
                       top
-                      className=" mg-thumbnail avatar-circle p-2"
+                      className=" mg-thumbnail avatar-circle p-4"
                       src={data.image}
                       alt="Badget Image"
                     />

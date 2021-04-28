@@ -86,6 +86,9 @@ class TrackList extends React.Component {
   render() {
     return (
       <RichList bordered action>
+        {this.state.data.length === 0 && (
+          <p className="text-center">Empty tracks</p>
+        )}
         <ReactSortable list={this.state.data} setList={this.onSortList}>
           {this.state.data.map((data, index) => {
             const { title, subtitle, type, id } = data;
@@ -100,7 +103,20 @@ class TrackList extends React.Component {
                   {/* END Avatar */}
                 </RichList.Addon>
                 <RichList.Content>
-                  <RichList.Title>{title}</RichList.Title>
+                  <RichList.Title
+                    onClick={() => {
+                      Router.push({
+                        pathname: "/track/edit",
+                        query: {
+                          trackId: id,
+                          runnerId: this.props.runnerId,
+                          pathwayId: this.props.pathwayId,
+                        },
+                      });
+                    }}
+                  >
+                    {title}
+                  </RichList.Title>
                   <RichList.Subtitle>{subtitle}</RichList.Subtitle>
                   <RichList.Subtitle>
                     <Badge variant="label-info">{type}</Badge>
@@ -109,10 +125,7 @@ class TrackList extends React.Component {
                 <RichList.Addon addonType="append">
                   {/* BEGIN Dropdown */}
                   <Dropdown.Uncontrolled>
-                    <Dropdown.Toggle
-                      icon
-                      variant="text-secondary"
-                    >
+                    <Dropdown.Toggle icon variant="text-secondary">
                       <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
                     </Dropdown.Toggle>
                     <Dropdown.Menu right animated>

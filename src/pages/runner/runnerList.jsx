@@ -79,12 +79,15 @@ class RunnerList extends React.Component {
   render() {
     return (
       <RichList bordered action>
+        {this.state.data.length === 0 && (
+          <p className="text-center">Empty runners</p>
+        )}
         <ReactSortable list={this.state.data} setList={this.onSortList}>
           {this.state.data.map((data, index) => {
             const { title, subtitle, id } = data;
 
             return (
-              <RichList.Item key={index} >
+              <RichList.Item key={index}>
                 <RichList.Addon addonType="prepend">
                   {/* BEGIN Avatar */}
                   <Avatar display>
@@ -93,16 +96,25 @@ class RunnerList extends React.Component {
                   {/* END Avatar */}
                 </RichList.Addon>
                 <RichList.Content>
-                  <RichList.Title>{title}</RichList.Title>
+                  <RichList.Title
+                    onClick={() => {
+                      Router.push({
+                        pathname: "/runner/edit",
+                        query: {
+                          runnerId: id,
+                          pathwayId: this.props.pathwayId,
+                        },
+                      });
+                    }}
+                  >
+                    {title}
+                  </RichList.Title>
                   <RichList.Subtitle>{subtitle}</RichList.Subtitle>
                 </RichList.Content>
                 <RichList.Addon addonType="append">
                   {/* BEGIN Dropdown */}
                   <Dropdown.Uncontrolled>
-                    <Dropdown.Toggle
-                      icon
-                      variant="text-secondary"
-                    >
+                    <Dropdown.Toggle icon variant="text-secondary">
                       <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
                     </Dropdown.Toggle>
                     <Dropdown.Menu right animated>

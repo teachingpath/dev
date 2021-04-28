@@ -90,7 +90,8 @@ const DropDownImage = (props) => {
               ref={setEditorRef}
               width={width || 125}
               height={height || 125}
-              scale={1.2}
+              scale={1.1}
+              border={10}
               className="mg-thumbnail"
               image={image}
             />
