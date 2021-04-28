@@ -297,12 +297,20 @@ function QuizForm({ runnerId, pathwayId, saved, data, activityChange }) {
             />
 
             <Portlet.Footer bordered>
-              <Button disabled={!saved} variant="primary">
+              <Button
+                disabled={!saved}
+                variant="label-primary"
+                size="lg"
+                width="widest"
+              >
                 Save and add
               </Button>
               <Button
                 type="button"
                 className="ml-2"
+                variant="label-secondary"
+                size="lg"
+                width="widest"
                 onClick={() => {
                   Router.back();
                 }}

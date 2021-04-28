@@ -233,7 +233,7 @@ function TrophyForm({ pathwayId, data, activityChange }) {
           {/* END Form Group */}
         </Col>
       </Row>
-      <Button type="submit" variant="primary">
+      <Button type="submit" variant="label-primary" size="lg" width="widest">
         {data === null || data === undefined ? "Save" : "Update"}
       </Button>
     </Form>

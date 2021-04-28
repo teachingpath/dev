@@ -115,12 +115,13 @@ function PathwayForm({ onSave, data }) {
           {/* END Form Group */}
         </Col>
       </Row>
-      <Button type="submit" variant="primary">
+      <Button type="submit" variant="label-primary" size="lg" width="widest">
         {isNew ? "Create" : "Update"}
       </Button>
       <Button
         type="button"
         className="ml-2"
+        variant="label-secondary" size="lg" width="widest"
         onClick={() => {
           Router.back();
         }}

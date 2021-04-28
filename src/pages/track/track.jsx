@@ -17,6 +17,7 @@ import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Quill from "@panely/quill";
 import Router from "next/router";
 import { useState } from "react";
+import Alert from "@panely/components/Alert";
 
 const modulesFull = {
   toolbar: [
@@ -134,10 +135,11 @@ function TrackForm({ onSave, data }) {
             id="timeLimit"
             name="timeLimit"
             control={control}
+            className="w-25"
             invalid={Boolean(errors.timeLimit)}
-            placeholder="Insert your time limit"
+            placeholder="Insert your time limit in hour"
           />
-          <Label for="timeLimit">Time limit</Label>
+          <Label for="timeLimit">Time limit (hours)</Label>
           {errors.timeLimit && (
             <Form.Feedback children={errors.timeLimit.message} />
           )}
@@ -156,10 +158,14 @@ function TrackForm({ onSave, data }) {
           invalid={Boolean(errors.type)}
         >
           <option value="default">Select your type</option>
-          <option value="learning">Learning</option>
-          <option value="hacking">Hacking</option>
-          <option value="q_and_A">Q and A</option>
-          <option value="training">Training</option>
+          <option value="learning">
+            Learning (Documents, guides or videos)
+          </option>
+          <option value="hacking">Hacking (Challenges or evaluations)</option>
+          <option value="q_and_A">Q&A (Questions and answers session)</option>
+          <option value="training">
+            Training (Tutorial or Step-by-step guides)
+          </option>
         </Controller>
         {errors.type && <Form.Feedback children={errors.type.message} />}
       </Form.Group>
@@ -169,6 +175,9 @@ function TrackForm({ onSave, data }) {
         {
           learning: (
             <>
+              <Alert variant="outline-primary">
+                Write here what the learner should read and learn.
+              </Alert>
               <Form.Group>
                 <FloatLabel>
                   <Controller
@@ -197,6 +206,11 @@ function TrackForm({ onSave, data }) {
           ),
           hacking: (
             <>
+              <Alert variant="outline-primary">
+                Write a series of indications, steps and guidelines that the
+                learner can validate their own knowledge by doing an individual
+                practical activity.
+              </Alert>
               <Form.Group>
                 <FloatLabel>
                   <Controller
@@ -252,58 +266,72 @@ function TrackForm({ onSave, data }) {
             </>
           ),
           q_and_A: (
-            <Form.Group>
-              <FloatLabel>
-                <Controller
-                  name={`questions`}
-                  control={control}
-                  render={({ onChange, onBlur, value, name, ref }) => (
-                    <QuestionForm
-                      data={value || {}}
-                      innerRef={ref}
-                      onBlur={onBlur}
-                      id="questions"
-                      name={"questions"}
-                      onChange={onChange}
-                    />
+            <>
+              <Alert variant="outline-primary">
+                Create questions where learners can then freely answer. They are
+                open questions to discuss.
+              </Alert>
+              <Form.Group>
+                <FloatLabel>
+                  <Controller
+                    name={`questions`}
+                    control={control}
+                    render={({ onChange, onBlur, value, name, ref }) => (
+                      <QuestionForm
+                        data={value || {}}
+                        innerRef={ref}
+                        onBlur={onBlur}
+                        id="questions"
+                        name={"questions"}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                  {errors.questions && (
+                    <Form.Feedback children={errors.questions.message} />
                   )}
-                />
-                {errors.questions && (
-                  <Form.Feedback children={errors.questions.message} />
-                )}
-              </FloatLabel>
-            </Form.Group>
+                </FloatLabel>
+              </Form.Group>
+            </>
           ),
           training: (
-            <Form.Group>
-              <FloatLabel>
-                <Controller
-                  name={`training`}
-                  control={control}
-                  render={({ onChange, onBlur, value, name, ref }) => (
-                    <TrainingForm
-                      data={value || []}
-                      innerRef={ref}
-                      onBlur={onBlur}
-                      id="training"
-                      name={"training"}
-                      onChange={onChange}
-                    />
+            <>
+              <Alert variant="outline-primary">
+                Create a series of steps to complete an individual activity,
+                such as a tutorial or step-by-step guide.
+              </Alert>
+              <Form.Group>
+                <FloatLabel>
+                  <Controller
+                    name={`training`}
+                    control={control}
+                    render={({ onChange, onBlur, value, name, ref }) => (
+                      <TrainingForm
+                        data={value || []}
+                        innerRef={ref}
+                        onBlur={onBlur}
+                        id="training"
+                        name={"training"}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                  {errors.training && (
+                    <Form.Feedback children={errors.training.message} />
                   )}
-                />
-                {errors.training && (
-                  <Form.Feedback children={errors.training.message} />
-                )}
-              </FloatLabel>
-            </Form.Group>
+                </FloatLabel>
+              </Form.Group>
+            </>
           ),
         }[watchFields.type]
       }
 
-      <Button type="submit" variant="primary" className="ml-2">
+      <Button type="submit" variant="label-primary" size="lg" width="widest">
         {data === null || data === undefined ? "Create" : "Update"}
       </Button>
       <Button
+        variant="label-secondary"
+        size="lg"
         type="button"
         className="ml-2"
         onClick={() => {
@@ -394,7 +422,7 @@ function TrainingForm({ data, onChange }) {
                       onClick={() => {
                         optionsRemove(index);
                         delete value[index];
-                        const dataValues = value.filter(d => d);
+                        const dataValues = value.filter((d) => d);
                         setValue(dataValues);
                         onChange(dataValues);
                       }}
@@ -501,7 +529,7 @@ function QuestionForm({ data, onChange }) {
                       onClick={() => {
                         optionsRemove(index);
                         delete value[index];
-                        const dataValues = value.filter(d => d);
+                        const dataValues = value.filter((d) => d);
                         setValue(dataValues);
                         onChange(dataValues);
                       }}

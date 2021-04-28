@@ -95,12 +95,14 @@ function RunnerForm({ onSave, data }) {
         </FloatLabel>
       </Form.Group>
       {/* END Form Group */}
-      <Button type="submit" variant="primary" className="ml-2">
+      <Button type="submit" variant="label-primary" size="lg" width="widest">
         {data === null || data === undefined ? "Create" : "Update"}
       </Button>
       <Button
         type="button"
+        variant="label-secondary"
         className="ml-2"
+        size="lg"
         onClick={() => {
           Router.back();
         }}

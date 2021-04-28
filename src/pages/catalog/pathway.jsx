@@ -14,7 +14,11 @@ import {
   firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
-import { pageChangeHeaderTitle, breadcrumbChange, activityChange } from "store/actions";
+import {
+  pageChangeHeaderTitle,
+  breadcrumbChange,
+  activityChange,
+} from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import withLayout from "components/layout/withLayout";
@@ -83,11 +87,11 @@ class PathwayComponent extends React.Component {
               src={this.state?.trophy?.image}
               alt="trophy"
               className="bg-dark p-2 border mx-auto d-block mg-thumbnail avatar-circle"
-              />
+            />
           </Widget1.Offset>
         </Widget1.Display>
         <Widget1.Body className="pt-5">
-          <br ></br>
+          <br></br>
           <h3>Runners</h3>
           {id && <RunnerTab ref={this.runnersRef} pathwayId={this.state.id} />}
         </Widget1.Body>
@@ -376,7 +380,7 @@ class PathwayGeneralPage extends React.Component {
         <Container fluid>
           <Row portletFill="xl">
             <Col xl="12">
-              <PathwayComponent />
+              <PathwayComponent activityChange={this.props.activityChange} />
             </Col>
           </Row>
         </Container>

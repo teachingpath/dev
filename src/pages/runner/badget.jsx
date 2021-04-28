@@ -136,7 +136,7 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
        
         </Col>
       </Row>
-      <Button type="submit" variant="primary" disabled={!saved}>
+      <Button type="submit" variant="label-primary" size="lg" width="widest" disabled={!saved}>
         Save
       </Button>
     </Form>
