@@ -26,10 +26,9 @@ import withLayout from "components/layout/withLayout";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import swalContent from "sweetalert2-react-content";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import Head from "next/head";
 import Spinner from "@panely/components/Spinner";
-
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -50,7 +49,7 @@ class FormBasePage extends React.Component {
 
     this.state = {
       id: null,
-      saved: false
+      saved: false,
     };
   }
   componentDidMount() {
@@ -60,7 +59,10 @@ class FormBasePage extends React.Component {
     this.props.pageChangeHeaderTitle("Update Pathway");
     this.props.breadcrumbChange([
       { text: "Home", link: "/" },
-      { text: "Pathway", link: "/pathway/edit?pathwayId=" + Router.query.pathwayId },
+      {
+        text: "Pathway",
+        link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
+      },
       { text: "Trophy" },
     ]);
 
@@ -92,7 +94,7 @@ class FormBasePage extends React.Component {
   render() {
     if (!this.state.saved) {
       return <Spinner>Loading</Spinner>;
-    }    
+    }
 
     return (
       <React.Fragment>
@@ -128,6 +130,7 @@ class FormBasePage extends React.Component {
 
 function TrophyForm({ pathwayId, data, activityChange }) {
   const imageRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   // Define Yup schema for form validation
   const schema = yup.object().shape({
@@ -138,7 +141,7 @@ function TrophyForm({ pathwayId, data, activityChange }) {
     description: yup
       .string()
       .min(5, "Please enter at least 5 characters")
-      .required("Please enter your description")
+      .required("Please enter your description"),
   });
 
   const { control, handleSubmit, errors } = useForm({
@@ -171,18 +174,21 @@ function TrophyForm({ pathwayId, data, activityChange }) {
           type: "edit_pathway",
           msn: 'The "' + data.name + '" trophy was changed.',
         });
+        setLoading(false);
       })
       .catch((error) => {
         toast.fire({
           icon: "error",
           title: "Updating trophy",
         });
+        setLoading(false);
       });
   };
 
   return (
     <Form
       onSubmit={handleSubmit((data) => {
+        setLoading(true);
         imageRef.current.getImage().then((url) => {
           onSubmit({ ...data, image: url });
         });
@@ -233,7 +239,14 @@ function TrophyForm({ pathwayId, data, activityChange }) {
           {/* END Form Group */}
         </Col>
       </Row>
-      <Button type="submit" variant="label-primary" size="lg" width="widest">
+      <Button
+        disabled={loading}
+        type="submit"
+        variant="label-primary"
+        size="lg"
+        width="widest"
+      >
+        {loading && <Spinner className="mr-2"></Spinner>}
         {data === null || data === undefined ? "Save" : "Update"}
       </Button>
     </Form>

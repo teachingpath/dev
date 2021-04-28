@@ -18,6 +18,7 @@ import Quill from "@panely/quill";
 import Router from "next/router";
 import { useState } from "react";
 import Alert from "@panely/components/Alert";
+import Spinner from "@panely/components/Spinner";
 
 const modulesFull = {
   toolbar: [
@@ -46,6 +47,7 @@ const modulesBasic = {
 };
 
 function TrackForm({ onSave, data }) {
+  const [loading, setLoading] = useState(false);
   const schema = yup.object().shape({
     name: yup
       .string()
@@ -83,8 +85,10 @@ function TrackForm({ onSave, data }) {
   return (
     <Form
       onSubmit={handleSubmit((data) => {
+        setLoading(true);
         onSave(data).then(() => {
           reset();
+          setLoading(false);
         });
       })}
     >
@@ -327,6 +331,7 @@ function TrackForm({ onSave, data }) {
       }
 
       <Button type="submit" variant="label-primary" size="lg" width="widest">
+        {loading && <Spinner className="mr-2"></Spinner>}
         {data === null || data === undefined ? "Create" : "Update"}
       </Button>
       <Button

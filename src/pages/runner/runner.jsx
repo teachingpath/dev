@@ -3,8 +3,11 @@ import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Router from "next/router";
+import { useState } from "react";
+import Spinner from "@panely/components/Spinner";
 
 function RunnerForm({ onSave, data }) {
+  const [loading, setLoading] = useState(false);
   const schema = yup.object().shape({
     name: yup
       .string()
@@ -30,11 +33,14 @@ function RunnerForm({ onSave, data }) {
       feedback: data?.feedback || "",
     },
   });
+
   return (
     <Form
       onSubmit={handleSubmit((data) => {
+        setLoading(true);
         onSave(data).then(() => {
           reset();
+          setLoading(false);
         });
       })}
     >
@@ -95,7 +101,14 @@ function RunnerForm({ onSave, data }) {
         </FloatLabel>
       </Form.Group>
       {/* END Form Group */}
-      <Button type="submit" variant="label-primary" size="lg" width="widest">
+      <Button
+        disabled={loading}
+        type="submit"
+        variant="label-primary"
+        size="lg"
+        width="widest"
+      >
+        {loading && <Spinner className="mr-2"></Spinner>}
         {data === null || data === undefined ? "Create" : "Update"}
       </Button>
       <Button

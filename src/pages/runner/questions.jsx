@@ -23,6 +23,7 @@ import { useState } from "react";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import Router from "next/router";
+import Spinner from "@panely/components/Spinner";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -39,7 +40,7 @@ const toast = ReactSwal.mixin({
 
 function QuizForm({ runnerId, pathwayId, saved, data, activityChange }) {
   const [listQuestions, setListQuestions] = useState(data);
-
+  const [loading, setLoading] = useState(false);
   const schema = yup.object().shape({
     question: yup
       .string()
@@ -86,6 +87,7 @@ function QuizForm({ runnerId, pathwayId, saved, data, activityChange }) {
 
   // Handle form submit event
   const onSubmit = (data) => {
+    setLoading(true);
     const db = firestoreClient.collection("runners").doc(runnerId);
     if (data.id) {
       update(db, data, () => {
@@ -100,6 +102,7 @@ function QuizForm({ runnerId, pathwayId, saved, data, activityChange }) {
           msn: "The  question created.",
         });
         reset();
+        setLoading(false);
         return refesh();
       });
     } else {
@@ -114,6 +117,7 @@ function QuizForm({ runnerId, pathwayId, saved, data, activityChange }) {
           msn: "The  question updated.",
         });
         reset();
+        setLoading(false);
         return refesh();
       });
     }
@@ -303,7 +307,7 @@ function QuizForm({ runnerId, pathwayId, saved, data, activityChange }) {
                 size="lg"
                 width="widest"
               >
-                Save and add
+                {loading && <Spinner className="mr-2"></Spinner>} Save and add
               </Button>
               <Button
                 type="button"

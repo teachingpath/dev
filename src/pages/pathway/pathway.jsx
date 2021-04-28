@@ -8,15 +8,15 @@ import {
   FloatLabel,
   ImageEditor,
 } from "@panely/components";
-import {  useRef } from "react";
+import { useRef, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Router from "next/router";
-
-
+import Spinner from "@panely/components/Spinner";
 
 function PathwayForm({ onSave, data }) {
+  const [loading, setLoading] = useState(false);
   const imageRef = useRef(null);
   const isNew = data === null || data === undefined;
   const schema = yup.object().shape({
@@ -41,11 +41,13 @@ function PathwayForm({ onSave, data }) {
   return (
     <Form
       onSubmit={handleSubmit((data) => {
+        setLoading(true);
         imageRef.current.getImage().then((url) => {
           onSave({ ...data, image: url }).then(() => {
             if (isNew) {
               reset();
             }
+            setLoading(false);
           });
         });
       })}
@@ -115,13 +117,22 @@ function PathwayForm({ onSave, data }) {
           {/* END Form Group */}
         </Col>
       </Row>
-      <Button type="submit" variant="label-primary" size="lg" width="widest">
+      <Button
+        disabled={loading}
+        type="submit"
+        variant="label-primary"
+        size="lg"
+        width="widest"
+      >
+        {loading && <Spinner className="mr-2"></Spinner>}
         {isNew ? "Create" : "Update"}
       </Button>
       <Button
         type="button"
         className="ml-2"
-        variant="label-secondary" size="lg" width="widest"
+        variant="label-secondary"
+        size="lg"
+        width="widest"
         onClick={() => {
           Router.back();
         }}

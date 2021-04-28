@@ -14,7 +14,8 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import Spinner from "@panely/components/Spinner";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -31,6 +32,8 @@ const toast = ReactSwal.mixin({
 function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
   const { badget } = data;
   const imageRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+
   // Define Yup schema for form validation
   const schema = yup.object().shape({
     name: yup
@@ -73,18 +76,22 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
           type: "edit_runner",
           msn: 'The "' + data.name + '" badget was changed.',
         });
+        setLoading(false);
       })
       .catch((error) => {
         toast.fire({
           icon: "error",
           title: "Creation badget",
         });
+        setLoading(false);
+
       });
   };
 
   return (
     <Form
       onSubmit={handleSubmit((data) => {
+        setLoading(true);
         imageRef.current.getImage().then((url) => {
           onSubmit({ ...data, image: url });
         });
@@ -137,7 +144,7 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
         </Col>
       </Row>
       <Button type="submit" variant="label-primary" size="lg" width="widest" disabled={!saved}>
-        Save
+        {loading && <Spinner className="mr-2"></Spinner>} Save
       </Button>
     </Form>
   );
