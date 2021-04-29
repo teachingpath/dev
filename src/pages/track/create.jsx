@@ -69,7 +69,7 @@ class FormBasePage extends React.Component {
       .collection("runners")
       .doc(this.state.runnerId);
 
-      return runnersDb
+    return runnersDb
       .collection("tracks")
       .doc(trackId)
       .set({
@@ -93,6 +93,12 @@ class FormBasePage extends React.Component {
           msn: 'The "' + data.name + '" track was created.',
           ...data,
         });
+        return firestoreClient
+          .collection("pathways")
+          .doc(Router.query.pathwayId)
+          .update({
+            draft: true
+          })
       })
       .catch((error) => {
         console.error("Error adding document: ", error);

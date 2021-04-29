@@ -92,6 +92,7 @@ class FormBasePage extends React.Component {
       .doc(this.state.id)
       .update({
         ...data,
+        draft: true,
         name: data.name.toLowerCase(),
         tags: tags
       })

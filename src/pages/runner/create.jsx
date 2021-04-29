@@ -99,6 +99,13 @@ class FormBasePage extends React.Component {
           msn: 'The "' + data.name + '" runner was created.',
           ...data,
         });
+
+        return firestoreClient
+          .collection("pathways")
+          .doc(Router.query.pathwayId)
+          .update({
+            draft: true
+          })
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
