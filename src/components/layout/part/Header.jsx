@@ -68,7 +68,7 @@ function HeaderComponent(props) {
         <Header.Holder mobile>
           <Header.Container fluid>
             <Header.Wrap block justify="start" className="px-3">
-            <img src="/images/logo.png" alt="teaching path" style={{height: "40px"}} />
+            <img src="/images/icon.png" alt="teaching path" style={{height: "25px"}} />
             </Header.Wrap>
             <Header.Wrap>
               <Button

@@ -20,18 +20,18 @@ function HeaderComponent(props) {
         className="sticky-header"
       >
         {/* BEGIN Header Holder */}
-        <Header.Holder>
+        <Header.Holder desktop>
           <Header.Container fluid>
             <Header.Wrap justify="start" className="pr-3">
               <Header.Brand>
                 <a href="/" >
-                <img
-                  src="/images/logo.png"
-                  alt="teaching path"
-                  style={{ height: "40px" }}
-                />
+                  <img
+                    src="/images/logo.png"
+                    alt="teaching path"
+                    style={{ height: "40px" }}
+                  />
                 </a>
-               
+
               </Header.Brand>
             </Header.Wrap>
             <Header.Wrap block>
@@ -39,6 +39,30 @@ function HeaderComponent(props) {
             </Header.Wrap>
             <Header.Wrap>
               <HeaderNav />
+              <HeaderUser />
+            </Header.Wrap>
+          </Header.Container>
+        </Header.Holder>
+        {/* END Header Holder */}
+        {/* BEGIN Header Holder */}
+        <Header.Holder mobile>
+          <Header.Container fluid>
+            <Header.Wrap justify="start" className="pr-3">
+              <Header.Brand>
+                <a href="/" >
+                  <img
+                    src="/images/icon.png"
+                    alt="teaching path"
+                    style={{ height: "25px" }}
+                  />
+                </a>
+
+              </Header.Brand>
+            </Header.Wrap>
+            <Header.Wrap block>
+              <HeaderSearch />
+            </Header.Wrap>
+            <Header.Wrap>
               <HeaderUser />
             </Header.Wrap>
           </Header.Container>

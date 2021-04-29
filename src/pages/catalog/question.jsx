@@ -74,7 +74,7 @@ function QuestionForm({ onSave }) {
 
 class Questions extends React.Component {
   // Default active card id
-  state = { activeCard: 0, list: [] };
+  state = { activeCard: null, list: [] };
 
   // Handle toggling accordion
   toggle = (id) => {
@@ -151,7 +151,7 @@ class Questions extends React.Component {
                   />
 
                   <Timeline>
-                    {this.state.list.map((data, index) => {
+                    {this.state.list.filter(q => q.id === index).map((data, index) => {
                       const { date, answer } = data;
 
                       return (
