@@ -33,14 +33,19 @@ function RunnerForm({ onSave, data }) {
       feedback: data?.feedback || "",
     },
   });
+  const isNew = !data || Object.keys(data).length === 0;
 
   return (
     <Form
       onSubmit={handleSubmit((data) => {
         setLoading(true);
         onSave(data).then(() => {
-          reset();
-          setLoading(false);
+          if (isNew) {
+            reset();
+            setLoading(false);
+          } else {
+            Router.back();
+          }
         });
       })}
     >

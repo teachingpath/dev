@@ -80,6 +80,7 @@ function TrackForm({ onSave, data }) {
       questions: data?.questions || [],
     },
   });
+  const isNew = !data || Object.keys(data).length === 0;
 
   const watchFields = watch(["type"]);
   return (
@@ -87,8 +88,12 @@ function TrackForm({ onSave, data }) {
       onSubmit={handleSubmit((data) => {
         setLoading(true);
         onSave(data).then(() => {
-          reset();
-          setLoading(false);
+          if (isNew) {
+            reset();
+            setLoading(false);
+          } else {
+            Router.back();
+          }
         });
       })}
     >

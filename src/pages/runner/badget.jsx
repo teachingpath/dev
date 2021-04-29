@@ -7,8 +7,20 @@ import {
   Button,
   FloatLabel,
   ImageEditor,
+  Container,
+  Portlet
 } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
+import {
+  pageChangeHeaderTitle,
+  breadcrumbChange,
+  activityChange,
+} from "store/actions";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import withLayout from "components/layout/withLayout";
+import Head from "next/head";
+import withAuth from "components/firebase/firebaseWithAuth";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
@@ -16,6 +28,7 @@ import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import { useRef, useState } from "react";
 import Spinner from "@panely/components/Spinner";
+import Router from "next/router";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -97,11 +110,11 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
         });
       })}
     >
-        <Form.Group>
-          <ImageEditor ref={imageRef} image={badget?.image} withPreview/>
-        </Form.Group>
+      <Form.Group>
+        <ImageEditor ref={imageRef} image={badget?.image} withPreview />
+      </Form.Group>
       <Row>
-      
+
         <Col xs="12">
           {/* BEGIN Form Group */}
           <Form.Group>
@@ -140,7 +153,7 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
             </FloatLabel>
           </Form.Group>
           {/* END Form Group */}
-       
+
         </Col>
       </Row>
       <Button type="submit" variant="label-primary" size="lg" width="widest" disabled={!saved}>
@@ -150,4 +163,110 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
   );
 }
 
-export default BadgetForm;
+
+class FormBasePage extends React.Component {
+  constructor(props) {
+    super(props);
+    if (!Router.query.runnerId) {
+      Router.push("/pathway/create");
+    }
+    this.state = {
+      runnerId: Router.query.runnerId,
+      pathwayId: Router.query.pathwayId,
+      saved: false,
+    };
+  }
+
+  componentDidMount() {
+    this.props.pageChangeHeaderTitle("Update Pathway");
+    this.props.breadcrumbChange([
+      { text: "Home", link: "/" },
+      {
+        text: "Pathway",
+        link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
+      },
+      {
+        text: "Runner",
+        link: "/runner/create?pathwayId=" + Router.query.pathwayId,
+      },
+      { text: "Badget" },
+    ]);
+    firestoreClient
+      .collection("runners")
+      .doc(this.state.runnerId).get()
+      .then((doc) => {
+        if (doc.exists) {
+          this.setState({
+            id: this.state.runnerId,
+            pathwayId: this.state.pathwayId,
+            saved: true,
+            ...doc.data(),
+          });
+        } else {
+          console.log("No such document!");
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+        toast.fire({
+          icon: "error",
+          title: "Getting a runner",
+        });
+      });
+  }
+
+  render() {
+    if (!this.state.saved) {
+      return <Spinner>Loading</Spinner>;
+    }
+    return (
+      <React.Fragment>
+        <Head>
+          <title>Runner | Badget</title>
+        </Head>
+        <Container fluid>
+          <Row>
+            <Col md="6">
+              {/* BEGIN Portlet */}
+              <Portlet>
+                <Portlet.Header bordered>
+                  <Portlet.Title>Badget | Update</Portlet.Title>
+                </Portlet.Header>
+                <Portlet.Body>
+                  <p>
+                    This badge is awarded to the trainee if they successfully
+                    complete the Quiz.{" "}
+                  </p>
+                  <hr />
+                  <BadgetForm
+                    activityChange={this.props.activityChange}
+                    saved={this.state.saved}
+                    runnerId={this.state.runnerId}
+                    pathwayId={this.state.pathwayId}
+                    data={this.state}
+                  />
+                  {/* END Portlet */}
+                </Portlet.Body>
+              </Portlet>
+              {/* END Portlet */}
+            </Col>
+          </Row>
+        </Container>
+      </React.Fragment>
+    );
+  }
+}
+
+function mapDispathToProps(dispatch) {
+  return bindActionCreators(
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    dispatch
+  );
+}
+
+export default connect(
+  null,
+  mapDispathToProps
+)(withAuth(withLayout(FormBasePage)));
+
+

@@ -1,34 +1,36 @@
 import { RichList, Dropdown, Avatar } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
-import { ReactSortable } from "react-sortablejs";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
+import { ReactSortable } from "react-sortablejs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Router from "next/router";
+import Badge from "@panely/components/Badge";
 
-class RunnerList extends React.Component {
+class QuestionList extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: props.data || [],
+      data: [],
     };
-
     this.onSortList = this.onSortList.bind(this);
   }
 
   componentDidMount() {
     firestoreClient
       .collection("runners")
-      .where("pathwayId", "==", this.props.pathwayId)
-      .orderBy("level")
+      .doc(this.props.runnerId)
+      .collection("questions")
+     .orderBy("position")
       .get()
       .then((querySnapshot) => {
         const list = [];
         querySnapshot.forEach((doc) => {
           list.push({
             id: doc.id,
-            title: doc.data().name,
-            subtitle: doc.data().description,
+            title: doc.data().question,
+            subtitle: "Options: "+doc.data().options.length,
+            type: doc.data().type,
           });
         });
         this.setState({
@@ -41,12 +43,15 @@ class RunnerList extends React.Component {
       });
   }
 
-  onDelete(runnerId) {
+  onDelete(questionId) {
     firestoreClient
       .collection("runners")
-      .doc(runnerId)
+      .doc(this.props.runnerId)
+      .collection("questions")
+      .doc(questionId)
       .delete()
       .then(() => {
+        console.log("Document successfully deleted!");
         this.componentDidMount();
       })
       .catch((error) => {
@@ -55,12 +60,14 @@ class RunnerList extends React.Component {
   }
 
   onSortList(list) {
-    list.forEach((item, level) => {
+    list.forEach((item, position) => {
       firestoreClient
         .collection("runners")
+        .doc(this.props.runnerId)
+        .collection("questions")
         .doc(item.id)
         .update({
-          level: level,
+          position: position,
         })
         .catch((error) => {
           console.error("Error removing document: ", error);
@@ -70,7 +77,7 @@ class RunnerList extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (this.props.item?.runnerId !== nextProps.item?.runnerId) {
+    if (this.props.data?.questionId !== nextProps.data?.questionId) {
       this.componentDidMount();
     }
     return true;
@@ -80,11 +87,11 @@ class RunnerList extends React.Component {
     return (
       <RichList bordered action>
         {this.state.data.length === 0 && (
-          <p className="text-center">Empty runners</p>
+          <p className="text-center">Empty questions</p>
         )}
         <ReactSortable list={this.state.data} setList={this.onSortList}>
           {this.state.data.map((data, index) => {
-            const { title, subtitle, id } = data;
+            const { title, subtitle, type, id } = data;
 
             return (
               <RichList.Item key={index}>
@@ -99,9 +106,10 @@ class RunnerList extends React.Component {
                   <RichList.Title
                     onClick={() => {
                       Router.push({
-                        pathname: "/runner/edit",
+                        pathname: "/runner/quiz/edit",
                         query: {
-                          runnerId: id,
+                          questionId: id,
+                          runnerId: this.props.runnerId,
                           pathwayId: this.props.pathwayId,
                         },
                       });
@@ -110,6 +118,9 @@ class RunnerList extends React.Component {
                     {title}
                   </RichList.Title>
                   <RichList.Subtitle>{subtitle}</RichList.Subtitle>
+                  <RichList.Subtitle>
+                    <Badge variant="label-info">{type}</Badge>
+                  </RichList.Subtitle>
                 </RichList.Content>
                 <RichList.Addon addonType="append">
                   {/* BEGIN Dropdown */}
@@ -121,9 +132,10 @@ class RunnerList extends React.Component {
                       <Dropdown.Item
                         onClick={() => {
                           Router.push({
-                            pathname: "/runner/edit",
+                            pathname: "/runner/quiz/edit",
                             query: {
-                              runnerId: id,
+                              questionId: id,
+                              runnerId: this.props.runnerId,
                               pathwayId: this.props.pathwayId,
                             },
                           });
@@ -140,49 +152,6 @@ class RunnerList extends React.Component {
                       >
                         Delete
                       </Dropdown.Item>
-                      <Dropdown.Divider />
-                      <Dropdown.Item
-                        onClick={() => {
-                          Router.push({
-                            pathname: "/runner/quiz/create",
-                            query: {
-                              runnerId: id,
-                              pathwayId: this.props.pathwayId,
-                            },
-                          });
-                        }}
-                        icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
-                      >
-                        Add Quiz
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        onClick={() => {
-                          Router.push({
-                            pathname: "/runner/badget",
-                            query: {
-                              runnerId: id,
-                              pathwayId: this.props.pathwayId,
-                            },
-                          });
-                        }}
-                        icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
-                      >
-                        Add Badget
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        onClick={() => {
-                          Router.push({
-                            pathname: "/track/create",
-                            query: {
-                              runnerId: id,
-                              pathwayId: this.props.pathwayId,
-                            },
-                          });
-                        }}
-                        icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
-                      >
-                        Add Tracks
-                      </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown.Uncontrolled>
                   {/* END Dropdown */}
@@ -196,4 +165,4 @@ class RunnerList extends React.Component {
   }
 }
 
-export default RunnerList;
+export default QuestionList;

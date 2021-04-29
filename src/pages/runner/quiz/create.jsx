@@ -14,8 +14,9 @@ import Router from "next/router";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
-import BadgetForm from "./badget";
 import QuizForm from "./questions";
+import QuestionList from "./questionList";
+import uuid from "components/helpers/uuid";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -31,20 +32,23 @@ const toast = ReactSwal.mixin({
 });
 
 class FormBasePage extends React.Component {
+
+
   constructor(props) {
     super(props);
-    if (!Router.query.runnerId) {
-      Router.push("/pathway/create");
-    }
+
     this.state = {
-      runnerId: Router.query.runnerId,
-      pathwayId: Router.query.pathwayId,
-      saved: false,
-      questions: [],
+      pathwayId: null,
+      runnerId: null,
     };
+
+    this.onCreate = this.onCreate.bind(this);
   }
 
   componentDidMount() {
+    if (!Router.query.pathwayId) {
+      Router.push("/pathway/create");
+    }
     this.props.pageChangeHeaderTitle("Update Pathway");
     this.props.breadcrumbChange([
       { text: "Home", link: "/" },
@@ -58,56 +62,66 @@ class FormBasePage extends React.Component {
       },
       { text: "Quiz" },
     ]);
+    this.setState({
+      runnerId: Router.query.runnerId,
+      pathwayId: Router.query.pathwayId,
+    });
+  }
+
+  onCreate(data) {
+    const questionId = uuid();
     const runnersDb = firestoreClient
       .collection("runners")
       .doc(this.state.runnerId);
-    runnersDb
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          runnersDb
-            .collection("questions")
-            .get()
-            .then((querySnapshot) => {
-              const questions = [];
-              querySnapshot.forEach((doc) => {
-                questions.push({
-                  id: doc.id,
-                  ...doc.data(),
-                });
-              });
-              return Promise.resolve(questions);
-            })
-            .then((questions) => {
-              this.setState({
-                id: this.state.runnerId,
-                pathwayId: this.state.pathwayId,
-                saved: true,
-                questions: questions,
-                ...doc.data(),
-              });
-            });
-        } else {
-          console.log("No such document!");
-        }
+
+    return runnersDb
+      .collection("questions")
+      .doc(questionId)
+      .set({
+        position: 1,
+        question: data.question,
+        type: data.type,
+        options: data.options.map((item, index) => {
+          return {
+            name: item.name,
+            isCorrect: data.type === 'multiple' ? item.isCorrect === true : item.isCorrect === index ,
+          };
+        }),
+      })
+      .then((docRef) => {
+        this.setState({
+          pathwayId: this.state.pathwayId,
+          runnerId: this.state.runnerId,
+          questionId: questionId,
+          ...data,
+        });
+        toast.fire({
+          icon: "success",
+          title: "Question saved successfully",
+        });
+        this.props.activityChange({
+          pathwayId: this.state.pathwayId,
+          type: "new_question",
+          msn: 'The "' + data.question + '" question was created.',
+        });
       })
       .catch((error) => {
-        console.log("Error getting documents: ", error);
+        console.error("Error adding document: ", error);
         toast.fire({
           icon: "error",
-          title: "Getting a runner",
+          title: "Creation question",
         });
       });
   }
 
   render() {
-    if (!this.state.saved) {
+    if (!this.state.pathwayId && !this.state.runnerId) {
       return <Spinner>Loading</Spinner>;
     }
     return (
       <React.Fragment>
         <Head>
-          <title>Runner | Quiz</title>
+          <title>Quiz | Question </title>
         </Head>
         <Container fluid>
           <Row>
@@ -115,7 +129,7 @@ class FormBasePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Runner | Quiz</Portlet.Title>
+                  <Portlet.Title>Question | Create </Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
@@ -124,40 +138,28 @@ class FormBasePage extends React.Component {
                   </p>
                   <hr />
                   <QuizForm
-                    activityChange={this.props.activityChange}
-                    saved={this.state.saved}
-                    runnerId={this.state.runnerId}
-                    pathwayId={this.state.pathwayId}
-                    data={this.state.questions}
+                    onSave={this.onCreate}
                   />
                   {/* END Portlet */}
                 </Portlet.Body>
               </Portlet>
               {/* END Portlet */}
             </Col>
+
             <Col md="6">
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Badget</Portlet.Title>
+                  <Portlet.Title>Questions</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
-                  <p>
-                    This badge is awarded to the trainee if they successfully
-                    complete the Quiz.{" "}
-                  </p>
-                  <hr />
-                  <BadgetForm
-                    activityChange={this.props.activityChange}
-                    saved={this.state.saved}
+                  <QuestionList
                     runnerId={this.state.runnerId}
                     pathwayId={this.state.pathwayId}
                     data={this.state}
                   />
-                  {/* END Portlet */}
                 </Portlet.Body>
               </Portlet>
-              {/* END Portlet */}
             </Col>
           </Row>
         </Container>
