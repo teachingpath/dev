@@ -69,10 +69,10 @@ class BadgetListComponent extends React.Component {
             {this.state.data.map((data) => {
               if (data.disabled) {
                 return (
-                  <Card className="text-center bg-light">
+                  <Card className="text-center bg-light p-3">
                     <Card.Img
                       top
-                      className=" mg-thumbnail avatar-circle p-5 border border-warning"
+                      className="bg-white mg-thumbnail avatar-circle p-5 border border-warning"
                       src={data.image}
                       alt="Badget Image"
                     />

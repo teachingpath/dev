@@ -86,7 +86,7 @@ class PathwayComponent extends React.Component {
             <img
               src={this.state?.trophy?.image}
               alt="trophy"
-              className="bg-dark p-2 border mx-auto d-block mg-thumbnail avatar-circle"
+              className="bg-white p-2 border mx-auto d-block mg-thumbnail avatar-circle"
             />
           </Widget1.Offset>
         </Widget1.Display>
@@ -167,6 +167,7 @@ class Status extends React.Component {
         id: data.id,
         name: data.title,
         description: data.subtitle,
+        feedback: data.feedback,
         current: runnerIndex === 0 ? 0 : null,
         quiz: quiz,
         tracks: data.data.map((item, trackIndex) => {
@@ -295,6 +296,7 @@ class RunnerTab extends React.Component {
             id: doc.id,
             title: doc.data().name,
             subtitle: doc.data().description,
+            feedback: doc.data().feedback,
             badget: doc.data().badget,
             data: data,
           });

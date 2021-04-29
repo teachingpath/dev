@@ -81,7 +81,7 @@ class JourneyGeneralPage extends React.Component {
                 <Widget1.Display
                   top
                   size="lg"
-                  className="bg-dark text-white mb-5"
+                  className={isFinish ? "bg-success text-white mb-5" : "bg-info text-white mb-5"}
                 >
                   {this.state?.id && (
                     <StatusProgress
@@ -105,7 +105,7 @@ class JourneyGeneralPage extends React.Component {
                       <img
                         src={trophy?.image}
                         alt="loading"
-                        className="bg-dark p-2 border mx-auto d-block mg-thumbnail avatar-circle"
+                        className="bg-white p-2 border mx-auto d-block mg-thumbnail avatar-circle"
                       />
                       <h4
                         className={

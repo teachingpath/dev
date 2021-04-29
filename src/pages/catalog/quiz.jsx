@@ -1,7 +1,7 @@
 import Quiz from "@panely/quiz";
 
 import { Row, Col, Card, Portlet, Container, Button } from "@panely/components";
-import { pageChangeHeaderTitle, breadcrumbChange, activityChange} from "store/actions";
+import { pageChangeHeaderTitle, breadcrumbChange, activityChange } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { firestoreClient } from "components/firebase/firebaseClient";
@@ -12,6 +12,7 @@ import Alert from "@panely/components/Alert";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Label from "@panely/components/Label";
+import Spinner from "@panely/components/Spinner";
 
 class QuizPage extends React.Component {
   constructor(props) {
@@ -22,6 +23,8 @@ class QuizPage extends React.Component {
         "Welcome to the Knowledge Verification Quiz for the Runner, by passing this Quiz you can get the pathway trophy. Solve the Quiz in the shortest time.",
       questions: [],
     };
+    this.onFinish = this.onFinish.bind(this);
+
   }
 
   componentDidMount() {
@@ -34,10 +37,14 @@ class QuizPage extends React.Component {
       { text: "My Journey", link: "/catalog/journey?id=" + Router.query.id },
       { text: "Quiz" },
     ]);
+    this.onLoad(Router.query);
 
+  }
+
+  onLoad = ({ runnerId }) => {
     firestoreClient
       .collection("runners")
-      .doc(Router.query.runnerId)
+      .doc(runnerId)
       .collection("questions")
       .get()
       .then((querySnapshot) => {
@@ -52,7 +59,7 @@ class QuizPage extends React.Component {
           });
           data.options.forEach((opt, index) => {
             if (type == "single" && opt.isCorrect === true) {
-              correctAnswer = index + 1 + "";
+              correctAnswer = (index + 1) + "";
               return;
             }
             if (type == "multiple" && opt.isCorrect === true) {
@@ -76,6 +83,90 @@ class QuizPage extends React.Component {
           questions: questions,
         });
         console.log(questions);
+      });
+  }
+
+  onFinish = ({ runnerId, id, totalPoints }) => {
+    firestoreClient
+      .collection("journeys")
+      .doc(id)
+      .get()
+      .then((doc) => {
+        const data = doc.data();
+        if (data.progress >= 100) {
+          Router.push({
+            pathname: "/catalog/journey",
+            query: {
+              id: id,
+            },
+          });
+
+        } else {
+          this.processQuiz(data, runnerId, id, totalPoints);
+        }
+      });
+  }
+
+  processQuiz = (data, runnerId, id, totalPoints) => {
+    let tracksCompleted = 1;
+    let tracksTotal = data.breadcrumbs.length;
+    data.breadcrumbs.forEach((runner) => {
+      if (runner.tracks) {
+        runner.tracks.forEach((track) => {
+          tracksTotal++;
+          if (track.status === "finish") {
+            tracksCompleted++;
+          }
+        });
+      }
+    });
+    data.progress = (tracksCompleted / tracksTotal) * 100;
+    data.current = data.current + 1;
+    const currentRunner = data.breadcrumbs.filter(runner => {
+      return runner.id === runnerId
+    })[0];
+
+    firestoreClient
+      .collection("journeys")
+      .doc(id)
+      .collection("badgets")
+      .doc(runnerId)
+      .update({
+        disabled: false,
+        date: new Date(),
+        totalPoints: totalPoints
+      })
+      .then((doc) => {
+        return firestoreClient
+          .collection("journeys")
+          .doc(id)
+          .update(data)
+          .then((docRef) => {
+            this.props.activityChange({
+              type: "complete_quiz",
+              msn: 'Runner "' + currentRunner.name + '" completed.',
+              point: totalPoints,
+              ...data
+            });
+
+            if (data.progress >= 100) {
+              this.props.activityChange({
+                type: "complete_pathway",
+                msn: 'Pathway "' + data.name + '" completed.',
+                ...data
+              });
+            }
+
+            Router.push({
+              pathname: "/catalog/journey",
+              query: {
+                id: id,
+              },
+            });
+          });
+      })
+      .catch((error) => {
+        console.error("Error adding document: ", error);
       });
   }
 
@@ -103,86 +194,7 @@ class QuizPage extends React.Component {
         </div>
         <p>
           <Button
-            onClick={() => {
-              firestoreClient
-                .collection("journeys")
-                .doc(Router.query.id)
-                .get()
-                .then((doc) => {
-                  const data = doc.data();
-                  if (data.progress >= 100) {
-                    Router.push({
-                      pathname: "/catalog/journey",
-                      query: {
-                        id: Router.query.id,
-                      },
-                    });
-
-                  } else {
-
-                    let tracksCompleted = 1;
-                    let tracksTotal = data.breadcrumbs.length;
-                    data.breadcrumbs.forEach((runner) => {
-                      if (runner.tracks) {
-                        runner.tracks.forEach((track) => {
-                          tracksTotal++;
-                          if (track.status === "finish") {
-                            tracksCompleted++;
-                          }
-                        });
-                      }
-                    });
-                    data.progress = (tracksCompleted / tracksTotal) * 100;
-                    data.current = data.current + 1;
-                    const currentRunner = data.breadcrumbs.filter(runner => {
-                        return runner.id === Router.query.runnerId
-                    })[0];
-
-                    firestoreClient
-                      .collection("journeys")
-                      .doc(Router.query.id)
-                      .collection("badgets")
-                      .doc(Router.query.runnerId)
-                      .update({
-                        disabled: false,
-                        date: new Date(),
-                        totalPoints: totalPoints
-                      })
-                      .then((doc) => {
-                        return firestoreClient
-                          .collection("journeys")
-                          .doc(Router.query.id)
-                          .update(data)
-                          .then((docRef) => {
-                            this.props.activityChange({
-                              type: "complete_quiz",
-                              msn: 'Runner "' + currentRunner.name + '" completed.',
-                              point: totalPoints,
-                              ...data
-                            });
-
-                            if(data.progress >= 100){
-                              this.props.activityChange({
-                                type: "complete_pathway",
-                                msn: 'Pathway "' + data.name + '" completed.',
-                                ...data
-                              });
-                            }
-
-                            Router.push({
-                              pathname: "/catalog/journey",
-                              query: {
-                                id: Router.query.id,
-                              },
-                            });
-                          });
-                      })
-                      .catch((error) => {
-                        console.error("Error adding document: ", error);
-                      });
-                  }
-                });
-            }}
+            onClick={() => { this.onFinish({ ...Router.query, totalPoints }) }}
           >
             Finish
           </Button>
@@ -231,6 +243,7 @@ class QuizPage extends React.Component {
                   <Portlet.Title>Validation runner</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
+                  {this.state.questions.length === 0 && <Spinner></Spinner>}
                   {this.state.questions.length > 0 && (
                     <Quiz
                       quiz={this.state}

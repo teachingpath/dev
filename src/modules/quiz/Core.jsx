@@ -216,7 +216,7 @@ const Core = ({questions, appLocale, showDefaultResult, onComplete, customResult
       multipleSelectionTagText,
       pickNumberOfSelection
     } = appLocale;
-
+    console.log(appLocale);
     return (
         <div className="tag-container">
           {answerSelectionType === 'single' &&
@@ -225,7 +225,7 @@ const Core = ({questions, appLocale, showDefaultResult, onComplete, customResult
           {answerSelectionType === 'multiple' &&
           <span className="multiple selection-tag">{multipleSelectionTagText}</span>}
           <span className="number-of-selection">
-            {pickNumberOfSelection.replace("<numberOfSelection>", numberOfSelection | 1)}
+            {pickNumberOfSelection.replace("<numberOfSelection>", numberOfSelection )}
           </span>
           {segment && <span className="selection-tag segment">{segment}</span>}
         </div>

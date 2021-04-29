@@ -39,23 +39,20 @@ class HeaderUser extends React.Component {
         <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
       </Avatar>
     ),
-    name: "Guest",
-    email: "No email",
-    point: "0",
-    uid: null,
     navs: [
       [
         {
           icon: () => <FontAwesomeIcon icon={RegularIcon.faAddressCard} />,
           title: "Profile",
         },
-        {
-          icon: () => <FontAwesomeIcon icon={RegularIcon.faComments} />,
-          title: "Messages",
-        },
+        
         {
           icon: () => <FontAwesomeIcon icon={RegularIcon.faClone} />,
           title: "Activities",
+        },
+        {
+          icon: () => <FontAwesomeIcon icon={SolidIcon.faHeart} />,
+          title: "0",
         },
       ],
     ],
@@ -77,7 +74,8 @@ class HeaderUser extends React.Component {
 
   render() {
     const { avatar: WidgetAvatar, navs } = this.state;
-
+    navs[0][2].title = this.props.user?.point || 0;
+    console.log(this.props.user);
     return (
       <Dropdown.Uncontrolled className="ml-2">
         <Widget13
@@ -108,20 +106,12 @@ class HeaderUser extends React.Component {
                     <WidgetAvatar />
                   </RichList.Addon>
                   <RichList.Content>
-                    <RichList.Title className="text-white" children={this.props.user.name} />
+                    <RichList.Title className="text-white" children={"Hi, "+this.props.user.firstName} />
                     <RichList.Subtitle
                       className="text-white"
                       children={this.props.user.email}
                     />
                   </RichList.Content>
-                  <RichList.Addon addonType="append">
-                    <Badge
-                      variant="warning"
-                      shape="square"
-                      size="lg"
-                      children={this.props.user.point}
-                    />
-                  </RichList.Addon>
                 </RichList.Item>
                 {/* END Rich List */}
               </Portlet.Header>
