@@ -15,6 +15,7 @@ import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
 import RunnerForm from "../../components/widgets/RunnerForm";
+import TrackList from "../../components/widgets/TrackList";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -153,6 +154,21 @@ class FormBasePage extends React.Component {
                   <hr />
                   <RunnerForm onSave={this.onEdit} data={this.state} />
                   {/* END Portlet */}
+                </Portlet.Body>
+              </Portlet>
+            </Col>
+            <Col md="6">
+              {/* BEGIN Portlet */}
+              <Portlet>
+                <Portlet.Header bordered>
+                  <Portlet.Title>Tracks</Portlet.Title>
+                </Portlet.Header>
+                <Portlet.Body>
+                  <TrackList
+                      runnerId={this.state.runnerId}
+                      pathwayId={this.state.pathwayId}
+                      data={this.state}
+                  />
                 </Portlet.Body>
               </Portlet>
             </Col>

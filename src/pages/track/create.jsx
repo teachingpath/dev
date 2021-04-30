@@ -31,7 +31,7 @@ const toast = ReactSwal.mixin({
   },
 });
 
-class FormBasePage extends React.Component {
+class TrackCreatePage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -167,4 +167,4 @@ function mapDispathToProps(dispatch) {
 export default connect(
   null,
   mapDispathToProps
-)(withAuth(withLayout(FormBasePage)));
+)(withAuth(withLayout(TrackCreatePage)));
