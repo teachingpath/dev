@@ -20,6 +20,7 @@ import swalContent from "sweetalert2-react-content";
 import RunnerList from "../../components/widgets/RunnerList";
 import PathwayForm from "../../components/widgets/PathwayForm";
 import Spinner from "@panely/components/Spinner";
+import React from "react";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -181,6 +182,7 @@ class FormBasePage extends React.Component {
                 <Portlet.Footer>
                   <Button
                     type="button"
+                    className="float-right"
                     disabled={!this.state.saved}
                     onClick={() => {
                       Router.push({
