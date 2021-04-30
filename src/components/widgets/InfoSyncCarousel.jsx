@@ -5,7 +5,7 @@ import Carousel from "@panely/slick"
 
 
 
-class SyncCarousel extends React.Component {
+class InfoSyncCarousel extends React.Component {
   state = {
     main: null,
     nav: null
@@ -121,4 +121,4 @@ function CarouselPrev2(props) {
 
 
 
-export default SyncCarousel;
+export default InfoSyncCarousel;

@@ -15,8 +15,8 @@ import uuid from "components/helpers/uuid";
 import Router from "next/router";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
-import TrackList from "./trackList";
-import TrackForm from "./track";
+import TrackList from "../../components/widgets/TrackList";
+import TrackForm from "../../components/widgets/TrackForm";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({

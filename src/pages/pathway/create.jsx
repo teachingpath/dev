@@ -19,7 +19,7 @@ import Router from "next/router";
 import uuid from "components/helpers/uuid";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
-import PathwayForm from "./pathway";
+import PathwayForm from "../../components/widgets/PathwayForm";
 import Alert from "@panely/components/Alert";
 
 const ReactSwal = swalContent(Swal);
@@ -35,7 +35,7 @@ const toast = ReactSwal.mixin({
   },
 });
 
-class FormBasePage extends React.Component {
+class PathwayPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -183,4 +183,4 @@ function mapDispathToProps(dispatch) {
 export default connect(
   null,
   mapDispathToProps
-)(withAuth(withLayout(FormBasePage)));
+)(withAuth(withLayout(PathwayPage)));

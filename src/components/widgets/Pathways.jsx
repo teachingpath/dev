@@ -18,7 +18,7 @@ const swal = ReactSwal.mixin({
   buttonsStyling: false,
 });
 
-class Widget14Component extends React.Component {
+class PathwaysComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = { data: [] };
@@ -303,4 +303,4 @@ class Widget14Component extends React.Component {
   }
 }
 
-export default Widget14Component;
+export default PathwaysComponent;

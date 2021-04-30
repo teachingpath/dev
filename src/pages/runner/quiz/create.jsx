@@ -14,8 +14,8 @@ import Router from "next/router";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
-import QuizForm from "./questions";
-import QuestionList from "./questionList";
+import QuizForm from "../../../components/widgets/QuestionForm";
+import QuestionList from "../../../components/widgets/QuestionList";
 import uuid from "components/helpers/uuid";
 
 const ReactSwal = swalContent(Swal);

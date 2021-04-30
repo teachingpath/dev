@@ -8,12 +8,12 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
-import Carusel from "components/widgets/Widget36";
-import Activities from "components/widgets/Widget13";
-import Pathways from "components/widgets/Widget14";
-import Journeys from "./catalog/journeyList";
-import BadgetList from "./catalog/badgetList"
-import Widget33 from "components/widgets/Widget33";
+import InfoSyncCarousel from "components/widgets/InfoSyncCarousel";
+import Activities from "components/widgets/Activities";
+import Pathways from "components/widgets/Pathways";
+import Journeys from "../components/widgets/JourneyList";
+import BadgetList from "../components/widgets/BadgetList"
+import InfoPanel from "components/widgets/InfoPanel";
 import Head from "next/head";
 
 class DashboardPage extends React.Component {
@@ -34,7 +34,7 @@ class DashboardPage extends React.Component {
             <>
               <Row>
                 <Col xs="12">
-                  <Widget33 />
+                  <InfoPanel />
                 </Col>
               </Row>
               <Row portletFill="xl">
@@ -45,7 +45,7 @@ class DashboardPage extends React.Component {
                       <Activities {...this.props} />
                     </Col>
                     <Col md="6">
-                      <Carusel {...this.props} />
+                      <InfoSyncCarousel {...this.props} />
                     </Col>
                   </Row>
                 </Col>

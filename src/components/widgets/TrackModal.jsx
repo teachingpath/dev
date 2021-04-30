@@ -3,10 +3,10 @@ import { firestoreClient } from "components/firebase/firebaseClient";
 import Router from "next/router";
 import Button from "@panely/components/Button";
 import Countdown, { zeroPad } from "react-countdown";
-import Questions from "./question";
-import Training from "./training";
-import Hacking from "./hacking";
-import Learning from "./learning";
+import Questions from "./QuestionTrack";
+import TrainingTrack from "./TrainingTrack";
+import HackingTrack from "./HackingTrack";
+import LearningTrack from "./LearningTrack";
 
 class TrackModal extends React.Component {
   time = 0;
@@ -161,10 +161,10 @@ class TrackModal extends React.Component {
           <Modal.Body>
             {
               {
-                learning: <Learning data={this.state} />,
+                learning: <LearningTrack data={this.state} />,
                 q_and_A: <Questions data={this.state} />,
-                training: <Training data={this.state} />,
-                hacking: <Hacking data={this.state} />,
+                training: <TrainingTrack data={this.state} />,
+                hacking: <HackingTrack data={this.state} />,
               }[type]
             }
           </Modal.Body>

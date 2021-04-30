@@ -73,7 +73,7 @@ function SolutionForm({ onSave }) {
   );
 }
 
-class Training extends React.Component {
+class TrainingTrack extends React.Component {
   state = { current: 0, list: [] };
   componentDidMount() {
     const {
@@ -187,4 +187,4 @@ class Training extends React.Component {
   }
 }
 
-export default Training;
+export default TrainingTrack;

@@ -70,7 +70,7 @@ function SolutionForm({ onSave }) {
   );
 }
 
-class Hacking extends React.Component {
+class HackingTrack extends React.Component {
   state = { list: [] };
 
   componentDidMount() {
@@ -170,4 +170,4 @@ class Hacking extends React.Component {
   }
 }
 
-export default Hacking;
+export default HackingTrack;

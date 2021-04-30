@@ -25,8 +25,8 @@ import withAuth from "components/firebase/firebaseWithAuth";
 import Router from "next/router";
 import Steps from "rc-steps";
 import Button from "@panely/components/Button";
-import TrackModal from "./trackModal";
-import BadgetList from "./badgetList";
+import TrackModal from "../../components/widgets/TrackModal";
+import BadgetList from "../../components/widgets/BadgetList";
 
 class JourneyGeneralPage extends React.Component {
   state = { name: "Loading", trophy: {}, progress: 0, badgets: [] };

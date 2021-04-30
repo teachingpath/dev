@@ -14,7 +14,7 @@ import Head from "next/head";
 import Router from "next/router";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
-import TrackForm from "./track";
+import TrackForm from "../../components/widgets/TrackForm";
 import Spinner from "@panely/components/Spinner";
 
 const ReactSwal = swalContent(Swal);

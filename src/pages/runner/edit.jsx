@@ -14,7 +14,7 @@ import Router from "next/router";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
-import RunnerForm from "./runner";
+import RunnerForm from "../../components/widgets/RunnerForm";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({

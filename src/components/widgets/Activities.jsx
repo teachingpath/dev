@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { firestoreClient } from "components/firebase/firebaseClient";
 
-class Widget13Component extends React.Component {
+class ActivitiesComponent extends React.Component {
   constructor(props){
     super(props);
     this.state = {data: []};
@@ -80,4 +80,4 @@ class Widget13Component extends React.Component {
   }
 }
 
-export default Widget13Component;
+export default ActivitiesComponent;

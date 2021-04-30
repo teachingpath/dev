@@ -1,8 +1,8 @@
-import { Avatar, Portlet, Widget8, Widget10 } from "@panely/components"
+import {  Portlet, Widget8, Widget10 } from "@panely/components"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
-class Widget33Component extends React.Component {
+class InfoPanelComponent extends React.Component {
   state = {
     data: [
       {
@@ -60,4 +60,4 @@ class Widget33Component extends React.Component {
   }
 }
 
-export default Widget33Component
+export default InfoPanelComponent

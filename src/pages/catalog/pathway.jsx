@@ -28,7 +28,7 @@ import Button from "@panely/components/Button";
 import uuid from "components/helpers/uuid";
 import Spinner from "@panely/components/Spinner";
 
-class PathwayComponent extends React.Component {
+class PathwayPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -382,7 +382,7 @@ class PathwayGeneralPage extends React.Component {
         <Container fluid>
           <Row portletFill="xl">
             <Col xl="12">
-              <PathwayComponent activityChange={this.props.activityChange} />
+              <PathwayPage activityChange={this.props.activityChange} />
             </Col>
           </Row>
         </Container>

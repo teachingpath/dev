@@ -14,7 +14,7 @@ function FooterComponent() {
           <Col md="6">
             <p className="text-left mb-0">
               Copyright <FontAwesomeIcon icon={RegularIcon.faCopyright} />{" "}
-              <span>{copyrightYear}</span> Teaching Path | Sofka U. All rights reserved
+              <span>{copyrightYear}</span> Teaching Path. All rights reserved
             </p>
           </Col>
           <Col md="6" className="d-none d-md-block">

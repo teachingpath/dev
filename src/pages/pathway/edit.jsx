@@ -17,8 +17,8 @@ import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Router from "next/router";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
-import RunnerList from "../runner/runnerList";
-import PathwayForm from "./pathway";
+import RunnerList from "../../components/widgets/RunnerList";
+import PathwayForm from "../../components/widgets/PathwayForm";
 import Spinner from "@panely/components/Spinner";
 
 const ReactSwal = swalContent(Swal);

@@ -70,7 +70,7 @@ function FeedbackForm({ onSave }) {
   );
 }
 
-class Learning extends React.Component {
+class LearningTrack extends React.Component {
   state = { list: [] };
 
   componentDidMount() {
@@ -146,4 +146,4 @@ class Learning extends React.Component {
   }
 }
 
-export default Learning;
+export default LearningTrack;
