@@ -10,7 +10,7 @@ import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
 import InfoSyncCarousel from "components/widgets/InfoSyncCarousel";
 import Activities from "components/widgets/Activities";
-import Pathways from "components/widgets/Pathways";
+import Pathways from "components/widgets/PathwayList";
 import Journeys from "../components/widgets/JourneyList";
 import BadgetList from "../components/widgets/BadgetList"
 import InfoPanel from "components/widgets/InfoPanel";
@@ -34,7 +34,7 @@ class DashboardPage extends React.Component {
             <>
               <Row>
                 <Col xs="12">
-                  <InfoPanel />
+                  <InfoPanel {...this.props}/>
                 </Col>
               </Row>
               <Row portletFill="xl">

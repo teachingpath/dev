@@ -11,13 +11,14 @@ import "styles/sweetalert2/index.scss";
 import "styles/slick-carousel/index.scss";
 import "rc-steps/assets/index.css";
 import "styles/quiz/styles.css";
+import "highlight.js/styles/github-gist.css";
+
 
 import { AuthProvider } from "components/firebase/firebaseAuth";
 import { bindActionCreators } from "redux";
 import { pageChangeTheme } from "store/actions";
 import { wrapper } from "store";
 import { connect } from "react-redux";
-import { firebaseClient } from "components/firebase/firebaseClient";
 import DefaultLayout from "components/layout/template/DefaultLayout";
 import BlankLayout from "components/layout/template/BlankLayout";
 import PublicLayout from "components/layout/template/PublicLayout";

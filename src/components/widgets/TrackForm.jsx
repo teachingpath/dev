@@ -23,6 +23,7 @@ import Spinner from "@panely/components/Spinner";
 const modulesFull = {
   toolbar: [
     ["bold", "italic", "underline", "strike"],
+    ['blockquote', 'code-block'],
     [
       { list: "ordered" },
       { list: "bullet" },
@@ -33,6 +34,7 @@ const modulesFull = {
     ["link", "image", "video"],
     ["clean"],
   ],
+  syntax: true,
 };
 
 const modulesBasic = {
@@ -90,10 +92,8 @@ function TrackForm({ onSave, data }) {
         onSave(data).then(() => {
           if (isNew) {
             reset();
-            setLoading(false);
-          } else {
-            Router.back();
           }
+          setLoading(false);
         });
       })}
     >
@@ -336,7 +336,7 @@ function TrackForm({ onSave, data }) {
       }
 
       <Button type="submit" variant="label-primary" size="lg" width="widest">
-        {loading && <Spinner className="mr-2"></Spinner>}
+        {loading && <Spinner className="mr-2" />}
         {data === null || data === undefined ? "Create" : "Update"}
       </Button>
       <Button
