@@ -1,5 +1,4 @@
 import Quill from "quill"
-import  'highlight.js';
 
 const QuillMixin = {
   /**
