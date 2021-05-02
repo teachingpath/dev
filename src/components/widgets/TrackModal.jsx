@@ -1,6 +1,5 @@
 import { Modal } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
-import Router from "next/router";
 import Button from "@panely/components/Button";
 import Countdown, { zeroPad } from "react-countdown";
 import Questions from "./QuestionTrack";
@@ -190,7 +189,7 @@ class TrackModal extends React.Component {
                 this.toggle();
               }}
             >
-              Cerrar
+              Close
             </Button>
           </Modal.Footer>
         </Modal>

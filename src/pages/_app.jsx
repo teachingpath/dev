@@ -11,7 +11,6 @@ import "styles/sweetalert2/index.scss";
 import "styles/slick-carousel/index.scss";
 import "rc-steps/assets/index.css";
 import "styles/quiz/styles.css";
-import "highlight.js/styles/github-gist.css";
 
 
 import { AuthProvider } from "components/firebase/firebaseAuth";
