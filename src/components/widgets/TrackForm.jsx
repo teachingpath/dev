@@ -76,7 +76,7 @@ function TrackForm({ onSave, data }) {
 
 
 
-  const { control, errors, handleSubmit, watch, reset } = useForm({
+  const { control, errors, handleSubmit, watch, setValue, reset } = useForm({
     resolver: yupResolver(schema),
     defaultValues: defaultValues,
   });
@@ -86,32 +86,33 @@ function TrackForm({ onSave, data }) {
 
   const watchFields = watch(["type"]);
   if(watchFields.type === 'learning'){
-    defaultValues.content = data?.content || "";
-    defaultValues.training =  [];
-    defaultValues.guidelines =  "";
-    defaultValues.criteria =  "";
-    defaultValues.questions = [];
+    setValue("content", data?.content || "");
+    setValue("guidelines", "");
+    setValue("criteria", "");
+    setValue("questions", []);
+    setValue("training",  []);
   }
   if(watchFields.type === 'training'){
-    defaultValues.content = "";
-    defaultValues.training = data?.training || [];
-    defaultValues.guidelines =  "";
-    defaultValues.criteria =  "";
-    defaultValues.questions = [];
+    setValue("content", "");
+    setValue("guidelines", "");
+    setValue("criteria", "");
+    setValue("questions", []);
+    setValue("training", data?.training || []);
   }
   if(watchFields.type === 'hacking'){
-    defaultValues.training =  [];
-    defaultValues.content = "";
-    defaultValues.guidelines = data?.guidelines || "";
-    defaultValues.criteria = data?.criteria || "";
-    defaultValues.questions = [];
+    setValue("content", "");
+    setValue("guidelines",  data?.guidelines || "");
+    setValue("criteria",  data?.criteria || "");
+    setValue("questions", []);
+    setValue("training",  []);
+
   }
   if(watchFields.type === 'q_and_a'){
-    defaultValues.questions = data?.questions || [];
-    defaultValues.training =  [];
-    defaultValues.content = "";
-    defaultValues.guidelines =  "";
-    defaultValues.criteria = "";
+    setValue("content", "");
+    setValue("guidelines",  "");
+    setValue("criteria",   "");
+    setValue("questions", data?.questions || []);
+    setValue("training",  []);
   }
 
   return (
