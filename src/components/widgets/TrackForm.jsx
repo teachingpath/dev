@@ -90,7 +90,7 @@ function TrackForm({ onSave, data }) {
   const isNew = !data || Object.keys(data).length === 0;
 
   const watchFields = watch(["type"]);
-  if(watchFields.type !== 'content'){
+  if(watchFields.type !== 'learning'){
     defaultValues.content = "";
   }
 
