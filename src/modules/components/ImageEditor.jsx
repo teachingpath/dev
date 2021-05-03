@@ -82,7 +82,7 @@ const DropDownImage = (props) => {
         onDrop={handleDrop}
         noClick
         noKeyboard
-        style={{ width: width || "120px", height: height || "120px" }}
+        style={{ maxWidth: width || "120px", maxHeight: height || "120px" }}
       >
         {({ getRootProps, getInputProps }) => (
           <div {...getRootProps()}>

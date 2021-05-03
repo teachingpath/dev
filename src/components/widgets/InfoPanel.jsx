@@ -64,11 +64,6 @@ class InfoPanelComponent extends React.Component {
                         const inRunning = [];
                         querySnapshot.forEach(async (doc) => {
                             const data = doc.data();
-                            data.user = await firestoreClient
-                                .collection("users")
-                                .doc(data.userId)
-                                .get()
-                                .then(doc => doc.data());
                             if (data.progress >= 100) {
                                 finisheds.push(data);
                             } else {
@@ -166,8 +161,7 @@ class InfoModal extends React.Component {
                                                     </Avatar>
                                                 </Col>
                                                 <Col md={12} className={"text-center"} >
-                                                    {user.firstName} {" "}
-                                                    {user.lastName}
+                                                    {user.displayName}
                                                 </Col>
                                             </Row>
                                             {/* END Avatar */}

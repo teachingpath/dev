@@ -135,33 +135,48 @@ class Status extends React.Component {
   onCreateJourney(pathwayId, journeyId, trophy, name) {
     const user = firebaseClient.auth().currentUser;
     const tabs = this.props.runnersRef.current.state.tabs;
+    const breadcrumbs = this.createBreadcrumbsBy(tabs, journeyId);
+    return this.createJourney(breadcrumbs, journeyId, name, trophy, pathwayId, user);
+  }
 
-    const breadcrumbs = tabs.map(async (data, runnerIndex) => {
-      const quiz = await firestoreClient
-        .collection("runners")
-        .doc(data.id)
-        .collection("questions")
-        .get()
-        .then((querySnapshot) => {
-          const questions = [];
-          querySnapshot.forEach((doc) => {
-            questions.push({
-              id: doc.id,
-              ...doc.data(),
+  createJourney(breadcrumbs, journeyId, name, trophy, pathwayId, user) {
+    return Promise.all(breadcrumbs).then((dataResolved) => {
+      return firestoreClient
+          .collection("journeys")
+          .doc(journeyId)
+          .set({
+            name: name,
+            trophy: trophy,
+            progress: 1,
+            pathwayId: pathwayId,
+            userId: user.uid,
+            user: user,
+            date: new Date(),
+            current: 0,
+            breadcrumbs: dataResolved,
+          })
+          .then((doc) => {
+            this.props.activityChange({
+              type: "start_pathway",
+              msn: 'Start pathway "' + name + '".',
             });
+            Router.push({
+              pathname: "/catalog/journey",
+              query: {
+                id: journeyId,
+              },
+            });
+          })
+          .catch((error) => {
+            console.error("Error adding document: ", error);
           });
-          return questions;
-        });
+    });
+  }
 
-      await firestoreClient
-        .collection("journeys")
-        .doc(journeyId)
-        .collection("badgets")
-        .doc(data.id)
-        .set({
-          ...data.badget,
-          disabled: true,
-        });
+  createBreadcrumbsBy(tabs, journeyId) {
+    const breadcrumbs = tabs.map(async (data, runnerIndex) => {
+      const quiz = await this.getQuizFromRunner(data);
+      await this.saveJourneyForBadget(journeyId, data);
 
       return {
         id: data.id,
@@ -180,36 +195,38 @@ class Status extends React.Component {
         }),
       };
     });
-    return Promise.all(breadcrumbs).then((dataResolved) => {
-      return firestoreClient
+    return breadcrumbs;
+  }
+
+  async saveJourneyForBadget(journeyId, data) {
+    await firestoreClient
         .collection("journeys")
         .doc(journeyId)
+        .collection("badgets")
+        .doc(data.id)
         .set({
-          name: name,
-          trophy: trophy,
-          progress: 1,
-          pathwayId: pathwayId,
-          userId: user.uid,
-          date: new Date(),
-          current: 0,
-          breadcrumbs: dataResolved,
-        })
-        .then((doc) => {
-          this.props.activityChange({
-            type: "start_pathway",
-            msn: 'Start pathway "' + name + '".',
-          });
-          Router.push({
-            pathname: "/catalog/journey",
-            query: {
-              id: journeyId,
-            },
-          });
-        })
-        .catch((error) => {
-          console.error("Error adding document: ", error);
+          ...data.badget,
+          disabled: true,
         });
-    });
+  }
+
+  async getQuizFromRunner(data) {
+    const quiz = await firestoreClient
+        .collection("runners")
+        .doc(data.id)
+        .collection("questions")
+        .get()
+        .then((querySnapshot) => {
+          const questions = [];
+          querySnapshot.forEach((doc) => {
+            questions.push({
+              id: doc.id,
+              ...doc.data(),
+            });
+          });
+          return questions;
+        });
+    return quiz;
   }
 
   render() {
