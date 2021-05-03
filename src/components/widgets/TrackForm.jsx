@@ -79,7 +79,9 @@ function TrackForm({ onSave, data }) {
     questions: data?.questions || [],
   };
 
-
+  if(defaultValues.type !== 'content'){
+    defaultValues.content = "";
+  }
 
   const { control, errors, handleSubmit, watch, reset } = useForm({
     resolver: yupResolver(schema),
@@ -91,12 +93,7 @@ function TrackForm({ onSave, data }) {
 
   const watchFields = watch(["type"]);
 
-  if(watchFields.type !== 'content'){
-    defaultValues.training = [];
-    defaultValues.questions = [];
-    defaultValues.criteria = "";
-    defaultValues.guidelines = "";
-  }
+
   return (
     <Form
       onSubmit={handleSubmit((data) => {
