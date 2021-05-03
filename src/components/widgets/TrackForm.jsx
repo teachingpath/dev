@@ -72,6 +72,11 @@ function TrackForm({ onSave, data }) {
     description: data?.description || "",
     type: data?.type || "",
     timeLimit: data?.timeLimit || 1,
+    training: [],
+    questions: [],
+    content: "",
+    guidelines: "",
+    criteria: "",
   };
 
 
@@ -107,7 +112,7 @@ function TrackForm({ onSave, data }) {
     setValue("training",  []);
 
   }
-  if(watchFields.type === 'q_and_a'){
+  if(watchFields.type === 'q_and_A'){
     setValue("content", "");
     setValue("guidelines",  "");
     setValue("criteria",   "");
