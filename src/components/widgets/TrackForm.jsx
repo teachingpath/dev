@@ -72,11 +72,6 @@ function TrackForm({ onSave, data }) {
     description: data?.description || "",
     type: data?.type || "",
     timeLimit: data?.timeLimit || 1,
-    content: data?.content || "",
-    guidelines: data?.guidelines || "",
-    criteria: data?.criteria || "",
-    training: data?.training || [],
-    questions: data?.questions || [],
   };
 
 
@@ -90,8 +85,18 @@ function TrackForm({ onSave, data }) {
   const isNew = !data || Object.keys(data).length === 0;
 
   const watchFields = watch(["type"]);
-  if(watchFields.type !== 'learning'){
-    defaultValues.content = "";
+  if(watchFields.type === 'learning'){
+    defaultValues.content = data?.content || "";
+  }
+  if(watchFields.type === 'training'){
+    defaultValues.training = data?.training || "";
+  }
+  if(watchFields.type === 'hacking'){
+    defaultValues.guidelines = data?.guidelines || "";
+    defaultValues.criteria = data?.criteria || "";
+  }
+  if(watchFields.type === 'q_and_a'){
+    defaultValues.questions = data?.questions || "";
   }
 
   return (
