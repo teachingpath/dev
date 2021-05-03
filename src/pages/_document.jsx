@@ -11,8 +11,8 @@ class MyDocument extends Document {
                         href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&family=Roboto+Mono&display=swap"
                         rel="stylesheet"
                     />
-                    <link rel="stylesheet"  href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/github-gist.css"/>
-                    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
+                    <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css"/>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
 
                 </Head>
                 <body className="theme-light">

@@ -75,7 +75,6 @@ class HeaderUser extends React.Component {
   render() {
     const { avatar: WidgetAvatar, navs } = this.state;
     navs[0][2].title = this.props.user?.point || 0;
-    console.log(this.props.user);
     return (
       <Dropdown.Uncontrolled className="ml-2">
         <Widget13

@@ -150,7 +150,10 @@ class Status extends React.Component {
             progress: 1,
             pathwayId: pathwayId,
             userId: user.uid,
-            user: user,
+            user: {
+              email: user.email,
+              displayName: user.displayName
+            },
             date: new Date(),
             current: 0,
             breadcrumbs: dataResolved,

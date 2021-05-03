@@ -66,25 +66,37 @@ function TrackForm({ onSave, data }) {
       .required("Please enter your time limit"),
   });
 
+
+  const defaultValues = {
+    name: data?.name || "",
+    description: data?.description || "",
+    type: data?.type || "",
+    timeLimit: data?.timeLimit || 1,
+    content: data?.content || "",
+    guidelines: data?.guidelines || "",
+    criteria: data?.criteria || "",
+    training: data?.training || [],
+    questions: data?.questions || [],
+  };
+
+
+
   const { control, errors, handleSubmit, watch, reset } = useForm({
-    // Apply Yup as resolver for react-hook-form
     resolver: yupResolver(schema),
-    // Define the default values for all input forms
-    defaultValues: {
-      name: data?.name || "",
-      description: data?.description || "",
-      type: data?.type || "",
-      timeLimit: data?.timeLimit || 1,
-      content: data?.content || "",
-      guidelines: data?.guidelines || "",
-      criteria: data?.criteria || "",
-      training: data?.training || [],
-      questions: data?.questions || [],
-    },
+    defaultValues: defaultValues,
   });
+
+
   const isNew = !data || Object.keys(data).length === 0;
 
   const watchFields = watch(["type"]);
+
+  if(watchFields.type !== 'content'){
+    defaultValues.training = [];
+    defaultValues.questions = [];
+    defaultValues.criteria = "";
+    defaultValues.guidelines = "";
+  }
   return (
     <Form
       onSubmit={handleSubmit((data) => {
