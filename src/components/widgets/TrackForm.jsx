@@ -87,16 +87,31 @@ function TrackForm({ onSave, data }) {
   const watchFields = watch(["type"]);
   if(watchFields.type === 'learning'){
     defaultValues.content = data?.content || "";
+    defaultValues.training =  [];
+    defaultValues.guidelines =  "";
+    defaultValues.criteria =  "";
+    defaultValues.questions = [];
   }
   if(watchFields.type === 'training'){
-    defaultValues.training = data?.training || "";
+    defaultValues.content = "";
+    defaultValues.training = data?.training || [];
+    defaultValues.guidelines =  "";
+    defaultValues.criteria =  "";
+    defaultValues.questions = [];
   }
   if(watchFields.type === 'hacking'){
+    defaultValues.training =  [];
+    defaultValues.content = "";
     defaultValues.guidelines = data?.guidelines || "";
     defaultValues.criteria = data?.criteria || "";
+    defaultValues.questions = [];
   }
   if(watchFields.type === 'q_and_a'){
-    defaultValues.questions = data?.questions || "";
+    defaultValues.questions = data?.questions || [];
+    defaultValues.training =  [];
+    defaultValues.content = "";
+    defaultValues.guidelines =  "";
+    defaultValues.criteria = "";
   }
 
   return (
