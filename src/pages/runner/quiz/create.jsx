@@ -84,7 +84,7 @@ class FormBasePage extends React.Component {
         options: data.options.map((item, index) => {
           return {
             name: item.name,
-            isCorrect: data.type === 'multiple' ? item.isCorrect === true : item.isCorrect === index ,
+            isCorrect: data.type === 'multiple' ? item.isCorrect === true : data.options.isCorrect === index ,
           };
         }),
       })

@@ -5,6 +5,18 @@ import { yupResolver } from "@hookform/resolvers";
 import Router from "next/router";
 import { useState } from "react";
 import Spinner from "@panely/components/Spinner";
+import Quill from "@panely/quill";
+
+const modulesBasic = {
+  toolbar: [
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+  ],
+};
 
 function RunnerForm({ onSave, data }) {
   const [loading, setLoading] = useState(false);
@@ -90,16 +102,26 @@ function RunnerForm({ onSave, data }) {
       {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel>
+
           <Controller
-            as={Input}
-            type="textarea"
-            id="feedback"
-            name="feedback"
-            control={control}
-            invalid={Boolean(errors.feedback)}
-            placeholder="Insert your closure feddback"
+              name={`feedback`}
+              control={control}
+              render={({ onChange, onBlur, value, name, ref }) => (
+                  <Quill
+                      innerRef={ref}
+                      onBlur={onBlur}
+                      theme="snow"
+                      value={value}
+                      id="feedback"
+                      name={"feedback"}
+                      placeholder="Insert your Summary/feedback"
+                      modules={modulesBasic}
+                      onChange={onChange}
+                      style={{ minHeight: "15rem" }}
+                  />
+              )}
           />
-          <Label for="feedback">Closure feedback</Label>
+          <Label for="feedback">Summary/feedback</Label>
           {errors.feedback && (
             <Form.Feedback children={errors.feedback.message} />
           )}

@@ -49,12 +49,12 @@ function QuizForm({ onSave, data }) {
   } = useFieldArray({ control, name: "options" });
 
   const watchFields = watch(["type"]);
- 
+
   return (
 
     <Form onSubmit={handleSubmit((data) => {
       setLoading(true);
-      if (data.options.some(opt => opt.isCorrect)) {
+      if (data.options.some(opt => opt.isCorrect) || data.options.isCorrect !== undefined) {
         onSave(data).then(() => {
           if (isNew) {
             reset();
@@ -116,12 +116,12 @@ function QuizForm({ onSave, data }) {
               <Form.Group>
                 <FloatLabel>
                   <Controller
-                    as={Input}
-                    defaultValue={item.name || ""}
-                    type="textarea"
-                    id={`options_${index}_.name`}
-                    name={`options[${index}].name`}
-                    control={control}
+                      as={Input}
+                      defaultValue={item.name || ""}
+                      type="textarea"
+                      id={`options_${index}_.name`}
+                      name={`options[${index}].name`}
+                      control={control}
                   />
                   <Label for={`options_${index}_.name`}>
                     Option#{index + 1}
@@ -131,42 +131,12 @@ function QuizForm({ onSave, data }) {
             </Col>
             <Col xs="1">
               <Button type="button" onClick={() => optionsRemove(index)}>
-                <FontAwesomeIcon icon={SolidIcon.faTrash} />
+                <FontAwesomeIcon icon={SolidIcon.faTrash}/>
               </Button>
             </Col>
             <Col xs="12">
-              <Form.Group>
-                <FloatLabel>
-                  <Controller
-                    name={`options[${index}].isCorrect`}
-                    control={control}
-                    render={({ onChange, onBlur, value, name, ref }) => {
-                      const val = item.isCorrect || value;
-                      const checked = watchFields.type === 'multiple' ? (val) : (val === false ? val === index : val);
-                      return (
-                        <CustomInput
-                          type={watchFields.type === 'multiple' ? "checkbox" : "radio"}
-                          id={`options_${index}_.isCorrect`}
-                          label="it's correct?"
-                          name={watchFields.type === 'multiple' ? `options[${index}].isCorrect` : `options.isCorrect`}
-                          onChange={(e) => {
-                            item.isCorrect = e.target.checked;
-
-                            if (watchFields.type === 'multiple') {
-                              onChange(e.target.checked);
-                            } else {
-                              onChange(index);
-                            }
-
-                          }}
-                          checked={checked}
-                          innerRef={ref}
-                        />
-                      )
-                    }}
-                  />
-                </FloatLabel>
-              </Form.Group>
+              {watchFields.type === 'multiple' && <CheckboxComponent index={index} item={item} control={control} />}
+              {watchFields.type === 'single' && <RadioComponent index={index} item={item} control={control} />}
             </Col>
           </Row>
         );
@@ -204,7 +174,7 @@ function QuizForm({ onSave, data }) {
         size="lg"
         width="widest"
       >
-        {loading && <Spinner className="mr-2"></Spinner>} Save</Button>
+        {loading && <Spinner className="mr-2" />} Save</Button>
       <Button
         type="button"
         className="ml-2"
@@ -219,6 +189,63 @@ function QuizForm({ onSave, data }) {
     </Form>
 
   );
+}
+
+
+
+function RadioComponent({index, item, control}) {
+  return <Form.Group>
+    <FloatLabel>
+      <Controller
+          name={`options.isCorrect`}
+          control={control}
+          render={({onChange, onBlur, value, name, ref}) => {
+            return (
+                <CustomInput
+                    type={"radio"}
+                    id={`options_${index}_.isCorrect`}
+                    label="it's correct?"
+                    name={`options.isCorrect`}
+                    onChange={(e) => {
+                      item.isCorrect = e.target.checked;
+                      onChange(index);
+                    }}
+                    checked={item.isCorrect}
+                    innerRef={ref}
+                />
+            )
+          }}
+      />
+    </FloatLabel>
+  </Form.Group>;
+}
+
+function CheckboxComponent({index, item, control}) {
+  return <Form.Group>
+    <FloatLabel>
+      <Controller
+          name={`options[${index}].isCorrect`}
+          control={control}
+          render={({onChange, onBlur, value, name, ref}) => {
+            const checked = item.isCorrect || value;
+            return (
+                <CustomInput
+                    type={"checkbox"}
+                    id={`options_${index}_.isCorrect`}
+                    label="it's correct?"
+                    name={`options[${index}].isCorrect`}
+                    onChange={(e) => {
+                      item.isCorrect = e.target.checked;
+                      onChange(e.target.checked);
+                    }}
+                    checked={checked}
+                    innerRef={ref}
+                />
+            )
+          }}
+      />
+    </FloatLabel>
+  </Form.Group>;
 }
 
 
