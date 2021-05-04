@@ -1,4 +1,4 @@
-import {Button, Col, Container, Portlet, Row} from "@panely/components";
+import {Button, Col, Container, Dropdown, Portlet, RichList, Row} from "@panely/components";
 import {firestoreClient} from "components/firebase/firebaseClient";
 import {activityChange, breadcrumbChange, pageChangeHeaderTitle,} from "store/actions";
 import {bindActionCreators} from "redux";
@@ -144,6 +144,9 @@ class FormBasePage extends React.Component {
                             <Portlet>
                                 <Portlet.Header bordered>
                                     <Portlet.Title>Runner | Update</Portlet.Title>
+                                    <Portlet.Addon>
+                                        <RunnerAddon id={this.state.runnerId}  pathwayId={this.state.pathwayId}/>
+                                    </Portlet.Addon>
                                 </Portlet.Header>
                                 <Portlet.Body>
                                     <p>
@@ -197,6 +200,60 @@ class FormBasePage extends React.Component {
             </React.Fragment>
         );
     }
+}
+
+const RunnerAddon  = ({id, pathwayId}) =>{
+    return <>
+        <Dropdown.Uncontrolled>
+            <Dropdown.Toggle icon variant="text-secondary">
+                <FontAwesomeIcon icon={SolidIcon.faEllipsisV} />
+            </Dropdown.Toggle>
+            <Dropdown.Menu right animated>
+                <Dropdown.Item
+                    onClick={() => {
+                        Router.push({
+                            pathname: "/runner/quiz/create",
+                            query: {
+                                runnerId: id,
+                                pathwayId: pathwayId,
+                            },
+                        });
+                    }}
+                    icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
+                >
+                    Add Quiz
+                </Dropdown.Item>
+                <Dropdown.Item
+                    onClick={() => {
+                        Router.push({
+                            pathname: "/runner/badget",
+                            query: {
+                                runnerId: id,
+                                pathwayId: pathwayId,
+                            },
+                        });
+                    }}
+                    icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
+                >
+                    Add Badget
+                </Dropdown.Item>
+                <Dropdown.Item
+                    onClick={() => {
+                        Router.push({
+                            pathname: "/track/create",
+                            query: {
+                                runnerId: id,
+                                pathwayId: pathwayId,
+                            },
+                        });
+                    }}
+                    icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
+                >
+                    Add Tracks
+                </Dropdown.Item>
+            </Dropdown.Menu>
+        </Dropdown.Uncontrolled>
+    </>;
 }
 
 function mapDispathToProps(dispatch) {

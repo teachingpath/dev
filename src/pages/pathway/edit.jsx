@@ -1,4 +1,4 @@
-import { Container, Row, Col, Button, Portlet } from "@panely/components";
+import {Container, Row, Col, Button, Portlet, Dropdown} from "@panely/components";
 import {
   firestoreClient,
 } from "components/firebase/firebaseClient";
@@ -142,6 +142,9 @@ class FormBasePage extends React.Component {
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Pathway | Edit</Portlet.Title>
+                  <Portlet.Addon>
+                    <PathwayAddon id={this.state.id}/>
+                  </Portlet.Addon>
                 </Portlet.Header>
                 <Portlet.Body>
                   <PathwayForm
@@ -202,6 +205,42 @@ class FormBasePage extends React.Component {
       </React.Fragment>
     );
   }
+}
+
+const PathwayAddon  = ({id}) =>{
+  return <>
+    {/* BEGIN Dropdown */}
+    <Dropdown.Uncontrolled>
+      <Dropdown.Toggle icon variant="text-secondary">
+        <FontAwesomeIcon icon={SolidIcon.faEllipsisV}/>
+      </Dropdown.Toggle>
+      <Dropdown.Menu right animated>
+        <Dropdown.Item
+            onClick={() => {
+              Router.push({
+                pathname: "/runner/create",
+                query: {pathwayId: id},
+              });
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faRunning}/>}
+        >
+          Add runner
+        </Dropdown.Item>
+        <Dropdown.Item
+            onClick={() => {
+              Router.push({
+                pathname: "/pathway/trophy",
+                query: {pathwayId: id},
+              });
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faTrophy}/>}
+        >
+          Add Trophy
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown.Uncontrolled>
+    {/* END Dropdown */}
+  </>;
 }
 
 function mapDispathToProps(dispatch) {
