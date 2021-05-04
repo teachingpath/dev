@@ -72,11 +72,11 @@ function TrackForm({ onSave, data }) {
     description: data?.description || "",
     type: data?.type || "",
     timeLimit: data?.timeLimit || 1,
-    training: [],
-    questions: [],
-    content: "",
-    guidelines: "",
-    criteria: "",
+    training: data?.training || [],
+    questions:data?.questions || [],
+    content: data?.content || "",
+    guidelines: data?.guidelines || "",
+    criteria: data?.criteria || "",
   };
 
 
