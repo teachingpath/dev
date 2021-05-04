@@ -57,7 +57,7 @@ class TrackCreatePage extends React.Component {
       },
       {
         text: "Runner",
-        link: "/runner/create?pathwayId=" + Router.query.pathwayId,
+        link: "/runner/edit?pathwayId=" + Router.query.pathwayId+"&runnerId="+Router.query.runnerId
       },
       { text: "Track" },
     ]);
