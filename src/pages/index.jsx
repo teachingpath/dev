@@ -56,6 +56,7 @@ class DashboardPage extends React.Component {
             <Row portletFill="xl">
                <Col md="6">
                <Journeys {...this.props}/>
+               <Activities {...this.props} />
               </Col>
               <Col md="6">
                 <BadgetList/>

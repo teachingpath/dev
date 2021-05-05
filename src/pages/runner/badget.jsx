@@ -8,7 +8,7 @@ import {
   FloatLabel,
   ImageEditor,
   Container,
-  Portlet
+  Portlet, Dropdown
 } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import {
@@ -26,9 +26,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Spinner from "@panely/components/Spinner";
 import Router from "next/router";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -41,6 +43,15 @@ const toast = ReactSwal.mixin({
     toast.addEventListener("mouseenter", ReactSwal.stopTimer);
     toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
   },
+});
+
+// Set SweetAlert options
+const alert = ReactSwal.mixin({
+  customClass: {
+    confirmButton: "btn btn-label-success btn-wide mx-1",
+    cancelButton: "btn btn-label-danger btn-wide mx-1",
+  },
+  buttonsStyling: false,
 });
 function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
   const { badget } = data;
@@ -69,37 +80,71 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
     },
   });
 
-  // Handle form submit event
-  const onSubmit = (data) => {
+  function saveBadget(data) {
     firestoreClient
-      .collection("runners")
-      .doc(runnerId)
-      .update({
-        badget: {
-          ...data,
-        },
-      })
-      .then((docRef) => {
-        toast.fire({
-          icon: "success",
-          title: "Badget saved successfully",
-        });
-        activityChange({
-          pathwayId: pathwayId,
-          type: "edit_runner",
-          msn: 'The "' + data.name + '" badget was changed.',
-        });
-        setLoading(false);
-      })
-      .catch((error) => {
-        toast.fire({
-          icon: "error",
-          title: "Creation badget",
-        });
-        setLoading(false);
+        .collection("runners")
+        .doc(runnerId)
+        .update({
+          badget: {
+            ...data,
+          },
+        })
+        .then((docRef) => {
+          toast.fire({
+            icon: "success",
+            title: "Badget saved successfully",
+          });
+          activityChange({
+            pathwayId: pathwayId,
+            type: "edit_runner",
+            msn: 'The "' + data.name + '" badget was changed.',
+          });
+          setLoading(false);
+        })
+        .catch((error) => {
+          toast.fire({
+            icon: "error",
+            title: "Creation badget",
+          });
+          setLoading(false);
 
-      });
+        });
+  }
+
+// Handle form submit event
+  const onSubmit = (data) => {
+    getQuestions(runnerId).then((questions) => {
+      if(questions.length >= 4) {
+        saveBadget(data);
+      } else {
+        alert.fire({
+          icon: "error",
+          title: "Oops...",
+          text:'To create the badget there must be a quiz with more than 3 questions.',
+        });
+        setLoading(false);
+      }
+    });
+
   };
+
+
+  const getQuestions =  (runnerId) => {
+     return firestoreClient.collection("runners")
+        .doc(runnerId)
+        .collection("questions")
+        .get()
+        .then((querySnapshot) => {
+          const list = [];
+          querySnapshot.forEach((doc) => {
+            list.push({
+              id: doc.id,
+              ...doc.data(),
+            });
+          });
+          return list;
+        });
+  }
 
   return (
     <Form
@@ -157,7 +202,19 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
         </Col>
       </Row>
       <Button type="submit" variant="label-primary" size="lg" width="widest" disabled={!saved}>
-        {loading && <Spinner className="mr-2"></Spinner>} Save
+        {loading && <Spinner className="mr-2" />} Save
+      </Button>
+      <Button
+          type="button"
+          className="ml-2"
+          variant="label-secondary"
+          size="lg"
+          width="widest"
+          onClick={() => {
+            Router.back();
+          }}
+      >
+        Cancel
       </Button>
     </Form>
   );
@@ -231,6 +288,9 @@ class FormBasePage extends React.Component {
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Badget | Update</Portlet.Title>
+                  <Portlet.Addon>
+                    <BadgetAddon id={this.state.runnerId}  pathwayId={this.state.pathwayId}/>
+                  </Portlet.Addon>
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
@@ -255,6 +315,32 @@ class FormBasePage extends React.Component {
       </React.Fragment>
     );
   }
+}
+
+const BadgetAddon  = ({id, pathwayId}) =>{
+  return <>
+    <Dropdown.Uncontrolled>
+      <Dropdown.Toggle icon variant="text-secondary">
+        <FontAwesomeIcon icon={SolidIcon.faEllipsisV} />
+      </Dropdown.Toggle>
+      <Dropdown.Menu right animated>
+        <Dropdown.Item
+            onClick={() => {
+              Router.push({
+                pathname: "/runner/quiz/create",
+                query: {
+                  runnerId: id,
+                  pathwayId: pathwayId,
+                },
+              });
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
+        >
+          Add Quiz
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown.Uncontrolled>
+  </>;
 }
 
 function mapDispathToProps(dispatch) {

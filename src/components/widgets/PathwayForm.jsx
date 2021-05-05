@@ -124,7 +124,7 @@ function PathwayForm({ onSave, data }) {
         size="lg"
         width="widest"
       >
-        {loading && <Spinner className="mr-2"></Spinner>}
+        {loading && <Spinner className="mr-2" />}
         {isNew ? "Create" : "Update"}
       </Button>
       <Button

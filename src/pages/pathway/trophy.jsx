@@ -246,8 +246,20 @@ function TrophyForm({ pathwayId, data, activityChange }) {
         size="lg"
         width="widest"
       >
-        {loading && <Spinner className="mr-2"></Spinner>}
+        {loading && <Spinner className="mr-2" />}
         {data === null || data === undefined ? "Save" : "Update"}
+      </Button>
+      <Button
+          type="button"
+          className="ml-2"
+          variant="label-secondary"
+          size="lg"
+          width="widest"
+          onClick={() => {
+            Router.back();
+          }}
+      >
+        Cancel
       </Button>
     </Form>
   );
