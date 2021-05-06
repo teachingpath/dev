@@ -82,7 +82,7 @@ class PathwayPage extends React.Component {
           )}
           <Widget1.Dialog>
             <Widget1.DialogContent>
-              <h1 className="display-3" children={name.toUpperCase()} />
+              <h1 className="display-4" children={name.toUpperCase()} />
             </Widget1.DialogContent>
           </Widget1.Dialog>
           <Widget1.Offset>

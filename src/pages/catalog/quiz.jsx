@@ -108,18 +108,20 @@ class QuizPage extends React.Component {
   }
 
   processQuiz = (data, runnerId, id, totalPoints) => {
-    let tracksCompleted = 1;
+
+    let tracksCompleted = data.current + 1;
     let tracksTotal = data.breadcrumbs.length;
     data.breadcrumbs.forEach((runner) => {
       if (runner.tracks) {
         runner.tracks.forEach((track) => {
           tracksTotal++;
-          if (track.status === "finish") {
+          if (track.status === "finish" || track.status === null) {
             tracksCompleted++;
           }
         });
       }
     });
+
     data.progress = (tracksCompleted / tracksTotal) * 100;
 
     const currentRunner = data.breadcrumbs[data.current];
