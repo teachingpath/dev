@@ -82,9 +82,9 @@ class JourneyListComponent extends React.Component {
                         <Progress
                           striped
                           className="mr-2 mb-2"
-                          value={progress}
+                          value={progress.toFixed(2)}
                         >
-                          {progress}%
+                          {progress.toFixed(2)}%
                         </Progress>
                       }
                     />

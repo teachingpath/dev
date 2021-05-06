@@ -58,11 +58,11 @@ class QuizPage extends React.Component {
             return opt.name;
           });
           data.options.forEach((opt, index) => {
-            if (type == "single" && opt.isCorrect === true) {
+            if (type === "single" && opt.isCorrect === true) {
               correctAnswer = (index + 1) + "";
               return;
             }
-            if (type == "multiple" && opt.isCorrect === true) {
+            if (type === "multiple" && opt.isCorrect === true) {
               if (correctAnswer === null) {
                 correctAnswer = [];
               }
@@ -121,10 +121,19 @@ class QuizPage extends React.Component {
       }
     });
     data.progress = (tracksCompleted / tracksTotal) * 100;
+
+    const currentRunner = data.breadcrumbs[data.current];
+    currentRunner.current = null;
+    currentRunner.tracks.forEach((track) => {
+      track.status = null;
+    });
     data.current = data.current + 1;
-    const currentRunner = data.breadcrumbs.filter(runner => {
-      return runner.id === runnerId
-    })[0];
+    try {
+      data.breadcrumbs[data.current].current = 0;
+      data.breadcrumbs[data.current].tracks[0].status = "process";
+    } catch (e) {
+      console.log("There are no more runners")
+    }
 
     firestoreClient
       .collection("journeys")
@@ -137,6 +146,7 @@ class QuizPage extends React.Component {
         totalPoints: totalPoints
       })
       .then((doc) => {
+        //Update journey
         return firestoreClient
           .collection("journeys")
           .doc(id)
@@ -176,6 +186,7 @@ class QuizPage extends React.Component {
     totalPoints,
   }) => {
     const pass = numberOfCorrectAnswers === numberOfQuestions;
+
     return pass === true ? (
       <Alert
         variant={"outline-success"}

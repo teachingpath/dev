@@ -27,6 +27,9 @@ import Router from "next/router";
 import Button from "@panely/components/Button";
 import uuid from "components/helpers/uuid";
 import Spinner from "@panely/components/Spinner";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import React from "react";
 
 class PathwayPage extends React.Component {
   constructor(props) {
@@ -261,7 +264,7 @@ class Status extends React.Component {
 
     return this.state.journeyId ? (
       <StatusProgress
-        progress={this.state.progress}
+        progress={this.state.progress.toFixed(2)}
         journeyId={this.state.journeyId}
       />
     ) : (
@@ -276,6 +279,7 @@ class RunnerTab extends React.Component {
     this.state = {
       activeTab: 0,
       tabs: props.data || [],
+      estimation: 0
     };
   }
 
@@ -320,9 +324,11 @@ class RunnerTab extends React.Component {
             badget: doc.data().badget,
             data: data,
           });
+          const estimation = data.map(el => el.time).reduce((a, b) => a+b);
           this.setState({
             ...this.state,
             tabs: list,
+            estimation: this.state.estimation + estimation
           });
         });
       })
@@ -335,7 +341,11 @@ class RunnerTab extends React.Component {
     return (
       <React.Fragment>
         {/* BEGIN Nav */}
+        <p>
+            Estimated time approximately:  <strong>{Math.floor(this.state.estimation/7)} {this.state.estimation>=7 ? "d" : "h"}</strong>
+        </p>
         <Widget2 justified size="lg" className="mb-4">
+
           {this.state.tabs.map((data, index) => (
             <Nav.Item
               key={index}
@@ -354,6 +364,9 @@ class RunnerTab extends React.Component {
                 {/* BEGIN Rich List */}
                 <Portlet.Header bordered>
                   <Portlet.Title>Tracks</Portlet.Title>
+                  <Portlet.Addon>
+                    Estimation: {tab.data.map(t => t.time).reduce((a, b) => a + b)} h
+                  </Portlet.Addon>
                 </Portlet.Header>
 
                 <RichList flush>
@@ -367,7 +380,10 @@ class RunnerTab extends React.Component {
                           <RichList.Subtitle children={subtitle} />
                         </RichList.Content>
                         <RichList.Addon addonType="append">
-                          {time.toString().padStart(2, "0")}:00 h
+
+                          {time.toString().padStart(2, "0")} h
+
+                          <FontAwesomeIcon className={"ml-2"} icon={SolidIcon.faStopwatch} />
                         </RichList.Addon>
                       </RichList.Item>
                     );

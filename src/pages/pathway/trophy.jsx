@@ -26,7 +26,7 @@ import withLayout from "components/layout/withLayout";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import swalContent from "sweetalert2-react-content";
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Head from "next/head";
 import Spinner from "@panely/components/Spinner";
 
@@ -230,7 +230,7 @@ function TrophyForm({ pathwayId, data, activityChange }) {
                 invalid={Boolean(errors.description)}
                 placeholder="Insert your description"
               />
-              <Label for="trophy-description">Description</Label>
+              <Label for="trophy-description">What logos would the apprentice get?</Label>
               {errors.description && (
                 <Form.Feedback children={errors.description.message} />
               )}

@@ -114,7 +114,7 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
 // Handle form submit event
   const onSubmit = (data) => {
     getQuestions(runnerId).then((questions) => {
-      if(questions.length >= 4) {
+      if(questions.length >= 3) {
         saveBadget(data);
       } else {
         alert.fire({
@@ -191,7 +191,7 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
                 invalid={Boolean(errors.description)}
                 placeholder="Insert your description"
               />
-              <Label for="badget-description">Description</Label>
+              <Label for="badget-description">What logos would the apprentice get?</Label>
               {errors.description && (
                 <Form.Feedback children={errors.description.message} />
               )}
