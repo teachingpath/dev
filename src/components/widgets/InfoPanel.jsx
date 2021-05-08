@@ -151,19 +151,16 @@ class InfoModal extends React.Component {
                                 const {name, date, progress, id, user} = data;
                                 const dateUpdated = new Date((date.seconds + date.nanoseconds * 10 ** -9) * 1000);
                                 return (
+                                    <>
+                                     <h4 className="mt-3"> {user.displayName.toUpperCase()}</h4>
                                     <RichList.Item key={index}  title={"User: "+user.email}>
+                                       
                                         <RichList.Addon addonType="prepend">
                                             {/* BEGIN Avatar */}
-                                            <Row>
-                                                <Col md={12} className={"text-center"}>
-                                                    <Avatar block>
-                                                        <FontAwesomeIcon icon={SolidIcon.faUserAlt}/>
-                                                    </Avatar>
-                                                </Col>
-                                                <Col md={12} className={"text-center"} >
-                                                    {user.displayName}
-                                                </Col>
-                                            </Row>
+                                                <Avatar block>
+                                                    <FontAwesomeIcon icon={SolidIcon.faUserAlt}/>
+                                                </Avatar>
+                                                
                                             {/* END Avatar */}
                                         </RichList.Addon>
                                         <RichList.Content>
@@ -172,9 +169,9 @@ class InfoModal extends React.Component {
                                                     <Progress
                                                         striped
                                                         className="mr-2 mb-2"
-                                                        value={progress}
+                                                        value={progress.toFixed(2)}
                                                     >
-                                                        {progress}%
+                                                        {progress.toFixed(2)}%
                                                     </Progress>
                                                 }
                                             />
@@ -183,9 +180,12 @@ class InfoModal extends React.Component {
                                             <RichList.Subtitle children={"Date: "+dateUpdated.toLocaleDateString()+" "+dateUpdated.toLocaleTimeString()}/>
                                         </RichList.Content>
                                     </RichList.Item>
-                                );
-                            })}
+                                </>);
+                              
+                            }
+                           )}
                         </RichList>
+
                     </Modal.Body>
                     <Modal.Footer>
 

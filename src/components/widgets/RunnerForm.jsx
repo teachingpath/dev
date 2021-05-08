@@ -9,12 +9,14 @@ import Quill from "@panely/quill";
 
 const modulesBasic = {
   toolbar: [
+    ["bold", "italic"],
     [
       { list: "ordered" },
       { list: "bullet" },
       { indent: "-1" },
       { indent: "+1" },
     ],
+    ["clean"],
   ],
 };
 
@@ -31,8 +33,7 @@ function RunnerForm({ onSave, data }) {
       .required("Please enter your description"),
     feedback: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your feedback"),
+      .min(5, "Please enter at least 5 characters"),
   });
 
   const { control, errors, handleSubmit, reset } = useForm({
@@ -54,10 +55,8 @@ function RunnerForm({ onSave, data }) {
         onSave(data).then(() => {
           if (isNew) {
             reset();
-            setLoading(false);
-          } else {
-            Router.back();
-          }
+          } 
+          setLoading(false);
         });
       })}
     >

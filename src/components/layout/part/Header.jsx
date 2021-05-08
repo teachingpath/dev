@@ -1,9 +1,11 @@
-import { Header, Button, Marker } from "@panely/components";
+import { Header, Button, Badge } from "@panely/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { sidemenuToggle } from "store/actions";
+import { sidemenuToggle, getPathwayBy, getRunnerBy } from "store/actions";
 import { bindActionCreators } from "redux";
+import { useEffect } from "react";
 import { connect } from "react-redux";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
+import { useRouter } from "next/router";
 
 import HeaderBreadcrumb from "./HeaderBreadcrumb";
 import HeaderUser from "./HeaderUser";
@@ -11,7 +13,22 @@ import HeaderNav from "./HeaderNav";
 import Sticky from "react-stickynode";
 
 function HeaderComponent(props) {
-  const { headerTitle, sidemenuToggle } = props;
+  const {
+    headerTitle,
+    sidemenuToggle,
+    getPathwayBy,
+    getRunnerBy,
+    pathway,
+  } = props;
+  const router = useRouter();
+
+  useEffect(() => {
+    getPathwayBy(router.query.pathwayId);
+  }, [router.query.pathwayId]);
+
+  useEffect(() => {
+    getRunnerBy(router.query.runnerId, router.query.pathwayId);
+  }, [router.query.runnerId, router.query.pathwayId]);
 
   return (
     <Header>
@@ -26,12 +43,32 @@ function HeaderComponent(props) {
           <Header.Container fluid>
             <Header.Wrap justify="start" className="pr-3">
               <Header.Brand>
-                <img src="/images/logo.png" alt="teaching path" style={{height: "40px"}} />
+                <img
+                  src="/images/logo.png"
+                  alt="teaching path"
+                  style={{ height: "40px" }}
+                />
               </Header.Brand>
             </Header.Wrap>
-            <Header.Wrap block justify="start"></Header.Wrap>
+            <Header.Wrap block justify="center">
+              <div className="text-center">
+                {pathway.pathwaySeleted && (
+                  <h5>
+                    {pathway.pathwaySeleted.name.toUpperCase()}
+                    {pathway.pathwaySeleted.draft ? (
+                      <Badge variant="label-info" className="ml-2">In draft</Badge>
+                    ) : (
+                      <Badge variant="label-success" className="ml-2">Published</Badge>
+                    )}
+                  </h5>
+                )}
+                {pathway.runnerSeleted && (
+                  <h7 className="text-muted">{pathway.runnerSeleted.name}</h7>
+                )}
+              </div>
+            </Header.Wrap>
             <Header.Wrap>
-            <HeaderNav />
+              <HeaderNav />
 
               <Button
                 icon
@@ -68,7 +105,11 @@ function HeaderComponent(props) {
         <Header.Holder mobile>
           <Header.Container fluid>
             <Header.Wrap block justify="start" className="px-3">
-            <img src="/images/icon.png" alt="teaching path" style={{height: "25px"}} />
+              <img
+                src="/images/icon.png"
+                alt="teaching path"
+                style={{ height: "25px" }}
+              />
             </Header.Wrap>
             <Header.Wrap>
               <Button
@@ -101,11 +142,15 @@ function HeaderComponent(props) {
 function mapStateToProps(state) {
   return {
     headerTitle: state.page.headerTitle,
+    pathway: state.pathway,
   };
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ sidemenuToggle }, dispatch);
+  return bindActionCreators(
+    { sidemenuToggle, getPathwayBy, getRunnerBy },
+    dispatch
+  );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HeaderComponent);

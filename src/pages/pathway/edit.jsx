@@ -38,12 +38,6 @@ const toast = ReactSwal.mixin({
 class FormBasePage extends React.Component {
   constructor(props) {
     super(props);
-   
-    this.state = {
-      id: null,
-      saved: false,
-    };
-
     this.onEdit = this.onEdit.bind(this);
   }
 
@@ -56,41 +50,17 @@ class FormBasePage extends React.Component {
       { text: "Home", link: "/" },
       { text: "Pathway" },
     ]);
-
-    firestoreClient
-      .collection("pathways")
-      .doc(Router.query.pathwayId)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          const data = {
-            id: Router.query.pathwayId,
-            saved: true,
-            ...doc.data(),
-          }
-          this.setState({...data});
-        } else {
-          console.log("No such document!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-        toast.fire({
-          icon: "error",
-          title: "Getting a pathway",
-        });
-      });
   }
 
   onEdit(data) {
-
+    const pathway = this.props.pathway;
     const tags = data.tags.split(",").map((item) => {
       return item.trim().toLowerCase();
     });
 
     return firestoreClient
       .collection("pathways")
-      .doc(this.state.id)
+      .doc(pathway.id)
       .update({
         ...data,
         draft: true,
@@ -98,19 +68,12 @@ class FormBasePage extends React.Component {
         tags: tags
       })
       .then((docRef) => {
-        this.setState({
-          id: this.state.id,
-          saved: true,
-          ...data,
-          name: data.name.toLowerCase(),
-          tags: tags
-        });
         toast.fire({
           icon: "success",
           title: "Pathway updated successfully",
         });
         this.props.activityChange({
-          pathwayId: this.state.id,
+          pathwayId: pathway.id,
           type: "edit_pathway",
           msn: 'The "' + data.name + '" pathway was changed.',
           ...data,
@@ -126,10 +89,10 @@ class FormBasePage extends React.Component {
   }
 
   render() {
-    if (!this.state.saved) {
+    const pathway = this.props.pathway;
+    if (!pathway) {
       return <Spinner>Loading</Spinner>;
     }
-
     return (
       <React.Fragment>
         <Head>
@@ -143,15 +106,15 @@ class FormBasePage extends React.Component {
                 <Portlet.Header bordered>
                   <Portlet.Title>Pathway | Edit</Portlet.Title>
                   <Portlet.Addon>
-                    <PathwayAddon id={this.state.id}/>
+                    <PathwayAddon id={pathway.id}/>
                   </Portlet.Addon>
                 </Portlet.Header>
                 <Portlet.Body>
                   <PathwayForm
                     onSave={this.onEdit}
-                    pathwayId={this.state.id}
-                    saved={this.state.saved}
-                    data={this.state}
+                    pathwayId={pathway.id}
+                    saved={pathway.saved}
+                    data={pathway}
                   />
                 </Portlet.Body>
                 <Portlet.Footer>
@@ -162,7 +125,7 @@ class FormBasePage extends React.Component {
                     onClick={() => {
                       Router.push({
                         pathname: "/pathway/trophy",
-                        query: { pathwayId: this.state.id },
+                        query: { pathwayId: pathway.id },
                       });
                     }}
                   >
@@ -180,17 +143,17 @@ class FormBasePage extends React.Component {
                   <Portlet.Title>Runners</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
-                  <RunnerList pathwayId={this.state.id} />
+                  <RunnerList pathwayId={pathway.id} />
                 </Portlet.Body>
                 <Portlet.Footer>
                   <Button
                     type="button"
                     className="float-right"
-                    disabled={!this.state.saved}
+                    disabled={!pathway.saved}
                     onClick={() => {
                       Router.push({
                         pathname: "/runner/create",
-                        query: { pathwayId: this.state.id },
+                        query: { pathwayId: pathway.id },
                       });
                     }}
                   >
@@ -250,7 +213,13 @@ function mapDispathToProps(dispatch) {
   );
 }
 
+function mapStateToProps(state) {
+  return {
+    pathway: state.pathway.pathwaySeleted
+  };
+}
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispathToProps
 )(withAuth(withLayout(FormBasePage)));

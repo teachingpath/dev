@@ -4,6 +4,7 @@ import { breadcrumbChange } from "./breadcrumbAction";
 import { firebaseChange } from "./firebaseAction";
 import { activityChange } from "./activityAction";
 import { userChange } from "./userAction";
+import { loadPathway, loadRunner, getPathwayBy, getRunnerBy } from "./pathwayAction";
 
 
 // Export all actions
@@ -15,5 +16,9 @@ export {
   firebaseChange,
   activityChange,
   breadcrumbChange,
-  userChange
+  userChange,
+  loadPathway,
+  loadRunner,
+  getPathwayBy,
+  getRunnerBy
 };

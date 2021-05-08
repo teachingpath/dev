@@ -94,7 +94,7 @@ class JourneyGeneralPage extends React.Component {
                                     <Widget1.Dialog>
                                         <Widget1.DialogContent>
                                             <h1
-                                                className="display-4"
+                                                className="display-5"
                                                 children={name?.toUpperCase()}
                                             />
                                         </Widget1.DialogContent>

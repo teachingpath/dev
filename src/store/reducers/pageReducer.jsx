@@ -2,7 +2,7 @@ import TYPES from "store/types"
 
 const initialState = {
   theme: "light",
-  headerTitle: "Untitled"
+  headerTitle: "Loading"
 }
 
 function pageReducer(state = initialState, action) {
