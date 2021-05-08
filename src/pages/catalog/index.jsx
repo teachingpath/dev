@@ -26,7 +26,7 @@ class CatalogPage extends React.Component {
 
   componentDidMount() {
     const q = Router.query.q;
-    const tags = Router.query.tags;
+    const tags = Router.query.tag;
 
     this.props.pageChangeHeaderTitle("Pathways");
     this.props.breadcrumbChange([
@@ -38,6 +38,7 @@ class CatalogPage extends React.Component {
       db = db.where("name", ">=", q).where("name", "<=", q + "\uf8ff");
     }
     if (tags) {
+      console.log(tags);
       db = db.where("tags", "array-contains", tags);
     }
     db.get()
@@ -113,9 +114,9 @@ class CatalogPage extends React.Component {
                                       variant="label-info"
                                       className="mr-1"
                                     >
-                                      <Link href={"/catalog?tag=" + tag}>
+                                      <a href={"/catalog?tag=" + tag} >
                                         {tag}
-                                      </Link>
+                                      </a>
                                     </Badge>
                                   );
                                 })}
