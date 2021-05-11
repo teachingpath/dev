@@ -1,4 +1,4 @@
-import { Container, Row, Col, Portlet } from "@panely/components";
+import { Container, Row, Dropdown, Col, Portlet } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
@@ -7,6 +7,8 @@ import {
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
 import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
@@ -39,9 +41,11 @@ class FormBasePage extends React.Component {
       runnerId: null,
       trackId: null,
       saved: false,
+      extend: true,
     };
 
     this.onEdit = this.onEdit.bind(this);
+    this.toggle = this.toggle.bind(this);
   }
 
   componentDidMount() {
@@ -57,7 +61,11 @@ class FormBasePage extends React.Component {
       },
       {
         text: "Runner",
-        link: "/runner/edit?pathwayId=" + Router.query.pathwayId+"&runnerId="+Router.query.runnerId
+        link:
+          "/runner/edit?pathwayId=" +
+          Router.query.pathwayId +
+          "&runnerId=" +
+          Router.query.runnerId,
       },
       { text: "Track" },
     ]);
@@ -79,6 +87,7 @@ class FormBasePage extends React.Component {
             runnerId,
             trackId,
             saved: true,
+            extend: this.state.extend,
             ...doc.data(),
           });
         } else {
@@ -110,6 +119,7 @@ class FormBasePage extends React.Component {
           pathwayId: this.state.pathwayId,
           runnerId: this.state.runnerId,
           trackId: this.state.trackId,
+          extend: this.state.extend,
           ...data,
         });
         toast.fire({
@@ -126,8 +136,8 @@ class FormBasePage extends React.Component {
           .collection("pathways")
           .doc(Router.query.pathwayId)
           .update({
-            draft: true
-          })
+            draft: true,
+          });
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
@@ -136,6 +146,13 @@ class FormBasePage extends React.Component {
           title: "Update track",
         });
       });
+  }
+
+  toggle() {
+    this.setState({
+      ...this.state,
+      extend: !this.state.extend,
+    });
   }
 
   render() {
@@ -149,11 +166,17 @@ class FormBasePage extends React.Component {
         </Head>
         <Container fluid>
           <Row>
-            <Col md="6">
+            <Col md={this.state.extend ? "12" : "6"}>
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Track | Edit</Portlet.Title>
+                  <Portlet.Addon>
+                    <TrackAddon
+                      extend={this.state.extend}
+                      toggle={this.toggle}
+                    />
+                  </Portlet.Addon>
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
@@ -172,6 +195,26 @@ class FormBasePage extends React.Component {
     );
   }
 }
+
+const TrackAddon = ({ extend, toggle }) => {
+  return (
+    <>
+      <Dropdown.Uncontrolled>
+        <Dropdown.Toggle icon variant="text-secondary">
+          <FontAwesomeIcon icon={SolidIcon.faEllipsisV} />
+        </Dropdown.Toggle>
+        <Dropdown.Menu right animated>
+          <Dropdown.Item
+            onClick={toggle}
+            icon={<FontAwesomeIcon icon={SolidIcon.faExpand} />}
+          >
+            {extend ? "Collapse":"Expand"}
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Uncontrolled>
+    </>
+  );
+};
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(

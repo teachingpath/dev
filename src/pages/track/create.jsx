@@ -1,4 +1,4 @@
-import { Container, Row, Col, Portlet } from "@panely/components";
+import { Container, Row, Dropdown, Col, Portlet } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
@@ -7,7 +7,8 @@ import {
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
@@ -44,6 +45,7 @@ class TrackCreatePage extends React.Component {
       saved: false,
     };
 
+    this.toggle = this.toggle.bind(this);
     this.onCreate = this.onCreate.bind(this);
   }
 
@@ -81,6 +83,7 @@ class TrackCreatePage extends React.Component {
           pathwayId: this.state.pathwayId,
           runnerId: this.state.runnerId,
           trackId: trackId,
+          extend: this.state.extend,
           ...data,
         });
         toast.fire({
@@ -109,6 +112,14 @@ class TrackCreatePage extends React.Component {
       });
   }
 
+  toggle() {
+    this.setState({
+      ...this.state,
+      extend: !this.state.extend,
+    });
+  }
+
+
   render() {
     return (
       <React.Fragment>
@@ -117,11 +128,17 @@ class TrackCreatePage extends React.Component {
         </Head>
         <Container fluid>
           <Row>
-            <Col md="6">
+          <Col md={this.state.extend ? "12" : "6"}>
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Track | Create</Portlet.Title>
+                  <Portlet.Addon>
+                    <TrackAddon
+                      extend={this.state.extend}
+                      toggle={this.toggle}
+                    />
+                  </Portlet.Addon>
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
@@ -156,6 +173,26 @@ class TrackCreatePage extends React.Component {
     );
   }
 }
+
+const TrackAddon = ({ extend, toggle }) => {
+  return (
+    <>
+      <Dropdown.Uncontrolled>
+        <Dropdown.Toggle icon variant="text-secondary">
+          <FontAwesomeIcon icon={SolidIcon.faEllipsisV} />
+        </Dropdown.Toggle>
+        <Dropdown.Menu right animated>
+          <Dropdown.Item
+            onClick={toggle}
+            icon={<FontAwesomeIcon icon={SolidIcon.faExpand} />}
+          >
+            {extend ? "Collapse":"Expand"}
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Uncontrolled>
+    </>
+  );
+};
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(

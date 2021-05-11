@@ -33,6 +33,7 @@ const modulesFull = {
     [{ direction: "rtl" }, { align: [] }],
     ["link", "image", "video"],
     ["clean"],
+    ['fullscreen']
   ],
   syntax: true,
 };
@@ -224,7 +225,7 @@ function TrackForm({ onSave, data }) {
               <Alert variant="outline-primary">
                 Write here what the learner should read and learn.
               </Alert>
-              <Form.Group>
+              <Form.Group className="scrolling-container">
                 <FloatLabel>
                   <Controller
                     name={`content`}
@@ -233,19 +234,19 @@ function TrackForm({ onSave, data }) {
                       <Quill
                         innerRef={ref}
                         onBlur={onBlur}
-                        theme="snow"
+                        theme="bubble"
                         value={value}
+                        scrollingContainer='#scrolling-container'
                         name={"content"}
                         modules={modulesFull}
                         onChange={onChange}
+                        placeholder="Compose an epic learning hire..."
                         style={{ minHeight: "50rem" }}
                       />
                     )}
                   />
                   <Label for="content">Content</Label>
-                  {errors.content && (
-                    <Form.Feedback children={errors.content.message} />
-                  )}
+                 
                 </FloatLabel>
               </Form.Group>
             </>
@@ -277,9 +278,7 @@ function TrackForm({ onSave, data }) {
                     )}
                   />
                   <Label for="guidelines">Guidelines</Label>
-                  {errors.guidelines && (
-                    <Form.Feedback children={errors.guidelines.message} />
-                  )}
+               
                 </FloatLabel>
               </Form.Group>
 
@@ -304,9 +303,7 @@ function TrackForm({ onSave, data }) {
                   />
 
                   <Label for="criteria">Criteria</Label>
-                  {errors.criteria && (
-                    <Form.Feedback children={errors.criteria.message} />
-                  )}
+            
                 </FloatLabel>
               </Form.Group>
             </>
@@ -362,9 +359,7 @@ function TrackForm({ onSave, data }) {
                       />
                     )}
                   />
-                  {errors.training && (
-                    <Form.Feedback children={errors.training.message} />
-                  )}
+                  
                 </FloatLabel>
               </Form.Group>
             </>
@@ -436,7 +431,7 @@ function TrainingForm({ data, onChange }) {
                           render={({ onChange, onBlur, value, name, ref }) => (
                             <Quill
                               innerRef={ref}
-                              theme="snow"
+                              theme="bubble"
                               value={value || ""}
                               id={`options_${index}_.name`}
                               name={`options[${index}].name`}
