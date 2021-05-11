@@ -6,6 +6,7 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  loadPathway
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -57,20 +58,25 @@ class FormBasePage extends React.Component {
     const tags = data.tags.split(",").map((item) => {
       return item.trim().toLowerCase();
     });
+    const dataUpdated = {
+      ...data,
+      draft: true,
+      name: data.name.toLowerCase(),
+      tags: tags
+    };
 
     return firestoreClient
       .collection("pathways")
       .doc(pathway.id)
-      .update({
-        ...data,
-        draft: true,
-        name: data.name.toLowerCase(),
-        tags: tags
-      })
+      .update(dataUpdated)
       .then((docRef) => {
         toast.fire({
           icon: "success",
           title: "Pathway updated successfully",
+        }); 
+        this.props.loadPathway({
+          pathwayId: pathway.id,
+          ...dataUpdated
         });
         this.props.activityChange({
           pathwayId: pathway.id,
@@ -208,7 +214,7 @@ const PathwayAddon  = ({id}) =>{
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, loadPathway, activityChange },
     dispatch
   );
 }

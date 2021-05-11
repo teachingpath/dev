@@ -28,8 +28,9 @@ import Button from "@panely/components/Button";
 import uuid from "components/helpers/uuid";
 import Spinner from "@panely/components/Spinner";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import Badge from "@panely/components/Badge";
 
 class PathwayPage extends React.Component {
   constructor(props) {
@@ -139,43 +140,50 @@ class Status extends React.Component {
     const user = firebaseClient.auth().currentUser;
     const tabs = this.props.runnersRef.current.state.tabs;
     const breadcrumbs = this.createBreadcrumbsBy(tabs, journeyId);
-    return this.createJourney(breadcrumbs, journeyId, name, trophy, pathwayId, user);
+    return this.createJourney(
+      breadcrumbs,
+      journeyId,
+      name,
+      trophy,
+      pathwayId,
+      user
+    );
   }
 
   createJourney(breadcrumbs, journeyId, name, trophy, pathwayId, user) {
     return Promise.all(breadcrumbs).then((dataResolved) => {
       return firestoreClient
-          .collection("journeys")
-          .doc(journeyId)
-          .set({
-            name: name,
-            trophy: trophy,
-            progress: 1,
-            pathwayId: pathwayId,
-            userId: user.uid,
-            user: {
-              email: user.email,
-              displayName: user.displayName
-            },
-            date: new Date(),
-            current: 0,
-            breadcrumbs: dataResolved,
-          })
-          .then((doc) => {
-            this.props.activityChange({
-              type: "start_pathway",
-              msn: 'Start pathway "' + name + '".',
-            });
-            Router.push({
-              pathname: "/catalog/journey",
-              query: {
-                id: journeyId,
-              },
-            });
-          })
-          .catch((error) => {
-            console.error("Error adding document: ", error);
+        .collection("journeys")
+        .doc(journeyId)
+        .set({
+          name: name,
+          trophy: trophy,
+          progress: 1,
+          pathwayId: pathwayId,
+          userId: user.uid,
+          user: {
+            email: user.email,
+            displayName: user.displayName,
+          },
+          date: new Date(),
+          current: 0,
+          breadcrumbs: dataResolved,
+        })
+        .then((doc) => {
+          this.props.activityChange({
+            type: "start_pathway",
+            msn: 'Start pathway "' + name + '".',
           });
+          Router.push({
+            pathname: "/catalog/journey",
+            query: {
+              id: journeyId,
+            },
+          });
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
     });
   }
 
@@ -206,32 +214,32 @@ class Status extends React.Component {
 
   async saveJourneyForBadget(journeyId, data) {
     await firestoreClient
-        .collection("journeys")
-        .doc(journeyId)
-        .collection("badgets")
-        .doc(data.id)
-        .set({
-          ...data.badget,
-          disabled: true,
-        });
+      .collection("journeys")
+      .doc(journeyId)
+      .collection("badgets")
+      .doc(data.id)
+      .set({
+        ...data.badget,
+        disabled: true,
+      });
   }
 
   async getQuizFromRunner(data) {
     const quiz = await firestoreClient
-        .collection("runners")
-        .doc(data.id)
-        .collection("questions")
-        .get()
-        .then((querySnapshot) => {
-          const questions = [];
-          querySnapshot.forEach((doc) => {
-            questions.push({
-              id: doc.id,
-              ...doc.data(),
-            });
+      .collection("runners")
+      .doc(data.id)
+      .collection("questions")
+      .get()
+      .then((querySnapshot) => {
+        const questions = [];
+        querySnapshot.forEach((doc) => {
+          questions.push({
+            id: doc.id,
+            ...doc.data(),
           });
-          return questions;
         });
+        return questions;
+      });
     return quiz;
   }
 
@@ -279,7 +287,7 @@ class RunnerTab extends React.Component {
     this.state = {
       activeTab: 0,
       tabs: props.data || [],
-      estimation: 0
+      estimation: 0,
     };
   }
 
@@ -311,6 +319,7 @@ class RunnerTab extends React.Component {
                   title: doc.data().name,
                   subtitle: doc.data().description,
                   time: doc.data().timeLimit,
+                  type: doc.data().type,
                 });
               });
               return list;
@@ -324,11 +333,11 @@ class RunnerTab extends React.Component {
             badget: doc.data().badget,
             data: data,
           });
-          const estimation = data.map(el => el.time).reduce((a, b) => a+b);
+          const estimation = data.map((el) => el.time).reduce((a, b) => a + b);
           this.setState({
             ...this.state,
             tabs: list,
-            estimation: this.state.estimation + estimation
+            estimation: this.state.estimation + estimation,
           });
         });
       })
@@ -342,10 +351,13 @@ class RunnerTab extends React.Component {
       <React.Fragment>
         {/* BEGIN Nav */}
         <p>
-            Estimated time approximately:  <strong>{Math.floor(this.state.estimation/7)} {this.state.estimation>=7 ? "d" : "h"}</strong>
+          Estimated time approximately:{" "}
+          <strong>
+            {Math.floor(this.state.estimation / 7)}{" "}
+            {this.state.estimation >= 7 ? "d" : "h"}
+          </strong>
         </p>
         <Widget2 justified size="lg" className="mb-4">
-
           {this.state.tabs.map((data, index) => (
             <Nav.Item
               key={index}
@@ -365,25 +377,30 @@ class RunnerTab extends React.Component {
                 <Portlet.Header bordered>
                   <Portlet.Title>Tracks</Portlet.Title>
                   <Portlet.Addon>
-                    Estimation: {tab.data.map(t => t.time).reduce((a, b) => a + b)} h
+                    Estimation:{" "}
+                    {tab.data.map((t) => t.time).reduce((a, b) => a + b)} h
                   </Portlet.Addon>
                 </Portlet.Header>
 
                 <RichList flush>
                   {tab.data.map((data, index) => {
-                    const { subtitle, title, time } = data;
+                    const { subtitle, title, time, type } = data;
 
                     return (
                       <RichList.Item key={index}>
                         <RichList.Content>
                           <RichList.Title children={index + 1 + ". " + title} />
-                          <RichList.Subtitle children={subtitle} />
+                          <RichList.Subtitle
+                            children={subtitle}
+                          />
                         </RichList.Content>
                         <RichList.Addon addonType="append">
-
+                        <Badge className="mr-2">{type}</Badge>
                           {time.toString().padStart(2, "0")} h
-
-                          <FontAwesomeIcon className={"ml-2"} icon={SolidIcon.faStopwatch} />
+                          <FontAwesomeIcon
+                            className={"ml-2"}
+                            icon={SolidIcon.faStopwatch}
+                          />
                         </RichList.Addon>
                       </RichList.Item>
                     );

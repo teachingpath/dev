@@ -72,7 +72,7 @@ class BadgetListComponent extends React.Component {
                   <Card className="text-center bg-light p-3">
                     <Card.Img
                       top
-                      className="bg-white mg-thumbnail avatar-circle p-5 border border-warning"
+                      className="bg-white mg-thumbnail avatar-circle p-3 border border-warning"
                       src={data.image}
                       alt="Badget Image"
                     />

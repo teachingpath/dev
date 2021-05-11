@@ -10,7 +10,6 @@ function* runnerSaga({ payload }) {
     runnerId: payload.runnerId,
     pathwayId: payload.pathwayId,
   });
-  console.log(data);
   yield put({ type: TYPES.RUNNER_LOAD, payload: data });
 }
 

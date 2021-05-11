@@ -30,10 +30,7 @@ function RunnerForm({ onSave, data }) {
     description: yup
       .string()
       .min(5, "Please enter at least 5 characters")
-      .required("Please enter your description"),
-    feedback: yup
-      .string()
-      .min(5, "Please enter at least 5 characters"),
+      .required("Please enter your description")
   });
 
   const { control, errors, handleSubmit, reset } = useForm({

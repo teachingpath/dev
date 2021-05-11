@@ -552,14 +552,17 @@ function QuestionForm({ data, onChange }) {
                               onChange={onChange}
                               onBlur={onBlur}
                               onKeyUp={(data) => {
-                                if (value.name) {
-                                  onChangeContent(index, value);
-                                } else {
-                                  onChangeContent(index, {
-                                    name: value,
-                                    id: index,
-                                  });
+                                if(value){
+                                  if (value.name) {
+                                    onChangeContent(index, value);
+                                  } else {
+                                    onChangeContent(index, {
+                                      name: value,
+                                      id: index,
+                                    });
+                                  }
                                 }
+                                
                               }}
                             />
                           )}

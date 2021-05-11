@@ -506,3 +506,7 @@ template {
 [hidden] {
   display: none !important;
 }
+
+.modal-body  img {
+  max-width: 500px;
+}

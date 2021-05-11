@@ -12,6 +12,7 @@ import {
   activityChange,
   breadcrumbChange,
   pageChangeHeaderTitle,
+  loadRunner
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -84,6 +85,11 @@ class FormBasePage extends React.Component {
           type: "edit_runner",
           msn: 'The "' + data.name + '" runner was updated.',
           ...data,
+        });  
+        this.props.loadRunner({
+          runnerId: runner.runnerId, 
+          pathwayId: runner.pathwayId,
+          ...data
         });
         return firestoreClient
           .collection("pathways")
@@ -234,7 +240,7 @@ const RunnerAddon = ({ id, pathwayId }) => {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, loadRunner },
     dispatch
   );
 }
