@@ -259,8 +259,14 @@ class Tracks extends React.Component {
                     <Badge className="mr-2">{item.timeLimit} h</Badge>
                   )}
                   <Badge className="mr-2">{item.type}</Badge>
-                  
-                  {item.title}
+                  {
+                    item.status !== "process" ? (
+                      <a href={"/catalog/track?id="+item.id+"&runnerId="+runnerId+"&journeyId="+journeyId} >{item.title}</a>
+                    ) : (
+                      item.title
+                    )
+                  }
+                 
                 </>
               }
               description={

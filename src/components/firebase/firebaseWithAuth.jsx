@@ -3,14 +3,17 @@ import { firebaseChange } from "store/actions";
 import { connect } from "react-redux";
 import { userChange } from "store/actions";
 import { firestoreClient } from "./firebaseClient";
-import verifyCookie from "components/firebase/firebaseVerifyCookie";
 import Router from "next/router";
+import nookies from "nookies";
+import jwt_decode from 'jwt-decode';
+
 import PAGE from "config/page.config";
 import Spinner from "@panely/components/Spinner";
 
 function firebaseWithAuth(AuthComponent) {
   class Authentication extends React.Component {
     static async getInitialProps(ctx) {
+  
       let initialProps = {};
 
       // Get initial properties
@@ -18,11 +21,10 @@ function firebaseWithAuth(AuthComponent) {
         initialProps = await AuthComponent.getInitialProps(ctx);
       }
 
-      // Verify cookie
-      const result = await verifyCookie(ctx);
+      const cookies = nookies.get(ctx)
 
       // Check cookie is valid or not
-      if (!result) {
+      if (!cookies.token) {
         // Redirect to login page
         if (ctx.res) {
           ctx.res.writeHead(302, { Location: PAGE.loginPagePath });
@@ -30,18 +32,19 @@ function firebaseWithAuth(AuthComponent) {
         } else {
           Router.push(PAGE.loginPagePath);
         }
-
-        return {
-          ...initialProps,
-          firebase: null,
-        };
       }
 
+      const claims = jwt_decode(cookies.token);
       return {
         ...initialProps,
-        firebase: result,
+        firebase: {
+          user_id: claims.user_id,
+          email: claims.email,
+          name: claims.name
+        },
       };
     }
+
 
     componentDidMount() {
       this.props.firebaseChange(this.props.firebase);

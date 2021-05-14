@@ -327,6 +327,7 @@ class RunnerTab extends React.Component {
 
           list.push({
             id: doc.id,
+            pathwayId: this.props.pathwayId,
             title: doc.data().name,
             subtitle: doc.data().description,
             feedback: doc.data().feedback,
@@ -384,18 +385,29 @@ class RunnerTab extends React.Component {
 
                 <RichList flush>
                   {tab.data.map((data, index) => {
-                    const { subtitle, title, time, type } = data;
-
+                    const { subtitle, title, time, type, id } = data;
+                    const titleLink = (
+                      <a
+                        href={
+                          "/catalog/track?id=" +
+                          id +
+                          "&runnerId=" +
+                          tab.id +
+                          "&pathwayId=" +
+                          tab.pathwayId
+                        }
+                      >
+                        {index + 1 + ". " + title}
+                      </a>
+                    );
                     return (
                       <RichList.Item key={index}>
                         <RichList.Content>
-                          <RichList.Title children={index + 1 + ". " + title} />
-                          <RichList.Subtitle
-                            children={subtitle}
-                          />
+                          <RichList.Title children={titleLink} />
+                          <RichList.Subtitle children={subtitle} />
                         </RichList.Content>
                         <RichList.Addon addonType="append">
-                        <Badge className="mr-2">{type}</Badge>
+                          <Badge className="mr-2">{type}</Badge>
                           {time.toString().padStart(2, "0")} h
                           <FontAwesomeIcon
                             className={"ml-2"}

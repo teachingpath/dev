@@ -29,7 +29,7 @@ function FeedbackForm({ onSave }) {
   const { control, errors, handleSubmit, reset } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-        feedback: "",
+      feedback: "",
     },
   });
   return (
@@ -103,44 +103,46 @@ class LearningTrack extends React.Component {
   }
   render() {
     const { data } = this.props;
+    const user = firebaseClient.auth().currentUser;
     const id = data.id;
     return (
       <>
         <div dangerouslySetInnerHTML={{ __html: data.content }} />
-        <div>
-          <h3 className="mt-3">Feedback</h3>
-          <p>Write a feedback about what you learned.</p>
+        {user && (
+          <div>
+            <h3 className="mt-3">Feedback</h3>
+            <p>Write a feedback about what you learned.</p>
 
-          <FeedbackForm
-            onSave={(data) => {
-              const user = firebaseClient.auth().currentUser;
-              return firestoreClient
-                .collection("track-response")
-                .add({
-                  id: 1,
-                  trackId: id,
-                  ...data,
-                  userId: user.uid,
-                  date: Date.now(),
-                })
-                .then(() => {
-                  this.componentDidMount();
-                  this.setState({ current: this.state.current + 1 });
-                });
-            }}
-          />
-          <Timeline>
-            {this.state.list.map((data, index) => {
-              const { date, feedback } = data;
+            <FeedbackForm
+              onSave={(data) => {
+                return firestoreClient
+                  .collection("track-response")
+                  .add({
+                    id: 1,
+                    trackId: id,
+                    ...data,
+                    userId: user.uid,
+                    date: Date.now(),
+                  })
+                  .then(() => {
+                    this.componentDidMount();
+                    this.setState({ current: this.state.current + 1 });
+                  });
+              }}
+            />
+            <Timeline>
+              {this.state.list.map((data, index) => {
+                const { date, feedback } = data;
 
-              return (
-                <Timeline.Item date={date} pin={<Marker type="dot" />}>
-                  {feedback}
-                </Timeline.Item>
-              );
-            })}
-          </Timeline>
-        </div>
+                return (
+                  <Timeline.Item date={date} pin={<Marker type="dot" />}>
+                    {feedback}
+                  </Timeline.Item>
+                );
+              })}
+            </Timeline>
+          </div>
+        )}
       </>
     );
   }

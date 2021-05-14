@@ -94,7 +94,7 @@ class TrackModal extends React.Component {
     } = this.props;
 
     if (completed) {
-      complete().then(() => {
+      this.complete().then(() => {
         onComplete();
       });
       return <span> 00:00:00 h</span>;

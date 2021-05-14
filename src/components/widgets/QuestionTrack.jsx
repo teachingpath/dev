@@ -119,6 +119,8 @@ class Questions extends React.Component {
     const {
       data: { questions, id },
     } = this.props;
+    const user = firebaseClient.auth().currentUser;
+
     return (
       <Accordion>
         {questions.map((question, index) => {
@@ -132,38 +134,42 @@ class Questions extends React.Component {
               </Card.Header>
               <Collapse isOpen={activeCard === index}>
                 <Card.Body>
-                  <QuestionForm
-                    onSave={(data) => {
-                      const user = firebaseClient.auth().currentUser;
-                      return firestoreClient
-                        .collection("track-response")
-                        .add({
-                          id: question.id,
-                          trackId: id,
-                          ...data,
-                          userId: user.uid,
-                          date: Date.now(),
-                        })
-                        .then(() => {
-                          this.componentDidMount();
-                        });
-                    }}
-                  />
+                  {user && (
+                    <QuestionForm
+                      onSave={(data) => {
+                        const user = firebaseClient.auth().currentUser;
+                        return firestoreClient
+                          .collection("track-response")
+                          .add({
+                            id: question.id,
+                            trackId: id,
+                            ...data,
+                            userId: user.uid,
+                            date: Date.now(),
+                          })
+                          .then(() => {
+                            this.componentDidMount();
+                          });
+                      }}
+                    />
+                  )}
 
                   <Timeline>
-                    {this.state.list.filter(q => q.id === index).map((data, index) => {
-                      const { date, answer } = data;
+                    {this.state.list
+                      .filter((q) => q.id === index)
+                      .map((data, index) => {
+                        const { date, answer } = data;
 
-                      return (
-                        <Timeline.Item
-                          key={index}
-                          date={date}
-                          pin={<Marker type="circle" />}
-                        >
-                          {answer}
-                        </Timeline.Item>
-                      );
-                    })}
+                        return (
+                          <Timeline.Item
+                            key={index}
+                            date={date}
+                            pin={<Marker type="circle" />}
+                          >
+                            {answer}
+                          </Timeline.Item>
+                        );
+                      })}
                   </Timeline>
                 </Card.Body>
               </Collapse>

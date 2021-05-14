@@ -104,6 +104,8 @@ class HackingTrack extends React.Component {
   render() {
     const { data } = this.props;
     const id = data.id;
+    const user = firebaseClient.auth().currentUser;
+
     return (
       <>
         <Card>
@@ -123,42 +125,44 @@ class HackingTrack extends React.Component {
             </Card.Text>
           </Card.Body>
         </Card>
-        <div>
-          <h3 className="mt-3">Solution</h3>
-          <p>
-            Add here your hacking answer, add links, repositories or comments.
-          </p>
+        {user && (
+          <div>
+            <h3 className="mt-3">Solution</h3>
+            <p>
+              Add here your hacking answer, add links, repositories or comments.
+            </p>
 
-          <SolutionForm
-            onSave={(data) => {
-              const user = firebaseClient.auth().currentUser;
-              return firestoreClient
-                .collection("track-response")
-                .add({
-                  id: 1,
-                  trackId: id,
-                  ...data,
-                  userId: user.uid,
-                  date: Date.now(),
-                })
-                .then(() => {
-                  this.componentDidMount();
-                  this.setState({ current: this.state.current + 1 });
-                });
-            }}
-          />
-          <Timeline>
-            {this.state.list.map((data, index) => {
-              const { date, solution } = data;
+            <SolutionForm
+              onSave={(data) => {
+                const user = firebaseClient.auth().currentUser;
+                return firestoreClient
+                  .collection("track-response")
+                  .add({
+                    id: 1,
+                    trackId: id,
+                    ...data,
+                    userId: user.uid,
+                    date: Date.now(),
+                  })
+                  .then(() => {
+                    this.componentDidMount();
+                    this.setState({ current: this.state.current + 1 });
+                  });
+              }}
+            />
+            <Timeline>
+              {this.state.list.map((data, index) => {
+                const { date, solution } = data;
 
-              return (
-                <Timeline.Item date={date} pin={<Marker type="dot" />}>
-                  {solution}
-                </Timeline.Item>
-              );
-            })}
-          </Timeline>
-        </div>
+                return (
+                  <Timeline.Item date={date} pin={<Marker type="dot" />}>
+                    {solution}
+                  </Timeline.Item>
+                );
+              })}
+            </Timeline>
+          </div>
+        )}
       </>
     );
   }

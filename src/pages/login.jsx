@@ -11,10 +11,10 @@ import {
   FloatLabel,
 } from "@panely/components";
 import { useForm, Controller } from "react-hook-form";
+import nookies from "nookies";
 import { firebaseClient } from "components/firebase/firebaseClient";
 import { yupResolver } from "@hookform/resolvers";
 import * as yup from "yup";
-import verifyCookie from "components/firebase/firebaseVerifyCookie";
 import withLayout from "components/layout/withLayout";
 import swalContent from "sweetalert2-react-content";
 import Router from "next/router";
@@ -184,10 +184,9 @@ function LoginForm() {
 }
 
 LoginPage.getInitialProps = async (ctx) => {
-  const result = await verifyCookie(ctx);
-
+  const cookies = nookies.get(ctx)
   // Redirect to dashboard page if the user has logged in
-  if (result) {
+  if (cookies?.token) {
     if (ctx.res) {
       ctx.res.writeHead(302, {
         Location: ctx.query.redirect || PAGE.dashboardPagePath,

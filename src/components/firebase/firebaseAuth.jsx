@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext, createContext } from "react";
 import { firebaseClient } from "./firebaseClient";
 import nookies from "nookies";
-import Spinner from "@panely/components/Spinner";
 
 // Set authentication context
 const AuthContext = createContext({
