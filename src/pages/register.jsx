@@ -19,9 +19,8 @@ import {
   firestoreClient,
 } from "components/firebase/firebaseClient";
 import { yupResolver } from "@hookform/resolvers";
-import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import * as yup from "yup";
-import verifyCookie from "components/firebase/firebaseVerifyCookie";
+import nookies from "nookies";
 import withLayout from "components/layout/withLayout";
 import swalContent from "sweetalert2-react-content";
 import Router from "next/router";
@@ -359,10 +358,9 @@ function RegisterForm() {
 }
 
 RegisterPage.getInitialProps = async (ctx) => {
-  const result = await verifyCookie(ctx);
-
+  const cookies = nookies.get(ctx)
   // Redirect to dashboard page if the user has logged in
-  if (result) {
+  if (cookies?.token) {
     if (ctx.res) {
       ctx.res.writeHead(302, {
         Location: ctx.query.redirect || PAGE.dashboardPagePath,
