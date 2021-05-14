@@ -110,6 +110,7 @@ class LearningTrack extends React.Component {
         <div dangerouslySetInnerHTML={{ __html: data.content }} />
         {user && (
           <div>
+            <hr />
             <h3 className="mt-3">Feedback</h3>
             <p>Write a feedback about what you learned.</p>
 

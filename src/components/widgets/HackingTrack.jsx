@@ -127,6 +127,7 @@ class HackingTrack extends React.Component {
         </Card>
         {user && (
           <div>
+            <hr/>
             <h3 className="mt-3">Solution</h3>
             <p>
               Add here your hacking answer, add links, repositories or comments.
