@@ -506,7 +506,45 @@ template {
 [hidden] {
   display: none !important;
 }
+@media (min-width: 10px) {
+  .portlet-body  img {
+    max-width: 260px;
+  }
+}
 
-.portlet-body  img {
-  max-width: 500px;
+@media (min-width: 400px) {
+  .portlet-body  img {
+    max-width: 360px;
+  }
+}
+
+@media (min-width: 600px) {
+  .portlet-body  img {
+    max-width: 460px;
+  }
+}
+
+@media (min-width: 700px) {
+  .portlet-body  img {
+    max-width: 500px;
+  }
+}
+
+@media (min-width: 800px) {
+  .portlet-body  img {
+    max-width: 600px;
+  }
+}
+
+
+@media (min-width: 900px) {
+  .portlet-body  img {
+    max-width: 900px;
+  }
+}
+
+
+
+.portlet-body  p {
+  display: inline;
 }
