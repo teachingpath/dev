@@ -8,8 +8,6 @@ import swalContent from "sweetalert2-react-content";
 import Swal from "@panely/sweetalert2";
 
 const ReactSwal = swalContent(Swal);
-
-// Set SweetAlert options
 const swal = ReactSwal.mixin({
     customClass: {
         confirmButton: "btn btn-label-success btn-wide mx-1",

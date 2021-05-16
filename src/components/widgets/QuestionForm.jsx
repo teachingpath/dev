@@ -142,7 +142,7 @@ function QuizForm({ onSave, data }) {
         );
       })}
 
-      <p className="text-right">
+      <div className="text-right">
         <Button
           variant={Boolean(errors.options) ? "danger" : "primary"}
           type="button"
@@ -154,7 +154,8 @@ function QuizForm({ onSave, data }) {
         >
           Add Option <FontAwesomeIcon icon={SolidIcon.faPlus} />
         </Button>
-      </p>
+      </div>
+
       {errors.options && (
         <Alert variant="label-danger">{errors.options.message}</Alert>
       )}

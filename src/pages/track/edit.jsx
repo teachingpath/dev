@@ -164,7 +164,7 @@ class FormBasePage extends React.Component {
         <Head>
           <title>Track | Edit</title>
         </Head>
-        <Container fluid>
+        <Container fluid={!this.state.extend}>
           <Row>
             <Col md={this.state.extend ? "12" : "6"}>
               {/* BEGIN Portlet */}

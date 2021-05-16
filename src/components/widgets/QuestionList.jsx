@@ -6,6 +6,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Router from "next/router";
 import Badge from "@panely/components/Badge";
 
+import Swal from "@panely/sweetalert2"
+import swalContent from "sweetalert2-react-content"
+const ReactSwal = swalContent(Swal)
+const swal = ReactSwal.mixin({
+  customClass: {
+    confirmButton: "btn btn-label-success btn-wide mx-1",
+    cancelButton: "btn btn-label-danger btn-wide mx-1"
+  },
+  buttonsStyling: false
+});
+
 class QuestionList extends React.Component {
   constructor(props) {
     super(props);
@@ -43,20 +54,34 @@ class QuestionList extends React.Component {
       });
   }
 
+
   onDelete(questionId) {
-    firestoreClient
-      .collection("runners")
-      .doc(this.props.runnerId)
-      .collection("questions")
-      .doc(questionId)
-      .delete()
-      .then(() => {
-        console.log("Document successfully deleted!");
-        this.componentDidMount();
-      })
-      .catch((error) => {
-        console.error("Error removing document: ", error);
-      });
+    swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then(result => {
+      if (result.value) {
+        firestoreClient
+            .collection("runners")
+            .doc(this.props.runnerId)
+            .collection("questions")
+            .doc(questionId)
+            .delete()
+            .then(() => {
+              console.log("Document successfully deleted!");
+              this.componentDidMount();
+            })
+            .catch((error) => {
+              console.error("Error removing document: ", error);
+            });
+      }
+    })
+
   }
 
   onSortList(list) {

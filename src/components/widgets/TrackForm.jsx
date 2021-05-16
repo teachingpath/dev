@@ -476,7 +476,7 @@ function TrainingForm({ data, onChange }) {
               );
             })}
 
-            <p className="text-right">
+            <div className="text-right">
               <Button
                 variant={"primary"}
                 type="button"
@@ -486,7 +486,7 @@ function TrainingForm({ data, onChange }) {
               >
                 Add Step <FontAwesomeIcon icon={SolidIcon.faPlus} />
               </Button>
-            </p>
+            </div>
 
             {/* END Form Group */}
           </Form>

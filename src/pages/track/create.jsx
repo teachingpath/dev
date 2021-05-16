@@ -126,7 +126,7 @@ class TrackCreatePage extends React.Component {
         <Head>
           <title>Track | Create</title>
         </Head>
-        <Container fluid>
+        <Container fluid={!this.state.extend}>
           <Row>
           <Col md={this.state.extend ? "12" : "6"}>
               {/* BEGIN Portlet */}
@@ -141,10 +141,10 @@ class TrackCreatePage extends React.Component {
                   </Portlet.Addon>
                 </Portlet.Header>
                 <Portlet.Body>
-                  <p>
+                  <div>
                     Create each track to evaluate the competencies within the
                     runner.
-                  </p>
+                  </div>
                   <hr />
                   <TrackForm onSave={this.onCreate} />
                   {/* END Portlet */}

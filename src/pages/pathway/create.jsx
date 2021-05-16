@@ -109,10 +109,10 @@ class PathwayPage extends React.Component {
                   <Portlet.Title>Pathway | Create</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
-                  <p>
+                  <div>
                     After creating the Pathway you must create the runners to
                     add the tracks.
-                  </p>
+                  </div>
                   <hr />
                   <PathwayForm
                     onSave={this.onCreate}

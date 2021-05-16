@@ -74,10 +74,10 @@ class CatalogPage extends React.Component {
                   <Portlet.Title>Available pathways</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
-                  <p>
+                  <div>
                     You can see the pathways here but in order to apply you must
                     have a user account.
-                  </p>
+                  </div>
                   <CardColumns>
                     {this.state.data.length === 0 && (
                       <p className="p-5">

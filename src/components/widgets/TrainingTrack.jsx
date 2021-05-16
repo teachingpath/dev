@@ -142,10 +142,10 @@ class TrainingTrack extends React.Component {
           title={"Result"}
           description={
             <>
-              <p>
+              <div>
                 Add here your training answer, add links, repositories or
                 comments.
-              </p>
+              </div>
               {this.state.current === training?.length && (
                 <>
                   {user && (

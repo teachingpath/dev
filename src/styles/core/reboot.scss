@@ -512,27 +512,66 @@ template {
   }
 }
 
-@media (min-width: 400px) {
+@media (min-width: 320px) {
+  .portlet-body  img {
+    max-width: 260px;
+  }
+}
+
+@media (min-width: 360px) {
+  .portlet-body  img {
+    max-width: 320px;
+  }
+}
+
+@media (min-width: 420px) {
   .portlet-body  img {
     max-width: 360px;
   }
 }
 
+@media (min-width: 460px) {
+  .portlet-body  img {
+    max-width: 420px;
+  }
+}
+
+@media (max-width: 500px) {
+  .content .container-fluid{
+    padding: 0 !important;
+  }
+  .content {
+    padding: 0 !important;
+    background: #ffffff;
+  }
+  .portlet {
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .col-xl-12 {
+    padding: 0 !important;
+  }
+  .row {
+    margin: 0 !important;
+  }
+}
+
 @media (min-width: 600px) {
   .portlet-body  img {
-    max-width: 460px;
+    max-width: 420px;
   }
 }
 
 @media (min-width: 700px) {
   .portlet-body  img {
-    max-width: 500px;
+    max-width: 600px;
   }
 }
 
 @media (min-width: 800px) {
   .portlet-body  img {
-    max-width: 600px;
+    max-width: 700px;
   }
 }
 
