@@ -184,7 +184,11 @@ class FormBasePage extends React.Component {
                     add the tracks.
                   </p>
                   <hr />
-                  <TrackForm onSave={this.onEdit} data={this.state} />
+                  <TrackForm onSave={this.onEdit} data={this.state} onExtend={() => {
+                    if(!this.state.extend){
+                      this.toggle()
+                    }
+                  }} />
                   {/* END Portlet */}
                 </Portlet.Body>
               </Portlet>

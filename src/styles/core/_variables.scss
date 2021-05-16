@@ -1292,7 +1292,7 @@ $portlet-icon-color-dark:           $text-level-1-dark !default;
 
 $portlet-title-color-light:         $text-level-3-light !default;
 $portlet-title-color-dark:          $text-level-3-dark !default;
-$portlet-title-font-size:           $font-size-lg !default;
+$portlet-title-font-size:           $font-size-lg + .5rem !default;
 $portlet-title-font-weight:         $font-weight-bold !default;
 
 // Carousel

@@ -51,7 +51,7 @@ const modulesBasic = {
   ],
 };
 
-function TrackForm({ onSave, data }) {
+function TrackForm({ onSave, data, onExtend }) {
   const [loading, setLoading] = useState(false);
   const schema = yup.object().shape({
     name: yup
@@ -84,7 +84,7 @@ function TrackForm({ onSave, data }) {
 
 
 
-  const { control, errors, handleSubmit, watch, setValue, reset } = useForm({
+  const { control, errors, handleSubmit, watch, setValue, reset, getValues } = useForm({
     resolver: yupResolver(schema),
     defaultValues: defaultValues,
   });
@@ -94,33 +94,36 @@ function TrackForm({ onSave, data }) {
 
   const watchFields = watch(["type"]);
   if(watchFields.type === 'learning'){
-    setValue("content", data?.content || "");
+    setValue("content", data?.content || (getValues().content || ""));
     setValue("guidelines", "");
     setValue("criteria", "");
     setValue("questions", []);
     setValue("training",  []);
+    onExtend();
   }
-  if(watchFields.type === 'training'){
+  if(watchFields.type === 'training' ){
     setValue("content", "");
     setValue("guidelines", "");
     setValue("criteria", "");
     setValue("questions", []);
-    setValue("training", data?.training || []);
+    setValue("training", data?.training || (getValues().training || []));
+    onExtend();
   }
   if(watchFields.type === 'hacking'){
     setValue("content", "");
-    setValue("guidelines",  data?.guidelines || "");
-    setValue("criteria",  data?.criteria || "");
+    setValue("guidelines",  data?.guidelines || (getValues().guidelines || ""));
+    setValue("criteria",  data?.criteria || (getValues().criteria || ""));
     setValue("questions", []);
     setValue("training",  []);
-
+    onExtend();
   }
-  if(watchFields.type === 'q_and_A'){
+  if(watchFields.type === 'q_and_A' && !Object.keys(errors).length){
     setValue("content", "");
     setValue("guidelines",  "");
     setValue("criteria",   "");
-    setValue("questions", data?.questions || []);
+    setValue("questions", data?.questions || (getValues().questions || []));
     setValue("training",  []);
+    onExtend();
   }
 
   return (

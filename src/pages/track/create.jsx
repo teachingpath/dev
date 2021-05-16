@@ -146,13 +146,17 @@ class TrackCreatePage extends React.Component {
                     runner.
                   </div>
                   <hr />
-                  <TrackForm onSave={this.onCreate} />
+                  <TrackForm onSave={this.onCreate}  onExtend={() => {
+                    if(!this.state.extend){
+                      this.toggle()
+                    }
+                  }} />
                   {/* END Portlet */}
                 </Portlet.Body>
               </Portlet>
             </Col>
 
-            <Col md="6">
+            <Col md={this.state.extend ? "12" : "6"}>
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>

@@ -506,6 +506,9 @@ template {
 [hidden] {
   display: none !important;
 }
+
+
+
 @media (min-width: 10px) {
   .portlet-body  img {
     max-width: 260px;
@@ -555,7 +558,16 @@ template {
   .row {
     margin: 0 !important;
   }
+
+  .card-columns .avatar-circle {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
 }
+
+
+
 
 @media (min-width: 600px) {
   .portlet-body  img {

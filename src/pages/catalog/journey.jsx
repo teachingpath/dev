@@ -134,11 +134,6 @@ class JourneyGeneralPage extends React.Component {
                 <Widget1.Body style={{ marginTop: "60px" }}>
                   <Row>
                     <Col md="6">
-                      {this.state?.id && (
-                        <BadgetList journeyId={this.state?.id} />
-                      )}
-                    </Col>
-                    <Col md="6">
                       {this.state?.runners && (
                         <Runners
                           current={this.state.current}
@@ -153,6 +148,11 @@ class JourneyGeneralPage extends React.Component {
                             this.componentDidMount();
                           }}
                         />
+                      )}
+                    </Col>
+                    <Col md="6">
+                      {this.state?.id && (
+                          <BadgetList journeyId={this.state?.id} />
                       )}
                     </Col>
                   </Row>
