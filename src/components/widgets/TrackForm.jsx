@@ -14,7 +14,6 @@ import { useForm, Controller, useFieldArray } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import * as RegularIcon from "@fortawesome/free-regular-svg-icons";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Quill from "@panely/quill";
 import Router from "next/router";
@@ -25,7 +24,8 @@ import Spinner from "@panely/components/Spinner";
 const modulesFull = {
   toolbar: [
     ["bold", "italic", "underline", "strike"],
-    ["blockquote", "code-block"],
+    [ "blockquote", "code-block"],
+    [{ 'header': [2, 3, 4, 5, 6, false] }],
     [
       { list: "ordered" },
       { list: "bullet" },
