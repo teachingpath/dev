@@ -8,11 +8,13 @@ import {
   Portlet,
   FloatLabel,
   CustomInput,
+  GridNav,
 } from "@panely/components";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as RegularIcon from "@fortawesome/free-regular-svg-icons";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Quill from "@panely/quill";
 import Router from "next/router";
@@ -23,7 +25,7 @@ import Spinner from "@panely/components/Spinner";
 const modulesFull = {
   toolbar: [
     ["bold", "italic", "underline", "strike"],
-    ['blockquote', 'code-block'],
+    ["blockquote", "code-block"],
     [
       { list: "ordered" },
       { list: "bullet" },
@@ -33,7 +35,7 @@ const modulesFull = {
     [{ direction: "rtl" }, { align: [] }],
     ["link", "image", "video"],
     ["clean"],
-    ['fullscreen']
+    ["fullscreen"],
   ],
   syntax: true,
 };
@@ -53,6 +55,8 @@ const modulesBasic = {
 
 function TrackForm({ onSave, data, onExtend }) {
   const [loading, setLoading] = useState(false);
+  const [typeContent, setTypeContent] = useState(data?.typeContent || "file");
+
   const schema = yup.object().shape({
     name: yup
       .string()
@@ -69,60 +73,57 @@ function TrackForm({ onSave, data, onExtend }) {
       .required("Please enter your time limit"),
   });
 
-
   const defaultValues = {
     name: data?.name || "",
     description: data?.description || "",
     type: data?.type || "",
     timeLimit: data?.timeLimit || 1,
     training: data?.training || [],
-    questions:data?.questions || [],
+    questions: data?.questions || [],
     content: data?.content || "",
     guidelines: data?.guidelines || "",
     criteria: data?.criteria || "",
   };
 
-
-
-  const { control, errors, handleSubmit, watch, setValue, reset, getValues } = useForm({
-    resolver: yupResolver(schema),
-    defaultValues: defaultValues,
-  });
-
+  const { control, errors, handleSubmit, watch, setValue, reset, getValues } =
+    useForm({
+      resolver: yupResolver(schema),
+      defaultValues: defaultValues,
+    });
 
   const isNew = !data || Object.keys(data).length === 0;
 
   const watchFields = watch(["type"]);
-  if(watchFields.type === 'learning'){
-    setValue("content", data?.content || (getValues().content || ""));
+  if (watchFields.type === "learning") {
+    setValue("content", data?.content || getValues().content || "");
     setValue("guidelines", "");
     setValue("criteria", "");
     setValue("questions", []);
-    setValue("training",  []);
+    setValue("training", []);
     onExtend();
   }
-  if(watchFields.type === 'training' ){
+  if (watchFields.type === "training") {
     setValue("content", "");
     setValue("guidelines", "");
     setValue("criteria", "");
     setValue("questions", []);
-    setValue("training", data?.training || (getValues().training || []));
+    setValue("training", data?.training || getValues().training || []);
     onExtend();
   }
-  if(watchFields.type === 'hacking'){
+  if (watchFields.type === "hacking") {
     setValue("content", "");
-    setValue("guidelines",  data?.guidelines || (getValues().guidelines || ""));
-    setValue("criteria",  data?.criteria || (getValues().criteria || ""));
+    setValue("guidelines", data?.guidelines || getValues().guidelines || "");
+    setValue("criteria", data?.criteria || getValues().criteria || "");
     setValue("questions", []);
-    setValue("training",  []);
+    setValue("training", []);
     onExtend();
   }
-  if(watchFields.type === 'q_and_A' && !Object.keys(errors).length){
+  if (watchFields.type === "q_and_A" && !Object.keys(errors).length) {
     setValue("content", "");
-    setValue("guidelines",  "");
-    setValue("criteria",   "");
-    setValue("questions", data?.questions || (getValues().questions || []));
-    setValue("training",  []);
+    setValue("guidelines", "");
+    setValue("criteria", "");
+    setValue("questions", data?.questions || getValues().questions || []);
+    setValue("training", []);
     onExtend();
   }
 
@@ -130,6 +131,7 @@ function TrackForm({ onSave, data, onExtend }) {
     <Form
       onSubmit={handleSubmit((data) => {
         setLoading(true);
+        data.typeContent = typeContent;
         onSave(data).then(() => {
           if (isNew) {
             reset();
@@ -225,65 +227,152 @@ function TrackForm({ onSave, data, onExtend }) {
         {
           learning: (
             <>
-              <Alert variant="outline-primary">
+              <Alert
+                variant="outline-primary"
+                icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
+              >
                 Write here what the learner should read and learn.
               </Alert>
-              <Form.Group className="scrolling-container">
-                <FloatLabel>
-                  <Controller
-                    name={`content`}
-                    control={control}
-                    render={({ onChange, onBlur, value, name, ref }) => (
-                      <Quill
-                        innerRef={ref}
-                        onBlur={onBlur}
-                        theme="bubble"
-                        value={value}
-                        scrollingContainer='#scrolling-container'
-                        name={"content"}
-                        modules={modulesFull}
-                        onChange={onChange}
-                        placeholder="Compose an epic learning hire..."
-                        style={{ minHeight: "50rem" }}
-                      />
-                    )}
-                  />
-                  <Label for="content">Content</Label>
-                 
-                </FloatLabel>
-              </Form.Group>
+              <Option
+                typeContent={typeContent}
+                setTypeContent={setTypeContent}
+              />
+              {
+                {
+                  file: (
+                    <Form.Group className="scrolling-container">
+                      <FloatLabel>
+                        <Controller
+                          name={`content`}
+                          control={control}
+                          render={({ onChange, onBlur, value, name, ref }) => (
+                            <Quill
+                              innerRef={ref}
+                              onBlur={onBlur}
+                              theme="snow"
+                              value={value}
+                              scrollingContainer="#scrolling-container"
+                              name={"content"}
+                              modules={modulesFull}
+                              onChange={onChange}
+                              placeholder="Compose an epic learning hire..."
+                              style={{ minHeight: "50rem" }}
+                            />
+                          )}
+                        />
+                        <Label for="content">Content</Label>
+                      </FloatLabel>
+                    </Form.Group>
+                  ),
+                  fileCode: (
+                    <Form.Group>
+                      <FloatLabel>
+                        <Controller
+                          as={Input}
+                          type="textarea"
+                          id="content"
+                          style={{ minHeight: "10rem" }}
+                          name="content"
+                          control={control}
+                          placeholder="Insert your html embed"
+                        />
+                        <Label for="content">HTML Embed</Label>
+                      </FloatLabel>
+                    </Form.Group>
+                  ),
+                  video: (
+                    <Form.Group>
+                      <FloatLabel>
+                        <Controller
+                          as={Input}
+                          type="url"
+                          id="content"
+                          name="content"
+                          control={control}
+                          placeholder="Insert your URL"
+                        />
+                        <Label for="content">URL Youtube</Label>
+                      </FloatLabel>
+                    </Form.Group>
+                  ),
+                }[typeContent]
+              }
             </>
           ),
           hacking: (
             <>
-              <Alert variant="outline-primary">
+              <Alert
+                variant="outline-primary"
+                icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
+              >
                 Write a series of indications, steps and guidelines that the
                 learner can validate their own knowledge by doing an individual
                 practical activity.
               </Alert>
-              <Form.Group>
-                <FloatLabel>
-                  <Controller
-                    name={`guidelines`}
-                    control={control}
-                    render={({ onChange, onBlur, value, name, ref }) => (
-                      <Quill
-                        innerRef={ref}
-                        onBlur={onBlur}
-                        theme="snow"
-                        value={value}
-                        id="guidelines"
-                        name={"guidelines"}
-                        modules={modulesBasic}
-                        onChange={onChange}
-                        style={{ minHeight: "15rem" }}
-                      />
-                    )}
-                  />
-                  <Label for="guidelines">Guidelines</Label>
-               
-                </FloatLabel>
-              </Form.Group>
+              <Option
+                typeContent={typeContent}
+                setTypeContent={setTypeContent}
+              />
+
+              {
+                {
+                  file: (
+                    <Form.Group>
+                      <FloatLabel>
+                        <Controller
+                          name={`guidelines`}
+                          control={control}
+                          render={({ onChange, onBlur, value, name, ref }) => (
+                            <Quill
+                              innerRef={ref}
+                              onBlur={onBlur}
+                              theme="snow"
+                              value={value}
+                              id="guidelines"
+                              name={"guidelines"}
+                              modules={modulesFull}
+                              onChange={onChange}
+                              style={{ minHeight: "15rem" }}
+                            />
+                          )}
+                        />
+                        <Label for="guidelines">Guidelines</Label>
+                      </FloatLabel>
+                    </Form.Group>
+                  ),
+                  fileCode: (
+                    <Form.Group>
+                      <FloatLabel>
+                        <Controller
+                          as={Input}
+                          type="textarea"
+                          id="guidelines"
+                          style={{ minHeight: "10rem" }}
+                          name="guidelines"
+                          control={control}
+                          placeholder="Insert your html embed"
+                        />
+                        <Label for="guidelines">Guidelines (HTML Embed)</Label>
+                      </FloatLabel>
+                    </Form.Group>
+                  ),
+                  video: (
+                    <Form.Group>
+                      <FloatLabel>
+                        <Controller
+                          as={Input}
+                          type="url"
+                          id="guidelines"
+                          name="guidelines"
+                          control={control}
+                          placeholder="Insert your URL"
+                        />
+                        <Label for="guidelines">Guidelines (URL Youtube)</Label>
+                      </FloatLabel>
+                    </Form.Group>
+                  ),
+                }[typeContent]
+              }
 
               <Form.Group>
                 <FloatLabel>
@@ -306,14 +395,16 @@ function TrackForm({ onSave, data, onExtend }) {
                   />
 
                   <Label for="criteria">Criteria</Label>
-            
                 </FloatLabel>
               </Form.Group>
             </>
           ),
           q_and_A: (
             <>
-              <Alert variant="outline-primary">
+              <Alert
+                variant="outline-primary"
+                icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
+              >
                 Create questions where learners can then freely answer. They are
                 open questions to discuss.
               </Alert>
@@ -342,7 +433,10 @@ function TrackForm({ onSave, data, onExtend }) {
           ),
           training: (
             <>
-              <Alert variant="outline-primary">
+              <Alert
+                variant="outline-primary"
+                icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
+              >
                 Create a series of steps to complete an individual activity,
                 such as a tutorial or step-by-step guide.
               </Alert>
@@ -362,7 +456,6 @@ function TrackForm({ onSave, data, onExtend }) {
                       />
                     )}
                   />
-                  
                 </FloatLabel>
               </Form.Group>
             </>
@@ -389,6 +482,47 @@ function TrackForm({ onSave, data, onExtend }) {
   );
 }
 
+function Option({ typeContent, setTypeContent }) {
+  return (
+    <div className="mb-3">
+      <GridNav bordered action>
+        <GridNav.Row>
+          <GridNav.Item
+            href="javascript:void(0)"
+            onClick={() => {
+              setTypeContent("file");
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faFile} />}
+            active={typeContent === "file"}
+          >
+            <GridNav.Title>Richard HTML</GridNav.Title>
+          </GridNav.Item>
+          <GridNav.Item
+            href="javascript:void(0)"
+            onClick={() => {
+              setTypeContent("fileCode");
+            }}
+            active={typeContent === "fileCode"}
+            icon={<FontAwesomeIcon icon={SolidIcon.faFileCode} />}
+          >
+            <GridNav.Title>Embed HTML</GridNav.Title>
+          </GridNav.Item>
+
+          <GridNav.Item
+            href="javascript:void(0)"
+            onClick={() => {
+              setTypeContent("video");
+            }}
+            active={typeContent === "video"}
+            icon={<FontAwesomeIcon icon={SolidIcon.faVideo} />}
+          >
+            <GridNav.Title>Youtube Video</GridNav.Title>
+          </GridNav.Item>
+        </GridNav.Row>
+      </GridNav>
+    </div>
+  );
+}
 function TrainingForm({ data, onChange }) {
   const [value, setValue] = useState(data);
 
@@ -550,7 +684,7 @@ function QuestionForm({ data, onChange }) {
                               onChange={onChange}
                               onBlur={onBlur}
                               onKeyUp={(data) => {
-                                if(value){
+                                if (value) {
                                   if (value.name) {
                                     onChangeContent(index, value);
                                   } else {
@@ -560,7 +694,6 @@ function QuestionForm({ data, onChange }) {
                                     });
                                   }
                                 }
-                                
                               }}
                             />
                           )}

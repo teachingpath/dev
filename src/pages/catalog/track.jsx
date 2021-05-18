@@ -11,7 +11,6 @@ import TrackContent from "components/widgets/TrackContent";
 import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
-import Alert from "@panely/components/Alert";
 
 class TrackPage extends React.Component {
   constructor(props) {

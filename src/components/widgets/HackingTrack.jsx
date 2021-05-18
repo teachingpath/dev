@@ -17,6 +17,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Row from "@panely/components/Row";
 import Col from "@panely/components/Col";
+import ReactPlayer from "react-player";
 
 function SolutionForm({ onSave }) {
   const schema = yup.object().shape({
@@ -112,7 +113,11 @@ class HackingTrack extends React.Component {
           <Card.Header>Guidelines</Card.Header>
           <Card.Body>
             <Card.Text>
-              <div dangerouslySetInnerHTML={{ __html: data.guidelines }} />
+            {typeContent === "video" ? (
+          <ReactPlayer url={data.guidelines} />
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: data.guidelines }} />
+        )}
             </Card.Text>
           </Card.Body>
         </Card>

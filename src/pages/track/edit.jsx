@@ -175,6 +175,10 @@ class FormBasePage extends React.Component {
                     <TrackAddon
                       extend={this.state.extend}
                       toggle={this.toggle}
+                      runnerId={this.state.runnerId}
+                      pathwayId={this.state.pathwayId}
+                      id={this.state.id}
+
                     />
                   </Portlet.Addon>
                 </Portlet.Header>
@@ -200,7 +204,7 @@ class FormBasePage extends React.Component {
   }
 }
 
-const TrackAddon = ({ extend, toggle }) => {
+const TrackAddon = ({ extend, toggle, runnerId, id, pathwayId }) => {
   return (
     <>
       <Dropdown.Uncontrolled>
@@ -213,6 +217,14 @@ const TrackAddon = ({ extend, toggle }) => {
             icon={<FontAwesomeIcon icon={SolidIcon.faExpand} />}
           >
             {extend ? "Collapse":"Expand"}
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              Router.push("/catalog/track?runnerId="+runnerId+"&id="+id+"&pathwayId="+pathwayId)
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faBook} />}
+          >
+            {"Preview"}
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>

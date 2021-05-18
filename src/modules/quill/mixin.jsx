@@ -1,59 +1,67 @@
-import Quill from "quill"
-
+import Quill from "quill";
 const QuillMixin = {
   /**
 	Creates an editor on the given element. The editor will
 	be passed the configuration, have its events bound,
 	*/
-  createEditor: function($el, config) {
-    let editor = new Quill($el, config)
+  createEditor: function ($el, config) {
+    let editor = new Quill($el, config);
     if (config.tabIndex !== undefined) {
-      this.setEditorTabIndex(editor, config.tabIndex)
+      this.setEditorTabIndex(editor, config.tabIndex);
     }
-    this.hookEditor(editor)
-    return editor
+    this.hookEditor(editor);
+    return editor;
   },
 
-  hookEditor: function(editor) {
+  hookEditor: function (editor) {
     // Expose the editor on change events via a weaker,
     // unprivileged proxy object that does not allow
     // accidentally modifying editor state.
-    let unprivilegedEditor = this.makeUnprivilegedEditor(editor)
+    let unprivilegedEditor = this.makeUnprivilegedEditor(editor);
 
-    this.handleTextChange = function(delta, oldDelta, source) {
+    this.handleTextChange = function (delta, oldDelta, source) {
       if (this.onEditorChangeText) {
-        this.onEditorChangeText(editor.root.innerHTML, delta, source, unprivilegedEditor)
-        this.onEditorChangeSelection(editor.getSelection(), source, unprivilegedEditor)
+        this.onEditorChangeText(
+          editor.root.innerHTML,
+          delta,
+          source,
+          unprivilegedEditor
+        );
+        this.onEditorChangeSelection(
+          editor.getSelection(),
+          source,
+          unprivilegedEditor
+        );
       }
-    }.bind(this)
+    }.bind(this);
 
-    this.handleSelectionChange = function(range, oldRange, source) {
+    this.handleSelectionChange = function (range, oldRange, source) {
       if (this.onEditorChangeSelection) {
-        this.onEditorChangeSelection(range, source, unprivilegedEditor)
+        this.onEditorChangeSelection(range, source, unprivilegedEditor);
       }
-    }.bind(this)
+    }.bind(this);
 
     editor.on(
       "editor-change",
-      function(eventType, rangeOrDelta, oldRangeOrOldDelta, source) {
+      function (eventType, rangeOrDelta, oldRangeOrOldDelta, source) {
         if (eventType === Quill.events.SELECTION_CHANGE) {
-          this.handleSelectionChange(rangeOrDelta, oldRangeOrOldDelta, source)
+          this.handleSelectionChange(rangeOrDelta, oldRangeOrOldDelta, source);
         }
 
         if (eventType === Quill.events.TEXT_CHANGE) {
-          this.handleTextChange(rangeOrDelta, oldRangeOrOldDelta, source)
+          this.handleTextChange(rangeOrDelta, oldRangeOrOldDelta, source);
         }
       }.bind(this)
-    )
+    );
   },
 
-  unhookEditor: function(editor) {
-    editor.off("selection-change")
-    editor.off("text-change")
+  unhookEditor: function (editor) {
+    editor.off("selection-change");
+    editor.off("text-change");
   },
 
-  setEditorReadOnly: function(editor, value) {
-    value ? editor.disable() : editor.enable()
+  setEditorReadOnly: function (editor, value) {
+    value ? editor.disable() : editor.enable();
   },
 
   /*
@@ -61,31 +69,34 @@ const QuillMixin = {
 	the previous selection hanging around so that
 	the cursor won't move.
 	*/
-  setEditorContents: function(editor, value) {
-    let sel = editor.getSelection()
+  setEditorContents: function (editor, value) {
+    let sel = editor.getSelection();
 
     if (typeof value === "string") {
-      editor.setContents(editor.clipboard.convert(value))
+      editor.setContents(editor.clipboard.convert(value));
     } else {
-      editor.setContents(value)
+      editor.setContents(value);
     }
 
-    if (sel && editor.hasFocus()) this.setEditorSelection(editor, sel)
+    if (sel && editor.hasFocus()) this.setEditorSelection(editor, sel);
   },
 
-  setEditorSelection: function(editor, range) {
+  setEditorSelection: function (editor, range) {
     if (range) {
       // Validate bounds before applying.
-      let length = editor.getLength()
-      range.index = Math.max(0, Math.min(range.index, length - 1))
-      range.length = Math.max(0, Math.min(range.length, length - 1 - range.index))
+      let length = editor.getLength();
+      range.index = Math.max(0, Math.min(range.index, length - 1));
+      range.length = Math.max(
+        0,
+        Math.min(range.length, length - 1 - range.index)
+      );
     }
-    editor.setSelection(range)
+    editor.setSelection(range);
   },
 
-  setEditorTabIndex: function(editor, tabIndex) {
+  setEditorTabIndex: function (editor, tabIndex) {
     if (editor.editor && editor.editor.scroll && editor.editor.scroll.domNode) {
-      editor.editor.scroll.domNode.tabIndex = tabIndex
+      editor.editor.scroll.domNode.tabIndex = tabIndex;
     }
   },
 
@@ -94,29 +105,29 @@ const QuillMixin = {
 	exposes read-only accessors found on the editor instance,
 	without any state-modificating methods.
 	*/
-  makeUnprivilegedEditor: function(editor) {
-    let e = editor
+  makeUnprivilegedEditor: function (editor) {
+    let e = editor;
     return {
-      getLength: function() {
-        return e.getLength.apply(e, arguments)
+      getLength: function () {
+        return e.getLength.apply(e, arguments);
       },
-      getText: function() {
-        return e.getText.apply(e, arguments)
+      getText: function () {
+        return e.getText.apply(e, arguments);
       },
-      getHTML: function() {
-        return e.root.innerHTML
+      getHTML: function () {
+        return e.root.innerHTML;
       },
-      getContents: function() {
-        return e.getContents.apply(e, arguments)
+      getContents: function () {
+        return e.getContents.apply(e, arguments);
       },
-      getSelection: function() {
-        return e.getSelection.apply(e, arguments)
+      getSelection: function () {
+        return e.getSelection.apply(e, arguments);
       },
-      getBounds: function() {
-        return e.getBounds.apply(e, arguments)
-      }
-    }
-  }
-}
+      getBounds: function () {
+        return e.getBounds.apply(e, arguments);
+      },
+    };
+  },
+};
 
-export default QuillMixin
+export default QuillMixin;

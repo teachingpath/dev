@@ -17,6 +17,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Row from "@panely/components/Row";
 import Col from "@panely/components/Col";
+import ReactPlayer from "react-player";
 
 function FeedbackForm({ onSave }) {
   const schema = yup.object().shape({
@@ -105,9 +106,15 @@ class LearningTrack extends React.Component {
     const { data } = this.props;
     const user = firebaseClient.auth().currentUser;
     const id = data.id;
+    const typeContent = data.typeContent;
     return (
       <>
-        <div dangerouslySetInnerHTML={{ __html: data.content }} />
+        {typeContent === "video" ? (
+          <ReactPlayer url={data.content} />
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: data.content }} />
+        )}
+
         {user && (
           <div>
             <hr />
