@@ -249,7 +249,7 @@ function TrackForm({ onSave, data, onExtend }) {
                             <Quill
                               innerRef={ref}
                               onBlur={onBlur}
-                              theme="snow"
+                              theme="bubble"
                               value={value}
                               scrollingContainer="#scrolling-container"
                               name={"content"}

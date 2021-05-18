@@ -93,7 +93,9 @@ class TrackPage extends React.Component {
                 <Portlet.Body>
                   <p>{this.state.description}</p>
                   <hr />
-                  <TrackContent {...this.state} />
+                  <div className="content-track">
+                    <TrackContent {...this.state} />
+                  </div>
                 </Portlet.Body>
               </Portlet>
             </Col>
