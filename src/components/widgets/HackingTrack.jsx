@@ -106,7 +106,7 @@ class HackingTrack extends React.Component {
     const { data } = this.props;
     const id = data.id;
     const user = firebaseClient.auth().currentUser;
-
+    const typeContent = data?.typeContent;
     return (
       <>
         <Card>
