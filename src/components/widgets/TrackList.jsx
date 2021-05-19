@@ -6,17 +6,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Router from "next/router";
 import Badge from "@panely/components/Badge";
 
-import Swal from "@panely/sweetalert2"
-import swalContent from "sweetalert2-react-content"
-const ReactSwal = swalContent(Swal)
+import Swal from "@panely/sweetalert2";
+import swalContent from "sweetalert2-react-content";
+const ReactSwal = swalContent(Swal);
 const swal = ReactSwal.mixin({
   customClass: {
     confirmButton: "btn btn-label-success btn-wide mx-1",
-    cancelButton: "btn btn-label-danger btn-wide mx-1"
+    cancelButton: "btn btn-label-danger btn-wide mx-1",
   },
-  buttonsStyling: false
+  buttonsStyling: false,
 });
-
 
 class TrackList extends React.Component {
   constructor(props) {
@@ -56,17 +55,19 @@ class TrackList extends React.Component {
   }
 
   onDelete(trackId) {
-    swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
-    }).then(result => {
-      if (result.value) {
-        firestoreClient
+    swal
+      .fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      })
+      .then((result) => {
+        if (result.value) {
+          firestoreClient
             .collection("runners")
             .doc(this.props.runnerId)
             .collection("tracks")
@@ -79,9 +80,8 @@ class TrackList extends React.Component {
             .catch((error) => {
               console.error("Error removing document: ", error);
             });
-      }
-    })
-
+        }
+      });
   }
 
   onSortList(list) {
@@ -176,6 +176,21 @@ class TrackList extends React.Component {
                         icon={<FontAwesomeIcon icon={SolidIcon.faTrashAlt} />}
                       >
                         Delete
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          Router.push({
+                            pathname: "/catalog/track",
+                            query: {
+                              id: id,
+                              runnerId: this.props.runnerId,
+                              pathwayId: this.props.pathwayId,
+                            },
+                          });
+                        }}
+                        icon={<FontAwesomeIcon icon={SolidIcon.faBook} />}
+                      >
+                        {"Preview"}
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown.Uncontrolled>

@@ -220,7 +220,14 @@ const TrackAddon = ({ extend, toggle, runnerId, id, pathwayId }) => {
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
-              Router.push("/catalog/track?runnerId="+runnerId+"&id="+id+"&pathwayId="+pathwayId)
+              Router.push({
+                pathname: "/catalog/track",
+                query: {
+                  id: id,
+                  runnerId: runnerId,
+                  pathwayId: pathwayId,
+                },
+              });
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faBook} />}
           >
