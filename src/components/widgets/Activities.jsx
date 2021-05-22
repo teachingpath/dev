@@ -1,44 +1,39 @@
-import {
-  Marker,
-  Portlet,
-  Timeline,
-} from "@panely/components";
+import { Marker, Portlet, Timeline } from "@panely/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { firestoreClient } from "components/firebase/firebaseClient";
+import Spinner from "@panely/components/Spinner";
 
 class ActivitiesComponent extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state = {data: []};
+    this.state = { data: null };
   }
-  
 
   componentDidMount() {
     firestoreClient
       .collection("activities")
       .where("leaderId", "==", this.props.firebase.user_id)
-      .orderBy("date", "desc").limit(12)
+      .orderBy("date", "desc")
+      .limit(12)
       .get()
       .then((querySnapshot) => {
         const list = [];
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          const time = new Date(data.date.seconds * 1000)
-              .toLocaleTimeString('es-ES', { hour12: false });
-             
-          list.push( {
-            time: time.substr(0,  time.lastIndexOf(":")),
+          const time = new Date(data.date.seconds * 1000).toLocaleTimeString(
+            "es-ES",
+            { hour12: false }
+          );
+
+          list.push({
+            time: time.substr(0, time.lastIndexOf(":")),
             date: new Date(data.date.seconds * 1000),
-            color: data.color || "info" ,
-            content: () => (
-              <p className="mb-0">
-               {data.msn}
-              </p>
-            ),
+            color: data.color || "info",
+            content: () => <p className="mb-0">{data.msn}</p>,
           });
         });
-        this.setState({data: list})
+        this.setState({ data: list });
       })
       .catch((error) => {
         console.log("Error getting documents: ", error);
@@ -56,22 +51,26 @@ class ActivitiesComponent extends React.Component {
         </Portlet.Header>
         <Portlet.Body>
           {/* BEGIN Timeline */}
-          {this.state.data.length ===0 && <p className="text-center">Empty activities</p>}
+          {this.state.data === null && <Spinner />}
+          {this.state.data && this.state.data.length === 0 && (
+            <p className="text-center">Empty activities</p>
+          )}
           <Timeline timed>
-            {this.state.data.map((data, index) => {
-              const { time, date, color, content: Content } = data;
+            {this.state.data &&
+              this.state.data.map((data, index) => {
+                const { time, date, color, content: Content } = data;
 
-              return (
-                <Timeline.Item
-                  key={index}
-                  date={date}
-                  time={time}
-                  pin={<Marker type="circle" variant={color} />}
-                >
-                  <Content />
-                </Timeline.Item>
-              );
-            })}
+                return (
+                  <Timeline.Item
+                    key={index}
+                    date={date}
+                    time={time}
+                    pin={<Marker type="circle" variant={color} />}
+                  >
+                    <Content />
+                  </Timeline.Item>
+                );
+              })}
           </Timeline>
           {/* END Timeline */}
         </Portlet.Body>

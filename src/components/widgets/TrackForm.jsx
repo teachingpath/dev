@@ -465,8 +465,9 @@ function TrackForm({ onSave, data, onExtend }) {
 
       <Button type="submit" variant="label-primary" size="lg" width="widest">
         {loading && <Spinner className="mr-2" />}
-        {data === null || data === undefined ? "Create" : "Update"}
+        {isNew ? "Create" : "Update"}
       </Button>
+    
       <Button
         variant="label-secondary"
         size="lg"

@@ -152,7 +152,7 @@ class JourneyGeneralPage extends React.Component {
                     </Col>
                     <Col md="6">
                       {this.state?.id && (
-                          <BadgetList journeyId={this.state?.id} />
+                        <BadgetList journeyId={this.state?.id} />
                       )}
                     </Col>
                   </Row>
@@ -219,6 +219,7 @@ class Runners extends React.Component {
                     journeyId={journeyId}
                     current={item.current}
                     runners={runners}
+                    feedback={item.feedback}
                   />
                 </Card.Body>
               </Collapse>
@@ -240,6 +241,7 @@ class Tracks extends React.Component {
       journeyId,
       runners,
       quiz,
+      feedback,
       onComplete,
     } = this.props;
     const activeQuiz = tracks.every((track) => {
@@ -255,18 +257,26 @@ class Tracks extends React.Component {
               status={item.status}
               title={
                 <>
-                {(item.status === "process" || item.status === "wait") && (
+                  {(item.status === "process" || item.status === "wait") && (
                     <Badge className="mr-2">{item.timeLimit} h</Badge>
                   )}
                   <Badge className="mr-2">{item.type}</Badge>
-                  {
-                    item.status !== "process" ? (
-                      <a href={"/catalog/track?id="+item.id+"&runnerId="+runnerId+"&journeyId="+journeyId} >{item.title}</a>
-                    ) : (
-                      item.title
-                    )
-                  }
-                 
+                  {item.status !== "wait" && item.status !== "process" ? (
+                    <a
+                      href={
+                        "/catalog/track?id=" +
+                        item.id +
+                        "&runnerId=" +
+                        runnerId +
+                        "&journeyId=" +
+                        journeyId
+                      }
+                    >
+                      {item.title}
+                    </a>
+                  ) : (
+                    item.title
+                  )}
                 </>
               }
               description={
@@ -298,6 +308,9 @@ class Tracks extends React.Component {
             title={"Quiz"}
             description={
               <div>
+                {activeQuiz && (
+                  <div dangerouslySetInnerHTML={{ __html: feedback }} />
+                )}
                 <p>Present Quiz to validate knowledge.</p>
                 <Button
                   disabled={!activeQuiz}

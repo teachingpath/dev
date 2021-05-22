@@ -116,6 +116,7 @@ class InfoPanelComponent extends React.Component {
                     children={
                       data.data.length ? (
                         <InfoModal
+                          key={index}
                           title={title}
                           data={data.data}
                           subtitle={subtitle}

@@ -8,6 +8,7 @@ import Badge from "@panely/components/Badge";
 
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
+import Spinner from "@panely/components/Spinner";
 const ReactSwal = swalContent(Swal);
 const swal = ReactSwal.mixin({
   customClass: {
@@ -23,6 +24,7 @@ class TrackList extends React.Component {
 
     this.state = {
       data: [],
+      loaded: false
     };
     this.onSortList = this.onSortList.bind(this);
   }
@@ -47,6 +49,7 @@ class TrackList extends React.Component {
         this.setState({
           ...this.state,
           data: list,
+          loaded: true
         });
       })
       .catch((error) => {
@@ -111,7 +114,8 @@ class TrackList extends React.Component {
   render() {
     return (
       <RichList bordered action>
-        {this.state.data.length === 0 && (
+        {this.state.loaded === false && <Spinner>loading...</Spinner>}
+        {this.state.loaded === true && this.state.data.length === 0 && (
           <p className="text-center">Empty tracks</p>
         )}
         <ReactSortable list={this.state.data} setList={this.onSortList}>

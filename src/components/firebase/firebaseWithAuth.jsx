@@ -5,7 +5,7 @@ import { userChange } from "store/actions";
 import { firestoreClient } from "./firebaseClient";
 import Router from "next/router";
 import nookies from "nookies";
-import jwt_decode from 'jwt-decode';
+import jwt_decode from "jwt-decode";
 
 import PAGE from "config/page.config";
 import Spinner from "@panely/components/Spinner";
@@ -13,7 +13,6 @@ import Spinner from "@panely/components/Spinner";
 function firebaseWithAuth(AuthComponent) {
   class Authentication extends React.Component {
     static async getInitialProps(ctx) {
-  
       let initialProps = {};
 
       // Get initial properties
@@ -21,7 +20,7 @@ function firebaseWithAuth(AuthComponent) {
         initialProps = await AuthComponent.getInitialProps(ctx);
       }
 
-      const cookies = nookies.get(ctx)
+      const cookies = nookies.get(ctx);
 
       // Check cookie is valid or not
       if (!cookies.token) {
@@ -32,19 +31,27 @@ function firebaseWithAuth(AuthComponent) {
         } else {
           Router.push(PAGE.loginPagePath);
         }
+      } else {
+        try {
+          const claims = jwt_decode(cookies.token);
+          return {
+            ...initialProps,
+            firebase: {
+              user_id: claims.user_id,
+              email: claims.email,
+              name: claims.name,
+            },
+          };
+        } catch (error) {
+          if (ctx.res) {
+            ctx.res.writeHead(302, { Location: PAGE.loginPagePath });
+            ctx.res.end();
+          } else {
+            Router.push(PAGE.loginPagePath);
+          }
+        }
       }
-
-      const claims = jwt_decode(cookies.token);
-      return {
-        ...initialProps,
-        firebase: {
-          user_id: claims.user_id,
-          email: claims.email,
-          name: claims.name
-        },
-      };
     }
-
 
     componentDidMount() {
       this.props.firebaseChange(this.props.firebase);

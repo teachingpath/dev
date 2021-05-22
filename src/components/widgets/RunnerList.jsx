@@ -7,6 +7,7 @@ import Router from "next/router";
 
 import Swal from "@panely/sweetalert2"
 import swalContent from "sweetalert2-react-content"
+import Spinner from "@panely/components/Spinner";
 const ReactSwal = swalContent(Swal)
 const swal = ReactSwal.mixin({
     customClass: {
@@ -22,6 +23,7 @@ class RunnerList extends React.Component {
 
         this.state = {
             data: props.data || [],
+            loaded: false
         };
 
         this.onSortList = this.onSortList.bind(this);
@@ -45,6 +47,7 @@ class RunnerList extends React.Component {
                 this.setState({
                     ...this.state,
                     data: list,
+                    loaded: true
                 });
             })
             .catch((error) => {
@@ -103,7 +106,8 @@ class RunnerList extends React.Component {
     render() {
         return (
             <RichList bordered action>
-                {this.state.data.length === 0 && (
+                {this.state.loaded === false && <Spinner/>}
+                {this.state.loaded === true && this.state.data.length === 0 && (
                     <p className="text-center">Empty runners</p>
                 )}
                 <ReactSortable list={this.state.data} setList={this.onSortList}>

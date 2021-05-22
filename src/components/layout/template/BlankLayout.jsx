@@ -9,7 +9,7 @@ import { Layout } from "@panely/components"
 
 function BlankLayout({ children }) {
   return (
-    <Layout type="holder road-background">
+    <Layout className="holder road-background">
       <Layout type="wrapper">
         <Layout type="content">
           {children}

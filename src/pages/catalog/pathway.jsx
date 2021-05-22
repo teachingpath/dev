@@ -87,11 +87,14 @@ class PathwayPage extends React.Component {
             </Widget1.DialogContent>
           </Widget1.Dialog>
           <Widget1.Offset>
-            <img
-              src={this.state?.trophy?.image}
-              alt="trophy"
-              className="bg-white p-2 border mx-auto d-block mg-thumbnail avatar-circle"
-            />
+          {!this.state?.trophy?.image && <Spinner />}
+            {this.state?.trophy?.image && (
+              <img
+                src={this.state?.trophy?.image}
+                alt="trophy"
+                className="bg-white p-2 border mx-auto d-block mg-thumbnail avatar-circle"
+              />
+            )}
           </Widget1.Offset>
         </Widget1.Display>
         <Widget1.Body className="pt-5">
@@ -358,6 +361,7 @@ class RunnerTab extends React.Component {
             {this.state.estimation >= 7 ? "d" : "h"}
           </strong>
         </p>
+        {this.state.tabs.length === 0 && <Spinner />}
         <Widget2 justified size="lg" className="mb-4">
           {this.state.tabs.map((data, index) => (
             <Nav.Item
@@ -386,20 +390,7 @@ class RunnerTab extends React.Component {
                 <RichList flush>
                   {tab.data.map((data, index) => {
                     const { subtitle, title, time, type, id } = data;
-                    const titleLink = (
-                      <a
-                        href={
-                          "/catalog/track?id=" +
-                          id +
-                          "&runnerId=" +
-                          tab.id +
-                          "&pathwayId=" +
-                          tab.pathwayId
-                        }
-                      >
-                        {index + 1 + ". " + title}
-                      </a>
-                    );
+                    const titleLink =  index + 1 + ". " + title;
                     return (
                       <RichList.Item key={index}>
                         <RichList.Content>
