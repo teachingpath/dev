@@ -233,6 +233,20 @@ const TrackAddon = ({ extend, toggle, runnerId, id, pathwayId }) => {
           >
             {"Preview"}
           </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              Router.push({
+                pathname: "/track/create",
+                query: {
+                  runnerId: runnerId,
+                  pathwayId: pathwayId,
+                },
+              });
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
+          >
+            New Track
+          </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>
     </>
