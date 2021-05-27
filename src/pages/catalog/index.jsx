@@ -29,10 +29,7 @@ class CatalogPage extends React.Component {
     const tags = Router.query.tag;
 
     this.props.pageChangeHeaderTitle("Pathways");
-    this.props.breadcrumbChange([
-      { text: "Catalog", link: "/catalog" },
-      { text: "Pathways" },
-    ]);
+    this.props.breadcrumbChange([{ text: "Catalog", link: "/catalog" }]);
     let db = firestoreClient.collection("pathways").where("draft", "==", false);
     if (q) {
       db = db.where("name", ">=", q).where("name", "<=", q + "\uf8ff");
@@ -69,27 +66,29 @@ class CatalogPage extends React.Component {
         <Container fluid>
           <Row>
             <Col md="12">
-              <Portlet>
+              <div>
                 <Portlet.Header bordered>
                   <Portlet.Title>Available pathways</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
-                  <div>
+                  <p>
                     You can see the pathways here but in order to apply you must
                     have a user account.
-                  </div>
+                  </p>
                   <CardColumns>
                     {this.state.data.length === 0 && (
-                      <p className="p-5">
-                        There is no match to display.
-                      </p>
+                      <p className="p-5">There is no match to display.</p>
                     )}
                     {this.state.data.map((data, index) => {
                       return (
                         <Card key={"pathwayId-" + index}>
                           <Card.Img top src={data.image} alt="Pathway Image" />
                           <Card.Body>
-                            <Card.Title>{data.name.toUpperCase()}</Card.Title>
+                            <Card.Title>
+                              <Link href={"/catalog/pathway?id=" + data.id}>
+                                {data.name.toUpperCase()}
+                              </Link>
+                            </Card.Title>
                             <Card.Text>{data.description}</Card.Text>
                             <Button
                               className="float-right"
@@ -105,6 +104,21 @@ class CatalogPage extends React.Component {
                               Start
                             </Button>
 
+                            <Button
+                              className="float-right mr-2"
+                              variant={"secondary"}
+                              onClick={() => {
+                                Router.push({
+                                  pathname: "/catalog/runners",
+                                  query: {
+                                    pathwayId: data.id,
+                                  },
+                                });
+                              }}
+                            >
+                              Runners
+                            </Button>
+
                             <Card.Text>
                               <span className="text-muted">
                                 Tags:{" "}
@@ -114,9 +128,7 @@ class CatalogPage extends React.Component {
                                       variant="label-info"
                                       className="mr-1"
                                     >
-                                      <a href={"/catalog?tag=" + tag} >
-                                        {tag}
-                                      </a>
+                                      <a href={"/catalog?tag=" + tag}>{tag}</a>
                                     </Badge>
                                   );
                                 })}
@@ -128,7 +140,7 @@ class CatalogPage extends React.Component {
                     })}
                   </CardColumns>
                 </Portlet.Body>
-              </Portlet>
+              </div>
             </Col>
           </Row>
         </Container>

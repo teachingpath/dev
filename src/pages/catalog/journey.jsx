@@ -81,7 +81,7 @@ class JourneyGeneralPage extends React.Component {
         <Container fluid>
           <Row portletFill="xl">
             <Col xl="12">
-              <Widget1 fluid>
+              <div fluid>
                 <Widget1.Display
                   top
                   size="lg"
@@ -131,7 +131,7 @@ class JourneyGeneralPage extends React.Component {
                     </Widget1.Offset>
                   )}
                 </Widget1.Display>
-                <Widget1.Body style={{ marginTop: "60px" }}>
+                <Widget1.Body style={{ marginTop: "100px" }}>
                   <Row>
                     <Col md="6">
                       {this.state?.runners && (
@@ -157,7 +157,7 @@ class JourneyGeneralPage extends React.Component {
                     </Col>
                   </Row>
                 </Widget1.Body>
-              </Widget1>
+              </div>
             </Col>
           </Row>
         </Container>

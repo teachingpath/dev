@@ -71,7 +71,7 @@ class PathwayPage extends React.Component {
     const { name, id } = this.state;
 
     return (
-      <Widget1>
+      <div>
         <Widget1.Display top size="lg" className="bg-dark text-white">
           {id && (
             <Status
@@ -102,7 +102,7 @@ class PathwayPage extends React.Component {
           <h3>Runners</h3>
           {id && <RunnerTab ref={this.runnersRef} pathwayId={this.state.id} />}
         </Widget1.Body>
-      </Widget1>
+      </div>
     );
   }
 }

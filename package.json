@@ -41,6 +41,7 @@
     "react-dropzone": "^11.3.2",
     "react-feather": "^2.0.8",
     "react-hook-form": "^6.8.4",
+    "react-i18next": "^11.8.15",
     "react-player": "^2.9.0",
     "react-popper": "^2.2.3",
     "react-redux": "^7.2.1",

@@ -19,7 +19,7 @@ class TrackPage extends React.Component {
   }
 
   componentDidMount() {
-    if (!Router.query.id) {
+    if (!Router.query.id || !Router.query.runnerId) {
       Router.push("/catalog");
     }
     this.props.pageChangeHeaderTitle("Pathway");
@@ -27,6 +27,10 @@ class TrackPage extends React.Component {
     if (Router.query.journeyId) {
       this.props.breadcrumbChange([
         { text: "Catalog", link: "/catalog" },
+        {
+          text: "Pathway",
+          link: "/catalog/pathway?id=" + Router.query.pathwayId,
+        },
         {
           text: "My Journey",
           link: "/catalog/journey?id=" + Router.query.journeyId,
@@ -40,11 +44,14 @@ class TrackPage extends React.Component {
           text: "Pathway",
           link: "/catalog/pathway?id=" + Router.query.pathwayId,
         },
+        { text: "Runner", link: "/catalog/runner?id=" + Router.query.runnerId },
+
         { text: "Track" },
       ]);
     } else {
       this.props.breadcrumbChange([
         { text: "Catalog", link: "/catalog" },
+        { text: "Runner", link: "/catalog/runner?id=" + Router.query.runnerId },
         { text: "Track" },
       ]);
     }
