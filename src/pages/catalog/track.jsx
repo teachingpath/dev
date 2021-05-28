@@ -1,9 +1,18 @@
-import { Row, Col, Portlet, Container, Spinner, Badge } from "@panely/components";
+import {
+  Row,
+  Col,
+  Portlet,
+  Container,
+  Spinner,
+  Badge,
+  Button,
+} from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  asideToggle,
 } from "store/actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
@@ -14,7 +23,7 @@ import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
 import Aside from "components/layout/part/Aside";
-
+import Header from "@panely/components/Header";
 
 class TrackPage extends React.Component {
   constructor(props) {
@@ -41,7 +50,7 @@ class TrackPage extends React.Component {
         },
         { text: "Track" },
       ]);
-      if(Router.query.pathwayId){
+      if (Router.query.pathwayId) {
         this.loadTracks();
       }
     } else if (Router.query.pathwayId) {
@@ -65,7 +74,6 @@ class TrackPage extends React.Component {
     }
     //  this.loadRunners(Router.query.pathwayId);
     this.loadCurrentTrack();
-
   }
 
   loadTracks() {
@@ -79,7 +87,7 @@ class TrackPage extends React.Component {
         const list = [
           {
             title: "Tracks",
-            section: true
+            section: true,
           },
         ];
         querySnapshot.forEach((doc) => {
@@ -88,11 +96,15 @@ class TrackPage extends React.Component {
           list.push({
             title: data.name,
             current: Router.query.id === doc.id,
-            icon: () => <div className="rc-steps-item rc-steps-item-process">
-              <div className="rc-steps-item-icon"><span className="rc-steps-icon">{level}</span></div>
-            </div>,
+            icon: () => (
+              <div className="rc-steps-item rc-steps-item-process">
+                <div className="rc-steps-item-icon">
+                  <span className="rc-steps-icon">{level}</span>
+                </div>
+              </div>
+            ),
             link: {
-              pathname: '/catalog/track',
+              pathname: "/catalog/track",
               query: { ...Router.query, id: doc.id },
             },
           });
@@ -120,7 +132,6 @@ class TrackPage extends React.Component {
             runnerId: Router.query.runnerId,
             ...data,
           });
-
         } else {
           console.log("No such document!");
         }
@@ -155,7 +166,8 @@ class TrackPage extends React.Component {
   render() {
     Router.events.on("routeChangeComplete", () => {
       this.loadCurrentTrack();
-    })
+    });
+    const { asideToggle } = this.props;
     const { trackId, runnerId, trackList } = this.state;
     if (trackId === null || runnerId == null) {
       return <Spinner>Loading</Spinner>;
@@ -171,7 +183,15 @@ class TrackPage extends React.Component {
             <Col md="12">
               <Portlet>
                 <Portlet.Header>
-                  <Portlet.Title>{this.state.name}</Portlet.Title>
+                  <Portlet.Title style={{whiteSpace: "none"}}>
+                    <Header.Holder mobile>
+                      <Button icon variant="flat-primary" className="mr-2" onClick={asideToggle}>
+                        <FontAwesomeIcon icon={SolidIcon.faBars} />
+                      </Button>
+                      {this.state.name}
+                    </Header.Holder>
+                    <Header.Holder desktop>{this.state.name}</Header.Holder>
+                  </Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>{this.state.description}</p>
@@ -191,7 +211,7 @@ class TrackPage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, asideToggle },
     dispatch
   );
 }

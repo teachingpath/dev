@@ -14,7 +14,6 @@ class AsideComponent extends React.Component {
 
   render() {
     const { desktopMinimized, mobileMinimized, asideChange, asideToggle, menuList } = this.props
-
     return (
       <Aside
         desktopMinimized={desktopMinimized}
