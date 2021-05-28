@@ -1,0 +1,111 @@
+// Base styles
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+  padding-left: $timeline-pin-width;
+  // Timeline line
+  &:before {
+    content: "";
+    position: absolute;
+    display: block;
+    height: 100%;
+    width: $timeline-line-width;
+    top: 0;
+    left: $timeline-pin-width / 2;
+    transform: translateX(-50%);
+    @include border-radius($timeline-line-border-radius);
+    @include theme-variant("light") {
+      background: $timeline-line-color-light;
+    }
+    @include theme-variant("dark") {
+      background: $timeline-line-color-dark;
+    }
+  }
+}
+
+.timeline-item {
+  position: relative;
+  width: 100%;
+}
+
+.timeline-pin {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $timeline-pin-width;
+  height: $timeline-pin-width;
+  left: -#{$timeline-pin-width};
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.timeline-content {
+  width: 100%;
+  padding: $timeline-content-padding;
+  @include theme-variant("light") {
+    color: $timeline-content-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $timeline-content-color-dark;
+  }
+}
+// Appear timeline for zigzag content
+.timeline-zigzag {
+  padding-left: 0;
+
+  &:before {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .timeline-item {
+    width: calc(50% - #{$timeline-pin-width / 2});
+  }
+
+  .timeline-item:nth-child(odd) {
+    align-self: flex-start;
+
+    .timeline-pin {
+      left: auto;
+      right: -#{$timeline-pin-width};
+    }
+
+    .timeline-content {
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+
+  .timeline-item:nth-child(even) {
+    align-self: flex-end;
+  }
+}
+// Add time to timeline
+.timeline-timed {
+  padding-left: $timeline-time-width + $timeline-pin-width;
+
+  &:before {
+    left: calc(#{$timeline-time-width + $timeline-pin-width} / 2 + #{($timeline-time-width) / 2});
+  }
+
+  .timeline-time {
+    position: absolute;
+    font-size: $timeline-time-font-size;
+    font-weight: $timeline-time-font-weight;
+    width: $timeline-time-width;
+    padding: $timeline-time-padding;
+    left: -#{$timeline-time-width + $timeline-pin-width};
+    top: 50%;
+    transform: translateY(-50%);
+    @include theme-variant("light") {
+      color: $timeline-time-color-light;
+    }
+    @include theme-variant("dark") {
+      color: $timeline-time-color-dark;
+    }
+  }
+}

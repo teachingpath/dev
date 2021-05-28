@@ -1,0 +1,38 @@
+@mixin custom-control-sizing($indicator, $switch-indicator, $switch-width, $switch-border-radius) {
+  min-height: $indicator;
+  padding-left: $custom-control-gutter + $indicator;
+
+  .custom-control-label {
+    &::after,
+    &::before {
+      width: $indicator;
+      height: $indicator;
+      left: -($custom-control-gutter + $indicator);
+    }
+  }
+
+  &.custom-switch {
+    padding-left: $switch-width + $custom-control-gutter;
+
+    .custom-control-label {
+      &::before {
+        left: -($switch-width + $custom-control-gutter);
+        width: $switch-width;
+        border-radius: $switch-border-radius;
+      }
+
+      &::after {
+        left: calc(#{-($switch-width + $custom-control-gutter)} + #{$custom-control-indicator-border-width * 2});
+        width: $switch-indicator;
+        height: $switch-indicator;
+        border-radius: $switch-border-radius;
+      }
+    }
+
+    .custom-control-input:checked ~ .custom-control-label {
+      &::after {
+        transform: translate($switch-width - $indicator, -50%);
+      }
+    }
+  }
+}

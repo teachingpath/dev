@@ -1,0 +1,110 @@
+// Base styles
+
+.sidemenu {
+	display: flex;
+	position: fixed;
+	flex-direction: column;
+	height: 100%;
+	width: $sidemenu-width;
+	top: 0;
+	z-index: $zindex-sidemenu;
+	@include transition($sidemenu-transition);
+	@include theme-variant("light") {
+		background: $sidemenu-bg-light;
+	}
+	@include theme-variant("dark") {
+		background: $sidemenu-bg-dark;
+	}
+
+	&.active {
+		transform: translateX(0);
+	}
+}
+// Sidemenu float alignment
+.sidemenu-left {
+	left: 0;
+	transform: translateX(-100%);
+}
+
+.sidemenu-right {
+	right: 0;
+	transform: translateX(100%);
+}
+
+.sidemenu-wide {
+	width: $sidemenu-width-wide;
+}
+
+.sidemenu-wider {
+	width: $sidemenu-width-wider;
+}
+
+.sidemenu-widest {
+	width: $sidemenu-width-widest;
+}
+
+.sidemenu-header {
+	width: 100%;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: $sidemenu-component-padding;
+
+	&.sidemenu-header-bordered {
+		border-bottom-width: $sidemenu-border-width;
+		border-bottom-style: solid;
+		@include theme-variant("light") {
+			border-bottom-color: $sidemenu-border-color-light;
+		}
+		@include theme-variant("dark") {
+			border-bottom-color: $sidemenu-border-color-dark;
+		}
+	}
+}
+
+.sidemenu-body {
+	width: 100%;
+	height: 100%;
+	padding: $sidemenu-component-padding;
+	overflow-y: auto;
+	@include theme-variant("light") {
+		color: $sidemenu-color-light;
+	}
+	@include theme-variant("dark") {
+		color: $sidemenu-color-dark;
+	}
+}
+
+.sidemenu-title {
+	flex: 1;
+	font-size: $sidemenu-title-font-size;
+	font-weight: $sidemenu-title-font-weight;
+	padding: 0;
+	margin: 0;
+	@include theme-variant("light") {
+		color: $sidemenu-title-color-light;
+	}
+	@include theme-variant("dark") {
+		color: $sidemenu-title-color-dark;
+	}
+}
+
+.sidemenu-addon {
+	white-space: nowrap;
+}
+// Backdrop styles
+#sidemenu-backdrop {
+	position: fixed;
+	display: block;
+	width: 100vw;
+	height: 100vh;
+	background: $sidemenu-backdrop-bg;
+	opacity: 1;
+	top: 0;
+	left: 0;
+	z-index: $zindex-sidemenu-backdrop;
+}
+// Hiding body scrollbar
+body.sidemenu-open {
+	overflow: hidden;
+}

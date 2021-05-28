@@ -1,0 +1,78 @@
+// Base styles
+
+.float-label {
+	position: relative;
+	display: block;
+	flex-grow: 1;
+	// Floating label on the top of input
+	> label,
+	> span {
+		position: absolute;
+		background: transparent;
+		font-size: $fltlabel-label-font-size;
+		left: $fltlabel-label-offset;
+		top: 0;
+		transform: translateY(-50%);
+		opacity: 1;
+		z-index: 3;
+		cursor: text;
+		@include transition($fltlabel-label-transition);
+		@include theme-variant("light") {
+			color: $fltlabel-label-color-light;
+		}
+		@include theme-variant("dark") {
+			color: $fltlabel-label-color-dark;
+		}
+		// Dash element
+		// Litte border for hiding the part of input border where label floated
+		&::after {
+			content: "";
+			position: absolute;
+			display: block;
+			height: $fltlabel-dash-width;
+			left: -#{$fltlabel-dash-offset};
+			right: -#{$fltlabel-dash-offset};
+			top: 50%;
+			z-index: -1;
+			@include theme-variant("light") {
+				background: $fltlabel-dash-bg-light;
+			}
+			@include theme-variant("dark") {
+				background: $fltlabel-dash-bg-dark;
+			}
+		}
+	}
+
+	.form-control:placeholder-shown:not(:focus) {
+		// Hide default placeholder
+		&::placeholder {
+			opacity: 0;
+		}
+		// Transform label or span element instead input placeholder
+		+ label,
+		+ span {
+			top: calc(#{$input-line-height * .5em} + #{$input-padding-y});
+			font-size: $input-font-size;
+			@include theme-variant("light") {
+				color: $input-placeholder-color-light;
+				background: $input-bg-light;
+			}
+			@include theme-variant("dark") {
+				color: $input-placeholder-color-dark;
+				background: $input-bg-dark;
+			}
+			// Hide dash element
+			&:after {
+				display: none;
+			}
+		}
+	}
+}
+// Sizes
+.float-label-lg {
+	@include float-label-sizing($input-font-size-lg, calc(#{$input-line-height-lg * .5em} + #{$input-padding-y-lg}), $fltlabel-label-font-size-lg, $fltlabel-label-offset-lg);
+}
+
+.float-label-sm {
+	@include float-label-sizing($input-font-size-sm, calc(#{$input-line-height-sm * .5em} + #{$input-padding-y-sm}), $fltlabel-label-font-size-sm, $fltlabel-label-offset-sm);
+}

@@ -1,0 +1,20 @@
+// Badges
+@mixin badge-variant($bg, $color, $border, $hover-bg, $hover-color, $hover-border) {
+  color: $color;
+  background: $bg;
+  border-color: $border;
+  @at-root a#{&} {
+    &.focus,
+    &:focus,
+    &:hover {
+      color: $hover-color;
+      background: $hover-bg;
+      border-color: $hover-border;
+    }
+
+    &.focus,
+    &:focus {
+      outline: 0;
+    }
+  }
+}

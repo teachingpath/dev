@@ -5,6 +5,7 @@ import firebaseReducer from "./firebaseReducer"
 import userReducer from "./userReducer"
 import pathwayReducer from "./pathwayReducer"
 import pageReducer from "./pageReducer"
+import asideReducer from "./asideReducer"
 
 // Concatenate all reducers
 const reducers = combineReducers({
@@ -13,6 +14,7 @@ const reducers = combineReducers({
   firebase: firebaseReducer,
   user: userReducer,
   page: pageReducer,
+  aside: asideReducer,
   pathway: pathwayReducer
 })
 

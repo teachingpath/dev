@@ -1,0 +1,71 @@
+.accordion {
+  > .card {
+    overflow: hidden;
+
+    &:not(:first-of-type) {
+      // Remove border radius for card header on the middle
+      .card-header:first-child {
+        @include border-radius(0);
+      }
+
+      &:not(:last-of-type) {
+        border-bottom: 0;
+        @include border-radius(0);
+      }
+    }
+
+    &:first-of-type {
+      border-bottom: 0;
+      // Remove border bottom radius for first of .card elements
+      @include border-bottom-radius(0);
+    }
+    // Remove border top radius for last of .card elements
+    &:last-of-type {
+      @include border-top-radius(0);
+    }
+    // Prevent double border
+    .card-header {
+      margin-bottom: -#{$card-border-width};
+    }
+  }
+
+  .accordion-caret {
+    @include caret-transform(right);
+  }
+
+  .card-header {
+    cursor: pointer;
+    // Rotate down accordion caret when card header expanded
+    &:not(.collapsed) .accordion-caret {
+      @include caret-transform(down);
+    }
+  }
+}
+// Accordion flush border version
+.accordion-flush {
+  > .card {
+    border: 0;
+    overflow: hidden;
+    @include border-radius(0);
+
+    .card-header {
+      background: transparent;
+      border: 0;
+    }
+
+    + .card {
+      border-top-width: $card-border-width;
+      border-top-style: solid;
+      @include theme-variant("light") {
+        border-top-color: $card-border-color-light;
+      }
+      @include theme-variant("dark") {
+        border-top-color: $card-border-color-dark;
+      }
+    }
+
+    .card-body {
+      padding-top: 0;
+    }
+  }
+}

@@ -1,0 +1,29 @@
+.float-btn {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  padding: $float-btn-padding-y $float-btn-padding-x;
+  border-width: $float-btn-border-width;
+  border-style: solid;
+  top: 50%;
+  transform: rotateY(-50%);
+  z-index: $zindex-float-btn;
+  @include theme-variant("light") {
+    background: $float-btn-bg-light;
+    border-color: $float-btn-border-color-light;
+  }
+  @include theme-variant("dark") {
+    background: $float-btn-bg-dark;
+    border-color: $float-btn-border-color-dark;
+  }
+}
+// Alignments
+.float-btn-right {
+  right: 0;
+  @include border-left-radius($float-btn-border-radius);
+}
+
+.float-btn-left {
+  left: 0;
+  @include border-right-radius($float-btn-border-radius);
+}

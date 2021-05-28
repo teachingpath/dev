@@ -1,0 +1,62 @@
+.apexcharts-menu-icon,
+.apexcharts-pan-icon,
+.apexcharts-reset-icon,
+.apexcharts-selection-icon,
+.apexcharts-toolbar-custom-icon,
+.apexcharts-zoom-icon,
+.apexcharts-zoomin-icon,
+.apexcharts-zoomout-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $apexchart-icon-dimension;
+  height: $apexchart-icon-dimension;
+  cursor: pointer;
+  @include theme-variant("light") {
+    color: $apexchart-icon-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $apexchart-icon-color-dark;
+  }
+
+  &:not(.apexcharts-selected):hover {
+    @include theme-variant("light") {
+      color: $apexchart-icon-hover-color-light;
+    }
+    @include theme-variant("dark") {
+      color: $apexchart-icon-hover-color-dark;
+    }
+  }
+}
+// Icon class
+.apexcharts-icon {
+  width: $apexchart-icon-size;
+  height: $apexchart-icon-size;
+  color: inherit;
+}
+// SVG icon path selector
+.apexcharts-icon-fill {
+  fill: currentColor;
+}
+// Active state class
+.apexcharts-selected {
+  @include theme-variant("light") {
+    color: $apexchart-icon-active-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $apexchart-icon-active-color-dark;
+  }
+}
+
+.apexcharts-canvas {
+  // Set custom cursor for zoom and pan buttons
+  &.apexcharts-zoomable {
+    .hovering-zoom {
+      cursor: crosshair;
+    }
+
+    .hovering-pan {
+      cursor: move;
+    }
+  }
+}

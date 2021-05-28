@@ -1,0 +1,7 @@
+.widget12 {
+  @include avatar-sizing($widget12-dimension, $widget12-font-size, $widget12-icon-size)
+}
+
+.widget12-sm {
+  @include avatar-sizing($widget12-dimension-sm, $widget12-font-size-sm, $widget12-icon-size-sm)
+}

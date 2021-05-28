@@ -1,0 +1,176 @@
+// Base styles
+
+.btn {
+  position: relative;
+  display: inline-block;
+  font-family: $btn-font-family;
+  font-weight: $btn-font-weight;
+  background: transparent;
+  border: $btn-border-width solid transparent;
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+  @include button-size($btn-padding-y, $btn-padding-x, $btn-font-size, $btn-line-height, $btn-border-radius);
+  @include icon-size($btn-font-size);
+  @include transition($btn-transition);
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &.focus,
+  &:focus {
+    outline: 0;
+  }
+  // Disabled comes first so active can properly restyle
+  &.disabled,
+  &:disabled {
+    cursor: default;
+    opacity: $btn-disabled-opacity;
+  }
+}
+// Future-proof disabling of clicks on `<a>` elements
+a.btn.disabled,
+fieldset:disabled a.btn {
+  pointer-events: none;
+}
+// Alternate buttons
+@each $color, $value in $theme-colors {
+  .btn-#{$color} {
+    @include button-variant($value, $value);
+  }
+
+  .btn-outline-#{$color} {
+    @include button-outline-variant($value);
+  }
+
+  .btn-flat-#{$color} {
+    @include button-flat-variant($value);
+  }
+
+  .btn-label-#{$color} {
+    @include button-label-variant($value);
+  }
+
+  .btn-text-#{$color} {
+    @include button-text-variant($value);
+  }
+}
+// Link buttons
+// Make a button look and behave like a link
+
+.btn-link {
+  color: $link-color;
+  font-weight: $font-weight-normal;
+  text-decoration: $link-decoration;
+
+  &:hover {
+    color: $link-hover-color;
+    text-decoration: $link-hover-decoration;
+  }
+
+  &.focus,
+  &:focus {
+    text-decoration: $link-hover-decoration;
+  }
+
+  &.disabled,
+  &:disabled {
+    color: $btn-link-disabled-color;
+    pointer-events: none;
+  }
+}
+// Button with icon inside
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: $btn-icon-dimension;
+  width: $btn-icon-dimension;
+  padding: 0;
+  @include icon-size($btn-icon-font-size);
+  // Circle buttons
+  &.btn-circle {
+    border-radius: 50% !important;
+  }
+}
+// Button sizes
+.btn-lg {
+  @include button-size($btn-padding-y-lg, $btn-padding-x-lg, $btn-font-size-lg, $btn-line-height-lg, $btn-border-radius-lg);
+}
+
+.btn-sm {
+  @include button-size($btn-padding-y-sm, $btn-padding-x-sm, $btn-font-size-sm, $btn-line-height-sm, $btn-border-radius-sm);
+}
+
+.btn-icon {
+  &.btn-sm {
+    @include button-icon-size($btn-icon-dimension-sm, $btn-border-radius-sm, $btn-icon-font-size-sm);
+  }
+
+  &.btn-lg {
+    @include button-icon-size($btn-icon-dimension-lg, $btn-border-radius-lg, $btn-icon-font-size-lg);
+  }
+}
+// Button wide sizes
+.btn-wide {
+  @include button-wide-size($btn-wide-padding-x);
+}
+
+.btn-wider {
+  @include button-wide-size($btn-wider-padding-x);
+}
+
+.btn-widest {
+  @include button-wide-size($btn-widest-padding-x);
+}
+// Button tall sizes
+.btn-tall {
+  @include button-tall-size($btn-tall-padding-y);
+}
+
+.btn-taller {
+  @include button-tall-size($btn-taller-padding-y);
+}
+
+.btn-tallest {
+  @include button-tall-size($btn-tallest-padding-y);
+}
+// Pill button
+.btn-pill {
+  border-radius: $btn-pill-border-radius;
+}
+// Block button
+.btn-block {
+  display: block;
+  width: 100%;
+  // Vertically space out multiple block buttons
+  + .btn-block {
+    margin-top: $btn-block-spacing-y;
+  }
+}
+// Specificity overrides
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  &.btn-block {
+    width: 100%;
+  }
+}
+// Button marker
+.btn-marker {
+  display: block;
+  position: absolute !important;
+  z-index: 1;
+  top: -#{$btn-marker-offset} !important;
+  right: -#{$btn-marker-offset} !important;
+}
+// Add outline to .badge class
+.btn-counter {
+  @include theme-variant("light") {
+    box-shadow: 0 0 0 $marker-outline-width $marker-outline-color-light;
+  }
+  @include theme-variant("dark") {
+    box-shadow: 0 0 0 $marker-outline-width $marker-outline-color-dark;
+  }
+}

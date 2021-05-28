@@ -1,0 +1,17 @@
+@mixin float-label-sizing($input-font-size, $input-height-half, $label-font-size, $label-offset) {
+  > label,
+  > span {
+    font-size: $label-font-size;
+    left: $label-offset;
+  }
+
+  .form-control {
+    &:placeholder-shown:not(:focus) {
+      + label,
+      + span {
+        font-size: $input-font-size;
+        top: $input-height-half;
+      }
+    }
+  }
+}

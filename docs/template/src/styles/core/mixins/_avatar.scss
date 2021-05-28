@@ -1,0 +1,38 @@
+// Avatar
+@mixin avatar-variant($bg, $color: color-yiq($bg)) {
+  color: $color !important;
+  background: $bg !important;
+  @at-root {
+    a#{ &}:hover {
+      color: $color !important;
+    }
+  }
+}
+@mixin avatar-icon-variant($bg, $color: color-yiq($bg)) {
+  color: $color !important;
+  background: $bg !important;
+}
+@mixin avatar-sizing($dimension, $icon-size, $font-size, $border-radius: $avatar-border-radius, $offset: $avatar-addon-offset) {
+  width: $dimension;
+  height: $dimension;
+
+  > img,
+  & {
+    @include border-radius($border-radius);
+  }
+
+  .avatar-display {
+    font-size: $font-size;
+    @include icon-size($icon-size);
+  }
+
+  .avatar-addon-top {
+    top: -#{$offset};
+    left: -#{$offset};
+  }
+
+  .avatar-addon-bottom {
+    bottom: -#{$offset};
+    right: -#{$offset};
+  }
+}

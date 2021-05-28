@@ -1,0 +1,250 @@
+.popover {
+  position: absolute;
+  z-index: $zindex-popover;
+  display: block;
+  max-width: $popover-max-width;
+  // Our parent element can be arbitrary since tooltips are by default inserted as a sibling of their target element.
+  // So reset our font and text properties to avoid inheriting weird values.
+  @include reset-text();
+  font-size: $popover-font-size;
+  // Allow breaking very long words so they don't overflow the popover's bounds
+  word-wrap: break-word;
+  border-width: $popover-border-width;
+  border-style: solid;
+  top: 0;
+  left: 0;
+
+  @include border-radius($popover-border-radius);
+  @include theme-variant("light") {
+    background: $popover-bg-light;
+    border-color: $popover-border-color-light;
+  }
+  @include theme-variant("dark") {
+    background: $popover-bg-dark;
+    border-color: $popover-border-color-dark;
+  }
+
+  .arrow {
+    position: absolute;
+    display: block;
+    width: $popover-arrow-width;
+    height: $popover-arrow-height;
+    margin: 0 $popover-border-radius;
+
+    &::after,
+    &::before {
+      content: "";
+      position: absolute;
+      display: block;
+      border-color: transparent;
+      border-style: solid;
+    }
+  }
+}
+// Popover orientation classes
+.bs-popover-top {
+  margin-bottom: $popover-arrow-height;
+
+  > .arrow {
+    bottom: calc((#{$popover-arrow-height} + #{$popover-border-width}) * -1);
+
+    &::after,
+    &::before {
+      border-width: $popover-arrow-height ($popover-arrow-width / 2) 0;
+    }
+
+    &::before {
+      bottom: 0;
+      @include theme-variant("light") {
+        border-top-color: $popover-arrow-outer-color-light;
+      }
+      @include theme-variant("dark") {
+        border-top-color: $popover-arrow-outer-color-dark;
+      }
+    }
+
+    &::after {
+      bottom: $popover-border-width;
+      @include theme-variant("light") {
+        border-top-color: $popover-arrow-color-light;
+      }
+      @include theme-variant("dark") {
+        border-top-color: $popover-arrow-color-dark;
+      }
+    }
+  }
+}
+
+.bs-popover-right {
+  margin-left: $popover-arrow-height;
+
+  > .arrow {
+    left: calc((#{$popover-arrow-height} + #{$popover-border-width}) * -1);
+    width: $popover-arrow-height;
+    height: $popover-arrow-width;
+    margin: $popover-border-radius 0; // make sure the arrow does not touch the popover's rounded corners
+
+    &::after,
+    &::before {
+      border-width: ($popover-arrow-width / 2) $popover-arrow-height ($popover-arrow-width / 2) 0;
+    }
+
+    &::before {
+      left: 0;
+      @include theme-variant("light") {
+        border-right-color: $popover-arrow-outer-color-light;
+      }
+      @include theme-variant("dark") {
+        border-right-color: $popover-arrow-outer-color-dark;
+      }
+    }
+
+    &::after {
+      left: $popover-border-width;
+      @include theme-variant("light") {
+        border-right-color: $popover-arrow-color-light;
+      }
+      @include theme-variant("dark") {
+        border-right-color: $popover-arrow-color-dark;
+      }
+    }
+  }
+}
+
+.bs-popover-bottom {
+  margin-top: $popover-arrow-height;
+
+  > .arrow {
+    top: calc((#{$popover-arrow-height} + #{$popover-border-width}) * -1);
+
+    &::after,
+    &::before {
+      border-width: 0 ($popover-arrow-width / 2) $popover-arrow-height ($popover-arrow-width / 2);
+    }
+
+    &::before {
+      top: 0;
+      @include theme-variant("light") {
+        border-bottom-color: $popover-arrow-outer-color-light;
+      }
+      @include theme-variant("dark") {
+        border-bottom-color: $popover-arrow-outer-color-dark;
+      }
+    }
+
+    &::after {
+      top: $popover-border-width;
+      @include theme-variant("light") {
+        border-bottom-color: $popover-arrow-color-light;
+      }
+      @include theme-variant("dark") {
+        border-bottom-color: $popover-arrow-color-dark;
+      }
+    }
+  }
+  // This will remove the popover-header's border just below the arrow
+  .popover-header::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: $popover-arrow-width;
+    margin-left: -#{$popover-arrow-width / 2};
+    border-bottom-width: $popover-border-width;
+    border-bottom-style: solid;
+    @include theme-variant("light") {
+      border-bottom-color: $popover-header-bg-light;
+    }
+    @include theme-variant("dark") {
+      border-bottom-color: $popover-header-bg-dark;
+    }
+  }
+}
+
+.bs-popover-left {
+  margin-right: $popover-arrow-height;
+
+  > .arrow {
+    right: calc((#{$popover-arrow-height} + #{$popover-border-width}) * -1);
+    width: $popover-arrow-height;
+    height: $popover-arrow-width;
+    margin: $popover-border-radius 0; // make sure the arrow does not touch the popover's rounded corners
+
+    &::after,
+    &::before {
+      border-width: ($popover-arrow-width / 2) 0 ($popover-arrow-width / 2) $popover-arrow-height;
+    }
+
+    &::before {
+      right: 0;
+      @include theme-variant("light") {
+        border-left-color: $popover-arrow-outer-color-light;
+      }
+      @include theme-variant("dark") {
+        border-left-color: $popover-arrow-outer-color-dark;
+      }
+    }
+
+    &::after {
+      right: $popover-border-width;
+      @include theme-variant("light") {
+        border-left-color: $popover-arrow-color-light;
+      }
+      @include theme-variant("dark") {
+        border-left-color: $popover-arrow-color-dark;
+      }
+    }
+  }
+}
+
+.bs-popover-auto {
+  &[x-placement^="top"] {
+    @extend .bs-popover-top;
+  }
+
+  &[x-placement^="right"] {
+    @extend .bs-popover-right;
+  }
+
+  &[x-placement^="bottom"] {
+    @extend .bs-popover-bottom;
+  }
+
+  &[x-placement^="left"] {
+    @extend .bs-popover-left;
+  }
+}
+// Popover header
+.popover-header {
+  padding: $popover-header-padding-y $popover-header-padding-x;
+  font-size: $popover-header-font-size;
+  border-bottom-width: $popover-border-width;
+  border-bottom-style: solid;
+  margin-bottom: 0; // Reset the default from Reboot
+  @include border-top-radius(calc(#{$popover-border-radius} - #{$popover-border-width}));
+  @include theme-variant("light") {
+    color: $popover-header-color-light;
+    background: $popover-header-bg-light;
+    border-bottom-color: $popover-header-border-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $popover-header-color-dark;
+    background: $popover-header-bg-dark;
+    border-bottom-color: $popover-header-border-color-dark;
+  }
+
+  &:empty {
+    display: none;
+  }
+}
+// Popover body
+.popover-body {
+  padding: $popover-body-padding-y $popover-body-padding-x;
+  @include theme-variant("light") {
+    color: $popover-body-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $popover-body-color-dark;
+  }
+}

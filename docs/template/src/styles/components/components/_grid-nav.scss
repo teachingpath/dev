@@ -1,0 +1,237 @@
+// Base styles
+
+.grid-nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.grid-nav-row {
+  display: flex;
+  flex-direction: row;
+  // Prevent border duplicates
+  + .grid-nav-row {
+    margin-top: -#{$gridnav-border-width};
+  }
+}
+
+.grid-nav-item {
+  flex: 1;
+  min-width: $gridnav-item-min-width;
+  padding: $gridnav-item-padding;
+  cursor: default;
+  @include theme-variant("light") {
+    color: $gridnav-color-light;
+    background: $gridnav-bg-light;
+  }
+  @include theme-variant("dark") {
+    color: $gridnav-color-dark;
+    background: $gridnav-bg-dark;
+  }
+  // Reset default behavior of <a> tag
+  @at-root a#{&} {
+    &:focus,
+    &:hover {
+      text-decoration: none !important;
+      @include theme-variant("light") {
+        color: $gridnav-color-light;
+      }
+      @include theme-variant("dark") {
+        color: $gridnav-color-dark;
+      }
+    }
+  }
+  // Prevent border duplicates
+  + .grid-nav-item {
+    margin-left: -#{$gridnav-border-width};
+  }
+}
+// Alternative border variants
+.grid-nav-bordered,
+.grid-nav-flush {
+  .grid-nav-item {
+    border-width: $gridnav-border-width;
+    border-style: solid;
+    @include theme-variant("light") {
+      border-color: $gridnav-border-color-light;
+    }
+    @include theme-variant("dark") {
+      border-color: $gridnav-border-color-dark;
+    }
+  }
+}
+
+.grid-nav-flush {
+  // Remove border around the element
+  .grid-nav-row {
+    &:first-of-type .grid-nav-item {
+      border-top: none;
+    }
+
+    &:last-of-type .grid-nav-item {
+      border-bottom: none;
+    }
+  }
+
+  .grid-nav-item {
+    &:first-of-type {
+      border-left: none;
+    }
+
+    &:last-of-type {
+      border-right: none;
+    }
+  }
+}
+// Make .grid-nav-item behave like link with active and disabled states
+.grid-nav-action {
+  .grid-nav-item {
+    cursor: pointer;
+
+    &:focus,
+    &:hover {
+      z-index: 1;
+      @include theme-variant("light") {
+        background: $gridnav-item-hover-bg-light;
+        border-color: $gridnav-item-hover-border-color-light;
+
+        &,
+        .grid-nav-icon,
+        .grid-nav-subtitle,
+        .grid-nav-title {
+          color: $gridnav-item-hover-color-light;
+        }
+      }
+      @include theme-variant("dark") {
+        background: $gridnav-item-hover-bg-dark;
+        border-color: $gridnav-item-hover-border-color-dark;
+
+        &,
+        .grid-nav-icon,
+        .grid-nav-subtitle,
+        .grid-nav-title {
+          color: $gridnav-item-hover-color-dark;
+        }
+      }
+    }
+
+    &.active,
+    &:active {
+      z-index: 2;
+      @include theme-variant("light") {
+        background: $gridnav-item-active-bg-light;
+        border-color: $gridnav-item-active-border-color-light;
+
+        &,
+        .grid-nav-icon,
+        .grid-nav-subtitle,
+        .grid-nav-title {
+          color: $gridnav-item-active-color-light;
+        }
+      }
+      @include theme-variant("dark") {
+        background: $gridnav-item-active-bg-dark;
+        border-color: $gridnav-item-active-border-color-dark;
+
+        &,
+        .grid-nav-icon,
+        .grid-nav-subtitle,
+        .grid-nav-title {
+          color: $gridnav-item-active-color-dark;
+        }
+      }
+    }
+
+    &.disabled,
+    &:disabled {
+      opacity: $gridnav-item-disabled-opacity;
+      pointer-events: none;
+      @include theme-variant("light") {
+        color: $gridnav-item-disabled-color-light;
+        background: $gridnav-item-disabled-bg-light;
+        border-color: $gridnav-item-disabled-border-color-light;
+      }
+      @include theme-variant("dark") {
+        color: $gridnav-item-disabled-color-dark;
+        background: $gridnav-item-disabled-bg-dark;
+        border-color: $gridnav-item-disabled-border-color-dark;
+      }
+    }
+  }
+}
+// Make the .grid-nav rounded when doesn't has .grid-nav-no-rounded class
+.grid-nav:not(.grid-nav-no-rounded) {
+  .grid-nav-row:first-of-type {
+    .grid-nav-item {
+      &:first-of-type {
+        @include border-top-left-radius($gridnav-border-radius);
+      }
+
+      &:last-of-type {
+        @include border-top-right-radius($gridnav-border-radius);
+      }
+    }
+  }
+
+  .grid-nav-row:last-of-type {
+    .grid-nav-item {
+      &:first-of-type {
+        @include border-bottom-left-radius($gridnav-border-radius);
+      }
+
+      &:last-of-type {
+        @include border-bottom-right-radius($gridnav-border-radius);
+      }
+    }
+  }
+}
+// Content styles
+.grid-nav-content {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.grid-nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $gridnav-icon-spacer;
+  @include icon-size($gridnav-icon-size);
+  @include theme-variant("light") {
+    color: $gridnav-icon-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $gridnav-icon-color-dark;
+  }
+}
+
+.grid-nav-subtitle,
+.grid-nav-title {
+  display: block;
+  margin: 0;
+  padding: 0;
+  line-height: $gridnav-content-line-height;
+}
+
+.grid-nav-title {
+  font-size: $gridnav-title-font-size;
+  font-weight: $gridnav-title-font-weight;
+  @include theme-variant("light") {
+    color: $gridnav-title-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $gridnav-title-color-dark;
+  }
+}
+
+.grid-nav-subtitle {
+  font-size: $gridnav-subtitle-font-size;
+  font-weight: $gridnav-subtitle-font-weight;
+  @include theme-variant("light") {
+    color: $gridnav-subtitle-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $gridnav-subtitle-color-dark;
+  }
+}

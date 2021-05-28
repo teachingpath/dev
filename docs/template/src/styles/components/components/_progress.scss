@@ -1,0 +1,60 @@
+// Base class
+
+.progress {
+  display: flex;
+  height: $progress-height;
+  font-size: $progress-font-size;
+  overflow: hidden; // force rounded corners by cropping it
+  @include border-radius($progress-border-radius);
+  @include theme-variant("light") {
+    background-color: $progress-bg-light;
+  }
+  @include theme-variant("dark") {
+    background-color: $progress-bg-dark;
+  }
+}
+
+.progress-bar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: $progress-bar-bg;
+  color: $progress-bar-color;
+  text-align: center;
+  white-space: nowrap;
+  @include transition($progress-bar-transition);
+}
+// Striped progress variation
+.progress-bar-striped {
+  @include gradient-striped();
+  background-size: $progress-height $progress-height;
+}
+// Sizing
+.progress-lg {
+  height: $progress-height-lg;
+}
+
+.progress-sm {
+  height: $progress-height-sm;
+}
+// Disable animation if transitions are disabled
+@if $enable-transitions {
+  @keyframes progress-bar-stripes {
+    from {
+      background-position: $progress-height 0;
+    }
+
+    to {
+      background-position: 0 0;
+    }
+  }
+
+  .progress-bar-animated {
+    animation: progress-bar-stripes $progress-bar-animation-timing;
+    @if $enable-prefers-reduced-motion-media-query {
+      @media (prefers-reduced-motion: reduce) {
+        animation: none;
+      }
+    }
+  }
+}

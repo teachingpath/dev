@@ -5,6 +5,7 @@ import { firebaseChange } from "./firebaseAction";
 import { activityChange } from "./activityAction";
 import { userChange } from "./userAction";
 import { loadPathway, loadRunner, getPathwayBy, getRunnerBy } from "./pathwayAction";
+import { asideToggle, asideChange } from "./asideAction"
 
 
 // Export all actions
@@ -19,6 +20,8 @@ export {
   userChange,
   loadPathway,
   loadRunner,
+  asideToggle,
+  asideChange,
   getPathwayBy,
   getRunnerBy
 };

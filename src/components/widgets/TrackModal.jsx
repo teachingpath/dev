@@ -6,6 +6,7 @@ import Questions from "./QuestionTrack";
 import TrainingTrack from "./TrainingTrack";
 import HackingTrack from "./HackingTrack";
 import LearningTrack from "./LearningTrack";
+import Link from "next/link";
 
 class TrackModal extends React.Component {
   time = 0;
@@ -127,7 +128,7 @@ class TrackModal extends React.Component {
 
   render() {
     const { name, type, isRunning, timeLimit, dataTime } = this.state;
-    const { time, onComplete } = this.props;
+    const { time, onComplete, extarnalLink } = this.props;
     const titleButton = timeLimit
       ? "Time limit [" + timeLimit + " hour]"
       : "Start this track";
@@ -154,8 +155,7 @@ class TrackModal extends React.Component {
           className="modal-xl"
         >
           <Modal.Header toggle={this.toggle}>
-            {name || "Loading"}
-            <small className="text-muted"> {type || ""}</small>
+            <Link href={extarnalLink}>{name || "Loading"}</Link>
           </Modal.Header>
           <Modal.Body>
             {

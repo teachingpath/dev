@@ -81,7 +81,7 @@ class RunnerList extends React.Component {
   }
 
   render() {
-    const { list, runnerId, name, description } = this.state;
+    const { list, runnerId, pathwayId, name, description } = this.state;
     return (
       <React.Fragment>
         <h2>{name}</h2>
@@ -111,7 +111,7 @@ class RunnerList extends React.Component {
                 const { subtitle, title, time, type, id } = data;
                 const titleLink = (
                   <Link
-                    href={"/catalog/track?id=" + id + "&runnerId=" + runnerId}
+                    href={"/catalog/track?id=" + id + "&runnerId=" + runnerId+"&pathwayId="+pathwayId}
                   >
                     {index + 1 + ". " + title}
                   </Link>

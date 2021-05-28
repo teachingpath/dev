@@ -1,0 +1,219 @@
+// Base class
+// Kickstart any navigation component with a set of style resets. Works with
+// `<nav>`s or `<ul>`s.
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: $nav-link-padding-y $nav-link-padding-x;
+  font-size: $nav-link-font-size;
+  font-weight: $nav-link-font-weight;
+  @include transition($nav-link-transition);
+  @include theme-variant("light") {
+    color: $nav-link-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $nav-link-color-dark;
+  }
+
+  &.active,
+  &:focus,
+  &:hover {
+    text-decoration: none;
+    @include theme-variant("light") {
+      color: $nav-link-active-color-light;
+    }
+    @include theme-variant("dark") {
+      color: $nav-link-active-color-dark;
+    }
+  }
+  // Disabled state lightens text
+  &.disabled {
+    pointer-events: none;
+    cursor: default;
+    @include theme-variant("light") {
+      color: $nav-link-disabled-color-light;
+    }
+    @include theme-variant("dark") {
+      color: $nav-link-disabled-color-dark;
+    }
+  }
+}
+
+.nav-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $nav-icon-dimension;
+  @include icon-size($nav-icon-size);
+}
+
+.nav-append,
+.nav-prepend {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.nav-prepend {
+  margin-right: $nav-addon-spacer;
+}
+
+.nav-append {
+  margin-left: $nav-addon-spacer;
+}
+
+.nav-content {
+  flex: 1;
+  text-align: left;
+}
+// Alternative nav variants
+.nav-lines {
+  margin-bottom: -#{$nav-line-border-width};
+
+  .nav-link {
+    border-bottom: $nav-line-border-width solid transparent;
+  }
+
+  .nav-item.show .nav-link,
+  .nav-link.active {
+    color: $nav-line-active-color;
+    border-bottom-color: $nav-line-active-border-color;
+  }
+  // Vertical variant
+  &.nav-vertical {
+    flex-direction: column;
+
+    .nav-link {
+      justify-content: flex-start;
+    }
+
+    .nav-item + .nav-item {
+      margin-top: $nav-link-spacer;
+    }
+  }
+}
+
+.nav-tabs {
+  margin-bottom: -#{$nav-tab-border-width};
+
+  .nav-link {
+    @include border-top-radius($nav-tab-border-radius);
+    @include theme-variant("light") {
+      border: $nav-tab-border-width solid transparent;
+      border-bottom-color: $nav-tab-border-color-light;
+    }
+    @include theme-variant("dark") {
+      border: $nav-tab-border-width solid transparent;
+      border-bottom-color: $nav-tab-border-color-dark;
+    }
+  }
+
+  .nav-item.show .nav-link,
+  .nav-link.active {
+    @include theme-variant("light") {
+      color: $nav-tab-active-color-light;
+      background: $nav-tab-active-bg-light;
+      border-color: $nav-tab-border-color-light;
+      border-bottom-color: transparent;
+    }
+    @include theme-variant("dark") {
+      color: $nav-tab-active-color-dark;
+      background: $nav-tab-active-bg-dark;
+      border-color: $nav-tab-border-color-dark;
+      border-bottom-color: transparent;
+    }
+  }
+}
+
+.nav-pills {
+  .nav-item + .nav-item {
+    margin-left: $nav-link-spacer;
+  }
+
+  .nav-link {
+    @include border-radius($nav-pills-border-radius);
+
+    &:hover {
+      @include theme-variant("light") {
+        color: $nav-pills-hover-color-light;
+        background: $nav-pills-hover-bg-light;
+      }
+      @include theme-variant("dark") {
+        color: $nav-pills-hover-color-dark;
+        background: $nav-pills-hover-bg-dark;
+      }
+    }
+  }
+
+  .nav-link.active,
+  .show > .nav-link {
+    @include theme-variant("light") {
+      color: $nav-pills-active-color-light;
+      background: $nav-pills-active-bg-light;
+    }
+    @include theme-variant("dark") {
+      color: $nav-pills-active-color-dark;
+      background: $nav-pills-active-bg-dark;
+    }
+  }
+  // Vertical variant
+  &.nav-vertical {
+    flex-direction: column;
+
+    .nav-link {
+      justify-content: flex-start;
+    }
+
+    .nav-item + .nav-item {
+      margin-left: 0;
+      margin-top: $nav-link-spacer;
+    }
+  }
+}
+// Justified variants
+.nav-fill {
+  .nav-item {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+}
+
+.nav-justified {
+  .nav-item {
+    flex-basis: 0;
+    flex-grow: 1;
+    text-align: center;
+  }
+}
+// Sizes
+.nav-lg {
+  @include nav-sizing($nav-link-font-size-lg, $nav-link-padding-x-lg, $nav-link-padding-y-lg, $nav-link-spacer-lg, $nav-link-font-size-lg);
+}
+
+.nav-sm {
+  @include nav-sizing($nav-link-font-size-sm, $nav-link-padding-x-sm, $nav-link-padding-y-sm, $nav-link-spacer-sm, $nav-link-font-size-sm);
+}
+// Tabbable tabs
+// Hide tabbable panes to start, show them when `.active`
+
+.tab-content {
+  > .tab-pane {
+    display: none;
+  }
+
+  > .active {
+    display: block;
+  }
+}

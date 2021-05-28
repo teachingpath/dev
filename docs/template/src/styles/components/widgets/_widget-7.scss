@@ -1,0 +1,32 @@
+.widget7 {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.widget7-text {
+  flex: 1;
+  font-size: $widget7-text-font-size;
+  font-weight: $widget7-text-font-weight;
+  padding: 0;
+  margin: 0;
+  @include theme-variant("light") {
+    color: $widget7-text-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget7-text-color-dark;
+  }
+}
+
+.widget7-time {
+  font-size: $widget7-time-font-size;
+  font-weight: $widget7-time-font-weight;
+  padding-left: $widget7-time-spacer;
+  margin: 0;
+  @include theme-variant("light") {
+    color: $widget7-time-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget7-time-color-dark;
+  }
+}

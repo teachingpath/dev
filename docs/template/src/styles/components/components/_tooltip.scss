@@ -1,0 +1,207 @@
+// Base class
+
+.tooltip {
+  position: absolute;
+  z-index: $zindex-tooltip;
+  display: block;
+  margin: 0;
+  // Our parent element can be arbitrary since tooltips are by default inserted as a sibling of their target element.
+  // So reset our font and text properties to avoid inheriting weird values.
+  @include reset-text();
+  font-size: $tooltip-font-size;
+  // Allow breaking very long words so they don't overflow the tooltip's bounds
+  word-wrap: break-word;
+  opacity: 0;
+
+  &.show {
+    opacity: $tooltip-opacity;
+  }
+
+  .arrow {
+    position: absolute;
+    display: block;
+    width: $tooltip-arrow-width;
+    height: $tooltip-arrow-height;
+
+    &::after,
+    &::before {
+      content: "";
+      position: absolute;
+      border-color: transparent;
+      border-style: solid;
+    }
+  }
+}
+// Tooltip orientation classes
+.bs-tooltip-top {
+  padding: $tooltip-arrow-height 0;
+
+  .arrow {
+    bottom: 0;
+
+    &::after,
+    &::before {
+      border-width: $tooltip-arrow-height ($tooltip-arrow-width / 2) 0;
+    }
+
+    &::before {
+      bottom: 0;
+      @include theme-variant("light") {
+        border-top-color: $tooltip-arrow-outer-color-light;
+      }
+      @include theme-variant("dark") {
+        border-top-color: $tooltip-arrow-outer-color-dark;
+      }
+    }
+
+    &::after {
+      bottom: $tooltip-border-width;
+      @include theme-variant("light") {
+        border-top-color: $tooltip-arrow-color-light;
+      }
+      @include theme-variant("dark") {
+        border-top-color: $tooltip-arrow-color-dark;
+      }
+    }
+  }
+}
+
+.bs-tooltip-right {
+  padding: 0 $tooltip-arrow-height;
+
+  .arrow {
+    left: 0;
+    width: $tooltip-arrow-height;
+    height: $tooltip-arrow-width;
+
+    &::after,
+    &::before {
+      border-width: ($tooltip-arrow-width / 2) $tooltip-arrow-height ($tooltip-arrow-width / 2) 0;
+    }
+
+    &::before {
+      left: 0;
+      @include theme-variant("light") {
+        border-right-color: $tooltip-arrow-outer-color-light;
+      }
+      @include theme-variant("dark") {
+        border-right-color: $tooltip-arrow-outer-color-dark;
+      }
+    }
+
+    &::after {
+      left: $tooltip-border-width;
+      @include theme-variant("light") {
+        border-right-color: $tooltip-arrow-color-light;
+      }
+      @include theme-variant("dark") {
+        border-right-color: $tooltip-arrow-color-dark;
+      }
+    }
+  }
+}
+
+.bs-tooltip-bottom {
+  padding: $tooltip-arrow-height 0;
+
+  .arrow {
+    top: 0;
+
+    &::after,
+    &::before {
+      border-width: 0 ($tooltip-arrow-width / 2) $tooltip-arrow-height;
+    }
+
+    &::before {
+      top: 0;
+      @include theme-variant("light") {
+        border-bottom-color: $tooltip-arrow-outer-color-light;
+      }
+      @include theme-variant("dark") {
+        border-bottom-color: $tooltip-arrow-outer-color-dark;
+      }
+    }
+
+    &::after {
+      top: $tooltip-border-width;
+      @include theme-variant("light") {
+        border-bottom-color: $tooltip-arrow-color-light;
+      }
+      @include theme-variant("dark") {
+        border-bottom-color: $tooltip-arrow-color-dark;
+      }
+    }
+  }
+}
+
+.bs-tooltip-left {
+  padding: 0 $tooltip-arrow-height;
+
+  .arrow {
+    right: 0;
+    width: $tooltip-arrow-height;
+    height: $tooltip-arrow-width;
+
+    &::after,
+    &::before {
+      border-width: ($tooltip-arrow-width / 2) 0 ($tooltip-arrow-width / 2) $tooltip-arrow-height;
+    }
+
+    &::before {
+      right: 0;
+      @include theme-variant("light") {
+        border-left-color: $tooltip-arrow-outer-color-light;
+      }
+      @include theme-variant("dark") {
+        border-left-color: $tooltip-arrow-outer-color-dark;
+      }
+    }
+
+    &::after {
+      right: $tooltip-border-width;
+      @include theme-variant("light") {
+        border-left-color: $tooltip-arrow-color-light;
+      }
+      @include theme-variant("dark") {
+        border-left-color: $tooltip-arrow-color-dark;
+      }
+    }
+  }
+}
+
+.bs-tooltip-auto {
+  &[x-placement^="top"] {
+    @extend .bs-tooltip-top;
+  }
+
+  &[x-placement^="right"] {
+    @extend .bs-tooltip-right;
+  }
+
+  &[x-placement^="bottom"] {
+    @extend .bs-tooltip-bottom;
+  }
+
+  &[x-placement^="left"] {
+    @extend .bs-tooltip-left;
+  }
+}
+// Wrapper for the tooltip content
+.tooltip-inner {
+  max-width: $tooltip-max-width;
+  padding: $tooltip-padding-y $tooltip-padding-x;
+  text-align: center;
+  border-width: $tooltip-border-width;
+  border-style: solid;
+  @include border-radius($tooltip-border-radius);
+  @include theme-variant("light") {
+    color: $tooltip-color-light;
+    background-color: $tooltip-bg-light;
+    border-color: $tooltip-border-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $tooltip-color-dark;
+    background-color: $tooltip-bg-dark;
+    border-color: $tooltip-border-color-dark;
+  }
+}

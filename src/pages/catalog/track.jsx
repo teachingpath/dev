@@ -1,21 +1,25 @@
-import { Row, Col, Portlet, Container, Spinner } from "@panely/components";
+import { Row, Col, Portlet, Container, Spinner, Badge } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
 } from "store/actions";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import TrackContent from "components/widgets/TrackContent";
 import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
+import Aside from "components/layout/part/Aside";
+
 
 class TrackPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { trackId: null, runnerId: null };
+    this.state = { trackId: null, runnerId: null, trackList: null };
   }
 
   componentDidMount() {
@@ -37,6 +41,9 @@ class TrackPage extends React.Component {
         },
         { text: "Track" },
       ]);
+      if(Router.query.pathwayId){
+        this.loadTracks();
+      }
     } else if (Router.query.pathwayId) {
       this.props.breadcrumbChange([
         { text: "Catalog", link: "/catalog" },
@@ -48,6 +55,7 @@ class TrackPage extends React.Component {
 
         { text: "Track" },
       ]);
+      this.loadTracks();
     } else {
       this.props.breadcrumbChange([
         { text: "Catalog", link: "/catalog" },
@@ -55,7 +63,48 @@ class TrackPage extends React.Component {
         { text: "Track" },
       ]);
     }
+    //  this.loadRunners(Router.query.pathwayId);
+    this.loadCurrentTrack();
 
+  }
+
+  loadTracks() {
+    firestoreClient
+      .collection("runners")
+      .doc(Router.query.runnerId)
+      .collection("tracks")
+      .orderBy("level")
+      .get()
+      .then((querySnapshot) => {
+        const list = [
+          {
+            title: "Tracks",
+            section: true
+          },
+        ];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data();
+          const level = data.level;
+          list.push({
+            title: data.name,
+            current: Router.query.id === doc.id,
+            icon: () => <div className="rc-steps-item rc-steps-item-process">
+              <div className="rc-steps-item-icon"><span className="rc-steps-icon">{level}</span></div>
+            </div>,
+            link: {
+              pathname: '/catalog/track',
+              query: { ...Router.query, id: doc.id },
+            },
+          });
+        });
+        this.setState({ ...this.state, trackList: list });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+  }
+
+  loadCurrentTrack() {
     firestoreClient
       .collection("runners")
       .doc(Router.query.runnerId)
@@ -71,6 +120,7 @@ class TrackPage extends React.Component {
             runnerId: Router.query.runnerId,
             ...data,
           });
+
         } else {
           console.log("No such document!");
         }
@@ -80,8 +130,33 @@ class TrackPage extends React.Component {
       });
   }
 
+  loadRunners(pathwayId) {
+    firestoreClient
+      .collection("runners")
+      .where("pathwayId", "==", pathwayId)
+      .orderBy("level")
+      .get()
+      .then((querySnapshot) => {
+        const list = [];
+        querySnapshot.forEach((doc) => {
+          list.push({
+            id: doc.id,
+            title: doc.data().name,
+            subtitle: doc.data().description,
+          });
+        });
+        console.log(list);
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+  }
+
   render() {
-    const { trackId, runnerId } = this.state;
+    Router.events.on("routeChangeComplete", () => {
+      this.loadCurrentTrack();
+    })
+    const { trackId, runnerId, trackList } = this.state;
     if (trackId === null || runnerId == null) {
       return <Spinner>Loading</Spinner>;
     }
@@ -91,6 +166,7 @@ class TrackPage extends React.Component {
           <title>Track | {this.state.name}</title>
         </Head>
         <Container fluid>
+          {trackList && <Aside menuList={trackList} />}
           <Row>
             <Col md="12">
               <Portlet>

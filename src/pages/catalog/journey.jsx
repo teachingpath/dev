@@ -30,6 +30,7 @@ import TrackModal from "../../components/widgets/TrackModal";
 import BadgetList from "../../components/widgets/BadgetList";
 import React from "react";
 import Badge from "@panely/components/Badge";
+import Link from "next/link";
 
 class JourneyGeneralPage extends React.Component {
   state = { name: "Loading", trophy: {}, progress: 0, badgets: [] };
@@ -81,7 +82,7 @@ class JourneyGeneralPage extends React.Component {
         <Container fluid>
           <Row portletFill="xl">
             <Col xl="12">
-              <div fluid>
+              <Widget1 fluid>
                 <Widget1.Display
                   top
                   size="lg"
@@ -139,6 +140,7 @@ class JourneyGeneralPage extends React.Component {
                           current={this.state.current}
                           runners={this.state.runners}
                           journeyId={this.state.id}
+                          pathwayId={this.state.pathwayId}
                           onComplete={(data) => {
                             this.props.activityChange({
                               type: "complete_track",
@@ -157,7 +159,7 @@ class JourneyGeneralPage extends React.Component {
                     </Col>
                   </Row>
                 </Widget1.Body>
-              </div>
+              </Widget1>
             </Col>
           </Row>
         </Container>
@@ -182,7 +184,7 @@ class Runners extends React.Component {
 
   render() {
     const { activeCard } = this.state;
-    const { runners, journeyId, onComplete } = this.props;
+    const { runners, journeyId, pathwayId, onComplete } = this.props;
     return (
       <Accordion {...this.props}>
         {runners.map((item, index) => {
@@ -212,6 +214,7 @@ class Runners extends React.Component {
                     onComplete={() => {
                       onComplete(item);
                     }}
+                    pathwayId={pathwayId}
                     runnerIndex={index}
                     tracks={item.tracks}
                     quiz={item.quiz}
@@ -242,6 +245,7 @@ class Tracks extends React.Component {
       runners,
       quiz,
       feedback,
+      pathwayId,
       onComplete,
     } = this.props;
     const activeQuiz = tracks.every((track) => {
@@ -250,6 +254,15 @@ class Tracks extends React.Component {
     return (
       <Steps current={current} direction="vertical" index={runnerId}>
         {tracks.map((item, index) => {
+          const extarnalLink = {
+            pathname: "/catalog/track",
+            query: {
+              id: item.id,
+              runnerId,
+              journeyId,
+              pathwayId
+            }
+          };
           return (
             <Steps.Step
               key={item.id}
@@ -262,18 +275,9 @@ class Tracks extends React.Component {
                   )}
                   <Badge className="mr-2">{item.type}</Badge>
                   {item.status !== "wait" && item.status !== "process" ? (
-                    <a
-                      href={
-                        "/catalog/track?id=" +
-                        item.id +
-                        "&runnerId=" +
-                        runnerId +
-                        "&journeyId=" +
-                        journeyId
-                      }
-                    >
+                    <Link href={extarnalLink}  >
                       {item.title}
-                    </a>
+                    </Link>
                   ) : (
                     item.title
                   )}
@@ -290,6 +294,7 @@ class Tracks extends React.Component {
                       trackIndex={index}
                       timeLimit={item.timeLimit}
                       time={item.time}
+                      extarnalLink={extarnalLink}
                       isRunning={item.isRunning || false}
                       runners={runners}
                       onComplete={onComplete}

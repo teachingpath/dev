@@ -1,0 +1,45 @@
+.nav.widget2 {
+  overflow: auto;
+
+  .nav-item + .nav-item {
+    margin-left: $widget2-link-spacer;
+  }
+
+  .nav-link {
+    border-width: $widget2-link-border-width;
+    border-style: solid;
+    @include border-radius($widget2-link-border-radius);
+    @include theme-variant("light") {
+      border-color: $widget2-link-border-color-light;
+    }
+    @include theme-variant("dark") {
+      border-color: $widget2-link-border-color-dark;
+    }
+
+    &:hover {
+      @include theme-variant("light") {
+        color: $widget2-link-hover-color-light;
+        background: $widget2-link-hover-bg-light;
+        border-color: $widget2-link-hover-border-color-light;
+      }
+      @include theme-variant("dark") {
+        color: $widget2-link-hover-color-dark;
+        background: $widget2-link-hover-bg-dark;
+        border-color: $widget2-link-hover-border-color-dark;
+      }
+    }
+
+    &.active {
+      @include theme-variant("light") {
+        color: $widget2-link-active-color-light;
+        background: $widget2-link-active-bg-light;
+        border-color: $widget2-link-active-border-color-light;
+      }
+      @include theme-variant("dark") {
+        color: $widget2-link-active-color-dark;
+        background: $widget2-link-active-bg-dark;
+        border-color: $widget2-link-active-border-color-dark;
+      }
+    }
+  }
+}

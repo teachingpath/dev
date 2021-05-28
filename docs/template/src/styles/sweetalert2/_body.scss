@@ -1,0 +1,92 @@
+body.swal2-shown {
+  &:not(.swal2-no-backdrop):not(.swal2-toast-shown) {
+    overflow: hidden; // not overflow-y because of Sarari, #1253
+  }
+}
+
+body.swal2-height-auto {
+  height: auto !important; // #781 #1107
+}
+
+body.swal2-no-backdrop {
+  .swal2-container {
+    top: auto;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    max-width: calc(100% - #{$swal2-container-padding} * 2);
+    background: transparent !important;
+
+    &.swal2-top {
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &.swal2-top-left,
+    &.swal2-top-start {
+      top: 0;
+      left: 0;
+    }
+
+    &.swal2-top-end,
+    &.swal2-top-right {
+      top: 0;
+      right: 0;
+    }
+
+    &.swal2-center {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    &.swal2-center-left,
+    &.swal2-center-start {
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+
+    &.swal2-center-end,
+    &.swal2-center-right {
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+    }
+
+    &.swal2-bottom {
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &.swal2-bottom-left,
+    &.swal2-bottom-start {
+      bottom: 0;
+      left: 0;
+    }
+
+    &.swal2-bottom-end,
+    &.swal2-bottom-right {
+      right: 0;
+      bottom: 0;
+    }
+  }
+}
+
+@media print {
+  body.swal2-shown {
+    @include not('.swal2-no-backdrop', '.swal2-toast-shown') {
+      overflow-y: scroll !important;
+
+      > [aria-hidden='true'] {
+        display: none;
+      }
+
+      .swal2-container {
+        position: static !important;
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+.footer {
+	width: 100%;
+	border-top-width: $footer-border-width;
+	border-top-style: solid;
+	padding: $footer-padding-y 0;
+	@include transition($footer-transition);
+	@include theme-variant("light") {
+		color: $footer-color-light;
+		background: $footer-bg-light;
+		border-top-color: $footer-border-color-light;
+	}
+	@include theme-variant("dark") {
+		color: $footer-color-dark;
+		background: $footer-bg-dark;
+		border-top-color: $footer-border-color-dark;
+	}
+}

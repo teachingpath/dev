@@ -1,0 +1,56 @@
+.widget5 {
+  display: flex;
+  flex-direction: column;
+}
+
+.widget5-title {
+  font-size: $widget5-title-font-size;
+  font-weight: $widget5-title-font-weight;
+  margin-bottom: $widget5-title-spacer;
+  @include theme-variant("light") {
+    color: $widget5-title-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget5-title-color-dark;
+  }
+}
+
+.widget5-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.widget5-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.widget5-info,
+.widget5-value {
+  padding: 0;
+  margin: 0;
+}
+
+.widget5-info {
+  font-size: $widget5-info-font-size;
+  font-weight: $widget5-info-font-weight;
+  @include theme-variant("light") {
+    color: $widget5-info-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget5-info-color-dark;
+  }
+}
+
+.widget5-value {
+  font-size: $widget5-value-font-size;
+  font-weight: $widget5-value-font-weight;
+  @include theme-variant("light") {
+    color: $widget5-value-color-light;
+  }
+  @include theme-variant("dark") {
+    color: $widget5-value-color-dark;
+  }
+}
