@@ -61,20 +61,20 @@ class FormBasePage extends React.Component {
   onEdit(data) {
     const pathway = this.props.pathway;
     return update(pathway.id, data)
-      .then((docRef) => {
+      .then((response) => {
         toast.fire({
           icon: "success",
           title: "Pathway updated successfully",
         });
         this.props.loadPathway({
           pathwayId: pathway.id,
-          ...dataUpdated,
+          ...response,
         });
         this.props.activityChange({
           pathwayId: pathway.id,
           type: "edit_pathway",
           msn: 'The "' + data.name + '" pathway was changed.',
-          ...data,
+          ...response,
         });
       })
       .catch((error) => {

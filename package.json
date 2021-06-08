@@ -25,6 +25,7 @@
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.20",
     "marked": "^2.0.3",
+    "meta-fetcher": "^3.1.0",
     "mime-types": "^2.1.30",
     "next": "9.5.3",
     "next-absolute-url": "^1.2.2",

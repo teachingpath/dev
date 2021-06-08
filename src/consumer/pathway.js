@@ -38,7 +38,11 @@ export const update = (id, data) => {
     searchTypes: searchTypes,
     date: new Date(),
   };
-  return firestoreClient.collection("pathways").doc(id).update(dataUpdated);
+  return firestoreClient
+    .collection("pathways")
+    .doc(id)
+    .update(dataUpdated)
+    .then(() => dataUpdated);
 };
 
 export const updateTrophy = (pathwayId, data) => {
@@ -53,15 +57,12 @@ export const updateTrophy = (pathwayId, data) => {
 };
 
 export const updateToDraft = (pathwayId) => {
-  return firestoreClient
-    .collection("pathways")
-    .doc(pathwayId)
-    .update({
-      draft: true,
-    });
+  return firestoreClient.collection("pathways").doc(pathwayId).update({
+    draft: true,
+  });
 };
 export const get = (id, resolve, reject) => {
- firestoreClient
+  firestoreClient
     .collection("pathways")
     .doc(id)
     .get()

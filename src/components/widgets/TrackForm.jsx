@@ -10,6 +10,7 @@ import {
   CustomInput,
   GridNav,
 } from "@panely/components";
+import metaFetcher from "meta-fetcher";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
@@ -21,12 +22,13 @@ import { useState } from "react";
 import Alert from "@panely/components/Alert";
 import Spinner from "@panely/components/Spinner";
 import { timeConvert } from "components/helpers/time";
+import ReactPlayer from "react-player";
 
 const modulesFull = {
   toolbar: [
     ["bold", "italic", "underline", "strike"],
-    [ "blockquote", "code-block"],
-    [{ 'header': [2, 3, 4, 5, 6, false] }],
+    ["blockquote", "code-block"],
+    [{ header: [2, 3, 4, 5, 6, false] }],
     [
       { list: "ordered" },
       { list: "bullet" },
@@ -57,6 +59,7 @@ const modulesBasic = {
 function TrackForm({ onSave, data, onExtend }) {
   const [loading, setLoading] = useState(false);
   const [typeContent, setTypeContent] = useState(data?.typeContent || "file");
+  const [url, setUrl] = useState(null);
 
   const schema = yup.object().shape({
     name: yup
@@ -93,7 +96,6 @@ function TrackForm({ onSave, data, onExtend }) {
     });
 
   const isNew = !data || Object.keys(data).length === 0;
-
   const watchFields = watch(["type", "timeLimit"]);
 
   if (watchFields.type === "learning") {
@@ -197,7 +199,10 @@ function TrackForm({ onSave, data, onExtend }) {
           {errors.timeLimit && (
             <Form.Feedback children={errors.timeLimit.message} />
           )}
-          <div className="text-muted">Calculate: {timeConvert(watchFields.timeLimit * 10)}  to finish the track.</div>
+          <div className="text-muted">
+            Calculate: {timeConvert(watchFields.timeLimit * 10)} to finish the
+            track.
+          </div>
         </FloatLabel>
       </Form.Group>
       {/* END Form Group */}
@@ -292,9 +297,36 @@ function TrackForm({ onSave, data, onExtend }) {
                           id="content"
                           name="content"
                           control={control}
+                          onKeyUp={(event) => {
+                            setUrl(event.target.value);
+                          }}
                           placeholder="Insert your URL"
                         />
                         <Label for="content">URL Youtube</Label>
+                        <p className="mt-3">
+                          <ReactPlayer url={url} controls />
+                        </p>
+                      </FloatLabel>
+                    </Form.Group>
+                  ),
+                  url: (
+                    <Form.Group>
+                      <FloatLabel>
+                        <Controller
+                          as={Input}
+                          type="url"
+                          id="content"
+                          name="content"
+                          control={control}
+                          onKeyUp={(event) => {
+                            setUrl(event.target.value);
+                          }}
+                          placeholder="Insert your URL"
+                        />
+                        <Label for="content"> URL External</Label>
+                        <p className="mt-3">
+                          {url && <DescribeURL url={url}></DescribeURL>}
+                        </p>
                       </FloatLabel>
                     </Form.Group>
                   ),
@@ -367,10 +399,33 @@ function TrackForm({ onSave, data, onExtend }) {
                           type="url"
                           id="guidelines"
                           name="guidelines"
+                          onKeyUp={(event) => {
+                            setUrl(event.target.value);
+                          }}
                           control={control}
                           placeholder="Insert your URL"
                         />
                         <Label for="guidelines">Guidelines (URL Youtube)</Label>
+                      </FloatLabel>
+                      <p className="mt-3">
+                        <ReactPlayer url={url} controls />
+                      </p>
+                    </Form.Group>
+                  ),
+                  url: (
+                    <Form.Group>
+                      <FloatLabel>
+                        <Controller
+                          as={Input}
+                          type="url"
+                          id="guidelines"
+                          name="guidelines"
+                          control={control}
+                          placeholder="Insert your URL"
+                        />
+                        <Label for="guidelines">
+                          Guidelines (URL External)
+                        </Label>
                       </FloatLabel>
                     </Form.Group>
                   ),
@@ -470,7 +525,7 @@ function TrackForm({ onSave, data, onExtend }) {
         {loading && <Spinner className="mr-2" />}
         {isNew ? "Create" : "Update"}
       </Button>
-    
+
       <Button
         variant="label-secondary"
         size="lg"
@@ -486,6 +541,28 @@ function TrackForm({ onSave, data, onExtend }) {
   );
 }
 
+function DescribeURL({ url }) {
+  const [data, setDate] = useState(null);
+  function validURL(str) {
+    var pattern = new RegExp(
+      "^(https?:\\/\\/)?" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$",
+      "i"
+    ); // fragment locator
+    return !!pattern.test(str);
+  }
+  if (url && validURL(url)) {
+    metaFetcher('https://wordpress.com').then((res) => {
+      console.log(res);
+    })
+  }
+
+  return data ? <p>loading</p> : <p>{JSON.stringify(data)}</p>;
+}
 function Option({ typeContent, setTypeContent }) {
   return (
     <div className="mb-3">
@@ -521,6 +598,16 @@ function Option({ typeContent, setTypeContent }) {
             icon={<FontAwesomeIcon icon={SolidIcon.faVideo} />}
           >
             <GridNav.Title>Youtube Video</GridNav.Title>
+          </GridNav.Item>
+          <GridNav.Item
+            href="javascript:void(0)"
+            onClick={() => {
+              setTypeContent("url");
+            }}
+            active={typeContent === "url"}
+            icon={<FontAwesomeIcon icon={SolidIcon.faBook} />}
+          >
+            <GridNav.Title>External URL</GridNav.Title>
           </GridNav.Item>
         </GridNav.Row>
       </GridNav>
