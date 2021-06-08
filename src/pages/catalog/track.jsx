@@ -183,7 +183,7 @@ class TrackPage extends React.Component {
             <Col md="12">
               <Portlet>
                 <Portlet.Header>
-                  <Portlet.Title style={{whiteSpace: "none"}}>
+                  <Portlet.Title>
                     <Header.Holder mobile>
                       <Button icon variant="flat-primary" className="mr-2" onClick={asideToggle}>
                         <FontAwesomeIcon icon={SolidIcon.faBars} />

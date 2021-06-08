@@ -1,5 +1,4 @@
 import { Container, Row, Dropdown, Col, Portlet } from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -12,12 +11,13 @@ import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
-import uuid from "components/helpers/uuid";
 import Router from "next/router";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import TrackList from "../../components/widgets/TrackList";
 import TrackForm from "../../components/widgets/TrackForm";
+import { create } from "consumer/track";
+import { updateToDraft } from "consumer/pathway";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -59,31 +59,25 @@ class TrackCreatePage extends React.Component {
       },
       {
         text: "Runner",
-        link: "/runner/edit?pathwayId=" + Router.query.pathwayId+"&runnerId="+Router.query.runnerId
+        link:
+          "/runner/edit?pathwayId=" +
+          Router.query.pathwayId +
+          "&runnerId=" +
+          Router.query.runnerId,
       },
       { text: "Track" },
     ]);
   }
 
   onCreate(data) {
-    const trackId = uuid();
-    const runnersDb = firestoreClient
-      .collection("runners")
-      .doc(this.state.runnerId);
-
-    return runnersDb
-      .collection("tracks")
-      .doc(trackId)
-      .set({
-        level: 1,
-        ...data,
-      })
+    const { runnerId, pathwayId, extend } = this.state;
+    return create(runnerId, data)
       .then((docRef) => {
         this.setState({
-          pathwayId: this.state.pathwayId,
-          runnerId: this.state.runnerId,
-          trackId: trackId,
-          extend: this.state.extend,
+          pathwayId,
+          runnerId,
+          trackId: docRef.id,
+          extend,
           ...data,
         });
         toast.fire({
@@ -91,17 +85,12 @@ class TrackCreatePage extends React.Component {
           title: "Track saved successfully",
         });
         this.props.activityChange({
-          pathwayId: this.state.pathwayId,
+          pathwayId: pathwayId,
           type: "new_track",
           msn: 'The "' + data.name + '" track was created.',
           ...data,
         });
-        return firestoreClient
-          .collection("pathways")
-          .doc(Router.query.pathwayId)
-          .update({
-            draft: true
-          })
+        return updateToDraft(pathwayId);
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
@@ -119,7 +108,6 @@ class TrackCreatePage extends React.Component {
     });
   }
 
-
   render() {
     return (
       <React.Fragment>
@@ -128,7 +116,7 @@ class TrackCreatePage extends React.Component {
         </Head>
         <Container fluid={!this.state.extend}>
           <Row>
-          <Col md={this.state.extend ? "12" : "6"}>
+            <Col md={this.state.extend ? "12" : "6"}>
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
@@ -146,11 +134,14 @@ class TrackCreatePage extends React.Component {
                     runner.
                   </div>
                   <hr />
-                  <TrackForm onSave={this.onCreate}  onExtend={() => {
-                    if(!this.state.extend){
-                      this.toggle()
-                    }
-                  }} />
+                  <TrackForm
+                    onSave={this.onCreate}
+                    onExtend={() => {
+                      if (!this.state.extend) {
+                        this.toggle();
+                      }
+                    }}
+                  />
                   {/* END Portlet */}
                 </Portlet.Body>
               </Portlet>
@@ -190,7 +181,7 @@ const TrackAddon = ({ extend, toggle }) => {
             onClick={toggle}
             icon={<FontAwesomeIcon icon={SolidIcon.faExpand} />}
           >
-            {extend ? "Collapse":"Expand"}
+            {extend ? "Collapse" : "Expand"}
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>

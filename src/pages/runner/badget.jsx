@@ -8,9 +8,9 @@ import {
   FloatLabel,
   ImageEditor,
   Container,
-  Portlet, Dropdown
+  Portlet,
+  Dropdown,
 } from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -29,8 +29,9 @@ import swalContent from "sweetalert2-react-content";
 import React, { useRef, useState } from "react";
 import Spinner from "@panely/components/Spinner";
 import Router from "next/router";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
+import { updateBadge, getQuestions, getRunner } from "consumer/runner";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -45,7 +46,6 @@ const toast = ReactSwal.mixin({
   },
 });
 
-// Set SweetAlert options
 const alert = ReactSwal.mixin({
   customClass: {
     confirmButton: "btn btn-label-success btn-wide mx-1",
@@ -53,12 +53,12 @@ const alert = ReactSwal.mixin({
   },
   buttonsStyling: false,
 });
-function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
+
+function BadgetForm({ runnerId, data, activityChange, pathwayId }) {
   const { badget } = data;
   const imageRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
-  // Define Yup schema for form validation
   const schema = yup.object().shape({
     name: yup
       .string()
@@ -67,13 +67,11 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
     description: yup
       .string()
       .min(5, "Please enter at least 5 characters")
-      .required("Please enter your description")
+      .required("Please enter your description"),
   });
 
   const { control, handleSubmit, errors } = useForm({
-    // Apply Yup as resolver for react-hook-form
     resolver: yupResolver(schema),
-    // Define the default values for all input forms
     defaultValues: {
       name: badget?.name || "",
       description: badget?.description || "",
@@ -81,70 +79,43 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
   });
 
   function saveBadget(data) {
-    firestoreClient
-        .collection("runners")
-        .doc(runnerId)
-        .update({
-          badget: {
-            ...data,
-          },
-        })
-        .then((docRef) => {
-          toast.fire({
-            icon: "success",
-            title: "Badget saved successfully",
-          });
-          activityChange({
-            pathwayId: pathwayId,
-            type: "edit_runner",
-            msn: 'The "' + data.name + '" badget was changed.',
-          });
-          setLoading(false);
-        })
-        .catch((error) => {
-          toast.fire({
-            icon: "error",
-            title: "Creation badget",
-          });
-          setLoading(false);
-
+    return updateBadge(runnerId, data)
+      .then((docRef) => {
+        toast.fire({
+          icon: "success",
+          title: "Badget saved successfully",
         });
+        activityChange({
+          pathwayId: pathwayId,
+          type: "edit_runner",
+          msn: 'The "' + data.name + '" badget was changed.',
+        });
+        setLoading(false);
+      })
+      .catch((error) => {
+        toast.fire({
+          icon: "error",
+          title: "Creation badget",
+        });
+        setLoading(false);
+      });
   }
 
-// Handle form submit event
+  // Handle form submit event
   const onSubmit = (data) => {
     getQuestions(runnerId).then((questions) => {
-      if(questions.length >= 3) {
+      if (questions.length >= 3) {
         saveBadget(data);
       } else {
         alert.fire({
           icon: "error",
           title: "Oops...",
-          text:'To create the badget there must be a quiz with more than 3 questions.',
+          text: "To create the badget there must be a quiz with more than 3 questions.",
         });
         setLoading(false);
       }
     });
-
   };
-
-
-  const getQuestions =  (runnerId) => {
-     return firestoreClient.collection("runners")
-        .doc(runnerId)
-        .collection("questions")
-        .get()
-        .then((querySnapshot) => {
-          const list = [];
-          querySnapshot.forEach((doc) => {
-            list.push({
-              id: doc.id,
-              ...doc.data(),
-            });
-          });
-          return list;
-        });
-  }
 
   return (
     <Form
@@ -159,7 +130,6 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
         <ImageEditor ref={imageRef} image={badget?.image} withPreview />
       </Form.Group>
       <Row>
-
         <Col xs="12">
           {/* BEGIN Form Group */}
           <Form.Group>
@@ -191,35 +161,40 @@ function BadgetForm({ runnerId, saved, data, activityChange, pathwayId }) {
                 invalid={Boolean(errors.description)}
                 placeholder="Insert your description"
               />
-              <Label for="badget-description">What logos would the apprentice get?</Label>
+              <Label for="badget-description">
+                What logos would the apprentice get?
+              </Label>
               {errors.description && (
                 <Form.Feedback children={errors.description.message} />
               )}
             </FloatLabel>
           </Form.Group>
           {/* END Form Group */}
-
         </Col>
       </Row>
-      <Button type="submit" variant="label-primary" size="lg" width="widest" disabled={!saved}>
+      <Button
+        type="submit"
+        variant="label-primary"
+        size="lg"
+        width="widest"
+      >
         {loading && <Spinner className="mr-2" />} Save
       </Button>
       <Button
-          type="button"
-          className="ml-2"
-          variant="label-secondary"
-          size="lg"
-          width="widest"
-          onClick={() => {
-            Router.back();
-          }}
+        type="button"
+        className="ml-2"
+        variant="label-secondary"
+        size="lg"
+        width="widest"
+        onClick={() => {
+          Router.back();
+        }}
       >
         Cancel
       </Button>
     </Form>
   );
 }
-
 
 class FormBasePage extends React.Component {
   constructor(props) {
@@ -228,54 +203,31 @@ class FormBasePage extends React.Component {
       Router.push("/pathway/create");
     }
     this.state = {
+      ...props.runner,
       runnerId: Router.query.runnerId,
       pathwayId: Router.query.pathwayId,
-      saved: false,
     };
   }
 
   componentDidMount() {
+    const { pathwayId } = this.state;
     this.props.pageChangeHeaderTitle("Update Pathway");
     this.props.breadcrumbChange([
       { text: "Home", link: "/" },
       {
         text: "Pathway",
-        link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
+        link: "/pathway/edit?pathwayId=" + pathwayId,
       },
       {
         text: "Runner",
-        link: "/runner/create?pathwayId=" + Router.query.pathwayId,
+        link: "/runner/create?pathwayId=" + pathwayId,
       },
       { text: "Badget" },
     ]);
-    firestoreClient
-      .collection("runners")
-      .doc(this.state.runnerId).get()
-      .then((doc) => {
-        if (doc.exists) {
-          this.setState({
-            id: this.state.runnerId,
-            pathwayId: this.state.pathwayId,
-            saved: true,
-            ...doc.data(),
-          });
-        } else {
-          console.log("No such document!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-        toast.fire({
-          icon: "error",
-          title: "Getting a runner",
-        });
-      });
+   
   }
 
   render() {
-    if (!this.state.saved) {
-      return <Spinner>Loading</Spinner>;
-    }
     return (
       <React.Fragment>
         <Head>
@@ -289,7 +241,10 @@ class FormBasePage extends React.Component {
                 <Portlet.Header bordered>
                   <Portlet.Title>Badget | Update</Portlet.Title>
                   <Portlet.Addon>
-                    <BadgetAddon id={this.state.runnerId}  pathwayId={this.state.pathwayId}/>
+                    <BadgetAddon
+                      id={this.state.runnerId}
+                      pathwayId={this.state.pathwayId}
+                    />
                   </Portlet.Addon>
                 </Portlet.Header>
                 <Portlet.Body>
@@ -300,7 +255,6 @@ class FormBasePage extends React.Component {
                   <hr />
                   <BadgetForm
                     activityChange={this.props.activityChange}
-                    saved={this.state.saved}
                     runnerId={this.state.runnerId}
                     pathwayId={this.state.pathwayId}
                     data={this.state}
@@ -317,14 +271,15 @@ class FormBasePage extends React.Component {
   }
 }
 
-const BadgetAddon  = ({id, pathwayId}) =>{
-  return <>
-    <Dropdown.Uncontrolled>
-      <Dropdown.Toggle icon variant="text-secondary">
-        <FontAwesomeIcon icon={SolidIcon.faEllipsisV} />
-      </Dropdown.Toggle>
-      <Dropdown.Menu right animated>
-        <Dropdown.Item
+const BadgetAddon = ({ id, pathwayId }) => {
+  return (
+    <>
+      <Dropdown.Uncontrolled>
+        <Dropdown.Toggle icon variant="text-secondary">
+          <FontAwesomeIcon icon={SolidIcon.faEllipsisV} />
+        </Dropdown.Toggle>
+        <Dropdown.Menu right animated>
+          <Dropdown.Item
             onClick={() => {
               Router.push({
                 pathname: "/runner/quiz/create",
@@ -335,13 +290,14 @@ const BadgetAddon  = ({id, pathwayId}) =>{
               });
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
-        >
-          Add Quiz
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown.Uncontrolled>
-  </>;
-}
+          >
+            Add Quiz
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Uncontrolled>
+    </>
+  );
+};
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
@@ -350,9 +306,13 @@ function mapDispathToProps(dispatch) {
   );
 }
 
+function mapStateToProps(state) {
+  return {
+    runner: state.pathway.runnerSeleted,
+  };
+}
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispathToProps
 )(withAuth(withLayout(FormBasePage)));
-
-

@@ -7,12 +7,11 @@ import {
   RichList,
   Row,
 } from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   activityChange,
   breadcrumbChange,
   pageChangeHeaderTitle,
-  loadRunner
+  loadRunner,
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -28,6 +27,8 @@ import TrackList from "../../components/widgets/TrackList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import React from "react";
+import { update } from "consumer/runner";
+import { updateToDraft } from "consumer/pathway";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -49,7 +50,8 @@ class FormBasePage extends React.Component {
   }
 
   componentDidMount() {
-    if (!Router.query.pathwayId || !Router.query.runnerId) {
+    const {pathwayId, runnerId} = Router.query;
+    if (!pathwayId || !runnerId) {
       Router.push("/pathway/create");
     }
     this.props.pageChangeHeaderTitle("Update Pathway");
@@ -57,46 +59,36 @@ class FormBasePage extends React.Component {
       { text: "Home", link: "/" },
       {
         text: "Pathway",
-        link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
+        link: "/pathway/edit?pathwayId=" + pathwayId,
       },
       {
         text: "Runner",
-        link: "/runner/create?pathwayId=" + Router.query.pathwayId,
+        link: "/runner/create?pathwayId=" + pathwayId,
       },
       { text: "Edit" },
     ]);
   }
 
   onEdit(data) {
-    const runner = this.props.runner;
-    return firestoreClient
-      .collection("runners")
-      .doc(runner.runnerId)
-      .update({
-        ...data,
-      })
+    const { runnerId, pathwayId } = this.props.runner;
+    return update(runnerId, data)
       .then((docRef) => {
         toast.fire({
           icon: "success",
           title: "Runner saved successfully",
         });
         this.props.activityChange({
-          pathwayId: runner.pathwayId,
+          pathwayId,
           type: "edit_runner",
           msn: 'The "' + data.name + '" runner was updated.',
           ...data,
-        });  
-        this.props.loadRunner({
-          runnerId: runner.runnerId, 
-          pathwayId: runner.pathwayId,
-          ...data
         });
-        return firestoreClient
-          .collection("pathways")
-          .doc(runner.pathwayId)
-          .update({
-            draft: true,
-          });
+        this.props.loadRunner({
+          runnerId,
+          pathwayId,
+          ...data,
+        });
+        return updateToDraft(pathwayId);
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
@@ -140,6 +132,24 @@ class FormBasePage extends React.Component {
                   <RunnerForm onSave={this.onEdit} data={runner} />
                   {/* END Portlet */}
                 </Portlet.Body>
+                <Portlet.Footer>
+                  <Button
+                    type="button"
+                    className="float-right"
+                    onClick={() => {
+                      Router.push({
+                        pathname: "/runner/badget",
+                        query: {
+                          runnerId: runner.runnerId,
+                          pathwayId: runner.pathwayId,
+                        },
+                      });
+                    }}
+                  >
+                    Add Quiz
+                    <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
+                  </Button>
+                </Portlet.Footer>
               </Portlet>
             </Col>
             <Col md="6">
@@ -231,6 +241,19 @@ const RunnerAddon = ({ id, pathwayId }) => {
             icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
           >
             Add Tracks
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              Router.push({
+                pathname: "/catalog/runner",
+                query: {
+                  id: id,
+                },
+              });
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faBook} />}
+          >
+            Preview
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>

@@ -10,7 +10,6 @@ import {
   Container,
   Portlet,
 } from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
@@ -29,6 +28,7 @@ import swalContent from "sweetalert2-react-content";
 import React, { useRef, useState } from "react";
 import Head from "next/head";
 import Spinner from "@panely/components/Spinner";
+import { get, updateTrophy } from "consumer/pathway";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -65,30 +65,18 @@ class FormBasePage extends React.Component {
       },
       { text: "Trophy" },
     ]);
-
-    firestoreClient
-      .collection("pathways")
-      .doc(Router.query.pathwayId)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          const data = {
-            id: Router.query.pathwayId,
-            saved: true,
-            ...doc.data(),
-          };
-          this.setState({ ...data });
-        } else {
-          console.log("No such document!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
+    get(
+      Router.query.pathwayId,
+      (data) => {
+        this.setState({ ...data });
+      },
+      () => {
         toast.fire({
           icon: "error",
           title: "Getting a pathway",
         });
-      });
+      }
+    );
   }
 
   render() {
@@ -132,7 +120,6 @@ function TrophyForm({ pathwayId, data, activityChange }) {
   const imageRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
-  // Define Yup schema for form validation
   const schema = yup.object().shape({
     name: yup
       .string()
@@ -145,25 +132,15 @@ function TrophyForm({ pathwayId, data, activityChange }) {
   });
 
   const { control, handleSubmit, errors } = useForm({
-    // Apply Yup as resolver for react-hook-form
     resolver: yupResolver(schema),
-    // Define the default values for all input forms
     defaultValues: {
       name: data?.name || "",
       description: data?.description || "",
     },
   });
 
-  // Handle form submit event
   const onSubmit = (data) => {
-    firestoreClient
-      .collection("pathways")
-      .doc(pathwayId)
-      .update({
-        trophy: {
-          ...data,
-        },
-      })
+    updateTrophy(pathwayId, data)
       .then((docRef) => {
         toast.fire({
           icon: "success",
@@ -230,7 +207,9 @@ function TrophyForm({ pathwayId, data, activityChange }) {
                 invalid={Boolean(errors.description)}
                 placeholder="Insert your description"
               />
-              <Label for="trophy-description">What logos would the apprentice get?</Label>
+              <Label for="trophy-description">
+                What logos would the apprentice get?
+              </Label>
               {errors.description && (
                 <Form.Feedback children={errors.description.message} />
               )}
@@ -250,14 +229,14 @@ function TrophyForm({ pathwayId, data, activityChange }) {
         {data === null || data === undefined ? "Save" : "Update"}
       </Button>
       <Button
-          type="button"
-          className="ml-2"
-          variant="label-secondary"
-          size="lg"
-          width="widest"
-          onClick={() => {
-            Router.back();
-          }}
+        type="button"
+        className="ml-2"
+        variant="label-secondary"
+        size="lg"
+        width="widest"
+        onClick={() => {
+          Router.back();
+        }}
       >
         Cancel
       </Button>

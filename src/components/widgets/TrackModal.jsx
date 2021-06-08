@@ -86,13 +86,8 @@ class TrackModal extends React.Component {
   };
 
   renderer = ({ hours, minutes, seconds, completed, total }) => {
-    const {
-      runnerIndex,
-      trackIndex,
-      journeyId,
-      runners,
-      onComplete,
-    } = this.props;
+    const { runnerIndex, trackIndex, journeyId, runners, onComplete } =
+      this.props;
 
     if (completed) {
       this.complete().then(() => {
@@ -128,13 +123,16 @@ class TrackModal extends React.Component {
 
   render() {
     const { name, type, isRunning, timeLimit, dataTime } = this.state;
-    const { time, onComplete, extarnalLink } = this.props;
+    const { time, onComplete, extarnalLink, tracksLength, trackIndex } =
+      this.props;
     const titleButton = timeLimit
       ? "Time limit [" + timeLimit + " hour]"
       : "Start this track";
     const date = this.countdownRef?.current?.props?.date
       ? this.countdownRef?.current?.props?.date
       : Date.now() + time;
+
+    const progress = " ("+(trackIndex + 1) + "/" + (tracksLength)+") ";
 
     return (
       <React.Fragment>
@@ -155,7 +153,9 @@ class TrackModal extends React.Component {
           className="modal-xl"
         >
           <Modal.Header toggle={this.toggle}>
-            <Link href={extarnalLink}>{name || "Loading"}</Link>
+            <Link href={extarnalLink}>
+              {(name + progress) || "Loading"}
+            </Link>
           </Modal.Header>
           <Modal.Body>
             {
@@ -167,7 +167,7 @@ class TrackModal extends React.Component {
               }[type]
             }
           </Modal.Body>
-          <Modal.Footer>
+          <Modal.Footer className="bg-yellow">
             <strong className="mr-2">Time to finish {dataTime} hours.</strong>
             <Button
               variant="primary"

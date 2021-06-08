@@ -1,12 +1,16 @@
-import {Container, Row, Col, Button, Portlet, Dropdown} from "@panely/components";
 import {
-  firestoreClient,
-} from "components/firebase/firebaseClient";
+  Container,
+  Row,
+  Col,
+  Button,
+  Portlet,
+  Dropdown,
+} from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
-  loadPathway
+  loadPathway,
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -22,6 +26,7 @@ import RunnerList from "../../components/widgets/RunnerList";
 import PathwayForm from "../../components/widgets/PathwayForm";
 import Spinner from "@panely/components/Spinner";
 import React from "react";
+import { update } from "consumer/pathway";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -55,28 +60,15 @@ class FormBasePage extends React.Component {
 
   onEdit(data) {
     const pathway = this.props.pathway;
-    const tags = data.tags.split(",").map((item) => {
-      return item.trim().toLowerCase();
-    });
-    const dataUpdated = {
-      ...data,
-      draft: true,
-      name: data.name.toLowerCase(),
-      tags: tags
-    };
-
-    return firestoreClient
-      .collection("pathways")
-      .doc(pathway.id)
-      .update(dataUpdated)
+    return update(pathway.id, data)
       .then((docRef) => {
         toast.fire({
           icon: "success",
           title: "Pathway updated successfully",
-        }); 
+        });
         this.props.loadPathway({
           pathwayId: pathway.id,
-          ...dataUpdated
+          ...dataUpdated,
         });
         this.props.activityChange({
           pathwayId: pathway.id,
@@ -112,7 +104,7 @@ class FormBasePage extends React.Component {
                 <Portlet.Header bordered>
                   <Portlet.Title>Pathway | Edit</Portlet.Title>
                   <Portlet.Addon>
-                    <PathwayAddon id={pathway.id}/>
+                    <PathwayAddon id={pathway.id} />
                   </Portlet.Addon>
                 </Portlet.Header>
                 <Portlet.Body>
@@ -124,7 +116,6 @@ class FormBasePage extends React.Component {
                   />
                 </Portlet.Body>
                 <Portlet.Footer>
-                  
                   <Button
                     type="button"
                     className="float-right mr-2"
@@ -176,41 +167,56 @@ class FormBasePage extends React.Component {
   }
 }
 
-const PathwayAddon  = ({id}) =>{
-  return <>
-    {/* BEGIN Dropdown */}
-    <Dropdown.Uncontrolled>
-      <Dropdown.Toggle icon variant="text-secondary">
-        <FontAwesomeIcon icon={SolidIcon.faEllipsisV}/>
-      </Dropdown.Toggle>
-      <Dropdown.Menu right animated>
-        <Dropdown.Item
+const PathwayAddon = ({ id }) => {
+  return (
+    <>
+      {/* BEGIN Dropdown */}
+      <Dropdown.Uncontrolled>
+        <Dropdown.Toggle icon variant="text-secondary">
+          <FontAwesomeIcon icon={SolidIcon.faEllipsisV} />
+        </Dropdown.Toggle>
+        <Dropdown.Menu right animated>
+          <Dropdown.Item
             onClick={() => {
               Router.push({
                 pathname: "/runner/create",
-                query: {pathwayId: id},
+                query: { pathwayId: id },
               });
             }}
-            icon={<FontAwesomeIcon icon={SolidIcon.faRunning}/>}
-        >
-          Add runner
-        </Dropdown.Item>
-        <Dropdown.Item
+            icon={<FontAwesomeIcon icon={SolidIcon.faRunning} />}
+          >
+            Add runner
+          </Dropdown.Item>
+          <Dropdown.Item
             onClick={() => {
               Router.push({
                 pathname: "/pathway/trophy",
-                query: {pathwayId: id},
+                query: { pathwayId: id },
               });
             }}
-            icon={<FontAwesomeIcon icon={SolidIcon.faTrophy}/>}
-        >
-          Add Trophy
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown.Uncontrolled>
-    {/* END Dropdown */}
-  </>;
-}
+            icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
+          >
+            Add Trophy
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              Router.push({
+                pathname: "/catalog/pathway",
+                query: {
+                  id: id,
+                },
+              });
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faBook} />}
+          >
+            Preview
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Uncontrolled>
+      {/* END Dropdown */}
+    </>
+  );
+};
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
@@ -221,7 +227,7 @@ function mapDispathToProps(dispatch) {
 
 function mapStateToProps(state) {
   return {
-    pathway: state.pathway.pathwaySeleted
+    pathway: state.pathway.pathwaySeleted,
   };
 }
 

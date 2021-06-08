@@ -5,17 +5,13 @@
 	display: flex;
 	flex-direction: column;
 	max-width: 100%;
-	margin-bottom: $portlet-spacer;
 	border-width: $portlet-border-width;
-	border-style: solid;
 	@include border-radius($portlet-border-radius);
 	@include theme-variant("light") {
 		background: $portlet-bg-light;
-		border-color: $portlet-border-color-light;
 	}
 	@include theme-variant("dark") {
 		background: $portlet-bg-dark;
-		border-color: $portlet-border-color-dark;
 	}
 	// Set border radius to first and last child elements
 	> *:first-child {

@@ -92,7 +92,7 @@ class PathwayPage extends React.Component {
               <img
                 src={this.state?.trophy?.image}
                 alt="trophy"
-                className="bg-white p-2 border mx-auto d-block mg-thumbnail avatar-circle"
+                className="bg-yellow p-2 border mx-auto d-block mg-thumbnail avatar-circle"
               />
             )}
           </Widget1.Offset>
@@ -337,7 +337,7 @@ class RunnerTab extends React.Component {
             badget: doc.data().badget,
             data: data,
           });
-          const estimation = data.map((el) => el.time).reduce((a, b) => a + b);
+          const estimation = data.map((el) => el.time).reduce((a, b) => a + b, 0);
           this.setState({
             ...this.state,
             tabs: list,
@@ -383,7 +383,7 @@ class RunnerTab extends React.Component {
                   <Portlet.Title>Tracks</Portlet.Title>
                   <Portlet.Addon>
                     Estimation:{" "}
-                    {tab.data.map((t) => t.time).reduce((a, b) => a + b)} h
+                    {tab.data.map((t) => t.time).reduce((a, b) => a + b, 0)} h
                   </Portlet.Addon>
                 </Portlet.Header>
 

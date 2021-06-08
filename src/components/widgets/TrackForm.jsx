@@ -20,6 +20,7 @@ import Router from "next/router";
 import { useState } from "react";
 import Alert from "@panely/components/Alert";
 import Spinner from "@panely/components/Spinner";
+import { timeConvert } from "components/helpers/time";
 
 const modulesFull = {
   toolbar: [
@@ -69,7 +70,7 @@ function TrackForm({ onSave, data, onExtend }) {
     type: yup.string().required("Please enter your type"),
     timeLimit: yup
       .number()
-      .min(1, "Please enter at least 1 hour")
+      .min(1, "Please enter at least 1 time")
       .required("Please enter your time limit"),
   });
 
@@ -93,7 +94,8 @@ function TrackForm({ onSave, data, onExtend }) {
 
   const isNew = !data || Object.keys(data).length === 0;
 
-  const watchFields = watch(["type"]);
+  const watchFields = watch(["type", "timeLimit"]);
+
   if (watchFields.type === "learning") {
     setValue("content", data?.content || getValues().content || "");
     setValue("guidelines", "");
@@ -191,10 +193,11 @@ function TrackForm({ onSave, data, onExtend }) {
             invalid={Boolean(errors.timeLimit)}
             placeholder="Insert your time limit in hour"
           />
-          <Label for="timeLimit">Time limit (hours)</Label>
+          <Label for="timeLimit">Unit time x 10 minutes</Label>
           {errors.timeLimit && (
             <Form.Feedback children={errors.timeLimit.message} />
           )}
+          <div className="text-muted">Calculate: {timeConvert(watchFields.timeLimit * 10)}  to finish the track.</div>
         </FloatLabel>
       </Form.Group>
       {/* END Form Group */}

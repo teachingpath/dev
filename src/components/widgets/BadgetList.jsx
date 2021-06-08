@@ -1,9 +1,6 @@
 import { Card } from "@panely/components";
-import {
-  firestoreClient,
-  firebaseClient,
-} from "components/firebase/firebaseClient";
 import CardColumns from "@panely/components/CardColumns";
+import { getBadges, getBadgesByUser } from "consumer/journey";
 
 class BadgetListComponent extends React.Component {
   constructor(props) {
@@ -12,97 +9,72 @@ class BadgetListComponent extends React.Component {
   }
   componentDidMount() {
     if (this.props.journeyId) {
-      firestoreClient
-        .collection("journeys")
-        .doc(this.props.journeyId)
-        .collection("badgets")
-        .get()
-        .then((querySnapshot) => {
-          if (!querySnapshot.empty) {
-            const list = [];
-            querySnapshot.forEach((doc) => {
-              list.push(doc.data());
-            });
-            this.setState({ data: list });
-          }
-        })
-        .catch((error) => {
-          console.log("Error getting documents: ", error);
-        });
+      getBadges(
+        this.props.journeyId,
+        (data) => {
+          this.setState(data);
+        },
+        () => {}
+      );
     } else {
-      const user = firebaseClient.auth().currentUser;
-      firestoreClient
-        .collection("journeys")
-        .where("userId", "==", user.uid)
-        .get()
-        .then((querySnapshot) => {
-          if (!querySnapshot.empty) {
-            querySnapshot.forEach((doc) => {
-              firestoreClient
-                .collection("journeys")
-                .doc(doc.id)
-                .collection("badgets")
-                .where("disabled", "==", false)
-                .get()
-                .then((querySnapshot) => {
-                  if (!querySnapshot.empty) {
-                    const list = this.state.data;
-                    querySnapshot.forEach((doc) => {
-                      list.push(doc.data());
-                    });
-                    this.setState({ data: list });
-                  }
-                });
-            });
-          }
-        });
+      getBadgesByUser(
+        (data) => {
+          this.setState(data);
+        },
+        () => {}
+      );
     }
   }
   render() {
-    return (
-      <>
-        <div>
-          <h4>Badgets</h4>
-          {this.state.data.length === 0 && <p className="text-center text-muted">Empty badgets</p>}
+    const tolta = this.state.data.length;
+    const inComplete = this.state.data.filter(
+      (data) => data.disabled === false
+    ).length;
 
-          <CardColumns columns={5}>
-            {this.state.data.map((data) => {
-              if (data.disabled) {
-                return (
-                  <Card className="text-center bg-light p-3">
-                    <Card.Img
-                      top
-                      className="bg-white mg-thumbnail avatar-circle p-3 border border-warning"
-                      src={data.image}
-                      alt="Badget Image"
-                    />
-                    <Card.Body>
-                      <Card.Title>Not available</Card.Title>
-                    </Card.Body>
-                  </Card>
-                );
-              } else {
-                return (
-                  <Card className="text-center">
-                    <Card.Img
-                      top
-                      className=" mg-thumbnail avatar-circle p-5"
-                      src={data.image}
-                      alt="Badget Image"
-                    />
-                    <Card.Body>
-                      <Card.Title>{data.name}</Card.Title>
-                      <Card.Text>
-                        <small className="text-muted">{data.description}</small>
-                      </Card.Text>
-                    </Card.Body>
-                  </Card>
-                );
-              }
-            })}
-          </CardColumns>
-        </div>
-      </>
+    return (
+      <div>
+        <h4>
+          Insignia ({inComplete}/{tolta})
+        </h4>
+        {this.state.data.length === 0 && (
+          <p className="text-center text-muted">Empty badgets</p>
+        )}
+
+        <CardColumns columns={5}>
+          {this.state.data.map((data) => {
+            if (data.disabled) {
+              return (
+                <Card className="text-center bg-light p-3">
+                  <Card.Img
+                    top
+                    className="bg-white mg-thumbnail avatar-circle p-3 border border-warning"
+                    src={data.image}
+                    alt="Badget Image"
+                  />
+                  <Card.Body>
+                    <Card.Text>Not available</Card.Text>
+                  </Card.Body>
+                </Card>
+              );
+            } else {
+              return (
+                <Card className="text-center p-3">
+                  <Card.Img
+                    top
+                    className="bg-yellow mg-thumbnail avatar-circle p-3 border border-success"
+                    src={data.image}
+                    title={data.description}
+                    alt="Badget Image"
+                  />
+                  <Card.Body>
+                    <Card.Text>{data.name}</Card.Text>
+                  </Card.Body>
+                </Card>
+              );
+            }
+          })}
+        </CardColumns>
+      </div>
     );
   }
 }

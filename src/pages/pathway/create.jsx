@@ -1,9 +1,5 @@
 import { Container, Row, Col, Button, Portlet } from "@panely/components";
 import {
-  firestoreClient,
-  firebaseClient,
-} from "components/firebase/firebaseClient";
-import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
@@ -16,11 +12,11 @@ import Head from "next/head";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Router from "next/router";
-import uuid from "components/helpers/uuid";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import PathwayForm from "../../components/widgets/PathwayForm";
 import Alert from "@panely/components/Alert";
+import { create } from "consumer/pathway";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -39,7 +35,7 @@ class PathwayPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      id: uuid(),
+      id: null,
       saved: false,
     };
     this.onCreate = this.onCreate.bind(this);
@@ -53,24 +49,10 @@ class PathwayPage extends React.Component {
   }
 
   onCreate(data) {
-    const user = firebaseClient.auth().currentUser;
-    const tags = data.tags.split(",").map((item) => {
-      return item.trim().toLowerCase();
-    });
-    return firestoreClient
-      .collection("pathways")
-      .doc(this.state.id)
-      .set({
-        ...data,
-        name: data.name.toLowerCase(),
-        tags: tags,
-        draft: true,
-        leaderId: user.uid,
-        date: new Date(),
-      })
-      .then(() => {
+    return create(data)
+      .then((docRef) => {
         this.setState({
-          id: this.state.id,
+          id: docRef.id,
           saved: true,
           ...data,
         });
@@ -79,7 +61,7 @@ class PathwayPage extends React.Component {
           title: "Pathway saved successfully",
         });
         this.props.activityChange({
-          pathwayId: this.state.id,
+          pathwayId: docRef.id,
           type: "new_pathway",
           msn: 'The "' + data.name + '" pathway was created.',
           ...data,

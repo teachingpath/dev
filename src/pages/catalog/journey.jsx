@@ -114,7 +114,7 @@ class JourneyGeneralPage extends React.Component {
                       <img
                         src={trophy?.image}
                         alt="loading"
-                        className="bg-white p-2 border mx-auto d-block mg-thumbnail avatar-circle"
+                        className="bg-yellow p-2 border mx-auto d-block mg-thumbnail avatar-circle"
                       />
                       <h4
                         className={
@@ -132,7 +132,7 @@ class JourneyGeneralPage extends React.Component {
                     </Widget1.Offset>
                   )}
                 </Widget1.Display>
-                <Widget1.Body style={{ marginTop: "100px" }}>
+                <Widget1.Body style={{ marginTop: "70px" }}>
                   <Row>
                     <Col md="6">
                       {this.state?.runners && (
@@ -188,12 +188,13 @@ class Runners extends React.Component {
     return (
       <Accordion {...this.props}>
         {runners.map((item, index) => {
-          const total = item.tracks
+
+          const totalTime = item.tracks
             ?.filter((t) => t.status !== null)
             ?.filter((t) => t.status !== "finish")
             ?.map((t) => t.timeLimit)
             .reduce((a, b) => a + b, 0);
-
+          const progress = (index + 1)+"/"+(runners.length);
           return (
             <Card key={"runnerskys" + index}>
               <Card.Header
@@ -201,8 +202,8 @@ class Runners extends React.Component {
                 onClick={() => this.toggle(index)}
               >
                 <Card.Title>{item.name.toUpperCase()}</Card.Title>
-                {total > 0 ? (
-                  <Portlet.Addon>Total time limit: {total} h</Portlet.Addon>
+                {totalTime > 0 ? (
+                  <Portlet.Addon>Total time limit: {totalTime} h</Portlet.Addon>
                 ) : (
                   <Portlet.Addon>Finished</Portlet.Addon>
                 )}
@@ -294,6 +295,7 @@ class Tracks extends React.Component {
                       trackIndex={index}
                       timeLimit={item.timeLimit}
                       time={item.time}
+                      tracksLength={tracks.length}
                       extarnalLink={extarnalLink}
                       isRunning={item.isRunning || false}
                       runners={runners}

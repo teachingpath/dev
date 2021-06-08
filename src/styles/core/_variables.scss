@@ -3,6 +3,7 @@
 // Variables should follow the `$component-state-property-size` formula for
 // consistent naming. Ex: $nav-link-disabled-color and $modal-content-box-shadow-xs.
 
+
 // Color system
 
 $white:    #fff !default;
@@ -152,8 +153,8 @@ $sizes: map-merge(
 // Body
 //
 // Settings for the `<body>` element.
-$body-bg-light:           #fafafa !default;
-$body-bg-dark:            #535353 !default;
+$body-bg-light:           #ffffff !default;
+$body-bg-dark:            #1f1f1f !default;
 $body-color-light:        $text-level-3-light !default;
 $body-color-dark:         $text-level-3-dark !default;
 
@@ -1225,9 +1226,9 @@ $breadcrumb-link-font-weight:		    $font-weight-normal !default;
 $breadcrumb-icon-size:              $breadcrumb-link-font-size !default;
 $breadcrumb-icon-spacer:            .5rem !default;
 
-$breadcrumb-divider-dimension:      4px !default;
-$breadcrumb-divider-color-light:    $gray-300 !default;
-$breadcrumb-divider-color-dark:     $gray-500 !default;
+$breadcrumb-divider-dimension:      8px !default;
+$breadcrumb-divider-color-light:    url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxwYXRoIGQ9Ik0yLjUgMEwxIDEuNSAzLjUgNCAxIDYuNSAyLjUgOGw0LTQtNC00eiIgZmlsbD0iY3VycmVudENvbG9yIi8+PC9zdmc+) !default;
+$breadcrumb-divider-color-dark:     url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxwYXRoIGQ9Ik0yLjUgMEwxIDEuNSAzLjUgNCAxIDYuNSAyLjUgOGw0LTQtNC00eiIgZmlsbD0iY3VycmVudENvbG9yIi8+PC9zdmc+) !default;
 
 // Spinners
 $spinner-animation-duration:        .75s !default;
@@ -1275,7 +1276,7 @@ $portlet-spacer-sm:                 1rem !default;
 $portlet-border-width:              $border-width !default;
 $portlet-border-color-light:        $border-color-light !default;
 $portlet-border-color-dark:         $border-color-dark !default;
-$portlet-border-radius:             $border-radius-lg !default;
+$portlet-border-radius:             0;
 
 $portlet-component-padding:         1rem !default;
 $portlet-component-min-height:      4rem !default;

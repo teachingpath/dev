@@ -1,5 +1,4 @@
 import { Container, Row, Col, Portlet } from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -15,6 +14,7 @@ import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
 import QuizForm from "../../../components/widgets/QuestionForm";
+import { getQuiz, updateQuiz } from "consumer/runner";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -30,11 +30,8 @@ const toast = ReactSwal.mixin({
 });
 
 class FormBasePage extends React.Component {
-
-
   constructor(props) {
     super(props);
-
 
     this.state = {
       pathwayId: null,
@@ -67,58 +64,30 @@ class FormBasePage extends React.Component {
   }
 
   loadData({ pathwayId, runnerId, questionId }) {
-    firestoreClient
-      .collection("runners")
-      .doc(runnerId)
-      .collection("questions")
-      .doc(questionId)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          this.setState({
-            id: questionId,
-            pathwayId,
-            runnerId,
-            questionId,
-            saved: true,
-            ...doc.data(),
-          });
-        } else {
-          console.log("No such document!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
+    return getQuiz(
+      pathwayId,
+      runnerId,
+      questionId,
+      (data) => {
+        this.setState(data);
+      },
+      () => {
         toast.fire({
           icon: "error",
           title: "Getting a runner",
         });
-      });
+      }
+    );
   }
 
   onEdit(data) {
-    const runnersDb = firestoreClient
-      .collection("runners")
-      .doc(this.state.runnerId);
-
-    return runnersDb
-      .collection("questions")
-      .doc(this.state.questionId)
-      .update({
-        question: data.question,
-        type: data.type,
-        options: data.options.map((item, index) => {
-          return {
-            name: item.name,
-            isCorrect: data.type === 'multiple' ? item.isCorrect === true : data.options.isCorrect === index ,
-          };
-        }),
-      })
+    const { pathwayId, runnerId, questionId } = this.state;
+    return updateQuiz(runnerId, questionId, data)
       .then((docRef) => {
         this.setState({
-          pathwayId: this.state.pathwayId,
-          runnerId: this.state.runnerId,
-          questionId: this.state.questionId,
+          pathwayId,
+          runnerId,
+          questionId,
           ...data,
         });
         toast.fire({
@@ -126,7 +95,7 @@ class FormBasePage extends React.Component {
           title: "Question saved successfully",
         });
         this.props.activityChange({
-          pathwayId: this.state.pathwayId,
+          pathwayId: pathwayId,
           type: "edit_question",
           msn: 'The "' + data.question + '" question was updated.',
         });
@@ -163,9 +132,7 @@ class FormBasePage extends React.Component {
                     questions should help validate the knowledge.
                   </p>
                   <hr />
-                  <QuizForm
-                    onSave={this.onEdit} data={this.state}
-                  />
+                  <QuizForm onSave={this.onEdit} data={this.state} />
                   {/* END Portlet */}
                 </Portlet.Body>
               </Portlet>

@@ -1,5 +1,4 @@
 import { Container, Row, Col, Portlet } from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -16,7 +15,7 @@ import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
 import QuizForm from "../../../components/widgets/QuestionForm";
 import QuestionList from "../../../components/widgets/QuestionList";
-import uuid from "components/helpers/uuid";
+import { createQuiz } from "consumer/runner";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -32,8 +31,6 @@ const toast = ReactSwal.mixin({
 });
 
 class FormBasePage extends React.Component {
-
-
   constructor(props) {
     super(props);
 
@@ -69,25 +66,7 @@ class FormBasePage extends React.Component {
   }
 
   onCreate(data) {
-    const questionId = uuid();
-    const runnersDb = firestoreClient
-      .collection("runners")
-      .doc(this.state.runnerId);
-
-    return runnersDb
-      .collection("questions")
-      .doc(questionId)
-      .set({
-        position: 1,
-        question: data.question,
-        type: data.type,
-        options: data.options.map((item, index) => {
-          return {
-            name: item.name,
-            isCorrect: data.type === 'multiple' ? item.isCorrect === true : data.options.isCorrect === index ,
-          };
-        }),
-      })
+    return createQuiz(this.state.runnerId, data)
       .then((docRef) => {
         this.setState({
           pathwayId: this.state.pathwayId,
@@ -137,9 +116,7 @@ class FormBasePage extends React.Component {
                     questions should help validate the knowledge.
                   </p>
                   <hr />
-                  <QuizForm
-                    onSave={this.onCreate}
-                  />
+                  <QuizForm onSave={this.onCreate} />
                   {/* END Portlet */}
                 </Portlet.Body>
               </Portlet>

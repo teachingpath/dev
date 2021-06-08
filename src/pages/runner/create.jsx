@@ -1,11 +1,4 @@
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Portlet,
-} from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
+import { Container, Row, Col, Button, Portlet } from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -16,7 +9,6 @@ import { connect } from "react-redux";
 import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
-import uuid from "components/helpers/uuid";
 import Router from "next/router";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
@@ -26,6 +18,8 @@ import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Alert from "@panely/components/Alert";
 import Spinner from "@panely/components/Spinner";
+import { create } from "consumer/runner";
+import { updateToDraft } from "consumer/pathway";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -54,7 +48,8 @@ class RunnerCreatePage extends React.Component {
   }
 
   componentDidMount() {
-    if (!Router.query.pathwayId) {
+    const {pathwayId} = Router.query;
+    if (!pathwayId) {
       Router.push("/pathway/create");
     }
     this.props.pageChangeHeaderTitle("Update Pathway");
@@ -62,31 +57,24 @@ class RunnerCreatePage extends React.Component {
       { text: "Home", link: "/" },
       {
         text: "Pathway",
-        link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
+        link: "/pathway/edit?pathwayId=" + pathwayId,
       },
       { text: "Runner" },
     ]);
     this.setState({
       ...this.state,
-      pathwayId: Router.query.pathwayId,
+      pathwayId: pathwayId,
     });
   }
 
   onCreate(data) {
-    const runnerId = uuid();
-    return firestoreClient
-      .collection("runners")
-      .doc(runnerId)
-      .set({
-        level: 1,
-        pathwayId: this.state.pathwayId,
-        ...data,
-      })
+    const pathwayId = this.state.pathwayId;
+    return create(pathwayId, data)
       .then((docRef) => {
         this.setState({
-          pathwayId: this.state.pathwayId,
+          pathwayId,
           saved: true,
-          runnerId: runnerId,
+          runnerId: docRef.id,
           ...data,
         });
         toast.fire({
@@ -94,18 +82,12 @@ class RunnerCreatePage extends React.Component {
           title: "Runner saved successfully",
         });
         this.props.activityChange({
-          pathwayId: this.state.pathwayId,
+          pathwayId,
           type: "new_runner",
           msn: 'The "' + data.name + '" runner was created.',
           ...data,
         });
-
-        return firestoreClient
-          .collection("pathways")
-          .doc(Router.query.pathwayId)
-          .update({
-            draft: true
-          })
+        return updateToDraft(pathwayId);
       })
       .catch((error) => {
         console.error("Error adding document: ", error);

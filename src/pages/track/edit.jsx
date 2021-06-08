@@ -1,5 +1,4 @@
 import { Container, Row, Dropdown, Col, Portlet } from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -18,6 +17,8 @@ import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import TrackForm from "../../components/widgets/TrackForm";
 import Spinner from "@panely/components/Spinner";
+import { getTrack, updateTrack } from "consumer/track";
+import { updateToDraft } from "consumer/pathway";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -73,53 +74,35 @@ class FormBasePage extends React.Component {
   }
 
   loadData({ pathwayId, runnerId, trackId }) {
-    firestoreClient
-      .collection("runners")
-      .doc(runnerId)
-      .collection("tracks")
-      .doc(trackId)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          this.setState({
-            id: trackId,
-            pathwayId,
-            runnerId,
-            trackId,
-            saved: true,
-            extend: this.state.extend,
-            ...doc.data(),
-          });
-        } else {
-          console.log("No such document!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
+    return getTrack(
+      pathwayId,
+      runnerId,
+      trackId,
+      (data) => {
+        this.setState({
+          ...data,
+          extend: this.state.extend,
+        });
+      },
+      () => {
         toast.fire({
           icon: "error",
           title: "Getting a runner",
         });
-      });
+      }
+    );
   }
 
   onEdit(data) {
-    const runnersDb = firestoreClient
-      .collection("runners")
-      .doc(this.state.runnerId);
+    const { pathwayId, runnerId, trackId, extend } = this.state;
 
-    return runnersDb
-      .collection("tracks")
-      .doc(this.state.trackId)
-      .update({
-        ...data,
-      })
+    return updateTrack(runnerId, trackId, data)
       .then((docRef) => {
         this.setState({
-          pathwayId: this.state.pathwayId,
-          runnerId: this.state.runnerId,
-          trackId: this.state.trackId,
-          extend: this.state.extend,
+          pathwayId,
+          runnerId,
+          trackId,
+          extend,
           ...data,
         });
         toast.fire({
@@ -127,17 +110,12 @@ class FormBasePage extends React.Component {
           title: "Track saved successfully",
         });
         this.props.activityChange({
-          pathwayId: this.state.pathwayId,
+          pathwayId: pathwayId,
           type: "edit_track",
           msn: 'The "' + data.name + '" track was updated.',
           ...data,
         });
-        return firestoreClient
-          .collection("pathways")
-          .doc(Router.query.pathwayId)
-          .update({
-            draft: true,
-          });
+        return updateToDraft(pathwayId);
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
@@ -178,7 +156,6 @@ class FormBasePage extends React.Component {
                       runnerId={this.state.runnerId}
                       pathwayId={this.state.pathwayId}
                       id={this.state.id}
-
                     />
                   </Portlet.Addon>
                 </Portlet.Header>
@@ -188,11 +165,15 @@ class FormBasePage extends React.Component {
                     add the tracks.
                   </p>
                   <hr />
-                  <TrackForm onSave={this.onEdit} data={this.state} onExtend={() => {
-                    if(!this.state.extend){
-                      this.toggle()
-                    }
-                  }} />
+                  <TrackForm
+                    onSave={this.onEdit}
+                    data={this.state}
+                    onExtend={() => {
+                      if (!this.state.extend) {
+                        this.toggle();
+                      }
+                    }}
+                  />
                   {/* END Portlet */}
                 </Portlet.Body>
               </Portlet>
@@ -216,7 +197,7 @@ const TrackAddon = ({ extend, toggle, runnerId, id, pathwayId }) => {
             onClick={toggle}
             icon={<FontAwesomeIcon icon={SolidIcon.faExpand} />}
           >
-            {extend ? "Collapse":"Expand"}
+            {extend ? "Collapse" : "Expand"}
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
@@ -231,7 +212,7 @@ const TrackAddon = ({ extend, toggle, runnerId, id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faBook} />}
           >
-            {"Preview"}
+            Preview
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
