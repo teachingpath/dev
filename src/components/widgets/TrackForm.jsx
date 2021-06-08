@@ -10,7 +10,6 @@ import {
   CustomInput,
   GridNav,
 } from "@panely/components";
-import metaFetcher from "meta-fetcher";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
@@ -18,11 +17,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Quill from "@panely/quill";
 import Router from "next/router";
-import { useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Alert from "@panely/components/Alert";
 import Spinner from "@panely/components/Spinner";
 import { timeConvert } from "components/helpers/time";
 import ReactPlayer from "react-player";
+import DescribeURL from "@panely/components/DescribePage";
 
 const modulesFull = {
   toolbar: [
@@ -325,7 +325,7 @@ function TrackForm({ onSave, data, onExtend }) {
                         />
                         <Label for="content"> URL External</Label>
                         <p className="mt-3">
-                          {url && <DescribeURL url={url}></DescribeURL>}
+                          {url && <DescribeURL url={url} />}
                         </p>
                       </FloatLabel>
                     </Form.Group>
@@ -421,12 +421,16 @@ function TrackForm({ onSave, data, onExtend }) {
                           id="guidelines"
                           name="guidelines"
                           control={control}
+                          onKeyUp={(event) => {
+                            setUrl(event.target.value);
+                          }}
                           placeholder="Insert your URL"
                         />
                         <Label for="guidelines">
                           Guidelines (URL External)
                         </Label>
                       </FloatLabel>
+                      <p className="mt-3">{url && <DescribeURL url="url" />}</p>
                     </Form.Group>
                   ),
                 }[typeContent]
@@ -541,28 +545,6 @@ function TrackForm({ onSave, data, onExtend }) {
   );
 }
 
-function DescribeURL({ url }) {
-  const [data, setDate] = useState(null);
-  function validURL(str) {
-    var pattern = new RegExp(
-      "^(https?:\\/\\/)?" + // protocol
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
-        "(\\#[-a-z\\d_]*)?$",
-      "i"
-    ); // fragment locator
-    return !!pattern.test(str);
-  }
-  if (url && validURL(url)) {
-    metaFetcher('https://wordpress.com').then((res) => {
-      console.log(res);
-    })
-  }
-
-  return data ? <p>loading</p> : <p>{JSON.stringify(data)}</p>;
-}
 function Option({ typeContent, setTypeContent }) {
   return (
     <div className="mb-3">

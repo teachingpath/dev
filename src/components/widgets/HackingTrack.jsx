@@ -18,6 +18,7 @@ import { yupResolver } from "@hookform/resolvers";
 import Row from "@panely/components/Row";
 import Col from "@panely/components/Col";
 import ReactPlayer from "react-player";
+import DescribeURL from "@panely/components/DescribePage";
 
 function SolutionForm({ onSave }) {
   const schema = yup.object().shape({
@@ -113,11 +114,22 @@ class HackingTrack extends React.Component {
           <Card.Header>Guidelines</Card.Header>
           <Card.Body>
             <Card.Text>
-            {typeContent === "video" ? (
-          <ReactPlayer url={data.guidelines} />
-        ) : (
-          <div dangerouslySetInnerHTML={{ __html: data.guidelines }} />
-        )}
+              {
+                {
+                  file: (
+                    <div
+                      dangerouslySetInnerHTML={{ __html: data.guidelines }}
+                    />
+                  ),
+                  fileCode: (
+                    <div
+                      dangerouslySetInnerHTML={{ __html: data.guidelines }}
+                    />
+                  ),
+                  video: <ReactPlayer url={data.guidelines} />,
+                  url: <DescribeURL url={data.guidelines} />,
+                }[typeContent]
+              }
             </Card.Text>
           </Card.Body>
         </Card>
@@ -132,7 +144,7 @@ class HackingTrack extends React.Component {
         </Card>
         {user && (
           <div>
-            <hr/>
+            <hr />
             <h3 className="mt-3">Solution</h3>
             <p>
               Add here your hacking answer, add links, repositories or comments.

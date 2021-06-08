@@ -8,16 +8,21 @@ export const create = (runnerId, data) => {
   const trackId = uuid();
   const user = firebaseClient.auth().currentUser;
   const searchTypes = data.name.toLowerCase();
+  const model = {
+    level: 1,
+    id: trackId,
+    leaderId: user.uid,
+    searchTypes,
+    ...data,
+  };
   return firestoreClient
     .collection("runners")
     .doc(runnerId)
     .collection("tracks")
     .doc(trackId)
-    .set({
-      level: 1,
-      leaderId: user.uid,
-      searchTypes,
-      ...data,
+    .set(model)
+    .then(() => {
+      return model;
     });
 };
 

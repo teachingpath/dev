@@ -7,6 +7,8 @@ import TrainingTrack from "./TrainingTrack";
 import HackingTrack from "./HackingTrack";
 import LearningTrack from "./LearningTrack";
 import Link from "next/link";
+import { timeShortPowerTen } from "components/helpers/time";
+import Progress from "@panely/components/Progress";
 
 class TrackModal extends React.Component {
   time = 0;
@@ -126,13 +128,11 @@ class TrackModal extends React.Component {
     const { time, onComplete, extarnalLink, tracksLength, trackIndex } =
       this.props;
     const titleButton = timeLimit
-      ? "Time limit [" + timeLimit + " hour]"
+      ? "Time limit [" + timeShortPowerTen(timeLimit) + "]"
       : "Start this track";
     const date = this.countdownRef?.current?.props?.date
       ? this.countdownRef?.current?.props?.date
       : Date.now() + time;
-
-    const progress = " ("+(trackIndex + 1) + "/" + (tracksLength)+") ";
 
     return (
       <React.Fragment>
@@ -152,10 +152,14 @@ class TrackModal extends React.Component {
           toggle={this.toggle}
           className="modal-xl"
         >
+           <Progress
+              striped
+              variant="primary"
+              value={((trackIndex + 1) / tracksLength) * 100}
+            />
           <Modal.Header toggle={this.toggle}>
-            <Link href={extarnalLink}>
-              {(name + progress) || "Loading"}
-            </Link>
+            <Link href={extarnalLink}  className={"w-100"}>{name || "..."}</Link>
+           
           </Modal.Header>
           <Modal.Body>
             {

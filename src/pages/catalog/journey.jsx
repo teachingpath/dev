@@ -31,6 +31,7 @@ import BadgetList from "../../components/widgets/BadgetList";
 import React from "react";
 import Badge from "@panely/components/Badge";
 import Link from "next/link";
+import { timeShortPowerTen, timePowerTen } from "components/helpers/time";
 
 class JourneyGeneralPage extends React.Component {
   state = { name: "Loading", trophy: {}, progress: 0, badgets: [] };
@@ -203,9 +204,11 @@ class Runners extends React.Component {
               >
                 <Card.Title>{item.name.toUpperCase()}</Card.Title>
                 {totalTime > 0 ? (
-                  <Portlet.Addon>Total time limit: {totalTime} h</Portlet.Addon>
+                  <Portlet.Addon>Time limit: <strong>
+                    {timeShortPowerTen(totalTime)} + Quiz
+                    </strong></Portlet.Addon>
                 ) : (
-                  <Portlet.Addon>Finished</Portlet.Addon>
+                  <Portlet.Addon><strong>Finished</strong></Portlet.Addon>
                 )}
               </Card.Header>
               <Collapse isOpen={activeCard === index}>
@@ -272,7 +275,7 @@ class Tracks extends React.Component {
               title={
                 <>
                   {(item.status === "process" || item.status === "wait") && (
-                    <Badge className="mr-2">{item.timeLimit} h</Badge>
+                    <Badge className="mr-2">{timeShortPowerTen(item.timeLimit)}</Badge>
                   )}
                   <Badge className="mr-2">{item.type}</Badge>
                   {item.status !== "wait" && item.status !== "process" ? (

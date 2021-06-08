@@ -18,6 +18,7 @@ import { yupResolver } from "@hookform/resolvers";
 import Row from "@panely/components/Row";
 import Col from "@panely/components/Col";
 import ReactPlayer from "react-player";
+import DescribeURL from "@panely/components/DescribePage";
 
 function FeedbackForm({ onSave }) {
   const schema = yup.object().shape({
@@ -109,11 +110,14 @@ class LearningTrack extends React.Component {
     const typeContent = data.typeContent;
     return (
       <>
-        {typeContent === "video" ? (
-          <ReactPlayer url={data.content} />
-        ) : (
-          <div dangerouslySetInnerHTML={{ __html: data.content }} />
-        )}
+        {
+          {
+            file: <div dangerouslySetInnerHTML={{ __html: data.content }} />,
+            fileCode: <div dangerouslySetInnerHTML={{ __html: data.content }} />,
+            video: <ReactPlayer url={data.content} />,
+            url: <DescribeURL url={data.content} />,
+          }[typeContent]
+        }
 
         {user && (
           <div>

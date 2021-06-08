@@ -31,6 +31,7 @@ import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import Badge from "@panely/components/Badge";
+import { timeConvert, timePowerTen, timeShortPowerTen } from "components/helpers/time";
 
 class PathwayPage extends React.Component {
   constructor(props) {
@@ -87,7 +88,7 @@ class PathwayPage extends React.Component {
             </Widget1.DialogContent>
           </Widget1.Dialog>
           <Widget1.Offset>
-          {!this.state?.trophy?.image && <Spinner />}
+            {!this.state?.trophy?.image && <Spinner />}
             {this.state?.trophy?.image && (
               <img
                 src={this.state?.trophy?.image}
@@ -206,7 +207,7 @@ class Status extends React.Component {
           return {
             ...item,
             timeLimit: item.time,
-            time: item.time * 3600000,
+            time: item.time * 10 * 60000,
             status: runnerIndex === 0 && trackIndex === 0 ? "process" : "wait",
           };
         }),
@@ -337,7 +338,9 @@ class RunnerTab extends React.Component {
             badget: doc.data().badget,
             data: data,
           });
-          const estimation = data.map((el) => el.time).reduce((a, b) => a + b, 0);
+          const estimation = data
+            .map((el) => el.time)
+            .reduce((a, b) => a + b, 0);
           this.setState({
             ...this.state,
             tabs: list,
@@ -356,10 +359,7 @@ class RunnerTab extends React.Component {
         {/* BEGIN Nav */}
         <p>
           Estimated time approximately:{" "}
-          <strong>
-            {Math.floor(this.state.estimation / 7)}{" "}
-            {this.state.estimation >= 7 ? "d" : "h"}
-          </strong>
+          <strong>{timeConvert(timePowerTen(this.state.estimation))}</strong>
         </p>
         {this.state.tabs.length === 0 && <Spinner />}
         <Widget2 justified size="lg" className="mb-4">
@@ -383,14 +383,18 @@ class RunnerTab extends React.Component {
                   <Portlet.Title>Tracks</Portlet.Title>
                   <Portlet.Addon>
                     Estimation:{" "}
-                    {tab.data.map((t) => t.time).reduce((a, b) => a + b, 0)} h
+                    {timeConvert(
+                      timePowerTen(
+                        tab.data.map((t) => t.time).reduce((a, b) => a + b, 0)
+                      )
+                    )}
                   </Portlet.Addon>
                 </Portlet.Header>
 
                 <RichList flush>
                   {tab.data.map((data, index) => {
                     const { subtitle, title, time, type, id } = data;
-                    const titleLink =  index + 1 + ". " + title;
+                    const titleLink = index + 1 + ". " + title;
                     return (
                       <RichList.Item key={index}>
                         <RichList.Content>
@@ -399,7 +403,7 @@ class RunnerTab extends React.Component {
                         </RichList.Content>
                         <RichList.Addon addonType="append">
                           <Badge className="mr-2">{type}</Badge>
-                          {time.toString().padStart(2, "0")} h
+                          {timeShortPowerTen(time)}
                           <FontAwesomeIcon
                             className={"ml-2"}
                             icon={SolidIcon.faStopwatch}
