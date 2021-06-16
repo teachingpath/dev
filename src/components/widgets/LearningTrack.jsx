@@ -120,40 +120,43 @@ class LearningTrack extends React.Component {
         }
 
         {user && (
-          <div>
-            <hr />
-            <h3 className="mt-3">Feedback</h3>
-            <p>Write a feedback about what you learned.</p>
+          <Card>
+            <Card.Header>
+              <h3 className="mt-3">Feedback</h3>
+            </Card.Header>
+            <Card.Body>
+              <Card.Text>Write a feedback about what you learned.</Card.Text>
+              <FeedbackForm
+                onSave={(data) => {
+                  return firestoreClient
+                    .collection("track-response")
+                    .add({
+                      id: 1,
+                      trackId: id,
+                      ...data,
+                      userId: user.uid,
+                      date: Date.now(),
+                    })
+                    .then(() => {
+                      this.componentDidMount();
+                      this.setState({ current: this.state.current + 1 });
+                    });
+                }}
+              />
+              <Timeline>
+                {this.state.list.map((data, index) => {
+                  const { date, feedback } = data;
 
-            <FeedbackForm
-              onSave={(data) => {
-                return firestoreClient
-                  .collection("track-response")
-                  .add({
-                    id: 1,
-                    trackId: id,
-                    ...data,
-                    userId: user.uid,
-                    date: Date.now(),
-                  })
-                  .then(() => {
-                    this.componentDidMount();
-                    this.setState({ current: this.state.current + 1 });
-                  });
-              }}
-            />
-            <Timeline>
-              {this.state.list.map((data, index) => {
-                const { date, feedback } = data;
+                  return (
+                    <Timeline.Item date={date} pin={<Marker type="dot" />}>
+                      {feedback}
+                    </Timeline.Item>
+                  );
+                })}
+              </Timeline>
+            </Card.Body>
 
-                return (
-                  <Timeline.Item date={date} pin={<Marker type="dot" />}>
-                    {feedback}
-                  </Timeline.Item>
-                );
-              })}
-            </Timeline>
-          </div>
+          </Card>
         )}
       </>
     );

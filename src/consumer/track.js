@@ -63,3 +63,26 @@ export const updateTrack = (runnerId, trackId, data) => {
       ...data,
     });
 };
+
+
+export const getTracks = (runnerId, resolve, reject) => {
+  firestoreClient
+    .collection("runners")
+    .doc(runnerId)
+    .collection("tracks")
+    .orderBy("level")
+    .get()
+    .then((querySnapshot) => {
+      const list = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        data.id = doc.id;
+        list.push(data);
+      });
+      resolve({ list });
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+      reject();
+    });
+}

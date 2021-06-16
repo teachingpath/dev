@@ -34,9 +34,7 @@ function RunnerForm({ onSave, data }) {
   });
 
   const { control, errors, handleSubmit, reset } = useForm({
-    // Apply Yup as resolver for react-hook-form
     resolver: yupResolver(schema),
-    // Define the default values for all input forms
     defaultValues: {
       name: data?.name || "",
       description: data?.description || "",
@@ -118,6 +116,7 @@ function RunnerForm({ onSave, data }) {
               )}
           />
           <Label for="feedback">Summary/feedback</Label>
+          <Form.Text>Write a summary or feedback so that the learner knows what he learned after completing the runners</Form.Text>
           {errors.feedback && (
             <Form.Feedback children={errors.feedback.message} />
           )}

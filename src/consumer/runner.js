@@ -62,7 +62,7 @@ export const getQuestions = (runnerId) => {
 };
 
 export const getQuiz = (pathwayId, runnerId, questionId, resolve, reject) => {
-   firestoreClient
+  firestoreClient
     .collection("runners")
     .doc(runnerId)
     .collection("questions")
@@ -133,7 +133,7 @@ export const createQuiz = (runnerId, data) => {
 };
 
 export const getRunner = (pathwayId, runnerId, resolve, reject) => {
-   firestoreClient
+  firestoreClient
     .collection("runners")
     .doc(runnerId)
     .get()
@@ -154,3 +154,27 @@ export const getRunner = (pathwayId, runnerId, resolve, reject) => {
       reject();
     });
 };
+
+export const getRunners = (pathwayId, resolve, reject) => {
+  firestoreClient
+    .collection("runners")
+    .where("pathwayId", "==", pathwayId)
+    .orderBy("level")
+    .get()
+    .then((querySnapshot) => {
+      const list = [];
+      querySnapshot.forEach((doc) => {
+        list.push({
+          id: doc.id,
+          level: doc.data().level,
+          name: doc.data().name,
+          description: doc.data().description,
+        });
+      });
+      resolve({list});
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+      reject();
+    });
+}

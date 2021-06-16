@@ -17,6 +17,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Row from "@panely/components/Row";
 import Col from "@panely/components/Col";
+import Card from "@panely/components/Card";
 
 function SolutionForm({ onSave }) {
   const schema = yup.object().shape({
@@ -141,48 +142,51 @@ class TrainingTrack extends React.Component {
         <Steps.Step
           title={"Result"}
           description={
-            <>
-              <div>
-                Add here your training answer, add links, repositories or
-                comments.
-              </div>
-              {this.state.current === training?.length && (
-                <>
-                  {user && (
-                    <SolutionForm
-                      onSave={(data) => {
-                        const user = firebaseClient.auth().currentUser;
-                        return firestoreClient
-                          .collection("track-response")
-                          .add({
-                            id: 1,
-                            trackId: id,
-                            ...data,
-                            userId: user.uid,
-                            date: Date.now(),
-                          })
-                          .then(() => {
-                            this.componentDidMount();
-                            this.setState({ current: this.state.current + 1 });
-                          });
-                      }}
-                    />
-                  )}
+            <Card>
+              <Card.Body>
+                <Card.Text>
+                  Add here your training answer, add links, repositories or
+                  comments.
+                </Card.Text>
+                {this.state.current === training?.length && (
+                  <>
+                    {user && (
+                      <SolutionForm
+                        onSave={(data) => {
+                          const user = firebaseClient.auth().currentUser;
+                          return firestoreClient
+                            .collection("track-response")
+                            .add({
+                              id: 1,
+                              trackId: id,
+                              ...data,
+                              userId: user.uid,
+                              date: Date.now(),
+                            })
+                            .then(() => {
+                              this.componentDidMount();
+                              this.setState({ current: this.state.current + 1 });
+                            });
+                        }}
+                      />
+                    )}
 
-                  <Timeline>
-                    {this.state.list.map((data, index) => {
-                      const { date, result } = data;
+                    <Timeline>
+                      {this.state.list.map((data, index) => {
+                        const { date, result } = data;
 
-                      return (
-                        <Timeline.Item date={date} pin={<Marker type="dot" />}>
-                          {result}
-                        </Timeline.Item>
-                      );
-                    })}
-                  </Timeline>
-                </>
-              )}
-            </>
+                        return (
+                          <Timeline.Item date={date} pin={<Marker type="dot" />}>
+                            {result}
+                          </Timeline.Item>
+                        );
+                      })}
+                    </Timeline>
+                  </>
+                )}
+              </Card.Body>
+       
+            </Card>
           }
         />
       </Steps>

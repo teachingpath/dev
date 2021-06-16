@@ -143,43 +143,44 @@ class HackingTrack extends React.Component {
           </Card.Body>
         </Card>
         {user && (
-          <div>
-            <hr />
-            <h3 className="mt-3">Solution</h3>
-            <p>
-              Add here your hacking answer, add links, repositories or comments.
-            </p>
+          <Card>
+            <Card.Header>
+              <h3 className="mt-3">Solution</h3>
+            </Card.Header>
+            <Card.Body>
+              <Card.Text>Add here your hacking answer, add links, repositories or comments.</Card.Text>
+              <SolutionForm
+                onSave={(data) => {
+                  const user = firebaseClient.auth().currentUser;
+                  return firestoreClient
+                    .collection("track-response")
+                    .add({
+                      id: 1,
+                      trackId: id,
+                      ...data,
+                      userId: user.uid,
+                      date: Date.now(),
+                    })
+                    .then(() => {
+                      this.componentDidMount();
+                      this.setState({ current: this.state.current + 1 });
+                    });
+                }}
+              />
+              <Timeline>
+                {this.state.list.map((data, index) => {
+                  const { date, solution } = data;
 
-            <SolutionForm
-              onSave={(data) => {
-                const user = firebaseClient.auth().currentUser;
-                return firestoreClient
-                  .collection("track-response")
-                  .add({
-                    id: 1,
-                    trackId: id,
-                    ...data,
-                    userId: user.uid,
-                    date: Date.now(),
-                  })
-                  .then(() => {
-                    this.componentDidMount();
-                    this.setState({ current: this.state.current + 1 });
-                  });
-              }}
-            />
-            <Timeline>
-              {this.state.list.map((data, index) => {
-                const { date, solution } = data;
+                  return (
+                    <Timeline.Item date={date} pin={<Marker type="dot" />}>
+                      {solution}
+                    </Timeline.Item>
+                  );
+                })}
+              </Timeline>
+            </Card.Body>
 
-                return (
-                  <Timeline.Item date={date} pin={<Marker type="dot" />}>
-                    {solution}
-                  </Timeline.Item>
-                );
-              })}
-            </Timeline>
-          </div>
+          </Card>
         )}
       </>
     );

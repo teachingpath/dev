@@ -138,7 +138,7 @@ class FormBasePage extends React.Component {
                     className="float-right"
                     onClick={() => {
                       Router.push({
-                        pathname: "/runner/badget",
+                        pathname: "/runner/quiz/create",
                         query: {
                           runnerId: runner.runnerId,
                           pathwayId: runner.pathwayId,

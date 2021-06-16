@@ -4,10 +4,10 @@ import {
   Portlet,
   Container,
   Spinner,
-  Badge,
   Button,
+  DemoWrapper,
+  Avatar
 } from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -24,6 +24,12 @@ import Head from "next/head";
 import Router from "next/router";
 import Aside from "components/layout/part/Aside";
 import Header from "@panely/components/Header";
+import { getTrack, getTracks } from "consumer/track";
+import { getRunners } from "consumer/runner";
+import Card from "@panely/components/Card";
+import { Widget1 } from "@panely/components";
+import Badge from "../../../docs/template/src/modules/components/Badge";
+import Marker from "@panely/components/Marker";
 
 class TrackPage extends React.Component {
   constructor(props) {
@@ -72,30 +78,62 @@ class TrackPage extends React.Component {
         { text: "Track" },
       ]);
     }
-    //  this.loadRunners(Router.query.pathwayId);
     this.loadCurrentTrack();
   }
 
   loadTracks() {
-    firestoreClient
-      .collection("runners")
-      .doc(Router.query.runnerId)
-      .collection("tracks")
-      .orderBy("level")
-      .get()
-      .then((querySnapshot) => {
-        const list = [
-          {
-            title: "Tracks",
-            section: true,
+    const { runnerId, pathwayId, id } = Router.query;
+    getTracks(runnerId, (result) => {
+      const list = [
+        {
+          title: "Tracks",
+          section: true,
+        },
+      ];
+      result.list.forEach((data) => {
+        const level = data.level;
+        list.push({
+          title: data.name,
+          current: id === data.id,
+          icon: () => (
+            <div className="rc-steps-item rc-steps-item-process">
+              <div className="rc-steps-item-icon">
+                <span className="rc-steps-icon">{level}</span>
+              </div>
+            </div>
+          ),
+          link: {
+            pathname: "/catalog/track",
+            query: { ...Router.query, id: data.id },
           },
-        ];
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const level = data.level;
+        });
+      });
+      this.loadRunners(pathwayId, list);
+    }, () => { });
+  }
+
+  loadCurrentTrack() {
+    const { pathwayId, runnerId, id } = Router.query;
+    getTrack(pathwayId, runnerId, id, (data) => {
+      this.setState({
+        ...this.state, ...data
+      });
+    })
+  }
+
+  loadRunners(pathwayId, trackList) {
+    getRunners(pathwayId, (result) => {
+      const list = trackList;
+      list.push({
+        title: "Related Runners",
+        section: true,
+      })
+      result.list.forEach((data) => {
+        const level = data.level;
+        if (Router.query.runnerId !== data.id) {
           list.push({
             title: data.name,
-            current: Router.query.id === doc.id,
+            current: false,
             icon: () => (
               <div className="rc-steps-item rc-steps-item-process">
                 <div className="rc-steps-item-icon">
@@ -104,63 +142,15 @@ class TrackPage extends React.Component {
               </div>
             ),
             link: {
-              pathname: "/catalog/track",
-              query: { ...Router.query, id: doc.id },
+              pathname: "/catalog/runner",
+              query: { ...Router.query, id: data.id },
             },
           });
-        });
-        this.setState({ ...this.state, trackList: list });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-  }
-
-  loadCurrentTrack() {
-    firestoreClient
-      .collection("runners")
-      .doc(Router.query.runnerId)
-      .collection("tracks")
-      .doc(Router.query.id)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          const data = doc.data();
-          this.setState({
-            id: Router.query.id,
-            trackId: Router.query.id,
-            runnerId: Router.query.runnerId,
-            ...data,
-          });
-        } else {
-          console.log("No such document!");
         }
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-  }
 
-  loadRunners(pathwayId) {
-    firestoreClient
-      .collection("runners")
-      .where("pathwayId", "==", pathwayId)
-      .orderBy("level")
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push({
-            id: doc.id,
-            title: doc.data().name,
-            subtitle: doc.data().description,
-          });
-        });
-        console.log(list);
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
       });
+      this.setState({ ...this.state, trackList: list });
+    });
   }
 
   render() {
@@ -181,25 +171,87 @@ class TrackPage extends React.Component {
           {trackList && <Aside menuList={trackList} />}
           <Row>
             <Col md="12">
-              <Portlet>
-                <Portlet.Header>
-                  <Portlet.Title>
-                    <Header.Holder mobile>
-                      <Button icon variant="flat-primary" className="mr-2" onClick={asideToggle}>
+
+              <Widget1>
+                <Widget1.Display top size="sm" className="bg-primary text-white">
+
+                  <Widget1.Addon>
+                    <DemoWrapper>
+                      <Button icon circle variant="flat-primary" className="mr-2" onClick={asideToggle}>
                         <FontAwesomeIcon icon={SolidIcon.faBars} />
                       </Button>
-                      {this.state.name}
-                    </Header.Holder>
-                    <Header.Holder desktop>{this.state.name}</Header.Holder>
-                  </Portlet.Title>
-                </Portlet.Header>
+
+                      <Avatar circle variant="light" className="mr-2">
+                        <Avatar.Display>
+                          <Button icon circle variant="flat-primary" >
+                            <FontAwesomeIcon icon={SolidIcon.faThumbsUp} />
+                          </Button>
+                        </Avatar.Display>
+                        <Avatar.Addon position="bottom" size={"sm"}>
+                          <Badge size={"sm"} pill variant="success">
+                            10K
+                        </Badge>
+                        </Avatar.Addon>
+                      </Avatar>
+                      <Avatar circle variant="light" className="mr-2">
+                        <Avatar.Display>
+                          <Button icon circle variant="flat-primary" >
+                            <FontAwesomeIcon icon={SolidIcon.faThumbsDown} />
+                          </Button>
+                        </Avatar.Display>
+                        <Avatar.Addon position="bottom" size={"sm"}>
+                          <Badge size={"sm"} pill variant="success">
+                            10K
+                        </Badge>
+                        </Avatar.Addon>
+                      </Avatar>
+                      <Avatar circle variant="light" className="mr-2">
+                        <Avatar.Display>
+                          <Button icon circle variant="flat-primary" >
+                            <FontAwesomeIcon icon={SolidIcon.faEye} />
+                          </Button>
+                        </Avatar.Display>
+                        <Avatar.Addon position="bottom" size={"sm"}>
+                          <Badge size={"sm"} pill variant="success">
+                            10K
+                        </Badge>
+                        </Avatar.Addon>
+                      </Avatar>
+                    </DemoWrapper>
+                  </Widget1.Addon>
+
+                  <Widget1.Body>
+                    <h1 className="display-3" children={this.state.name} />
+                  </Widget1.Body>
+                  <Widget1.Body>
+                    {this.state.description}
+                    <div className="text-right">
+                      <small>
+                        <i >Last update: {new Date().toDateString()}</i>
+                      </small>
+                    </div>
+                  </Widget1.Body>
+                </Widget1.Display>
+              </Widget1>
+              <Portlet>
                 <Portlet.Body>
-                  <p>{this.state.description}</p>
-                  <hr />
                   <div className="content-track">
                     <TrackContent {...this.state} />
                   </div>
                 </Portlet.Body>
+
+                <Portlet.Footer>
+                  <Card>
+                    <Card.Header>
+                      Related Pathway
+                    </Card.Header>
+                    <Card.Body>
+                      <Card.Title>
+
+                      </Card.Title>
+                    </Card.Body>
+                  </Card>
+                </Portlet.Footer>
               </Portlet>
             </Col>
           </Row>
