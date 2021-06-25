@@ -54,18 +54,32 @@ class PathwaysComponent extends React.Component {
   }
 
   onDelete(pathwayId) {
-    deletePathway(pathwayId)
-      .then(() => {
-        console.log("Document successfully deleted!");
-        this.componentDidMount();
-        this.props.activityChange({
-          type: "delete_pathway",
-          pathwayId: pathwayId,
-          msn: "The pathway deleted.",
-        });
+    swal
+      .fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
       })
-      .catch((error) => {
-        console.error("Error removing document: ", error);
+      .then((result) => {
+        if (result.value) {
+          deletePathway(pathwayId)
+            .then(() => {
+              console.log("Document successfully deleted!");
+              this.componentDidMount();
+              this.props.activityChange({
+                type: "delete_pathway",
+                pathwayId: pathwayId,
+                msn: "The pathway deleted.",
+              });
+            })
+            .catch((error) => {
+              console.error("Error removing document: ", error);
+            });
+        }
       });
   }
 

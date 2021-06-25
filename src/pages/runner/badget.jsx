@@ -167,17 +167,13 @@ function BadgetForm({ runnerId, data, activityChange, pathwayId }) {
               {errors.description && (
                 <Form.Feedback children={errors.description.message} />
               )}
+              <Form.Text>Specify a list of achievements.</Form.Text>
             </FloatLabel>
           </Form.Group>
           {/* END Form Group */}
         </Col>
       </Row>
-      <Button
-        type="submit"
-        variant="label-primary"
-        size="lg"
-        width="widest"
-      >
+      <Button type="submit" variant="label-primary" size="lg" width="widest">
         {loading && <Spinner className="mr-2" />} Save
       </Button>
       <Button
@@ -224,7 +220,6 @@ class FormBasePage extends React.Component {
       },
       { text: "Badget" },
     ]);
-   
   }
 
   render() {

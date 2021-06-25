@@ -25,8 +25,21 @@ export const create = (data) => {
       searchTypes: searchTypes,
       tags: tags,
       draft: true,
+      groups: [
+        {
+          name: "default",
+          slug: "default",
+          isPrivate: false,
+          id: 1,
+        },
+      ],
       leaderId: user.uid,
       date: new Date(),
+    })
+    .then(() => {
+      return {
+        id: pathwayId,
+      };
     });
 };
 
@@ -138,8 +151,6 @@ export const getMyPathways = (resolve, reject) => {
       reject();
     });
 };
-
-
 
 export const publishPathway = (pathwayId, resolve, reject) => {
   firestoreClient

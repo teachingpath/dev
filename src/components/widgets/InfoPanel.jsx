@@ -12,7 +12,7 @@ import { firestoreClient } from "../firebase/firebaseClient";
 import Button from "@panely/components/Button";
 import React from "react";
 import Progress from "@panely/components/Progress";
-
+import { groupBy } from "components/helpers/array";
 
 class InfoPanelComponent extends React.Component {
   state = {
@@ -80,6 +80,7 @@ class InfoPanelComponent extends React.Component {
             const inRunning = [];
             querySnapshot.forEach(async (doc) => {
               const data = doc.data();
+              data.composeGroup = data.name + "/" + data.group;
               if (data.progress >= 100) {
                 finisheds.push(data);
               } else {
@@ -88,6 +89,7 @@ class InfoPanelComponent extends React.Component {
               const dataSummary = this.state.data;
               dataSummary[1].data = inRunning;
               dataSummary[2].data = finisheds;
+
               this.setState({
                 data: dataSummary,
               });
@@ -153,6 +155,7 @@ class InfoModal extends React.Component {
   };
 
   render() {
+    const dataList = groupBy(this.props.data, "composeGroup");
     return (
       <React.Fragment>
         <a href={"#"} onClick={this.toggle}>
@@ -170,48 +173,60 @@ class InfoModal extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <RichList bordered action>
-              {this.props.data.map((data, index) => {
-                const { name, date, progress, id, user } = data;
-                const dateUpdated = new Date(
-                  (date.seconds + date.nanoseconds * 10 ** -9) * 1000
-                );
+              {Object.keys(dataList).map((group) => {
                 return (
-                  <>
-                    <h4 className="mt-3"> {user.displayName.toUpperCase()}</h4>
-                    <RichList.Item key={index} title={"User: " + user.email}>
-                      <RichList.Addon addonType="prepend">
-                        {/* BEGIN Avatar */}
-                        <Avatar block>
-                          <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
-                        </Avatar>
+                  <div>
+                    <h4>{group.toUpperCase()}</h4>
+                    {dataList[group].map((data, index) => {
+                      const { name, date, progress, id, user } = data;
+                      const dateUpdated = new Date(
+                        (date.seconds + date.nanoseconds * 10 ** -9) * 1000
+                      );
+                      return (
+                        <>
+                          <h5 className="mt-3">
+                            {user.displayName}
+                          </h5>
+                          <RichList.Item
+                            key={index}
+                            title={"User: " + user.email}
+                          >
+                            <RichList.Addon addonType="prepend">
+                              {/* BEGIN Avatar */}
+                              <Avatar block>
+                                <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
+                              </Avatar>
 
-                        {/* END Avatar */}
-                      </RichList.Addon>
-                      <RichList.Content>
-                        <RichList.Title
-                          children={
-                            <Progress
-                              striped
-                              className="mr-2 mb-2"
-                              value={progress.toFixed(2)}
-                            >
-                              {progress.toFixed(2)}%
-                            </Progress>
-                          }
-                        />
+                              {/* END Avatar */}
+                            </RichList.Addon>
+                            <RichList.Content>
+                              <RichList.Title
+                                children={
+                                  <Progress
+                                    striped
+                                    className="mr-2 mb-2"
+                                    value={progress.toFixed(2)}
+                                  >
+                                    {progress.toFixed(2)}%
+                                  </Progress>
+                                }
+                              />
 
-                        <RichList.Title children={name.toUpperCase()} />
-                        <RichList.Subtitle
-                          children={
-                            "Date: " +
-                            dateUpdated.toLocaleDateString() +
-                            " " +
-                            dateUpdated.toLocaleTimeString()
-                          }
-                        />
-                      </RichList.Content>
-                    </RichList.Item>
-                  </>
+                              <RichList.Title children={name} />
+                              <RichList.Subtitle
+                                children={
+                                  "Date: " +
+                                  dateUpdated.toLocaleDateString() +
+                                  " " +
+                                  dateUpdated.toLocaleTimeString()
+                                }
+                              />
+                            </RichList.Content>
+                          </RichList.Item>
+                        </>
+                      );
+                    })}
+                  </div>
                 );
               })}
             </RichList>

@@ -70,7 +70,16 @@ class StartPathway extends React.Component {
     );
   }
 
-  createJourney(leaderId, group, breadcrumbs, journeyId, name, trophy, pathwayId, user) {
+  createJourney(
+    leaderId,
+    group,
+    breadcrumbs,
+    journeyId,
+    name,
+    trophy,
+    pathwayId,
+    user
+  ) {
     return Promise.all(breadcrumbs).then((dataResolved) => {
       return firestoreClient
         .collection("journeys")
@@ -313,7 +322,9 @@ class StartPathwayButton extends React.Component {
   render() {
     return (
       <>
-        <Button onClick={this.toggle}>Start Pathway</Button>
+        <Button onClick={this.toggle} className="w-25">
+          Start Pathway
+        </Button>
         {/* BEGIN Modal */}
         <Modal isOpen={this.state.isOpen} toggle={this.toggle}>
           <Modal.Header toggle={this.toggle}>Select Group</Modal.Header>

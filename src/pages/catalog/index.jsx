@@ -32,7 +32,7 @@ class CatalogPage extends React.Component {
     this.props.breadcrumbChange([{ text: "Catalog", link: "/catalog" }]);
     let db = firestoreClient.collection("pathways").where("draft", "==", false);
     if (q) {
-      db = db.where("name", ">=", q).where("name", "<=", q + "\uf8ff");
+      db = db.where("searchTypes", ">=", q).where("searchTypes", "<=", q + "\uf8ff");
     }
     if (tags) {
       console.log(tags);

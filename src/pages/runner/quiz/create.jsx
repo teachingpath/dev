@@ -71,7 +71,7 @@ class FormBasePage extends React.Component {
         this.setState({
           pathwayId: this.state.pathwayId,
           runnerId: this.state.runnerId,
-          questionId: questionId,
+          questionId: docRef.id,
           ...data,
         });
         toast.fire({

@@ -228,6 +228,13 @@ class Teacher extends React.Component {
                 <small className="text-muted">{data?.specialty}</small>
               </Card.Text>
               <Card.Text>{data?.bio}</Card.Text>
+              <Button
+                onClick={() => {
+                  window.location = "mailto:" + data.email;
+                }}
+              >
+                Contact
+              </Button>
             </Card.Body>
           </Col>
         </Row>

@@ -60,7 +60,7 @@ class BadgetListComponent extends React.Component {
             )}
 
             {this.state.data.length !== 0 && (
-              <Carousel slidesToShow={3} slidesToScroll={2}>
+              <Carousel >
                 {this.state.data.map((data) => {
                   return (
                     <CarouselItem>

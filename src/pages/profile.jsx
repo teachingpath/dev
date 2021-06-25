@@ -100,6 +100,7 @@ function ProfileForm({ data, id }) {
     defaultValues: {
       specialty: data?.specialty || "",
       bio: data?.bio || "",
+      phone: data?.phone || "",
     },
   });
 
@@ -110,7 +111,7 @@ function ProfileForm({ data, id }) {
       firestoreClient
         .collection("users")
         .doc(id)
-        .update({...data, image: url})
+        .update({ ...data, image: url })
         .then((doc) => {
           setLoading(false);
         })
@@ -147,7 +148,22 @@ function ProfileForm({ data, id }) {
           )}
         </FloatLabel>
       </Form.Group>
-      {/* END Form Group */}
+      <Form.Group>
+        <FloatLabel size="lg">
+          <Controller
+            as={Input}
+            type="number"
+            id="phone"
+            name="phone"
+            size="lg"
+            control={control}
+            invalid={Boolean(errors.specialty)}
+            placeholder="Please insert your phone"
+          />
+          <Label for="specialty">Phone</Label>
+          {errors.phone && <Form.Feedback children={errors.phone.message} />}
+        </FloatLabel>
+      </Form.Group>
       {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel size="lg">

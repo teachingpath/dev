@@ -199,7 +199,7 @@ class TrackPage extends React.Component {
                     <h1 className="display-3" children={this.state.name} />
                   </Widget1.Body>
                   <Widget1.Body>
-                     {this.state.description}
+                    {this.state.description}
                     <div className="text-right">
                       <small>
                         <i>Last update: {new Date().toDateString()}</i>
@@ -268,6 +268,13 @@ class Pathway extends React.Component {
                   {data?.trophy?.description}
                 </small>
               </Card.Text>
+              <Button
+                onClick={() => {
+                  Router.push("/catalog/pathway?id=" + this.props.pathwayId);
+                }}
+              >
+                Start pathway
+              </Button>
             </Card.Body>
           </Col>
         </Row>

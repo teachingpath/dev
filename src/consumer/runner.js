@@ -21,6 +21,11 @@ export const create = (pathwayId, data) => {
       searchTypes,
       slug: searchTypes.replace(searchRegExp, replaceWith),
       ...data,
+    })
+    .then(() => {
+      return {
+        id: runnerId,
+      };
     });
 };
 
@@ -31,7 +36,7 @@ export const update = (runnerId, data) => {
     .doc(runnerId)
     .update({
       ...data,
-      searchTypes
+      searchTypes,
     });
 };
 
@@ -132,6 +137,11 @@ export const createQuiz = (runnerId, data) => {
               : data.options.isCorrect === index,
         };
       }),
+    })
+    .then(() => {
+      return {
+        id: questionId,
+      };
     });
 };
 
@@ -170,14 +180,14 @@ export const getRunners = (pathwayId, resolve, reject) => {
         const data = doc.data();
         list.push({
           id: doc.id,
-          ...data
+          ...data,
         });
       });
-      if(resolve) resolve({list});
+      if (resolve) resolve({ list });
       return list;
     })
     .catch((error) => {
       console.log("Error getting documents: ", error);
-      if(reject) reject();
+      if (reject) reject();
     });
-}
+};

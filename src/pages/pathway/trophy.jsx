@@ -213,6 +213,7 @@ function TrophyForm({ pathwayId, data, activityChange }) {
               {errors.description && (
                 <Form.Feedback children={errors.description.message} />
               )}
+              <Form.Text>Specify a list of achievements.</Form.Text>
             </FloatLabel>
           </Form.Group>
           {/* END Form Group */}

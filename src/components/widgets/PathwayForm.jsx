@@ -113,6 +113,7 @@ function PathwayForm({ onSave, data }) {
               />
               <Label for="tags">Tags</Label>
             </FloatLabel>
+            <Form.Text>Separate tags with commas.</Form.Text>
           </Form.Group>
           {/* END Form Group */}
         </Col>
