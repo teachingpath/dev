@@ -2,11 +2,11 @@ import { Badge, Button, Dropdown, Portlet, RichList } from "@panely/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Router from "next/router";
-import { firestoreClient } from "components/firebase/firebaseClient";
 
 import swalContent from "sweetalert2-react-content";
 import Swal from "@panely/sweetalert2";
 import Spinner from "@panely/components/Spinner";
+import { deletePathway, getMyPathways, publishPathway } from "consumer/pathway";
 
 const ReactSwal = swalContent(Swal);
 const swal = ReactSwal.mixin({
@@ -24,148 +24,37 @@ class PathwaysComponent extends React.Component {
   }
 
   componentDidMount() {
-    firestoreClient
-      .collection("pathways")
-      .where("leaderId", "==", this.props.firebase.user_id)
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push({
-            id: doc.id,
-            ...doc.data(),
-          });
-        });
-        this.setState({ data: list });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
+    getMyPathways(
+      (data) => {
+        this.setState(data);
+      },
+      () => {}
+    );
   }
 
-  publishPathway(pathwayId) {
-    firestoreClient
-      .collection("pathways")
-      .doc(pathwayId)
-      .get()
-      .then(async (doc) => {
-        await this.publishPathwayFor(doc, pathwayId);
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-  }
-
-  async publishPathwayFor(doc, pathwayId) {
-    if (doc.exists) {
-      const data = doc.data();
-
-      if (!Object.keys(data.trophy || {}).length) {
-        swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "The pathway requires a trophy to publish it.",
-        });
-        return;
-      }
-      const runners = await this.getRunnersBy(pathwayId);
-
-      for (const key in runners) {
-        if (!Object.keys(runners[key].badget || {}).length) {
-          swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text:
-              'The runner "' +
-              runners[key].name +
-              '" requires a badget to publish this pathway.',
-          });
-          return;
-        }
-        const tracks = await this.getTrackByRunners(runners, key);
-
-        if (tracks.length < 2) {
-          swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text:
-              'The runner "' +
-              runners[key].name +
-              '" requires a minimum of 3 tracks to be able to publish the pathway.',
-          });
-          return;
-        }
-      }
-
-      this.onPublish(pathwayId, data.name);
-    } else {
-      console.log("No such document!");
-    }
-  }
-
-  async getTrackByRunners(runners, key) {
-    const tracks = await firestoreClient
-      .collection("runners")
-      .doc(runners[key].id)
-      .collection("tracks")
-      .orderBy("level")
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push({
-            id: doc.id,
-            ...doc.data(),
-          });
-        });
-        return list;
-      });
-    return tracks;
-  }
-
-  async getRunnersBy(pathwayId) {
-    const runners = await firestoreClient
-      .collection("runners")
-      .where("pathwayId", "==", pathwayId)
-      .orderBy("level")
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push({
-            id: doc.id,
-            ...doc.data(),
-          });
-        });
-        return list;
-      });
-    return runners;
-  }
-
-  onPublish(pathwayId, name) {
-    firestoreClient
-      .collection("pathways")
-      .doc(pathwayId)
-      .update({ draft: false })
-      .then(() => {
-        console.log("Document successfully deleted!");
+  onPublishPathway(pathwayId) {
+    publishPathway(
+      pathwayId,
+      (data) => {
         this.componentDidMount();
         this.props.activityChange({
           type: "publish_pathway",
           pathwayId: pathwayId,
-          msn: 'The pathway "' + name + '" is published.',
+          msn: 'The pathway "' + data.name + '" is published.',
         });
-      })
-      .catch((error) => {
-        console.error("Error removing document: ", error);
-      });
+      },
+      (error) => {
+        swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: error,
+        });
+      }
+    );
   }
 
   onDelete(pathwayId) {
-    firestoreClient
-      .collection("pathways")
-      .doc(pathwayId)
-      .delete()
+    deletePathway(pathwayId)
       .then(() => {
         console.log("Document successfully deleted!");
         this.componentDidMount();
@@ -205,36 +94,37 @@ class PathwaysComponent extends React.Component {
             {this.state.data && this.state.data.length === 0 && (
               <p className="text-center">Empty pathways</p>
             )}
-            {this.state.data && this.state.data.map((data, index) => {
-              const { name, description, id, draft } = data;
-              return (
-                <RichList.Item key={index}>
-                  <RichList.Content
-                    onClick={() => {
-                      Router.push({
-                        pathname: "/pathway/edit",
-                        query: { pathwayId: id },
-                      });
-                    }}
-                  >
-                    <RichList.Title children={name.toUpperCase()} />
-                    <RichList.Subtitle children={description} />
-                    <RichList.Subtitle
-                      children={
-                        draft ? (
-                          <Badge variant="label-info">In draft</Badge>
-                        ) : (
-                          <Badge variant="label-success">Published</Badge>
-                        )
-                      }
-                    />
-                  </RichList.Content>
-                  <RichList.Addon addonType="append">
-                    {this.getAddon(id, draft)}
-                  </RichList.Addon>
-                </RichList.Item>
-              );
-            })}
+            {this.state.data &&
+              this.state.data.map((data, index) => {
+                const { name, description, id, draft } = data;
+                return (
+                  <RichList.Item key={index}>
+                    <RichList.Content
+                      onClick={() => {
+                        Router.push({
+                          pathname: "/pathway/edit",
+                          query: { pathwayId: id },
+                        });
+                      }}
+                    >
+                      <RichList.Title children={name.toUpperCase()} />
+                      <RichList.Subtitle children={description} />
+                      <RichList.Subtitle
+                        children={
+                          draft ? (
+                            <Badge variant="label-info">In draft</Badge>
+                          ) : (
+                            <Badge variant="label-success">Published</Badge>
+                          )
+                        }
+                      />
+                    </RichList.Content>
+                    <RichList.Addon addonType="append">
+                      {this.getAddon(id, draft)}
+                    </RichList.Addon>
+                  </RichList.Item>
+                );
+              })}
           </RichList>
           {/* END Rich List */}
         </Portlet.Body>
@@ -291,12 +181,22 @@ class PathwaysComponent extends React.Component {
               }}
               icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
             >
-              Add Trophy
+              Add trophy
             </Dropdown.Item>
-
+            <Dropdown.Item
+              onClick={() => {
+                Router.push({
+                  pathname: "/pathway/group",
+                  query: { pathwayId: id },
+                });
+              }}
+              icon={<FontAwesomeIcon icon={SolidIcon.faObjectGroup} />}
+            >
+              Add group
+            </Dropdown.Item>
             {draft ? (
               <Dropdown.Item
-                onClick={() => this.publishPathway(id)}
+                onClick={() => this.onPublishPathway(id)}
                 icon={<FontAwesomeIcon icon={SolidIcon.faShareSquare} />}
               >
                 Publish

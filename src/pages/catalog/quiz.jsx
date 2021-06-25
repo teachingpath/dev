@@ -1,10 +1,17 @@
 import Quiz from "@panely/quiz";
 
 import { Row, Col, Card, Portlet, Container, Button } from "@panely/components";
-import { pageChangeHeaderTitle, breadcrumbChange, activityChange } from "store/actions";
+import {
+  pageChangeHeaderTitle,
+  breadcrumbChange,
+  activityChange,
+} from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { firestoreClient } from "components/firebase/firebaseClient";
+import {
+  firestoreClient,
+  firebaseClient,
+} from "components/firebase/firebaseClient";
 import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
@@ -24,7 +31,6 @@ class QuizPage extends React.Component {
       questions: [],
     };
     this.onFinish = this.onFinish.bind(this);
-
   }
 
   componentDidMount() {
@@ -38,10 +44,9 @@ class QuizPage extends React.Component {
       { text: "Quiz" },
     ]);
     this.onLoad(Router.query);
-
   }
 
-  onLoad = ({ runnerId }) => {
+  onLoad = ({ runnerId, id }) => {
     firestoreClient
       .collection("runners")
       .doc(runnerId)
@@ -59,7 +64,7 @@ class QuizPage extends React.Component {
           });
           data.options.forEach((opt, index) => {
             if (type === "single" && opt.isCorrect === true) {
-              correctAnswer = (index + 1) + "";
+              correctAnswer = index + 1 + "";
               return;
             }
             if (type === "multiple" && opt.isCorrect === true) {
@@ -82,9 +87,26 @@ class QuizPage extends React.Component {
           ...this.state,
           questions: questions,
         });
-        console.log(questions);
+
+        return firestoreClient.collection("journeys").doc(id).get();
+      })
+      .then((doc) => {
+        const data = doc.data();
+        if (data.progress >= 100) {
+          Router.push({
+            pathname: "/catalog/journey",
+            query: {
+              id: id,
+            },
+          });
+        } else {
+          this.setState({
+            ...this.state,
+            trophy: data.trophy,
+          });
+        }
       });
-  }
+  };
 
   onFinish = ({ runnerId, id, totalPoints }) => {
     firestoreClient
@@ -100,15 +122,14 @@ class QuizPage extends React.Component {
               id: id,
             },
           });
-
         } else {
           this.processQuiz(data, runnerId, id, totalPoints);
         }
       });
-  }
+  };
 
   processQuiz = (data, runnerId, id, totalPoints) => {
-
+    const user = firebaseClient.auth().currentUser;
     let tracksCompleted = data.current + 1;
     let tracksTotal = data.breadcrumbs.length;
     data.breadcrumbs.forEach((runner) => {
@@ -134,7 +155,7 @@ class QuizPage extends React.Component {
       data.breadcrumbs[data.current].current = 0;
       data.breadcrumbs[data.current].tracks[0].status = "process";
     } catch (e) {
-      console.log("There are no more runners")
+      console.log("There are no more runners");
     }
 
     firestoreClient
@@ -145,7 +166,7 @@ class QuizPage extends React.Component {
       .update({
         disabled: false,
         date: new Date(),
-        totalPoints: totalPoints
+        totalPoints: totalPoints,
       })
       .then((doc) => {
         //Update journey
@@ -158,14 +179,27 @@ class QuizPage extends React.Component {
               type: "complete_quiz",
               msn: 'Runner "' + currentRunner.name + '" completed.',
               point: totalPoints,
-              ...data
+              msnForGroup:
+                "<i>" +
+                user.displayName +
+                '</i> has completed runner <b>"' +
+                currentRunner.name +
+                '"</b> your new process is: ' +
+                data.progress.toFixed(2) + '%',
+              group: data.group,
             });
 
             if (data.progress >= 100) {
               this.props.activityChange({
                 type: "complete_pathway",
                 msn: 'Pathway "' + data.name + '" completed.',
-                ...data
+                msnForGroup:
+                  "<i>" +
+                  user.displayName +
+                  '</i> has completed pathway <b>"' +
+                  data.name +
+                  '"</b>',
+                group: data.group,
               });
             }
 
@@ -180,7 +214,7 @@ class QuizPage extends React.Component {
       .catch((error) => {
         console.error("Error adding document: ", error);
       });
-  }
+  };
 
   renderCustomResultPage = ({
     numberOfCorrectAnswers,
@@ -207,7 +241,9 @@ class QuizPage extends React.Component {
         </div>
         <p>
           <Button
-            onClick={() => { this.onFinish({ ...Router.query, totalPoints }) }}
+            onClick={() => {
+              this.onFinish({ ...Router.query, totalPoints });
+            }}
           >
             Finish
           </Button>
@@ -249,14 +285,32 @@ class QuizPage extends React.Component {
           <title>Quiz | Teaching Path</title>
         </Head>
         <Container fluid>
-          <Row>
-            <Col md="12">
-              <Portlet>
-                <Portlet.Header bordered>
-                  <Portlet.Title>Validation runner</Portlet.Title>
-                </Portlet.Header>
-                <Portlet.Body>
+          <Portlet>
+            <Portlet.Header bordered>
+              <Portlet.Title>
+                {this.state?.trophy?.name || "Validation runner"}
+              </Portlet.Title>
+            </Portlet.Header>
+            <Portlet.Body>
+              <Row>
+                <Col md="2">
                   {this.state.questions.length === 0 && <Spinner></Spinner>}
+                  {this.state.trophy && (
+                    <div className="m-2 text-center">
+                      <img
+                        className={
+                          this.state.trophy.disabled
+                            ? "bg-white mg-thumbnail avatar-circle p-3 border border-warning"
+                            : "bg-yellow mg-thumbnail avatar-circle p-3 border border-success"
+                        }
+                        src={this.state.trophy.image}
+                        alt="Card Image"
+                      />
+                      <p>{this.state.trophy.description}</p>
+                    </div>
+                  )}
+                </Col>
+                <Col md="10">
                   {this.state.questions.length > 0 && (
                     <Quiz
                       quiz={this.state}
@@ -264,10 +318,10 @@ class QuizPage extends React.Component {
                       customResultPage={this.renderCustomResultPage}
                     />
                   )}
-                </Portlet.Body>
-              </Portlet>
-            </Col>
-          </Row>
+                </Col>
+              </Row>
+            </Portlet.Body>
+          </Portlet>
         </Container>
       </React.Fragment>
     );

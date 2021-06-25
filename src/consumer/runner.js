@@ -7,6 +7,8 @@ import uuid from "components/helpers/uuid";
 export const create = (pathwayId, data) => {
   const runnerId = uuid();
   const user = firebaseClient.auth().currentUser;
+  const searchRegExp = /\s/g;
+  const replaceWith = "-";
   const searchTypes = data.name.toLowerCase();
   return firestoreClient
     .collection("runners")
@@ -17,6 +19,7 @@ export const create = (pathwayId, data) => {
       pathwayId: pathwayId,
       date: new Date(),
       searchTypes,
+      slug: searchTypes.replace(searchRegExp, replaceWith),
       ...data,
     });
 };
@@ -156,7 +159,7 @@ export const getRunner = (pathwayId, runnerId, resolve, reject) => {
 };
 
 export const getRunners = (pathwayId, resolve, reject) => {
-  firestoreClient
+  return firestoreClient
     .collection("runners")
     .where("pathwayId", "==", pathwayId)
     .orderBy("level")
@@ -164,17 +167,17 @@ export const getRunners = (pathwayId, resolve, reject) => {
     .then((querySnapshot) => {
       const list = [];
       querySnapshot.forEach((doc) => {
+        const data = doc.data();
         list.push({
           id: doc.id,
-          level: doc.data().level,
-          name: doc.data().name,
-          description: doc.data().description,
+          ...data
         });
       });
-      resolve({list});
+      if(resolve) resolve({list});
+      return list;
     })
     .catch((error) => {
       console.log("Error getting documents: ", error);
-      reject();
+      if(reject) reject();
     });
 }

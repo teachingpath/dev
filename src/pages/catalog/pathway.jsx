@@ -8,12 +8,9 @@ import {
   RichList,
   Widget1,
   Widget2,
-  Progress,
+  Card,
 } from "@panely/components";
-import {
-  firestoreClient,
-  firebaseClient,
-} from "components/firebase/firebaseClient";
+import { firestoreClient } from "components/firebase/firebaseClient";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -24,14 +21,19 @@ import { connect } from "react-redux";
 import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
-import Button from "@panely/components/Button";
-import uuid from "components/helpers/uuid";
 import Spinner from "@panely/components/Spinner";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import Badge from "@panely/components/Badge";
-import { timeConvert, timePowerTen, timeShortPowerTen } from "components/helpers/time";
+import {
+  timeConvert,
+  timePowerTen,
+  timeShortPowerTen,
+} from "components/helpers/time";
+import { getRunners } from "consumer/runner";
+import { getTracks } from "consumer/track";
+import StartPathway from "components/widgets/StartPathway";
 
 class PathwayPage extends React.Component {
   constructor(props) {
@@ -69,13 +71,12 @@ class PathwayPage extends React.Component {
   }
 
   render() {
-    const { name, id } = this.state;
-
+    const { name, id, leaderId } = this.state;
     return (
       <Widget1>
         <Widget1.Display top size="lg" className="bg-dark text-white">
           {id && (
-            <Status
+            <StartPathway
               pathwayId={id}
               {...this.state}
               activityChange={this.props.activityChange}
@@ -99,188 +100,24 @@ class PathwayPage extends React.Component {
           </Widget1.Offset>
         </Widget1.Display>
         <Widget1.Body className="pt-5">
-          <br></br>
-          <h3>Runners</h3>
-          {id && <RunnerTab ref={this.runnersRef} pathwayId={this.state.id} />}
+          <Portlet className="mt-4">
+            <Portlet.Header>
+              <Portlet.Icon>
+                <FontAwesomeIcon icon={SolidIcon.faRoute} />
+              </Portlet.Icon>
+              <Portlet.Title>Runners</Portlet.Title>
+            </Portlet.Header>
+            <Portlet.Body>
+              {id && (
+                <RunnerTab ref={this.runnersRef} pathwayId={this.state.id} />
+              )}
+            </Portlet.Body>
+            <Portlet.Footer>
+              <Col md="6">{leaderId && <Teacher leaderId={leaderId} />}</Col>
+            </Portlet.Footer>
+          </Portlet>
         </Widget1.Body>
       </Widget1>
-    );
-  }
-}
-
-class Status extends React.Component {
-  state = {
-    journeyId: null,
-    loading: null,
-  };
-  componentDidMount() {
-    const { pathwayId } = this.props;
-    const user = firebaseClient.auth().currentUser;
-    if (user) {
-      firestoreClient
-        .collection("journeys")
-        .where("userId", "==", user.uid)
-        .where("pathwayId", "==", pathwayId)
-        .limit(1)
-        .get()
-        .then((querySnapshot) => {
-          if (!querySnapshot.empty) {
-            const queryDocumentSnapshot = querySnapshot.docs[0];
-            this.setState({
-              journeyId: queryDocumentSnapshot.id,
-              ...queryDocumentSnapshot.data(),
-            });
-          } else {
-            console.log("No such journeys!");
-          }
-        })
-        .catch((error) => {
-          console.log("Error getting journeys: ", error);
-        });
-    }
-  }
-
-  onCreateJourney(pathwayId, journeyId, trophy, name) {
-    const user = firebaseClient.auth().currentUser;
-    const tabs = this.props.runnersRef.current.state.tabs;
-    const breadcrumbs = this.createBreadcrumbsBy(tabs, journeyId);
-    return this.createJourney(
-      breadcrumbs,
-      journeyId,
-      name,
-      trophy,
-      pathwayId,
-      user
-    );
-  }
-
-  createJourney(breadcrumbs, journeyId, name, trophy, pathwayId, user) {
-    return Promise.all(breadcrumbs).then((dataResolved) => {
-      return firestoreClient
-        .collection("journeys")
-        .doc(journeyId)
-        .set({
-          name: name,
-          trophy: trophy,
-          progress: 1,
-          pathwayId: pathwayId,
-          userId: user.uid,
-          user: {
-            email: user.email,
-            displayName: user.displayName,
-          },
-          date: new Date(),
-          current: 0,
-          breadcrumbs: dataResolved,
-        })
-        .then((doc) => {
-          this.props.activityChange({
-            type: "start_pathway",
-            msn: 'Start pathway "' + name + '".',
-          });
-          Router.push({
-            pathname: "/catalog/journey",
-            query: {
-              id: journeyId,
-            },
-          });
-        })
-        .catch((error) => {
-          console.error("Error adding document: ", error);
-        });
-    });
-  }
-
-  createBreadcrumbsBy(tabs, journeyId) {
-    const breadcrumbs = tabs.map(async (data, runnerIndex) => {
-      const quiz = await this.getQuizFromRunner(data);
-      await this.saveJourneyForBadget(journeyId, data);
-
-      return {
-        id: data.id,
-        name: data.title,
-        description: data.subtitle,
-        feedback: data.feedback,
-        current: runnerIndex === 0 ? 0 : null,
-        quiz: quiz,
-        tracks: data.data.map((item, trackIndex) => {
-          return {
-            ...item,
-            timeLimit: item.time,
-            time: item.time * 10 * 60000,
-            status: runnerIndex === 0 && trackIndex === 0 ? "process" : "wait",
-          };
-        }),
-      };
-    });
-    return breadcrumbs;
-  }
-
-  async saveJourneyForBadget(journeyId, data) {
-    await firestoreClient
-      .collection("journeys")
-      .doc(journeyId)
-      .collection("badgets")
-      .doc(data.id)
-      .set({
-        ...data.badget,
-        disabled: true,
-      });
-  }
-
-  async getQuizFromRunner(data) {
-    const quiz = await firestoreClient
-      .collection("runners")
-      .doc(data.id)
-      .collection("questions")
-      .get()
-      .then((querySnapshot) => {
-        const questions = [];
-        querySnapshot.forEach((doc) => {
-          questions.push({
-            id: doc.id,
-            ...doc.data(),
-          });
-        });
-        return questions;
-      });
-    return quiz;
-  }
-
-  render() {
-    const user = firebaseClient.auth().currentUser;
-    const { pathwayId, trophy, name } = this.props;
-    const { loading } = this.state;
-    const journeyId = uuid();
-    const Start = () => {
-      return (
-        <Button
-          className="w-25"
-          disabled={loading}
-          onClick={() => {
-            this.setState({
-              ...this.state,
-              loading: true,
-            });
-            this.onCreateJourney(pathwayId, journeyId, trophy, name);
-          }}
-        >
-          {loading && <Spinner className="mr-2" />} Start Pathway
-        </Button>
-      );
-    };
-
-    if (!user) {
-      return <Login />;
-    }
-
-    return this.state.journeyId ? (
-      <StatusProgress
-        progress={this.state.progress.toFixed(2)}
-        journeyId={this.state.journeyId}
-      />
-    ) : (
-      <Start />
     );
   }
 }
@@ -303,54 +140,42 @@ class RunnerTab extends React.Component {
   };
 
   componentDidMount() {
-    const db = firestoreClient.collection("runners");
-    db.where("pathwayId", "==", this.props.pathwayId)
-      .orderBy("level")
-      .get()
-      .then((querySnapshot) => {
-        const list = this.state.tabs;
-        querySnapshot.forEach(async (doc) => {
-          const data = await db
-            .doc(doc.id)
-            .collection("tracks")
-            .orderBy("level")
-            .get()
-            .then((querySnapshot) => {
-              const list = [];
-              querySnapshot.forEach((doc) => {
-                list.push({
-                  id: doc.id,
-                  title: doc.data().name,
-                  subtitle: doc.data().description,
-                  time: doc.data().timeLimit,
-                  type: doc.data().type,
-                });
-              });
-              return list;
-            });
+    const list = this.state.tabs;
+    getRunners(
+      this.props.pathwayId,
+      async (runners) => {
+        runners.list.forEach(async (runner) => {
+          const tracks = await getTracks(runner.id);
+          const listMapped = tracks.map((doc) => ({
+            id: doc.id,
+            title: doc.name,
+            subtitle: doc.description,
+            time: doc.timeLimit,
+            type: doc.type,
+          }));
 
           list.push({
-            id: doc.id,
+            id: runner.id,
             pathwayId: this.props.pathwayId,
-            title: doc.data().name,
-            subtitle: doc.data().description,
-            feedback: doc.data().feedback,
-            badget: doc.data().badget,
-            data: data,
+            title: runner.name,
+            subtitle: runner.description,
+            feedback: runner.feedback,
+            badget: runner.badget,
+            data: listMapped,
           });
-          const estimation = data
+          const estimation = listMapped
             .map((el) => el.time)
             .reduce((a, b) => a + b, 0);
+
           this.setState({
             ...this.state,
             tabs: list,
             estimation: this.state.estimation + estimation,
           });
         });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
+      },
+      () => {}
+    );
   }
 
   render() {
@@ -451,53 +276,48 @@ class PathwayGeneralPage extends React.Component {
   }
 }
 
-const StatusProgress = ({ progress, journeyId }) => {
-  return (
-    <Widget1.Group>
-      <Widget1.Title>
-        <h4>Progress</h4>
-        <Progress striped variant="dark" value={progress} className="mr-5 w-50">
-          {progress}%
-        </Progress>
-      </Widget1.Title>
-      <Widget1.Addon>
-        <Button
-          onClick={() => {
-            Router.push({
-              pathname: "/catalog/journey",
-              query: {
-                id: journeyId,
-              },
-            });
-          }}
-        >
-          Go to journey
-        </Button>
-        {/* BEGIN Dropdown */}
-
-        {/* END Dropdown */}
-      </Widget1.Addon>
-    </Widget1.Group>
-  );
-};
-
-const Login = () => {
-  return (
-    <Button
-      className="w-25"
-      onClick={() => {
-        Router.push({
-          pathname: "/login",
-          query: {
-            redirect: window.location.href,
-          },
-        });
-      }}
-    >
-      Start Pathway
-    </Button>
-  );
-};
+class Teacher extends React.Component {
+  state = { data: {} };
+  componentDidMount() {
+    firestoreClient
+      .collection("users")
+      .doc(this.props.leaderId)
+      .get()
+      .then((doc) => {
+        this.setState({ data: doc.data() });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+  }
+  render() {
+    const { data } = this.state;
+    return (
+      <Card>
+        <Row noGutters>
+          <Col md="4">
+            <Card.Img
+              className="avatar-circle p-3"
+              src={data?.image || "/images/avatar/blank.webp"}
+              alt="Profile Image"
+            />
+          </Col>
+          <Col md="8">
+            <Card.Body>
+              <Card.Title>
+                Coach: {data?.firstName} {data?.lastName}
+              </Card.Title>
+              <Card.Text>
+                <small className="text-muted">{data?.specialty}</small>
+              </Card.Text>
+              <Card.Text>{data?.bio}</Card.Text>
+            </Card.Body>
+          </Col>
+        </Row>
+      </Card>
+    );
+  }
+}
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(

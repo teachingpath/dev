@@ -1,5 +1,4 @@
 import {
-  Badge,
   Button,
   Avatar,
   GridNav,
@@ -34,9 +33,13 @@ const swal = ReactSwal.mixin({
 
 class HeaderUser extends React.Component {
   state = {
-    avatar: () => (
+    avatar: ({ image }) => (
       <Avatar variant="label-light" display circle>
-        <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
+        {image ? (
+          <img src={image} alt="profile image" />
+        ) : (
+          <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
+        )}
       </Avatar>
     ),
     navs: [
@@ -44,8 +47,9 @@ class HeaderUser extends React.Component {
         {
           icon: () => <FontAwesomeIcon icon={RegularIcon.faAddressCard} />,
           title: "Profile",
+          link: "/profile",
         },
-        
+
         {
           icon: () => <FontAwesomeIcon icon={RegularIcon.faClone} />,
           title: "Activities",
@@ -102,10 +106,13 @@ class HeaderUser extends React.Component {
                 {/* BEGIN Rich List */}
                 <RichList.Item className="w-100 p-0">
                   <RichList.Addon addonType="prepend">
-                    <WidgetAvatar />
+                    <WidgetAvatar image={this.props.user?.image}/>
                   </RichList.Addon>
                   <RichList.Content>
-                    <RichList.Title className="text-white" children={"Hi, "+this.props.user.firstName} />
+                    <RichList.Title
+                      className="text-white"
+                      children={"Hi, " + this.props.user.firstName}
+                    />
                     <RichList.Subtitle
                       className="text-white"
                       children={this.props.user.email}
@@ -120,11 +127,16 @@ class HeaderUser extends React.Component {
                   {navs.map((nav, index) => (
                     <GridNav.Row key={index}>
                       {nav.map((data, index) => {
-                        const { icon: Icon, title } = data;
+                        const { icon: Icon, title, link } = data;
 
                         return (
                           <GridNav.Item
                             key={index}
+                            onClick={() => {
+                              if (link) {
+                                Router.push(link);
+                              }
+                            }}
                             icon={<Icon />}
                             children={title}
                           />

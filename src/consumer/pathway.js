@@ -3,8 +3,12 @@ import {
   firebaseClient,
 } from "components/firebase/firebaseClient";
 import uuid from "components/helpers/uuid";
+import { getRunners } from "./runner";
+import { getTracks } from "./track";
 
 export const create = (data) => {
+  const searchRegExp = /\s/g;
+  const replaceWith = "-";
   const pathwayId = uuid();
   const user = firebaseClient.auth().currentUser;
   const tags = data.tags.split(",").map((item) => {
@@ -17,11 +21,22 @@ export const create = (data) => {
     .set({
       ...data,
       name: data.name,
+      slug: data?.name.toLowerCase().replace(searchRegExp, replaceWith),
       searchTypes: searchTypes,
       tags: tags,
       draft: true,
       leaderId: user.uid,
       date: new Date(),
+    });
+};
+
+export const deletePathway = (pathwayId) => {
+  return firestoreClient
+    .collection("pathways")
+    .doc(pathwayId)
+    .delete()
+    .catch((error) => {
+      console.error("Error removing document: ", error);
     });
 };
 
@@ -56,11 +71,28 @@ export const updateTrophy = (pathwayId, data) => {
     });
 };
 
+export const updateGroup = (pathwayId, data) => {
+  const searchRegExp = /\s/g;
+  const replaceWith = "-";
+  return firestoreClient
+    .collection("pathways")
+    .doc(pathwayId)
+    .update({
+      groups: data.map((item) => ({
+        name: item?.name,
+        slug: item?.name.toLowerCase().replace(searchRegExp, replaceWith),
+        isPrivate: item?.isPrivate === true,
+        id: item?.id,
+      })),
+    });
+};
+
 export const updateToDraft = (pathwayId) => {
   return firestoreClient.collection("pathways").doc(pathwayId).update({
     draft: true,
   });
 };
+
 export const get = (id, resolve, reject) => {
   firestoreClient
     .collection("pathways")
@@ -83,3 +115,91 @@ export const get = (id, resolve, reject) => {
       reject();
     });
 };
+
+export const getMyPathways = (resolve, reject) => {
+  const user = firebaseClient.auth().currentUser;
+
+  firestoreClient
+    .collection("pathways")
+    .where("leaderId", "==", user.uid)
+    .get()
+    .then((querySnapshot) => {
+      const list = [];
+      querySnapshot.forEach((doc) => {
+        list.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+      resolve({ data: list });
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+      reject();
+    });
+};
+
+
+
+export const publishPathway = (pathwayId, resolve, reject) => {
+  firestoreClient
+    .collection("pathways")
+    .doc(pathwayId)
+    .get()
+    .then(async (doc) => {
+      await publishPathwayFor(doc, pathwayId, resolve, reject);
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+    });
+};
+
+async function publishPathwayFor(doc, pathwayId, resolve, reject) {
+  if (doc.exists) {
+    const data = doc.data();
+
+    if (!Object.keys(data.trophy || {}).length) {
+      reject("The pathway requires a trophy to publish it.");
+      return;
+    }
+
+    const runners = await getRunners(pathwayId);
+    for (const key in runners) {
+      if (!Object.keys(runners[key].badget || {}).length) {
+        console.log(runners[key]);
+        reject(
+          'The runner "' +
+            runners[key].name +
+            '" requires a badget to publish this pathway.'
+        );
+        return;
+      }
+
+      const tracks = await getTracks(runners[key].id);
+      if (tracks.length < 2) {
+        reject(
+          'The runner "' +
+            runners[key].name +
+            '" requires a minimum of 3 tracks to be able to publish the pathway.'
+        );
+        return;
+      }
+    }
+    onPublish(pathwayId, data, resolve);
+  } else {
+    console.log("No such document!");
+  }
+}
+
+function onPublish(pathwayId, data, resolve) {
+  firestoreClient
+    .collection("pathways")
+    .doc(pathwayId)
+    .update({ draft: false })
+    .then(() => {
+      resolve(data);
+    })
+    .catch((error) => {
+      console.error("Error removing document: ", error);
+    });
+}

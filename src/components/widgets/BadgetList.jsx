@@ -1,6 +1,9 @@
-import { Card } from "@panely/components";
-import CardColumns from "@panely/components/CardColumns";
+import Carousel from "@panely/slick";
+import { CarouselItem } from "@panely/components";
 import { getBadges, getBadgesByUser } from "consumer/journey";
+import Portlet from "@panely/components/Portlet";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
 class BadgetListComponent extends React.Component {
   constructor(props) {
@@ -12,7 +15,16 @@ class BadgetListComponent extends React.Component {
       getBadges(
         this.props.journeyId,
         (data) => {
-          this.setState(data);
+          const list = data.data.sort((a, b) => {
+            if (a.disabled) {
+              return 1;
+            }
+            if (b.disabled) {
+              return -1;
+            }
+            return 0;
+          });
+          this.setState({ data: list });
         },
         () => {}
       );
@@ -32,49 +44,48 @@ class BadgetListComponent extends React.Component {
     ).length;
 
     return (
-      <div>
-        <h4>
-          Insignia ({inComplete}/{tolta})
-        </h4>
-        {this.state.data.length === 0 && (
-          <p className="text-center text-muted">Empty badgets</p>
-        )}
+      <Portlet className="mt-4">
+        <Portlet.Header>
+          <Portlet.Icon>
+            <FontAwesomeIcon icon={SolidIcon.faTrophy} />
+          </Portlet.Icon>
+          <Portlet.Title>
+            Insignia ({inComplete}/{tolta})
+          </Portlet.Title>
+        </Portlet.Header>
+        <Portlet.Body>
+          <div className="mt-4">
+            {this.state.data.length === 0 && (
+              <p className="text-center text-muted">Empty badges</p>
+            )}
 
-        <CardColumns columns={5}>
-          {this.state.data.map((data) => {
-            if (data.disabled) {
-              return (
-                <Card className="text-center bg-light p-3">
-                  <Card.Img
-                    top
-                    className="bg-white mg-thumbnail avatar-circle p-3 border border-warning"
-                    src={data.image}
-                    alt="Badget Image"
-                  />
-                  <Card.Body>
-                    <Card.Text>Not available</Card.Text>
-                  </Card.Body>
-                </Card>
-              );
-            } else {
-              return (
-                <Card className="text-center p-3">
-                  <Card.Img
-                    top
-                    className="bg-yellow mg-thumbnail avatar-circle p-3 border border-success"
-                    src={data.image}
-                    title={data.description}
-                    alt="Badget Image"
-                  />
-                  <Card.Body>
-                    <Card.Text>{data.name}</Card.Text>
-                  </Card.Body>
-                </Card>
-              );
-            }
-          })}
-        </CardColumns>
-      </div>
+            {this.state.data.length !== 0 && (
+              <Carousel slidesToShow={3} slidesToScroll={2}>
+                {this.state.data.map((data) => {
+                  return (
+                    <CarouselItem>
+                      {/* BEGIN Card */}
+                      <center>
+                        <img
+                          className={
+                            data.disabled
+                              ? "bg-white mg-thumbnail avatar-circle p-3 border border-warning"
+                              : "bg-yellow mg-thumbnail avatar-circle p-3 border border-success"
+                          }
+                          src={data.image}
+                          alt="Card Image"
+                        />
+                        <p>{data.disabled ? "Not available" : data.name}</p>
+                      </center>
+                      {/* END Card */}
+                    </CarouselItem>
+                  );
+                })}
+              </Carousel>
+            )}
+          </div>
+        </Portlet.Body>
+      </Portlet>
     );
   }
 }

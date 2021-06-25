@@ -1,0 +1,367 @@
+import { Widget1, Progress } from "@panely/components";
+import {
+  firestoreClient,
+  firebaseClient,
+} from "components/firebase/firebaseClient";
+import Router from "next/router";
+import Button from "@panely/components/Button";
+import uuid from "components/helpers/uuid";
+import Spinner from "@panely/components/Spinner";
+import React from "react";
+import swalContent from "sweetalert2-react-content";
+import Swal from "@panely/sweetalert2";
+import Modal from "@panely/components/Modal";
+import RichList from "@panely/components/RichList";
+const ReactSwal = swalContent(Swal);
+
+const swal = ReactSwal.mixin({
+  customClass: {
+    confirmButton: "btn btn-label-success btn-wide mx-1",
+    cancelButton: "btn btn-label-danger btn-wide mx-1",
+  },
+  buttonsStyling: false,
+});
+
+class StartPathway extends React.Component {
+  state = {
+    journeyId: null,
+    loading: null,
+  };
+  componentDidMount() {
+    const { pathwayId } = this.props;
+    const user = firebaseClient.auth().currentUser;
+    if (user) {
+      firestoreClient
+        .collection("journeys")
+        .where("userId", "==", user.uid)
+        .where("pathwayId", "==", pathwayId)
+        .limit(1)
+        .get()
+        .then((querySnapshot) => {
+          if (!querySnapshot.empty) {
+            const queryDocumentSnapshot = querySnapshot.docs[0];
+            this.setState({
+              journeyId: queryDocumentSnapshot.id,
+              ...queryDocumentSnapshot.data(),
+            });
+          } else {
+            console.log("No such journeys!");
+          }
+        })
+        .catch((error) => {
+          console.log("Error getting journeys: ", error);
+        });
+    }
+  }
+
+  onCreateJourney(leaderId, pathwayId, journeyId, trophy, name, group) {
+    const user = firebaseClient.auth().currentUser;
+    const tabs = this.props.runnersRef.current.state.tabs;
+    const breadcrumbs = this.createBreadcrumbsBy(tabs, journeyId);
+    return this.createJourney(
+      leaderId,
+      group,
+      breadcrumbs,
+      journeyId,
+      name,
+      trophy,
+      pathwayId,
+      user
+    );
+  }
+
+  createJourney(leaderId, group, breadcrumbs, journeyId, name, trophy, pathwayId, user) {
+    return Promise.all(breadcrumbs).then((dataResolved) => {
+      return firestoreClient
+        .collection("journeys")
+        .doc(journeyId)
+        .set({
+          leaderId: leaderId,
+          group: group,
+          name: name,
+          trophy: trophy,
+          progress: 1,
+          pathwayId: pathwayId,
+          userId: user.uid,
+          user: {
+            email: user.email,
+            displayName: user.displayName,
+          },
+          date: new Date(),
+          current: 0,
+          breadcrumbs: dataResolved,
+        })
+        .then((doc) => {
+          this.props.activityChange({
+            type: "start_pathway",
+            msn: 'Start pathway "' + name + '".',
+            msnForGroup:
+              "<i>" +
+              user.displayName +
+              '</i> starts the pathway "<b>' +
+              name +
+              '</b>".',
+            group,
+          });
+          Router.push({
+            pathname: "/catalog/journey",
+            query: {
+              id: journeyId,
+            },
+          });
+        })
+        .catch((error) => {
+          console.error("Error adding document: ", error);
+        });
+    });
+  }
+
+  createBreadcrumbsBy(tabs, journeyId) {
+    const breadcrumbs = tabs.map(async (data, runnerIndex) => {
+      const quiz = await this.getQuizFromRunner(data);
+      await this.saveJourneyForBadget(journeyId, data);
+
+      return {
+        id: data.id,
+        name: data.title,
+        description: data.subtitle,
+        feedback: data.feedback,
+        current: runnerIndex === 0 ? 0 : null,
+        quiz: quiz,
+        tracks: data.data.map((item, trackIndex) => {
+          return {
+            ...item,
+            timeLimit: item.time,
+            time: item.time * 10 * 60000,
+            status: runnerIndex === 0 && trackIndex === 0 ? "process" : "wait",
+          };
+        }),
+      };
+    });
+    return breadcrumbs;
+  }
+
+  async saveJourneyForBadget(journeyId, data) {
+    await firestoreClient
+      .collection("journeys")
+      .doc(journeyId)
+      .collection("badgets")
+      .doc(data.id)
+      .set({
+        ...data.badget,
+        disabled: true,
+      });
+  }
+
+  async getQuizFromRunner(data) {
+    const quiz = await firestoreClient
+      .collection("runners")
+      .doc(data.id)
+      .collection("questions")
+      .get()
+      .then((querySnapshot) => {
+        const questions = [];
+        querySnapshot.forEach((doc) => {
+          questions.push({
+            id: doc.id,
+            ...doc.data(),
+          });
+        });
+        return questions;
+      });
+    return quiz;
+  }
+
+  render() {
+    const user = firebaseClient.auth().currentUser;
+    const { pathwayId, trophy, name, leaderId } = this.props;
+    const { loading } = this.state;
+    const journeyId = uuid();
+
+    if (!user) {
+      return <Login />;
+    }
+
+    return this.state.journeyId ? (
+      <StatusProgress
+        progress={this.state.progress.toFixed(2)}
+        journeyId={this.state.journeyId}
+      />
+    ) : (
+      <StartPathwayButton
+        loading={loading}
+        pathwayId={pathwayId}
+        onStart={(group) => {
+          this.setState({
+            ...this.state,
+            loading: true,
+          });
+          this.onCreateJourney(
+            leaderId,
+            pathwayId,
+            journeyId,
+            trophy,
+            name,
+            group
+          );
+        }}
+      />
+    );
+  }
+}
+
+const StatusProgress = ({ progress, journeyId }) => {
+  return (
+    <Widget1.Group>
+      <Widget1.Title>
+        <h4>Progress</h4>
+        <Progress striped variant="dark" value={progress} className="mr-5 w-50">
+          {progress}%
+        </Progress>
+      </Widget1.Title>
+      <Widget1.Addon>
+        <Button
+          onClick={() => {
+            Router.push({
+              pathname: "/catalog/journey",
+              query: {
+                id: journeyId,
+              },
+            });
+          }}
+        >
+          Go to journey
+        </Button>
+      </Widget1.Addon>
+    </Widget1.Group>
+  );
+};
+
+const Login = () => {
+  return (
+    <Button
+      className="w-25"
+      onClick={() => {
+        Router.push({
+          pathname: "/login",
+          query: {
+            redirect: window.location.href,
+          },
+        });
+      }}
+    >
+      Start Pathway
+    </Button>
+  );
+};
+
+class StartPathwayButton extends React.Component {
+  // Default state
+  state = { isOpen: false, data: [] };
+
+  // Handle modal toggle event
+  toggle = () => this.setState({ isOpen: !this.state.isOpen });
+
+  componentDidMount() {
+    firestoreClient
+      .collection("pathways")
+      .doc(this.props.pathwayId)
+      .get()
+      .then((doc) => {
+        const groups = doc.data()?.groups || [];
+        this.setState({ ...this.state, data: groups });
+      });
+  }
+
+  onSubmitPathwayGroup = () => {
+    swal
+      .fire({
+        title: "Submit your pathway group",
+        input: "text",
+        inputAttributes: {
+          autocapitalize: "off",
+        },
+        showCancelButton: true,
+        confirmButtonText: "Look up",
+        showLoaderOnConfirm: true,
+        preConfirm: (group) => {
+          return Promise.resolve({
+            groups: this.state.data,
+            group: this.state.data.filter(
+              (g) => g.name === group || g.slug === group
+            ),
+            status: this.state.data.some(
+              (g) => g.name === group || g.slug === group
+            ),
+          });
+        },
+        allowOutsideClick: () => !swal.isLoading(),
+      })
+      .then((result) => {
+        if (result.value && result.value.status) {
+          this.props.onStart(result.value.group[0].slug);
+        } else {
+          swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "The group does not exist for this pathway",
+          });
+        }
+      });
+  };
+
+  render() {
+    return (
+      <>
+        <Button onClick={this.toggle}>Start Pathway</Button>
+        {/* BEGIN Modal */}
+        <Modal isOpen={this.state.isOpen} toggle={this.toggle}>
+          <Modal.Header toggle={this.toggle}>Select Group</Modal.Header>
+          <Modal.Body>
+            <p className="mb-0">
+              Select a group to work the pathway as a group
+            </p>
+            <RichList bordered action>
+              {this.state.data === null && <Spinner className="mr-2" />}
+              {this.props.loading && <Spinner className="mr-2" />}
+              {this.state.data && this.state.data.length === 0 && (
+                <p className="text-center">Empty groups</p>
+              )}
+              {this.state.data
+                .filter((item) => item.isPrivate !== true)
+                .map((data, index) => {
+                  const { name, slug } = data;
+                  return (
+                    <RichList.Item key={index}>
+                      <RichList.Content
+                        onClick={() => {
+                          this.props.onStart(slug);
+                        }}
+                      >
+                        <RichList.Title children={name.toUpperCase()} />
+                      </RichList.Content>
+                    </RichList.Item>
+                  );
+                })}
+            </RichList>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button
+              variant="primary"
+              className="mr-2"
+              onClick={this.onSubmitPathwayGroup}
+            >
+              Enter private group
+            </Button>
+            <Button variant="outline-danger" onClick={this.toggle}>
+              Cancel
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        {/* END Modal */}
+      </>
+    );
+  }
+}
+
+export default StartPathway;

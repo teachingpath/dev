@@ -10,7 +10,10 @@ import {
   Row,
   Widget1,
 } from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
+import {
+  firestoreClient,
+  firebaseClient,
+} from "components/firebase/firebaseClient";
 import {
   activityChange,
   breadcrumbChange,
@@ -32,6 +35,7 @@ import React from "react";
 import Badge from "@panely/components/Badge";
 import Link from "next/link";
 import { timeShortPowerTen, timePowerTen } from "components/helpers/time";
+import ActivitiesComponent from "components/widgets/ActivitiesGroup";
 
 class JourneyGeneralPage extends React.Component {
   state = { name: "Loading", trophy: {}, progress: 0, badgets: [] };
@@ -73,7 +77,8 @@ class JourneyGeneralPage extends React.Component {
   }
 
   render() {
-    const { name, trophy, progress } = this.state;
+    const { name, trophy, progress, group } = this.state;
+    const user = firebaseClient.auth().currentUser;
     const isFinish = progress >= 100;
     return (
       <React.Fragment>
@@ -108,6 +113,9 @@ class JourneyGeneralPage extends React.Component {
                         className="display-5"
                         children={name?.toUpperCase()}
                       />
+                      <h5>
+                        Your Group: <Badge>{group}</Badge>
+                      </h5>
                     </Widget1.DialogContent>
                   </Widget1.Dialog>
                   {Object.keys(trophy).length > 0 && (
@@ -145,8 +153,14 @@ class JourneyGeneralPage extends React.Component {
                           onComplete={(data) => {
                             this.props.activityChange({
                               type: "complete_track",
-                              msn: 'Track "' + data.name + '" completed.',
-                              ...data,
+                              msn: 'Track "' + data.title + '" completed.',
+                              msnForGroup:
+                                "<i>" +
+                                user.displayName +
+                                '</i> has completed track <b>"' +
+                                data.title +
+                                '"</b>',
+                              group: group,
                             });
                             this.componentDidMount();
                           }}
@@ -155,7 +169,17 @@ class JourneyGeneralPage extends React.Component {
                     </Col>
                     <Col md="6">
                       {this.state?.id && (
+                        <ActivitiesComponent group={this.state?.group} />
+                      )}
+                    </Col>
+                    <Col md="12">
+                      {this.state?.id && (
                         <BadgetList journeyId={this.state?.id} />
+                      )}
+                    </Col>
+                    <Col md="6">
+                      {this.state?.id && (
+                        <Teacher leaderId={this.state?.leaderId} />
                       )}
                     </Col>
                   </Row>
@@ -165,6 +189,49 @@ class JourneyGeneralPage extends React.Component {
           </Row>
         </Container>
       </React.Fragment>
+    );
+  }
+}
+
+class Teacher extends React.Component {
+  state = { data: {} };
+  componentDidMount() {
+    firestoreClient
+      .collection("users")
+      .doc(this.props.leaderId)
+      .get()
+      .then((doc) => {
+        this.setState({ data: doc.data() });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+  }
+  render() {
+    const { data } = this.state;
+    return (
+      <Card>
+        <Row noGutters>
+          <Col md="4">
+            <Card.Img
+              className="avatar-circle p-3"
+              src={data?.image || "/images/avatar/blank.webp"}
+              alt="Profile Image"
+            />
+          </Col>
+          <Col md="8">
+            <Card.Body>
+              <Card.Title>
+                Coach: {data?.firstName} {data?.lastName}
+              </Card.Title>
+              <Card.Text>
+                <small className="text-muted">{data?.specialty}</small>
+              </Card.Text>
+              <Card.Text>{data?.bio}</Card.Text>
+            </Card.Body>
+          </Col>
+        </Row>
+      </Card>
     );
   }
 }
@@ -189,13 +256,12 @@ class Runners extends React.Component {
     return (
       <Accordion {...this.props}>
         {runners.map((item, index) => {
-
           const totalTime = item.tracks
             ?.filter((t) => t.status !== null)
             ?.filter((t) => t.status !== "finish")
             ?.map((t) => t.timeLimit)
             .reduce((a, b) => a + b, 0);
-          const progress = (index + 1)+"/"+(runners.length);
+          const progress = index + 1 + "/" + runners.length;
           return (
             <Card key={"runnerskys" + index}>
               <Card.Header
@@ -204,19 +270,22 @@ class Runners extends React.Component {
               >
                 <Card.Title>{item.name.toUpperCase()}</Card.Title>
                 {totalTime > 0 ? (
-                  <Portlet.Addon>Time limit: <strong>
-                    {timeShortPowerTen(totalTime)} + Quiz
-                    </strong></Portlet.Addon>
+                  <Portlet.Addon>
+                    Time limit:{" "}
+                    <strong>{timeShortPowerTen(totalTime)} + Quiz</strong>
+                  </Portlet.Addon>
                 ) : (
-                  <Portlet.Addon><strong>Finished</strong></Portlet.Addon>
+                  <Portlet.Addon>
+                    <strong>Finished</strong>
+                  </Portlet.Addon>
                 )}
               </Card.Header>
               <Collapse isOpen={activeCard === index}>
                 <Card.Body>{item.description}</Card.Body>
                 <Card.Body>
                   <Tracks
-                    onComplete={() => {
-                      onComplete(item);
+                    onComplete={(track) => {
+                      onComplete(track);
                     }}
                     pathwayId={pathwayId}
                     runnerIndex={index}
@@ -264,8 +333,8 @@ class Tracks extends React.Component {
               id: item.id,
               runnerId,
               journeyId,
-              pathwayId
-            }
+              pathwayId,
+            },
           };
           return (
             <Steps.Step
@@ -275,13 +344,13 @@ class Tracks extends React.Component {
               title={
                 <>
                   {(item.status === "process" || item.status === "wait") && (
-                    <Badge className="mr-2">{timeShortPowerTen(item.timeLimit)}</Badge>
+                    <Badge className="mr-2">
+                      {timeShortPowerTen(item.timeLimit)}
+                    </Badge>
                   )}
                   <Badge className="mr-2">{item.type}</Badge>
                   {item.status !== "wait" && item.status !== "process" ? (
-                    <Link href={extarnalLink}  >
-                      {item.title}
-                    </Link>
+                    <Link href={extarnalLink}>{item.title}</Link>
                   ) : (
                     item.title
                   )}
@@ -302,7 +371,9 @@ class Tracks extends React.Component {
                       extarnalLink={extarnalLink}
                       isRunning={item.isRunning || false}
                       runners={runners}
-                      onComplete={onComplete}
+                      onComplete={() => {
+                        onComplete(item);
+                      }}
                       journeyId={journeyId}
                     />
                   )}
@@ -370,7 +441,7 @@ const StatusProgress = ({ progress, journeyId, pathwayId, runners }) => {
       <Widget1.Group>
         {!isFinish ? (
           <Widget1.Title>
-            <h4>Progress</h4>
+            <h4>My Progress</h4>
             <Progress striped value={progress} className="mr-5 w-50">
               {progress}%
             </Progress>

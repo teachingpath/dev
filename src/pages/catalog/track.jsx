@@ -6,7 +6,7 @@ import {
   Spinner,
   Button,
   DemoWrapper,
-  Avatar
+  Avatar,
 } from "@panely/components";
 import {
   pageChangeHeaderTitle,
@@ -23,13 +23,12 @@ import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
 import Aside from "components/layout/part/Aside";
-import Header from "@panely/components/Header";
 import { getTrack, getTracks } from "consumer/track";
 import { getRunners } from "consumer/runner";
 import Card from "@panely/components/Card";
 import { Widget1 } from "@panely/components";
-import Badge from "../../../docs/template/src/modules/components/Badge";
-import Marker from "@panely/components/Marker";
+import { firestoreClient } from "components/firebase/firebaseClient";
+import Link from "next/link";
 
 class TrackPage extends React.Component {
   constructor(props) {
@@ -83,42 +82,48 @@ class TrackPage extends React.Component {
 
   loadTracks() {
     const { runnerId, pathwayId, id } = Router.query;
-    getTracks(runnerId, (result) => {
-      const list = [
-        {
-          title: "Tracks",
-          section: true,
-        },
-      ];
-      result.list.forEach((data) => {
-        const level = data.level;
-        list.push({
-          title: data.name,
-          current: id === data.id,
-          icon: () => (
-            <div className="rc-steps-item rc-steps-item-process">
-              <div className="rc-steps-item-icon">
-                <span className="rc-steps-icon">{level}</span>
-              </div>
-            </div>
-          ),
-          link: {
-            pathname: "/catalog/track",
-            query: { ...Router.query, id: data.id },
+    getTracks(
+      runnerId,
+      (result) => {
+        const list = [
+          {
+            title: "Tracks",
+            section: true,
           },
+        ];
+        result.list.forEach((data) => {
+          const level = data.level;
+          list.push({
+            title: data.name,
+            current: id === data.id,
+            icon: () => (
+              <div className="rc-steps-item rc-steps-item-process">
+                <div className="rc-steps-item-icon">
+                  <span className="rc-steps-icon">{level}</span>
+                </div>
+              </div>
+            ),
+            link: {
+              pathname: "/catalog/track",
+              query: { ...Router.query, id: data.id },
+            },
+          });
         });
-      });
-      this.loadRunners(pathwayId, list);
-    }, () => { });
+        this.loadRunners(pathwayId, list);
+      },
+      () => {}
+    );
   }
 
   loadCurrentTrack() {
     const { pathwayId, runnerId, id } = Router.query;
     getTrack(pathwayId, runnerId, id, (data) => {
       this.setState({
-        ...this.state, ...data
+        ...this.state,
+        ...data,
+        pathwayId,
       });
-    })
+    });
   }
 
   loadRunners(pathwayId, trackList) {
@@ -127,7 +132,7 @@ class TrackPage extends React.Component {
       list.push({
         title: "Related Runners",
         section: true,
-      })
+      });
       result.list.forEach((data) => {
         const level = data.level;
         if (Router.query.runnerId !== data.id) {
@@ -147,9 +152,8 @@ class TrackPage extends React.Component {
             },
           });
         }
-
       });
-      this.setState({ ...this.state, trackList: list });
+      this.setState({ ...this.state, trackList: list, pathwayId });
     });
   }
 
@@ -158,7 +162,7 @@ class TrackPage extends React.Component {
       this.loadCurrentTrack();
     });
     const { asideToggle } = this.props;
-    const { trackId, runnerId, trackList } = this.state;
+    const { trackId, runnerId, trackList, pathwayId } = this.state;
     if (trackId === null || runnerId == null) {
       return <Spinner>Loading</Spinner>;
     }
@@ -171,52 +175,23 @@ class TrackPage extends React.Component {
           {trackList && <Aside menuList={trackList} />}
           <Row>
             <Col md="12">
-
               <Widget1>
-                <Widget1.Display top size="sm" className="bg-primary text-white">
-
+                <Widget1.Display
+                  top
+                  size="sm"
+                  className="bg-primary text-white"
+                >
                   <Widget1.Addon>
                     <DemoWrapper>
-                      <Button icon circle variant="flat-primary" className="mr-2" onClick={asideToggle}>
+                      <Button
+                        icon
+                        circle
+                        variant="flat-primary"
+                        className="mr-2"
+                        onClick={asideToggle}
+                      >
                         <FontAwesomeIcon icon={SolidIcon.faBars} />
                       </Button>
-
-                      <Avatar circle variant="light" className="mr-2">
-                        <Avatar.Display>
-                          <Button icon circle variant="flat-primary" >
-                            <FontAwesomeIcon icon={SolidIcon.faThumbsUp} />
-                          </Button>
-                        </Avatar.Display>
-                        <Avatar.Addon position="bottom" size={"sm"}>
-                          <Badge size={"sm"} pill variant="success">
-                            10K
-                        </Badge>
-                        </Avatar.Addon>
-                      </Avatar>
-                      <Avatar circle variant="light" className="mr-2">
-                        <Avatar.Display>
-                          <Button icon circle variant="flat-primary" >
-                            <FontAwesomeIcon icon={SolidIcon.faThumbsDown} />
-                          </Button>
-                        </Avatar.Display>
-                        <Avatar.Addon position="bottom" size={"sm"}>
-                          <Badge size={"sm"} pill variant="success">
-                            10K
-                        </Badge>
-                        </Avatar.Addon>
-                      </Avatar>
-                      <Avatar circle variant="light" className="mr-2">
-                        <Avatar.Display>
-                          <Button icon circle variant="flat-primary" >
-                            <FontAwesomeIcon icon={SolidIcon.faEye} />
-                          </Button>
-                        </Avatar.Display>
-                        <Avatar.Addon position="bottom" size={"sm"}>
-                          <Badge size={"sm"} pill variant="success">
-                            10K
-                        </Badge>
-                        </Avatar.Addon>
-                      </Avatar>
                     </DemoWrapper>
                   </Widget1.Addon>
 
@@ -224,10 +199,10 @@ class TrackPage extends React.Component {
                     <h1 className="display-3" children={this.state.name} />
                   </Widget1.Body>
                   <Widget1.Body>
-                    {this.state.description}
+                     {this.state.description}
                     <div className="text-right">
                       <small>
-                        <i >Last update: {new Date().toDateString()}</i>
+                        <i>Last update: {new Date().toDateString()}</i>
                       </small>
                     </div>
                   </Widget1.Body>
@@ -241,22 +216,62 @@ class TrackPage extends React.Component {
                 </Portlet.Body>
 
                 <Portlet.Footer>
-                  <Card>
-                    <Card.Header>
-                      Related Pathway
-                    </Card.Header>
-                    <Card.Body>
-                      <Card.Title>
-
-                      </Card.Title>
-                    </Card.Body>
-                  </Card>
+                  {pathwayId && <Pathway pathwayId={pathwayId} />}
                 </Portlet.Footer>
               </Portlet>
             </Col>
           </Row>
         </Container>
       </React.Fragment>
+    );
+  }
+}
+
+class Pathway extends React.Component {
+  state = { data: {} };
+  componentDidMount() {
+    firestoreClient
+      .collection("pathways")
+      .doc(this.props.pathwayId)
+      .get()
+      .then((doc) => {
+        this.setState({ data: doc.data() });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+      });
+  }
+  render() {
+    const { data } = this.state;
+    return (
+      <Card>
+        <Row noGutters>
+          <Col md="2">
+            <Link href={"/catalog/pathway?id=" + this.props.pathwayId}>
+              <Card.Img
+                className="avatar-circle p-3"
+                src={data?.trophy?.image}
+                alt="Card Image"
+              />
+            </Link>
+          </Col>
+          <Col md="10">
+            <Card.Body>
+              <Card.Title>
+                <a href={"/catalog/pathway?id=" + this.props.pathwayId}>
+                  {data?.name}
+                </a>
+              </Card.Title>
+              <Card.Text>{data?.description}</Card.Text>
+              <Card.Text>
+                <small className="text-muted">
+                  {data?.trophy?.description}
+                </small>
+              </Card.Text>
+            </Card.Body>
+          </Col>
+        </Row>
+      </Card>
     );
   }
 }

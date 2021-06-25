@@ -6,6 +6,8 @@ import uuid from "components/helpers/uuid";
 
 export const create = (runnerId, data) => {
   const trackId = uuid();
+  const searchRegExp = /\s/g;
+  const replaceWith = "-";
   const user = firebaseClient.auth().currentUser;
   const searchTypes = data.name.toLowerCase();
   const model = {
@@ -13,6 +15,7 @@ export const create = (runnerId, data) => {
     id: trackId,
     leaderId: user.uid,
     searchTypes,
+    slug: searchTypes.replace(searchRegExp, replaceWith),
     ...data,
   };
   return firestoreClient
@@ -66,7 +69,7 @@ export const updateTrack = (runnerId, trackId, data) => {
 
 
 export const getTracks = (runnerId, resolve, reject) => {
-  firestoreClient
+  return firestoreClient
     .collection("runners")
     .doc(runnerId)
     .collection("tracks")
@@ -79,10 +82,11 @@ export const getTracks = (runnerId, resolve, reject) => {
         data.id = doc.id;
         list.push(data);
       });
-      resolve({ list });
+      if(resolve)  resolve({ list });
+      return list;
     })
     .catch((error) => {
       console.log("Error getting documents: ", error);
-      reject();
+      if(reject) reject();
     });
 }

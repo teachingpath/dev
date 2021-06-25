@@ -12,7 +12,7 @@ import InfoSyncCarousel from "components/widgets/InfoSyncCarousel";
 import Activities from "components/widgets/Activities";
 import Pathways from "components/widgets/PathwayList";
 import Journeys from "../components/widgets/JourneyList";
-import BadgetList from "../components/widgets/BadgetList"
+import BadgetList from "../components/widgets/BadgetList";
 import InfoPanel from "components/widgets/InfoPanel";
 import Head from "next/head";
 
@@ -34,7 +34,7 @@ class DashboardPage extends React.Component {
             <>
               <Row>
                 <Col xs="12">
-                  <InfoPanel {...this.props}/>
+                  <InfoPanel {...this.props} />
                 </Col>
               </Row>
               <Row portletFill="xl">
@@ -54,12 +54,14 @@ class DashboardPage extends React.Component {
           )}
           {user?.profile === "trainee" && (
             <Row portletFill="xl">
-               <Col md="6">
-               <Journeys {...this.props}/>
-               <Activities {...this.props} />
+              <Col md="6">
+                <Journeys {...this.props} />
               </Col>
               <Col md="6">
-                <BadgetList/>
+                <Activities {...this.props} />
+              </Col>
+              <Col md="12">
+                <BadgetList />
               </Col>
             </Row>
           )}

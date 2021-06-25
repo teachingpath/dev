@@ -196,7 +196,18 @@ const PathwayAddon = ({ id }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
           >
-            Add Trophy
+            Add trophy
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              Router.push({
+                pathname: "/pathway/group",
+                query: { pathwayId: id },
+              });
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faObjectGroup} />}
+          >
+            Add group
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
