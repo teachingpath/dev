@@ -2,20 +2,20 @@ import {
   firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
+import { createSlug } from "components/helpers/mapper";
 import uuid from "components/helpers/uuid";
 
 export const create = (runnerId, data) => {
   const trackId = uuid();
-  const searchRegExp = /\s/g;
-  const replaceWith = "-";
   const user = firebaseClient.auth().currentUser;
   const searchTypes = data.name.toLowerCase();
+  
   const model = {
-    level: 1,
+    level: 100,
     id: trackId,
     leaderId: user.uid,
     searchTypes,
-    slug: searchTypes.replace(searchRegExp, replaceWith),
+    slug: createSlug(data.name),
     ...data,
   };
   return firestoreClient
@@ -64,9 +64,29 @@ export const updateTrack = (runnerId, trackId, data) => {
     .doc(trackId)
     .update({
       ...data,
+      slug: createSlug(data.name),
     });
 };
 
+export const deleteTrack = (runnerId, trackId) => {
+  return firestoreClient
+    .collection("runners")
+    .doc(runnerId)
+    .collection("tracks")
+    .doc(trackId)
+    .delete();
+};
+
+export const updateTrackLevel = (runnerId, trackId, level) => {
+  return firestoreClient
+    .collection("runners")
+    .doc(runnerId)
+    .collection("tracks")
+    .doc(trackId)
+    .update({
+      level: level,
+    });
+};
 
 export const getTracks = (runnerId, resolve, reject) => {
   return firestoreClient
@@ -82,11 +102,50 @@ export const getTracks = (runnerId, resolve, reject) => {
         data.id = doc.id;
         list.push(data);
       });
-      if(resolve)  resolve({ list });
+      if (resolve) resolve({ list });
       return list;
     })
     .catch((error) => {
       console.log("Error getting documents: ", error);
-      if(reject) reject();
+      if (reject) reject();
     });
-}
+};
+
+export const saveTrackResponse = (trackId, group, data, id = 1) => {
+  const user = firebaseClient.auth().currentUser;
+  return firestoreClient.collection("track-response").add({
+    id,
+    trackId,
+    group,
+    ...data,
+    userId: user.uid,
+    date: Date.now(),
+  });
+};
+
+export const getTracksResponses = (trackId, group, resolve, reject) => {
+  let db = firestoreClient
+    .collection("track-response")
+    .orderBy("date")
+    .where("trackId", "==", trackId);
+    
+  if (group) {
+    db = db.where("group", "==", group);
+  }
+
+  db.limit(20)
+    .get()
+    .then((querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const list = [];
+        querySnapshot.forEach((doc) => {
+          list.push(doc.data());
+        });
+        resolve({ list });
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+      reject();
+    });
+};

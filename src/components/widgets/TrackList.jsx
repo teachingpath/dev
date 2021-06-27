@@ -1,5 +1,4 @@
 import { RichList, Dropdown, Avatar } from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { ReactSortable } from "react-sortablejs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,6 +8,7 @@ import Badge from "@panely/components/Badge";
 import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
+import { getTracks, deleteTrack, updateTrackLevel } from "consumer/track";
 const ReactSwal = swalContent(Swal);
 const swal = ReactSwal.mixin({
   customClass: {
@@ -24,37 +24,25 @@ class TrackList extends React.Component {
 
     this.state = {
       data: [],
-      loaded: false
+      loaded: false,
     };
     this.onSortList = this.onSortList.bind(this);
   }
 
   componentDidMount() {
-    firestoreClient
-      .collection("runners")
-      .doc(this.props.runnerId)
-      .collection("tracks")
-      .orderBy("level")
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push({
-            id: doc.id,
-            title: doc.data().name,
-            subtitle: doc.data().description,
-            type: doc.data().type,
-          });
-        });
-        this.setState({
-          ...this.state,
-          data: list,
-          loaded: true
-        });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
+    getTracks(this.props.runnerId, (data) => {
+      this.setState({
+        ...this.state,
+        data: data.list.map((item) => ({
+          id: item.id,
+          title: item.name,
+          subtitle: item.description,
+          type: item.type,
+          typeContent: item.typeContent
+        })),
+        loaded: true,
       });
+    });
   }
 
   onDelete(trackId) {
@@ -70,36 +58,16 @@ class TrackList extends React.Component {
       })
       .then((result) => {
         if (result.value) {
-          firestoreClient
-            .collection("runners")
-            .doc(this.props.runnerId)
-            .collection("tracks")
-            .doc(trackId)
-            .delete()
-            .then(() => {
-              console.log("Document successfully deleted!");
-              this.componentDidMount();
-            })
-            .catch((error) => {
-              console.error("Error removing document: ", error);
-            });
+          deleteTrack(this.props.runnerId, trackId).then(() => {
+            this.componentDidMount();
+          });
         }
       });
   }
 
   onSortList(list) {
     list.forEach((item, level) => {
-      firestoreClient
-        .collection("runners")
-        .doc(this.props.runnerId)
-        .collection("tracks")
-        .doc(item.id)
-        .update({
-          level: level,
-        })
-        .catch((error) => {
-          console.error("Error removing document: ", error);
-        });
+      updateTrackLevel(this.props.runnerId, item.id, level);
     });
     this.setState({ data: list });
   }
@@ -120,7 +88,7 @@ class TrackList extends React.Component {
         )}
         <ReactSortable list={this.state.data} setList={this.onSortList}>
           {this.state.data.map((data, index) => {
-            const { title, subtitle, type, id } = data;
+            const { title, subtitle,typeContent, type, id } = data;
 
             return (
               <RichList.Item key={index}>
@@ -144,11 +112,12 @@ class TrackList extends React.Component {
                       });
                     }}
                   >
-                    {title}
+                    {index + 1}. {title}
                   </RichList.Title>
                   <RichList.Subtitle>{subtitle}</RichList.Subtitle>
                   <RichList.Subtitle>
                     <Badge variant="label-info">{type}</Badge>
+                    <Badge variant="label-info" className="ml-2">{typeContent}</Badge>
                   </RichList.Subtitle>
                 </RichList.Content>
                 <RichList.Addon addonType="append">

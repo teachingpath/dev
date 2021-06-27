@@ -9,16 +9,16 @@ import {
   Accordion,
   Timeline,
   Marker,
+  Row,
+  Col
 } from "@panely/components";
 import {
-  firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
-import Row from "@panely/components/Row";
-import Col from "@panely/components/Col";
+import { saveTrackResponse } from "consumer/track";
 
 function QuestionForm({ onSave }) {
   const schema = yup.object().shape({
@@ -73,10 +73,8 @@ function QuestionForm({ onSave }) {
 }
 
 class Questions extends React.Component {
-  // Default active card id
   state = { activeCard: null, list: [] };
 
-  // Handle toggling accordion
   toggle = (id) => {
     if (this.state.activeCard === id) {
       this.setState({ activeCard: null });
@@ -88,39 +86,29 @@ class Questions extends React.Component {
   componentDidMount() {
     const {
       data: { id },
+      group,
     } = this.props;
-    firestoreClient
-      .collection("track-response")
-      .orderBy("date")
-      .where("trackId", "==", id)
-      .limit(30)
-      .get()
-      .then((querySnapshot) => {
-        if (!querySnapshot.empty) {
-          const list = [];
-          querySnapshot.forEach((doc) => {
-            list.push(doc.data());
-          });
-          this.setState({
-            ...this.state,
-            list: list,
-          });
-        } else {
-          console.log("No such journeys!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting journeys: ", error);
-      });
+    getTracksResponses(
+      id,
+      group,
+      (data) => {
+        this.setState({
+          ...this.state,
+          list: data.list,
+        });
+      },
+      () => {}
+    );
   }
 
   render() {
     const { activeCard } = this.state;
     const {
       data: { questions, id },
+      group,
     } = this.props;
     const user = firebaseClient.auth().currentUser;
-
+    const trackName = this.props.data?.name;
     return (
       <Accordion>
         {questions.map((question, index) => {
@@ -137,19 +125,19 @@ class Questions extends React.Component {
                   {user && (
                     <QuestionForm
                       onSave={(data) => {
-                        const user = firebaseClient.auth().currentUser;
-                        return firestoreClient
-                          .collection("track-response")
-                          .add({
-                            id: question.id,
-                            trackId: id,
-                            ...data,
-                            userId: user.uid,
-                            date: Date.now(),
-                          })
-                          .then(() => {
+                        saveTrackResponse(id, group, data, question.id).then(
+                          () => {
+                            if (this.props.activityChange) {
+                              this.props.activityChange({
+                                type: "new_track_response",
+                                msn: 'New track response inside group "'+group+'".',
+                                msnForGroup:'New track response by <i>'+user.displayName+'</i> from question task <b>'+trackName+'</b>.',
+                                group: group,
+                              });
+                            }
                             this.componentDidMount();
-                          });
+                          }
+                        );
                       }}
                     />
                   )}

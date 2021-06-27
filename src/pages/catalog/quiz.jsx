@@ -8,10 +8,7 @@ import {
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import {
-  firestoreClient,
-  firebaseClient,
-} from "components/firebase/firebaseClient";
+import { firebaseClient } from "components/firebase/firebaseClient";
 import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
@@ -20,6 +17,8 @@ import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Label from "@panely/components/Label";
 import Spinner from "@panely/components/Spinner";
+import { loadQuiz } from "consumer/evaluation";
+import { enableBadge, getJourney, updateJourney } from "consumer/journey";
 
 class QuizPage extends React.Component {
   constructor(props) {
@@ -47,74 +46,30 @@ class QuizPage extends React.Component {
   }
 
   onLoad = ({ runnerId, id }) => {
-    firestoreClient
-      .collection("runners")
-      .doc(runnerId)
-      .collection("questions")
-      .get()
-      .then((querySnapshot) => {
-        const questions = [];
-
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          const type = data.type;
-          let correctAnswer = null;
-          const answers = data.options.map((opt) => {
-            return opt.name;
-          });
-          data.options.forEach((opt, index) => {
-            if (type === "single" && opt.isCorrect === true) {
-              correctAnswer = index + 1 + "";
-              return;
-            }
-            if (type === "multiple" && opt.isCorrect === true) {
-              if (correctAnswer === null) {
-                correctAnswer = [];
-              }
-              correctAnswer.push(index + 1);
-            }
-          });
-          questions.push({
-            question: data.question,
-            questionType: "text",
-            answerSelectionType: type,
-            answers: answers,
-            correctAnswer: correctAnswer,
-            point: "2",
-          });
-        });
+    loadQuiz(
+      runnerId,
+      id,
+      (data) => {
         this.setState({
           ...this.state,
-          questions: questions,
+          ...data,
         });
-
-        return firestoreClient.collection("journeys").doc(id).get();
-      })
-      .then((doc) => {
-        const data = doc.data();
-        if (data.progress >= 100) {
-          Router.push({
-            pathname: "/catalog/journey",
-            query: {
-              id: id,
-            },
-          });
-        } else {
-          this.setState({
-            ...this.state,
-            trophy: data.trophy,
-          });
-        }
-      });
+      },
+      () => {
+        Router.push({
+          pathname: "/catalog/journey",
+          query: {
+            id: id,
+          },
+        });
+      }
+    );
   };
 
   onFinish = ({ runnerId, id, totalPoints }) => {
-    firestoreClient
-      .collection("journeys")
-      .doc(id)
-      .get()
-      .then((doc) => {
-        const data = doc.data();
+    getJourney(
+      id,
+      (data) => {
         if (data.progress >= 100) {
           Router.push({
             pathname: "/catalog/journey",
@@ -125,7 +80,9 @@ class QuizPage extends React.Component {
         } else {
           this.processQuiz(data, runnerId, id, totalPoints);
         }
-      });
+      },
+      () => {}
+    );
   };
 
   processQuiz = (data, runnerId, id, totalPoints) => {
@@ -157,59 +114,45 @@ class QuizPage extends React.Component {
     } catch (e) {
       console.log("There are no more runners");
     }
-
-    firestoreClient
-      .collection("journeys")
-      .doc(id)
-      .collection("badgets")
-      .doc(runnerId)
-      .update({
-        disabled: false,
-        date: new Date(),
-        totalPoints: totalPoints,
-      })
+    enableBadge(id, runnerId, totalPoints)
       .then((doc) => {
-        //Update journey
-        return firestoreClient
-          .collection("journeys")
-          .doc(id)
-          .update(data)
-          .then((docRef) => {
+        return updateJourney(id, data).then((docRef) => {
+          this.props.activityChange({
+            type: "complete_quiz",
+            msn: 'Runner "' + currentRunner.name + '" completed.',
+            point: totalPoints,
+            msnForGroup:
+              "<i>" +
+              user.displayName +
+              '</i> has completed runner <b>"' +
+              currentRunner.name +
+              '"</b> your new process is: ' +
+              data.progress.toFixed(2) +
+              "%",
+            group: data.group,
+          });
+
+          if (data.progress >= 100) {
             this.props.activityChange({
-              type: "complete_quiz",
-              msn: 'Runner "' + currentRunner.name + '" completed.',
-              point: totalPoints,
+              type: "complete_pathway",
+              msn: 'Pathway "' + data.name + '" completed.',
               msnForGroup:
                 "<i>" +
                 user.displayName +
-                '</i> has completed runner <b>"' +
-                currentRunner.name +
-                '"</b> your new process is: ' +
-                data.progress.toFixed(2) + '%',
+                '</i> has completed pathway <b>"' +
+                data.name +
+                '"</b>',
               group: data.group,
             });
+          }
 
-            if (data.progress >= 100) {
-              this.props.activityChange({
-                type: "complete_pathway",
-                msn: 'Pathway "' + data.name + '" completed.',
-                msnForGroup:
-                  "<i>" +
-                  user.displayName +
-                  '</i> has completed pathway <b>"' +
-                  data.name +
-                  '"</b>',
-                group: data.group,
-              });
-            }
-
-            Router.push({
-              pathname: "/catalog/journey",
-              query: {
-                id: id,
-              },
-            });
+          Router.push({
+            pathname: "/catalog/journey",
+            query: {
+              id: id,
+            },
           });
+        });
       })
       .catch((error) => {
         console.error("Error adding document: ", error);

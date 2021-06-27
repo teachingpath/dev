@@ -12,6 +12,7 @@ import swalContent from "sweetalert2-react-content";
 import Swal from "@panely/sweetalert2";
 import Modal from "@panely/components/Modal";
 import RichList from "@panely/components/RichList";
+import { createSlug } from "components/helpers/mapper";
 const ReactSwal = swalContent(Swal);
 
 const swal = ReactSwal.mixin({
@@ -81,12 +82,13 @@ class StartPathway extends React.Component {
     user
   ) {
     return Promise.all(breadcrumbs).then((dataResolved) => {
+      const groupSlug = createSlug(name+" "+group);
       return firestoreClient
         .collection("journeys")
         .doc(journeyId)
         .set({
           leaderId: leaderId,
-          group: group,
+          group: groupSlug,
           name: name,
           trophy: trophy,
           progress: 1,
@@ -110,7 +112,7 @@ class StartPathway extends React.Component {
               '</i> starts the pathway "<b>' +
               name +
               '</b>".',
-            group,
+            group: groupSlug,
           });
           Router.push({
             pathname: "/catalog/journey",

@@ -122,7 +122,7 @@ function TrackForm({ onSave, data, onExtend }) {
     setValue("training", []);
     onExtend();
   }
-  if (watchFields.type === "q_and_A" && !Object.keys(errors).length) {
+  if (watchFields.type === "questions" && !Object.keys(errors).length) {
     setValue("content", "");
     setValue("guidelines", "");
     setValue("criteria", "");
@@ -222,7 +222,7 @@ function TrackForm({ onSave, data, onExtend }) {
             Learning (Documents, guides or videos)
           </option>
           <option value="hacking">Hacking (Challenges or evaluations)</option>
-          <option value="q_and_A">Q&A (Questions and answers session)</option>
+          <option value="questions">Q&A (Questions and answers session)</option>
           <option value="training">
             Training (Tutorial or Step-by-step guides)
           </option>
@@ -461,7 +461,7 @@ function TrackForm({ onSave, data, onExtend }) {
               </Form.Group>
             </>
           ),
-          q_and_A: (
+          questions: (
             <>
               <Alert
                 variant="outline-primary"

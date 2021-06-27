@@ -1,17 +1,4 @@
-import {
-  Row,
-  Col,
-  Container,
-  Nav,
-  Tab,
-  Portlet,
-  RichList,
-  Widget1,
-  Widget2,
-  Card,
-  Button,
-} from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
+import { Row, Col, Container, Portlet, Widget1 } from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -26,15 +13,10 @@ import Spinner from "@panely/components/Spinner";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
-import Badge from "@panely/components/Badge";
-import {
-  timeConvert,
-  timePowerTen,
-  timeShortPowerTen,
-} from "components/helpers/time";
-import { getRunners } from "consumer/runner";
-import { getTracks } from "consumer/track";
 import StartPathway from "components/widgets/StartPathway";
+import Teacher from "components/widgets/Teacher";
+import RunnerTab from "components/widgets/RunnerTab";
+import { get } from "consumer/pathway";
 
 class PathwayPage extends React.Component {
   constructor(props) {
@@ -43,6 +25,7 @@ class PathwayPage extends React.Component {
     this.state = {
       name: "Loading",
       id: null,
+      draft: true,
     };
     this.runnersRef = React.createRef();
   }
@@ -51,32 +34,21 @@ class PathwayPage extends React.Component {
     if (!Router.query.id) {
       Router.push("/catalog");
     }
-
-    firestoreClient
-      .collection("pathways")
-      .doc(Router.query.id)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          this.setState({
-            ...doc.data(),
-            id: Router.query.id,
-          });
-        } else {
-          console.log("No such document!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
+    get(
+      Router.query.id,
+      (data) => {
+        this.setState(data);
+      },
+      () => {}
+    );
   }
 
   render() {
-    const { name, id, leaderId } = this.state;
+    const { name, id, leaderId, draft } = this.state;
     return (
       <Widget1>
         <Widget1.Display top size="lg" className="bg-dark text-white">
-          {id && (
+          {draft === false && (
             <StartPathway
               pathwayId={id}
               {...this.state}
@@ -123,133 +95,6 @@ class PathwayPage extends React.Component {
   }
 }
 
-class RunnerTab extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      activeTab: 0,
-      tabs: props.data || [],
-      estimation: 0,
-    };
-  }
-
-  // Handle toggling tab
-  toggle = (id) => {
-    if (this.state.activeTab !== id) {
-      this.setState({ activeTab: id });
-    }
-  };
-
-  componentDidMount() {
-    const list = this.state.tabs;
-    getRunners(
-      this.props.pathwayId,
-      async (runners) => {
-        runners.list.forEach(async (runner) => {
-          const tracks = await getTracks(runner.id);
-          const listMapped = tracks.map((doc) => ({
-            id: doc.id,
-            title: doc.name,
-            subtitle: doc.description,
-            time: doc.timeLimit,
-            type: doc.type,
-          }));
-
-          list.push({
-            id: runner.id,
-            pathwayId: this.props.pathwayId,
-            title: runner.name,
-            subtitle: runner.description,
-            feedback: runner.feedback,
-            badget: runner.badget,
-            data: listMapped,
-          });
-          const estimation = listMapped
-            .map((el) => el.time)
-            .reduce((a, b) => a + b, 0);
-
-          this.setState({
-            ...this.state,
-            tabs: list,
-            estimation: this.state.estimation + estimation,
-          });
-        });
-      },
-      () => {}
-    );
-  }
-
-  render() {
-    return (
-      <React.Fragment>
-        {/* BEGIN Nav */}
-        <p>
-          Estimated time approximately:{" "}
-          <strong>{timeConvert(timePowerTen(this.state.estimation))}</strong>
-        </p>
-        {this.state.tabs.length === 0 && <Spinner />}
-        <Widget2 justified size="lg" className="mb-4">
-          {this.state.tabs.map((data, index) => (
-            <Nav.Item
-              key={index}
-              active={this.state.activeTab === index}
-              onClick={() => this.toggle(index)}
-              children={data.title.toUpperCase()}
-              title={data.subtitle}
-            />
-          ))}
-        </Widget2>
-        <Tab activeTab={this.state.activeTab}>
-          {this.state.tabs.map((tab, index) => (
-            <Tab.Pane key={index} tabId={index}>
-              {/* BEGIN Portlet */}
-              <Portlet className="mb-0">
-                {/* BEGIN Rich List */}
-                <Portlet.Header bordered>
-                  <Portlet.Title>Tracks</Portlet.Title>
-                  <Portlet.Addon>
-                    Estimation:{" "}
-                    {timeConvert(
-                      timePowerTen(
-                        tab.data.map((t) => t.time).reduce((a, b) => a + b, 0)
-                      )
-                    )}
-                  </Portlet.Addon>
-                </Portlet.Header>
-
-                <RichList flush>
-                  {tab.data.map((data, index) => {
-                    const { subtitle, title, time, type, id } = data;
-                    const titleLink = index + 1 + ". " + title;
-                    return (
-                      <RichList.Item key={index}>
-                        <RichList.Content>
-                          <RichList.Title children={titleLink} />
-                          <RichList.Subtitle children={subtitle} />
-                        </RichList.Content>
-                        <RichList.Addon addonType="append">
-                          <Badge className="mr-2">{type}</Badge>
-                          {timeShortPowerTen(time)}
-                          <FontAwesomeIcon
-                            className={"ml-2"}
-                            icon={SolidIcon.faStopwatch}
-                          />
-                        </RichList.Addon>
-                      </RichList.Item>
-                    );
-                  })}
-                </RichList>
-                {/* END Rich List */}
-              </Portlet>
-              {/* END Portlet */}
-            </Tab.Pane>
-          ))}
-        </Tab>
-      </React.Fragment>
-    );
-  }
-}
-
 class PathwayGeneralPage extends React.Component {
   componentDidMount() {
     this.props.pageChangeHeaderTitle("Pathway");
@@ -273,56 +118,6 @@ class PathwayGeneralPage extends React.Component {
           </Row>
         </Container>
       </React.Fragment>
-    );
-  }
-}
-
-class Teacher extends React.Component {
-  state = { data: {} };
-  componentDidMount() {
-    firestoreClient
-      .collection("users")
-      .doc(this.props.leaderId)
-      .get()
-      .then((doc) => {
-        this.setState({ data: doc.data() });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-  }
-  render() {
-    const { data } = this.state;
-    return (
-      <Card>
-        <Row noGutters>
-          <Col md="4">
-            <Card.Img
-              className="avatar-circle p-3"
-              src={data?.image || "/images/avatar/blank.webp"}
-              alt="Profile Image"
-            />
-          </Col>
-          <Col md="8">
-            <Card.Body>
-              <Card.Title>
-                Coach: {data?.firstName} {data?.lastName}
-              </Card.Title>
-              <Card.Text>
-                <small className="text-muted">{data?.specialty}</small>
-              </Card.Text>
-              <Card.Text>{data?.bio}</Card.Text>
-              <Button
-                onClick={() => {
-                  window.location = "mailto:" + data.email;
-                }}
-              >
-                Contact
-              </Button>
-            </Card.Body>
-          </Col>
-        </Row>
-      </Card>
     );
   }
 }

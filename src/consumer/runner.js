@@ -2,24 +2,24 @@ import {
   firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
+import { createSlug } from "components/helpers/mapper";
 import uuid from "components/helpers/uuid";
 
 export const create = (pathwayId, data) => {
   const runnerId = uuid();
   const user = firebaseClient.auth().currentUser;
-  const searchRegExp = /\s/g;
-  const replaceWith = "-";
   const searchTypes = data.name.toLowerCase();
+
   return firestoreClient
     .collection("runners")
     .doc(runnerId)
     .set({
-      level: 1,
+      level: 100,
       leaderId: user.uid,
       pathwayId: pathwayId,
       date: new Date(),
       searchTypes,
-      slug: searchTypes.replace(searchRegExp, replaceWith),
+      slug: createSlug(data.name),
       ...data,
     })
     .then(() => {
@@ -37,7 +37,14 @@ export const update = (runnerId, data) => {
     .update({
       ...data,
       searchTypes,
+      slug: createSlug(data.name),
     });
+};
+
+export const updateLevel = (runnerId, level) => {
+  return firestoreClient.collection("runners").doc(runnerId).update({
+    level: level,
+  });
 };
 
 export const updateBadge = (runnerId, data) => {
@@ -190,4 +197,8 @@ export const getRunners = (pathwayId, resolve, reject) => {
       console.log("Error getting documents: ", error);
       if (reject) reject();
     });
+};
+
+export const deleteRunner = (runnerId) => {
+  return firestoreClient.collection("runners").doc(runnerId).delete();
 };

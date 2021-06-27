@@ -61,3 +61,51 @@ export const getBadgesByUser = (resolve, reject) => {
       reject();
     });
 };
+
+export const enableBadge = (journeyId, runnerId, totalPoints) => {
+  return firestoreClient
+    .collection("journeys")
+    .doc(journeyId)
+    .collection("badgets")
+    .doc(runnerId)
+    .update({
+      disabled: false,
+      date: new Date(),
+      totalPoints: totalPoints,
+    });
+};
+
+export const updateJourney = (journeyId, data) => {
+  return firestoreClient.collection("journeys").doc(journeyId).update(data);
+};
+
+export const getJourney = (journeyId, resolve, reject) => {
+  firestoreClient
+    .collection("journeys")
+    .doc(journeyId)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        resolve({
+          ...doc.data(),
+          id: doc.id,
+        });
+      } else {
+        console.log("Empty documents"); 
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+      reject();
+    });
+};
+
+export const deleteJourney = (journeyId) => {
+  return firestoreClient
+    .collection("journeys")
+    .doc(journeyId)
+    .delete()
+    .catch((error) => {
+      console.error("Error adding document: ", error);
+    });
+};

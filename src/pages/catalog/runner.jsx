@@ -25,6 +25,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 import Badge from "@panely/components/Badge";
 import { timeConvert, timePowerTen } from "components/helpers/time";
+import PathwayResume from "components/widgets/PathwayResume";
 
 class RunnerList extends React.Component {
   constructor(props) {
@@ -99,8 +100,6 @@ class RunnerList extends React.Component {
           <Spinner />
         ) : (
           <Portlet className="mb-2">
-            {/* BEGIN Rich List */}
-
             <Portlet.Header bordered>
               <Portlet.Icon>
                 <FontAwesomeIcon icon={SolidIcon.faRoad} />
@@ -108,11 +107,14 @@ class RunnerList extends React.Component {
               <Portlet.Title>Tracks</Portlet.Title>
               <Portlet.Addon>
                 Estimation:{" "}
+                <strong>
                 {timeConvert(
                   timePowerTen(
                     list.map((t) => t.time).reduce((a, b) => a + b, 0)
                   )
                 )}
+                </strong>
+               
               </Portlet.Addon>
             </Portlet.Header>
 
@@ -182,61 +184,13 @@ class RunnerGeneralPage extends React.Component {
         </Head>
         <Container fluid>
           {this.state.id && <RunnerList id={this.state.id} />}
-          {this.state.pathwayId && <Pathway pathwayId={this.state.pathwayId} />}
+          {this.state.pathwayId && <PathwayResume pathwayId={this.state.pathwayId} />}
         </Container>
       </React.Fragment>
     );
   }
 }
 
-class Pathway extends React.Component {
-  state = { data: {} };
-  componentDidMount() {
-    firestoreClient
-      .collection("pathways")
-      .doc(this.props.pathwayId)
-      .get()
-      .then((doc) => {
-        this.setState({ data: doc.data() });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
-  }
-  render() {
-    const { data } = this.state;
-    return (
-      <Card>
-        <Row noGutters>
-          <Col md="2">
-            <Link href={"/catalog/pathway?id=" + this.props.pathwayId}>
-              <Card.Img
-                className="avatar-circle p-3"
-                src={data?.trophy?.image}
-                alt="Card Image"
-              />
-            </Link>
-          </Col>
-          <Col md="10">
-            <Card.Body>
-              <Card.Title>
-                <a href={"/catalog/pathway?id=" + this.props.pathwayId}>
-                  {data?.name}
-                </a>
-              </Card.Title>
-              <Card.Text>{data?.description}</Card.Text>
-              <Card.Text>
-                <small className="text-muted">
-                  {data?.trophy?.description}
-                </small>
-              </Card.Text>
-            </Card.Body>
-          </Col>
-        </Row>
-      </Card>
-    );
-  }
-}
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(

@@ -2,13 +2,12 @@ import {
   firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
+import { createSlug } from "components/helpers/mapper";
 import uuid from "components/helpers/uuid";
 import { getRunners } from "./runner";
 import { getTracks } from "./track";
 
 export const create = (data) => {
-  const searchRegExp = /\s/g;
-  const replaceWith = "-";
   const pathwayId = uuid();
   const user = firebaseClient.auth().currentUser;
   const tags = data.tags.split(",").map((item) => {
@@ -21,7 +20,7 @@ export const create = (data) => {
     .set({
       ...data,
       name: data.name,
-      slug: data?.name.toLowerCase().replace(searchRegExp, replaceWith),
+      slug: createSlug(data.name),
       searchTypes: searchTypes,
       tags: tags,
       draft: true,
@@ -62,6 +61,7 @@ export const update = (id, data) => {
     ...data,
     draft: true,
     name: data.name,
+    slug: createSlug(data.name),
     tags: tags,
     searchTypes: searchTypes,
     date: new Date(),
@@ -214,3 +214,5 @@ function onPublish(pathwayId, data, resolve) {
       console.error("Error removing document: ", error);
     });
 }
+
+

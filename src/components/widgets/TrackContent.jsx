@@ -9,10 +9,10 @@ class TrackContent extends React.Component {
       <React.Fragment>
         {
           {
-            learning: <LearningTrack data={this.props} />,
-            q_and_A: <Questions data={this.props} />,
-            training: <TrainingTrack data={this.props} />,
-            hacking: <HackingTrack data={this.props} />,
+            learning: <LearningTrack data={this.props} group={"default"} />,
+            questions: <Questions data={this.props} group={"default"}/>,
+            training: <TrainingTrack data={this.props} group={"default"}/>,
+            hacking: <HackingTrack data={this.props} group={"default"}/>,
           }[this.props.type]
         }
       </React.Fragment>

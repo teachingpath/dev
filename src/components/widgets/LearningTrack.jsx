@@ -8,10 +8,7 @@ import {
   Marker,
   Card,
 } from "@panely/components";
-import {
-  firestoreClient,
-  firebaseClient,
-} from "components/firebase/firebaseClient";
+import { firebaseClient } from "components/firebase/firebaseClient";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
@@ -19,6 +16,7 @@ import Row from "@panely/components/Row";
 import Col from "@panely/components/Col";
 import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
+import { getTracksResponses, saveTrackResponse } from "consumer/track";
 
 function FeedbackForm({ onSave }) {
   const schema = yup.object().shape({
@@ -78,42 +76,34 @@ class LearningTrack extends React.Component {
   componentDidMount() {
     const {
       data: { id },
+      group,
     } = this.props;
-    firestoreClient
-      .collection("track-response")
-      .orderBy("date")
-      .where("trackId", "==", id)
-      .limit(20)
-      .get()
-      .then((querySnapshot) => {
-        if (!querySnapshot.empty) {
-          const list = [];
-          querySnapshot.forEach((doc) => {
-            list.push(doc.data());
-          });
-          this.setState({
-            ...this.state,
-            list: list,
-          });
-        } else {
-          console.log("No such journeys!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting journeys: ", error);
-      });
+    getTracksResponses(
+      id,
+      group,
+      (data) => {
+        this.setState({
+          ...this.state,
+          list: data.list,
+        });
+      },
+      () => {}
+    );
   }
   render() {
-    const { data } = this.props;
+    const { data, group } = this.props;
     const user = firebaseClient.auth().currentUser;
     const id = data.id;
+    const trackName = this.props.data?.name;
     const typeContent = data.typeContent;
     return (
       <>
         {
           {
             file: <div dangerouslySetInnerHTML={{ __html: data.content }} />,
-            fileCode: <div dangerouslySetInnerHTML={{ __html: data.content }} />,
+            fileCode: (
+              <div dangerouslySetInnerHTML={{ __html: data.content }} />
+            ),
             video: <ReactPlayer url={data.content} />,
             url: <DescribeURL url={data.content} />,
           }[typeContent]
@@ -128,19 +118,18 @@ class LearningTrack extends React.Component {
               <Card.Text>Write a feedback about what you learned.</Card.Text>
               <FeedbackForm
                 onSave={(data) => {
-                  return firestoreClient
-                    .collection("track-response")
-                    .add({
-                      id: 1,
-                      trackId: id,
-                      ...data,
-                      userId: user.uid,
-                      date: Date.now(),
-                    })
-                    .then(() => {
-                      this.componentDidMount();
-                      this.setState({ current: this.state.current + 1 });
-                    });
+                  return saveTrackResponse(id, group, data).then(() => {
+                    if (this.props.activityChange) {
+                      this.props.activityChange({
+                        type: "new_track_response",
+                        msn: 'New track response inside group "'+group+'".',
+                        msnForGroup:'New track response by <i>'+user.displayName+'</i> from learning task <b>'+trackName+'</b>.',
+                        group: group,
+                      });
+                    }
+                    this.componentDidMount();
+                    this.setState({ current: this.state.current + 1 });
+                  });
                 }}
               />
               <Timeline>
@@ -155,7 +144,6 @@ class LearningTrack extends React.Component {
                 })}
               </Timeline>
             </Card.Body>
-
           </Card>
         )}
       </>

@@ -9,6 +9,7 @@ import LearningTrack from "./LearningTrack";
 import Link from "next/link";
 import { timeShortPowerTen } from "components/helpers/time";
 import Progress from "@panely/components/Progress";
+import { getTrack } from "consumer/track";
 
 class TrackModal extends React.Component {
   time = 0;
@@ -30,27 +31,20 @@ class TrackModal extends React.Component {
   };
 
   loadData() {
-    firestoreClient
-      .collection("runners")
-      .doc(this.props.runnerId)
-      .collection("tracks")
-      .doc(this.props.trackId)
-      .get()
-      .then((doc) => {
-        if (doc.exists) {
-          this.setState({
-            isOpen: true,
-            isRunning: true,
-            id: this.props.trackId,
-            ...doc.data(),
-          });
-        } else {
-          console.log("No such document!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
+    const { pathwayId, runnerId, trackId } = this.props;
+    getTrack(
+      pathwayId,
+      runnerId,
+      trackId,
+      (data) => {
+        this.setState({
+          isOpen: true,
+          isRunning: true,
+          ...data,
+        });
+      },
+      () => {}
+    );
   }
 
   complete = () => {
@@ -125,8 +119,15 @@ class TrackModal extends React.Component {
 
   render() {
     const { name, type, isRunning, timeLimit, dataTime } = this.state;
-    const { time, onComplete, extarnalLink, tracksLength, trackIndex } =
-      this.props;
+    const {
+      time,
+      onComplete,
+      extarnalLink,
+      tracksLength,
+      trackIndex,
+      group,
+      activityChange,
+    } = this.props;
     const titleButton = timeLimit
       ? "Time limit [" + timeShortPowerTen(timeLimit) + "]"
       : "Start this track";
@@ -152,22 +153,47 @@ class TrackModal extends React.Component {
           toggle={this.toggle}
           className="modal-xl"
         >
-           <Progress
-              striped
-              variant="primary"
-              value={((trackIndex + 1) / tracksLength) * 100}
-            />
+          <Progress
+            striped
+            variant="primary"
+            value={((trackIndex + 1) / tracksLength) * 100}
+          />
           <Modal.Header toggle={this.toggle}>
-            <Link href={extarnalLink}  className={"w-100"}>{name || "..."}</Link>
-           
+            <Link href={extarnalLink} className={"w-100"}>
+              {name || "..."}
+            </Link>
           </Modal.Header>
           <Modal.Body>
             {
               {
-                learning: <LearningTrack data={this.state} />,
-                q_and_A: <Questions data={this.state} />,
-                training: <TrainingTrack data={this.state} />,
-                hacking: <HackingTrack data={this.state} />,
+                learning: (
+                  <LearningTrack
+                    data={this.state}
+                    group={group}
+                    activityChange={activityChange}
+                  />
+                ),
+                questions: (
+                  <Questions
+                    data={this.state}
+                    group={group}
+                    activityChange={activityChange}
+                  />
+                ),
+                training: (
+                  <TrainingTrack
+                    data={this.state}
+                    group={group}
+                    activityChange={activityChange}
+                  />
+                ),
+                hacking: (
+                  <HackingTrack
+                    data={this.state}
+                    group={group}
+                    activityChange={activityChange}
+                  />
+                ),
               }[type]
             }
           </Modal.Body>

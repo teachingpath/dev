@@ -85,7 +85,6 @@ class RunnerCreatePage extends React.Component {
           pathwayId,
           type: "new_runner",
           msn: 'The "' + data.name + '" runner was created.',
-          ...data,
         });
         return updateToDraft(pathwayId);
       })
@@ -123,7 +122,6 @@ class RunnerCreatePage extends React.Component {
                   </p>
                   <hr />
                   <RunnerForm onSave={this.onCreate} />
-                  {/* END Portlet */}
                 </Portlet.Body>
                 <Portlet.Footer>
                   {this.state.saved && (
@@ -138,7 +136,7 @@ class RunnerCreatePage extends React.Component {
                         className="float-right ml-2"
                         onClick={() => {
                           Router.push({
-                            pathname: "/runner/quiz",
+                            pathname: "/runner/quiz/create",
                             query: {
                               runnerId: this.state.runnerId,
                               pathwayId: this.state.pathwayId,
@@ -179,7 +177,6 @@ class RunnerCreatePage extends React.Component {
             </Col>
 
             <Col md="6">
-              {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Runners</Portlet.Title>

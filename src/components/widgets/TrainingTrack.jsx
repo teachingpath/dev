@@ -7,17 +7,17 @@ import {
   Label,
   Marker,
   Timeline,
+  Row,
+  Col,
+  Card
 } from "@panely/components";
 import {
   firebaseClient,
-  firestoreClient,
 } from "components/firebase/firebaseClient";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
-import Row from "@panely/components/Row";
-import Col from "@panely/components/Col";
-import Card from "@panely/components/Card";
+import { getTracksResponses, saveTrackResponse } from "consumer/track";
 
 function SolutionForm({ onSave }) {
   const schema = yup.object().shape({
@@ -77,38 +77,28 @@ class TrainingTrack extends React.Component {
   componentDidMount() {
     const {
       data: { id },
+      group
     } = this.props;
-    firestoreClient
-      .collection("track-response")
-      .orderBy("date")
-      .where("trackId", "==", id)
-      .limit(20)
-      .get()
-      .then((querySnapshot) => {
-        if (!querySnapshot.empty) {
-          const list = [];
-          querySnapshot.forEach((doc) => {
-            list.push(doc.data());
-          });
-          this.setState({
-            ...this.state,
-            list: list,
-          });
-        } else {
-          console.log("No such journeys!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting journeys: ", error);
-      });
+    getTracksResponses(
+      id,
+      group,
+      (data) => {
+        this.setState({
+          ...this.state,
+          list: data.list,
+        });
+      },
+      () => {}
+    );
   }
 
   render() {
     const {
       data: { training, id },
+      group,
     } = this.props;
     const user = firebaseClient.auth().currentUser;
-
+    const trackName = this.props.data?.name;
     return (
       <Steps current={this.state.current} direction="vertical">
         {training?.map((item, index) => {
@@ -153,20 +143,18 @@ class TrainingTrack extends React.Component {
                     {user && (
                       <SolutionForm
                         onSave={(data) => {
-                          const user = firebaseClient.auth().currentUser;
-                          return firestoreClient
-                            .collection("track-response")
-                            .add({
-                              id: 1,
-                              trackId: id,
-                              ...data,
-                              userId: user.uid,
-                              date: Date.now(),
-                            })
-                            .then(() => {
-                              this.componentDidMount();
-                              this.setState({ current: this.state.current + 1 });
-                            });
+                          saveTrackResponse(id, group, data).then(() => {
+                            if (this.props.activityChange) {
+                              this.props.activityChange({
+                                type: "new_track_response",
+                                msn: 'New track response inside group "'+group+'".',
+                                msnForGroup:'New track response by <i>'+user.displayName+'</i> from training task <b>'+trackName+'</b>.',
+                                group: group,
+                              });
+                            }
+                            this.componentDidMount();
+                            this.setState({ current: this.state.current + 1 });
+                          });
                         }}
                       />
                     )}
@@ -176,7 +164,10 @@ class TrainingTrack extends React.Component {
                         const { date, result } = data;
 
                         return (
-                          <Timeline.Item date={date} pin={<Marker type="dot" />}>
+                          <Timeline.Item
+                            date={date}
+                            pin={<Marker type="dot" />}
+                          >
                             {result}
                           </Timeline.Item>
                         );
@@ -185,7 +176,6 @@ class TrainingTrack extends React.Component {
                   </>
                 )}
               </Card.Body>
-       
             </Card>
           }
         />

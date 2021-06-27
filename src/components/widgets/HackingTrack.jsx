@@ -9,7 +9,6 @@ import {
   Card,
 } from "@panely/components";
 import {
-  firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
 import { useForm, Controller } from "react-hook-form";
@@ -19,6 +18,7 @@ import Row from "@panely/components/Row";
 import Col from "@panely/components/Col";
 import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
+import { getTracksResponses, saveTrackResponse } from "consumer/track";
 
 function SolutionForm({ onSave }) {
   const schema = yup.object().shape({
@@ -78,36 +78,26 @@ class HackingTrack extends React.Component {
   componentDidMount() {
     const {
       data: { id },
+      group
     } = this.props;
-    firestoreClient
-      .collection("track-response")
-      .orderBy("date")
-      .where("trackId", "==", id)
-      .limit(10)
-      .get()
-      .then((querySnapshot) => {
-        if (!querySnapshot.empty) {
-          const list = [];
-          querySnapshot.forEach((doc) => {
-            list.push(doc.data());
-          });
-          this.setState({
-            ...this.state,
-            list: list,
-          });
-        } else {
-          console.log("No such journeys!");
-        }
-      })
-      .catch((error) => {
-        console.log("Error getting journeys: ", error);
-      });
+    getTracksResponses(
+      id,
+      group,
+      (data) => {
+        this.setState({
+          ...this.state,
+          list: data.list,
+        });
+      },
+      () => {}
+    );
   }
   render() {
-    const { data } = this.props;
+    const { data, group } = this.props;
     const id = data.id;
     const user = firebaseClient.auth().currentUser;
     const typeContent = data?.typeContent;
+    const trackName = this.props.data?.name;
     return (
       <>
         <Card>
@@ -148,23 +138,24 @@ class HackingTrack extends React.Component {
               <h3 className="mt-3">Solution</h3>
             </Card.Header>
             <Card.Body>
-              <Card.Text>Add here your hacking answer, add links, repositories or comments.</Card.Text>
+              <Card.Text>
+                Add here your hacking answer, add links, repositories or
+                comments.
+              </Card.Text>
               <SolutionForm
                 onSave={(data) => {
-                  const user = firebaseClient.auth().currentUser;
-                  return firestoreClient
-                    .collection("track-response")
-                    .add({
-                      id: 1,
-                      trackId: id,
-                      ...data,
-                      userId: user.uid,
-                      date: Date.now(),
-                    })
-                    .then(() => {
-                      this.componentDidMount();
-                      this.setState({ current: this.state.current + 1 });
-                    });
+                  saveTrackResponse(id, group, data).then(() => {
+                    if (this.props.activityChange) {
+                      this.props.activityChange({
+                        type: "new_track_response",
+                        msn: 'New track response inside group "'+group+'".',
+                        msnForGroup:'New track response by <i>'+user.displayName+'</i> from hacking task <b>'+trackName+'</b>.',
+                        group: group,
+                      });
+                    }
+                    this.componentDidMount();
+                    this.setState({ current: this.state.current + 1 });
+                  });
                 }}
               />
               <Timeline>
@@ -179,7 +170,6 @@ class HackingTrack extends React.Component {
                 })}
               </Timeline>
             </Card.Body>
-
           </Card>
         )}
       </>
