@@ -56,7 +56,7 @@ class RunnerTab extends React.Component {
             title: runner.name,
             subtitle: runner.description,
             feedback: runner.feedback,
-            badget: runner.badget,
+            badge: runner.badge,
             data: listMapped,
           });
           const estimation = listMapped

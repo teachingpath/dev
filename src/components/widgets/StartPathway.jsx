@@ -114,6 +114,7 @@ class StartPathway extends React.Component {
               '</b>".',
             group: groupSlug,
           });
+
           Router.push({
             pathname: "/catalog/journey",
             query: {
@@ -130,7 +131,7 @@ class StartPathway extends React.Component {
   createBreadcrumbsBy(tabs, journeyId) {
     const breadcrumbs = tabs.map(async (data, runnerIndex) => {
       const quiz = await this.getQuizFromRunner(data);
-      await this.saveJourneyForBadget(journeyId, data);
+      await this.saveJourneyForBadge(journeyId, data);
 
       return {
         id: data.id,
@@ -152,14 +153,14 @@ class StartPathway extends React.Component {
     return breadcrumbs;
   }
 
-  async saveJourneyForBadget(journeyId, data) {
+  async saveJourneyForBadge(journeyId, data) {
     await firestoreClient
       .collection("journeys")
       .doc(journeyId)
-      .collection("badgets")
+      .collection("badges")
       .doc(data.id)
       .set({
-        ...data.badget,
+        ...data.badge,
         disabled: true,
       });
   }

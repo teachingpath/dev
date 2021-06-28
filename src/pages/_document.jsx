@@ -8,7 +8,7 @@ class MyDocument extends Document {
                 <Head>
                     <link href={PAGE.favicon} rel="shortcut icon" type="image/x-icon"/>
                     <link
-                        href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@200;300;400;500;600&family=Roboto+Mono&display=swap"
+                        href="https://fonts.googleapis.com/css2?family=Roboto:wght@200;300;400;500;600&family=Roboto+Mono&display=swap"
                         rel="stylesheet"
                     />
                     <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css"/>

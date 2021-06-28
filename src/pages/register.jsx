@@ -62,7 +62,13 @@ function RegisterPage() {
                 <RegisterForm />
               </Portlet.Body>
             </Portlet>
-            {/* END Portlet */}
+            <Portlet.Footer>
+                  <Link href="/catalog">
+                    <Button pill size="lg" width="widest">
+                      See catalog
+                    </Button>
+                  </Link>
+                </Portlet.Footer>
           </Col>
         </Row>
       </Container>

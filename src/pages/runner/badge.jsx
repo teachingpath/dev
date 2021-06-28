@@ -54,8 +54,8 @@ const alert = ReactSwal.mixin({
   buttonsStyling: false,
 });
 
-function BadgetForm({ runnerId, data, activityChange, pathwayId }) {
-  const { badget } = data;
+function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
+  const { badge } = data;
   const imageRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
@@ -73,29 +73,29 @@ function BadgetForm({ runnerId, data, activityChange, pathwayId }) {
   const { control, handleSubmit, errors } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      name: badget?.name || "",
-      description: badget?.description || "",
+      name: badge?.name || "",
+      description: badge?.description || "",
     },
   });
 
-  function saveBadget(data) {
+  function saveBadge(data) {
     return updateBadge(runnerId, data)
       .then((docRef) => {
         toast.fire({
           icon: "success",
-          title: "Badget saved successfully",
+          title: "Badge saved successfully",
         });
         activityChange({
           pathwayId: pathwayId,
           type: "edit_runner",
-          msn: 'The "' + data.name + '" badget was changed.',
+          msn: 'The "' + data.name + '" badge was changed.',
         });
         setLoading(false);
       })
       .catch((error) => {
         toast.fire({
           icon: "error",
-          title: "Creation badget",
+          title: "Creation badge",
         });
         setLoading(false);
       });
@@ -105,12 +105,12 @@ function BadgetForm({ runnerId, data, activityChange, pathwayId }) {
   const onSubmit = (data) => {
     getQuestions(runnerId).then((questions) => {
       if (questions.length >= 3) {
-        saveBadget(data);
+        saveBadge(data);
       } else {
         alert.fire({
           icon: "error",
           title: "Oops...",
-          text: "To create the badget there must be a quiz with more than 3 questions.",
+          text: "To create the badge there must be a quiz with more than 3 questions.",
         });
         setLoading(false);
       }
@@ -127,7 +127,7 @@ function BadgetForm({ runnerId, data, activityChange, pathwayId }) {
       })}
     >
       <Form.Group>
-        <ImageEditor ref={imageRef} image={badget?.image} withPreview />
+        <ImageEditor ref={imageRef} image={badge?.image} withPreview />
       </Form.Group>
       <Row>
         <Col xs="12">
@@ -137,13 +137,13 @@ function BadgetForm({ runnerId, data, activityChange, pathwayId }) {
               <Controller
                 as={Input}
                 type="text"
-                id="badget-name"
+                id="badge-name"
                 name="name"
                 control={control}
                 invalid={Boolean(errors.name)}
                 placeholder="Insert your name"
               />
-              <Label for="badget-name">Name</Label>
+              <Label for="badge-name">Name</Label>
               {errors.name && <Form.Feedback children={errors.name.message} />}
             </FloatLabel>
           </Form.Group>
@@ -155,13 +155,13 @@ function BadgetForm({ runnerId, data, activityChange, pathwayId }) {
               <Controller
                 as={Input}
                 type="textarea"
-                id="badget-description"
+                id="badge-description"
                 name="description"
                 control={control}
                 invalid={Boolean(errors.description)}
                 placeholder="Insert your description"
               />
-              <Label for="badget-description">
+              <Label for="badge-description">
                 What logos would the apprentice get?
               </Label>
               {errors.description && (
@@ -218,7 +218,7 @@ class FormBasePage extends React.Component {
         text: "Runner",
         link: "/runner/create?pathwayId=" + pathwayId,
       },
-      { text: "Badget" },
+      { text: "Badge" },
     ]);
   }
 
@@ -226,7 +226,7 @@ class FormBasePage extends React.Component {
     return (
       <React.Fragment>
         <Head>
-          <title>Runner | Badget</title>
+          <title>Runner | Badge</title>
         </Head>
         <Container fluid>
           <Row>
@@ -234,9 +234,9 @@ class FormBasePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Badget | Update</Portlet.Title>
+                  <Portlet.Title>Badge | Update</Portlet.Title>
                   <Portlet.Addon>
-                    <BadgetAddon
+                    <BadgeAddon
                       id={this.state.runnerId}
                       pathwayId={this.state.pathwayId}
                     />
@@ -248,13 +248,12 @@ class FormBasePage extends React.Component {
                     complete the Quiz.{" "}
                   </p>
                   <hr />
-                  <BadgetForm
+                  {this.props?.runner?.id && <BadgeForm
                     activityChange={this.props.activityChange}
                     runnerId={this.state.runnerId}
                     pathwayId={this.state.pathwayId}
-                    data={this.state}
-                  />
-                  {/* END Portlet */}
+                    data={this.props?.runner}
+                  />}
                 </Portlet.Body>
               </Portlet>
               {/* END Portlet */}
@@ -266,7 +265,7 @@ class FormBasePage extends React.Component {
   }
 }
 
-const BadgetAddon = ({ id, pathwayId }) => {
+const BadgeAddon = ({ id, pathwayId }) => {
   return (
     <>
       <Dropdown.Uncontrolled>

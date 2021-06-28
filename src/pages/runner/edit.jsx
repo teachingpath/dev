@@ -217,7 +217,7 @@ const RunnerAddon = ({ id, pathwayId }) => {
           <Dropdown.Item
             onClick={() => {
               Router.push({
-                pathname: "/runner/badget",
+                pathname: "/runner/badge",
                 query: {
                   runnerId: id,
                   pathwayId: pathwayId,
@@ -226,7 +226,7 @@ const RunnerAddon = ({ id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
           >
-            Add Badget
+            Add Badge
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {

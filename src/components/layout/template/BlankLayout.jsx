@@ -1,4 +1,5 @@
 import { Layout } from "@panely/components"
+import Footer from "components/layout/part/Footer"
 
 
 /*
@@ -9,11 +10,12 @@ import { Layout } from "@panely/components"
 
 function BlankLayout({ children }) {
   return (
-    <Layout className="holder road-background">
+    <Layout className="holder">
       <Layout type="wrapper">
         <Layout type="content">
           {children}
         </Layout>
+        <Footer></Footer>
       </Layout>
     </Layout>
   )

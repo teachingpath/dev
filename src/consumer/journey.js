@@ -8,7 +8,7 @@ export const getBadges = (journeyId, resolve, reject) => {
   firestoreClient
     .collection("journeys")
     .doc(journeyId)
-    .collection("badgets")
+    .collection("badges")
     .get()
     .then((querySnapshot) => {
       if (!querySnapshot.empty) {
@@ -34,26 +34,24 @@ export const getBadgesByUser = (resolve, reject) => {
     .then(async (querySnapshot) => {
       const dataList = [];
       if (!querySnapshot.empty) {
-        const response = await querySnapshot.forEach((doc) => {
-          firestoreClient
+        querySnapshot.forEach(async (doc) => {
+         const result = await firestoreClient
             .collection("journeys")
             .doc(doc.id)
-            .collection("badgets")
+            .collection("badges")
             .where("disabled", "==", false)
             .get()
             .then((querySnapshot) => {
-              const list = dataList;
               if (!querySnapshot.empty) {
                 querySnapshot.forEach((doc) => {
-                  list.push(doc.data());
+                  dataList.push(doc.data());
                 });
               }
-
-              return list;
+              return dataList;
             });
+            resolve({ data: result });
         });
 
-        resolve({ data: dataList });
       }
     })
     .catch((error) => {
@@ -66,7 +64,7 @@ export const enableBadge = (journeyId, runnerId, totalPoints) => {
   return firestoreClient
     .collection("journeys")
     .doc(journeyId)
-    .collection("badgets")
+    .collection("badge")
     .doc(runnerId)
     .update({
       disabled: false,

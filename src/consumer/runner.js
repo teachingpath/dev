@@ -52,7 +52,7 @@ export const updateBadge = (runnerId, data) => {
     .collection("runners")
     .doc(runnerId)
     .update({
-      badget: {
+      badge: {
         ...data,
       },
     });

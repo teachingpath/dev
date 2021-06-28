@@ -80,7 +80,6 @@ class InfoPanelComponent extends React.Component {
             const inRunning = [];
             querySnapshot.forEach(async (doc) => {
               const data = doc.data();
-              data.composeGroup = data.name + "/" + data.group;
               if (data.progress >= 100) {
                 finisheds.push(data);
               } else {
@@ -155,7 +154,7 @@ class InfoModal extends React.Component {
   };
 
   render() {
-    const dataList = groupBy(this.props.data, "composeGroup");
+    const dataList = groupBy(this.props.data, "group");
     return (
       <React.Fragment>
         <a href={"#"} onClick={this.toggle}>

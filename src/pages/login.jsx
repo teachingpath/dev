@@ -22,6 +22,7 @@ import Swal from "@panely/sweetalert2";
 import Link from "next/link";
 import Head from "next/head";
 import PAGE from "config/page.config";
+import InfoSyncCarousel from "components/widgets/InfoSyncCarousel";
 
 // Use SweetAlert React Content library
 const ReactSwal = swalContent(Swal);
@@ -44,9 +45,9 @@ function LoginPage() {
       <Container fluid>
         <Row
           noGutters
-          className="align-items-center justify-content-center h-100"
+          className="align-items-center justify-content-center m-5"
         >
-          <Col sm="8" md="6" lg="4">
+          <Col sm="12" md="8" lg="6">
             {/* BEGIN Portlet */}
             <Col md="12">
               <Portlet.Body className="d-flex flex-column justify-content-center align-items-start h-100 bg-primary text-white">
@@ -56,27 +57,36 @@ function LoginPage() {
                   pathways, learn programming, English and calculus, etc. Also
                   create your pathways and help others to follow your path.
                 </p>
-                <Link href="/catalog">
+
+                <Link href="https://docs.teachingpath.info/" target="_back">
                   <Button pill variant="outline-light" size="lg" width="widest">
-                    See catalog
+                    See docs
                   </Button>
                 </Link>
               </Portlet.Body>
             </Col>
+
             <Col md="12">
               <Portlet>
                 <Portlet.Body className="h-100">
                   <div className="text-center mt-2 mb-4">
-                    {/* BEGIN Widget */}
                     <img src="/images/logo.png" alt="teaching path" />
-                    {/* END Widget */}
                   </div>
+                  <InfoSyncCarousel />
+                  <br></br>
+
                   <Label>Sing in</Label>
                   <LoginForm />
                 </Portlet.Body>
+                <Portlet.Footer>
+                  <Link href="/catalog">
+                    <Button pill size="lg" width="widest">
+                      See catalog
+                    </Button>
+                  </Link>
+                </Portlet.Footer>
               </Portlet>
             </Col>
-            {/* END Portlet */}
           </Col>
         </Row>
       </Container>
@@ -184,7 +194,7 @@ function LoginForm() {
 }
 
 LoginPage.getInitialProps = async (ctx) => {
-  const cookies = nookies.get(ctx)
+  const cookies = nookies.get(ctx);
   // Redirect to dashboard page if the user has logged in
   if (cookies?.token) {
     if (ctx.res) {

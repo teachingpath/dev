@@ -256,7 +256,7 @@ $embed-responsive-aspect-ratios: join(
 // Typography
 //
 // Font, line-height, and color for body text, headings, and more.
-$font-family-sans-serif:      "Roboto Condensed", sans-serif !default;
+$font-family-sans-serif:      "Roboto", sans-serif !default;
 $font-family-monospace:       "Roboto Mono", monospace !default;
 $font-family-base:            $font-family-sans-serif !default;
 
@@ -265,9 +265,9 @@ $font-size-lg:                1.6rem !default;
 $font-size-md:                1.2rem !default; // Assumes the browser default, typically `16px`
 $font-size-sm:                1rem !default;
 
-$font-weight-lighter:         200 !default;
-$font-weight-light:           300 !default;
-$font-weight-normal:          400 !default;
+$font-weight-lighter:         100 !default;
+$font-weight-light:           200 !default;
+$font-weight-normal:          300 !default;
 $font-weight-bold:            500 !default;
 $font-weight-bolder:          600 !default;
 

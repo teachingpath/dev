@@ -22,39 +22,38 @@ class InfoSyncCarousel extends React.Component {
   render() {
     return (
       <React.Fragment>
-        {/* BEGIN Carousel */}
         <Carousel arrows={false} asNavFor={this.state.nav} ref={ref => (this.mainRef = ref)}>
           <CarouselItem>
-            {/* BEGIN Card */}
             <Card>
-              <Card.Img src="/images/banner/1120x480.webp" alt="Card Image" />
+              <Card.Img src="/images/banner/roud.png" alt="Card Image" />
             </Card>
-            {/* END Card */}
           </CarouselItem>
           <CarouselItem>
-            {/* BEGIN Card */}
             <Card>
-              <Card.Img src="/images/banner/1120x480.webp" alt="Card Image" />
+              <Card.Img src="/images/banner/roud2.png" alt="Card Image" />
             </Card>
-            {/* END Card */}
           </CarouselItem>
           <CarouselItem>
-            {/* BEGIN Card */}
             <Card>
-              <Card.Img src="/images/banner/1120x480.webp" alt="Card Image" />
+            <Card.Img src="/images/banner/roud3.png" alt="Card Image" />
             </Card>
-            {/* END Card */}
           </CarouselItem>
           <CarouselItem>
-            {/* BEGIN Card */}
             <Card>
-              <Card.Img src="/images/banner/1120x480.webp" alt="Card Image" />
+            <Card.Img src="/images/banner/roud4.png" alt="Card Image" />
             </Card>
-            {/* END Card */}
+          </CarouselItem>
+          <CarouselItem>
+            <Card>
+            <Card.Img src="/images/banner/roud5.png" alt="Card Image" />
+            </Card>
+          </CarouselItem>
+          <CarouselItem>
+            <Card>
+            <Card.Img src="/images/banner/roud1.png" alt="Card Image" />
+            </Card>
           </CarouselItem>
         </Carousel>
-        {/* END Carousel */}
-        {/* BEGIN Carousel */}
         <Carousel
           centerMode={true}
           slidesToShow={3}
@@ -65,33 +64,36 @@ class InfoSyncCarousel extends React.Component {
           ref={ref => (this.navRef = ref)}
           className="mt-4"
         >
-          <CarouselItem>
-            {/* BEGIN Card */}
+           <CarouselItem>
             <Card>
-              <Card.Img src="/images/banner/560x400.webp" alt="Card Image" />
+            <Card.Img src="/images/banner/roud.png" alt="Card Image" />
             </Card>
-            {/* END Card */}
+          </CarouselItem>
+     
+          <CarouselItem>
+            <Card>
+            <Card.Img src="/images/banner/roud2.png" alt="Card Image" />
+            </Card>
           </CarouselItem>
           <CarouselItem>
-            {/* BEGIN Card */}
             <Card>
-              <Card.Img src="/images/banner/560x400.webp" alt="Card Image" />
+            <Card.Img src="/images/banner/roud3.png" alt="Card Image" />
             </Card>
-            {/* END Card */}
           </CarouselItem>
           <CarouselItem>
-            {/* BEGIN Card */}
             <Card>
-              <Card.Img src="/images/banner/560x400.webp" alt="Card Image" />
+            <Card.Img src="/images/banner/roud4.png" alt="Card Image" />
             </Card>
-            {/* END Card */}
           </CarouselItem>
           <CarouselItem>
-            {/* BEGIN Card */}
             <Card>
-              <Card.Img src="/images/banner/560x400.webp" alt="Card Image" />
+            <Card.Img src="/images/banner/roud5.png" alt="Card Image" />
             </Card>
-            {/* END Card */}
+          </CarouselItem>
+          <CarouselItem>
+            <Card>
+            <Card.Img src="/images/banner/roud1.png" alt="Card Image" />
+            </Card>
           </CarouselItem>
         </Carousel>
         {/* END Carousel */}

@@ -11,7 +11,7 @@ import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Router from "next/router";
-import BadgetList from "../../components/widgets/BadgetList";
+import BadgeList from "../../components/widgets/BadgeList";
 import React from "react";
 import Badge from "@panely/components/Badge";
 import ActivitiesComponent from "components/widgets/ActivitiesGroup";
@@ -21,7 +21,7 @@ import RunnersExecutor from "components/widgets/RunnersExecutor";
 import { getJourney } from "consumer/journey";
 
 class JourneyGeneralPage extends React.Component {
-  state = { name: "Loading", trophy: {}, progress: 0, badgets: [] };
+  state = { name: "Loading", trophy: {}, progress: 0, badges: [] };
 
   componentDidMount() {
     if (!Router.query.id) {
@@ -152,7 +152,7 @@ class JourneyGeneralPage extends React.Component {
                     </Col>
                     <Col md="12">
                       {this.state?.id && (
-                        <BadgetList journeyId={this.state?.id} />
+                        <BadgeList journeyId={this.state?.id} />
                       )}
                     </Col>
                     <Col md="6">

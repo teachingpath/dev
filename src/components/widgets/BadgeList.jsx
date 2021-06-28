@@ -5,7 +5,7 @@ import Portlet from "@panely/components/Portlet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
-class BadgetListComponent extends React.Component {
+class BadgeListComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = { data: [] };
@@ -73,7 +73,7 @@ class BadgetListComponent extends React.Component {
                               : "bg-yellow mg-thumbnail avatar-circle p-3 border border-success"
                           }
                           src={data.image}
-                          alt="Card Image"
+                          alt="Badge Image"
                         />
                         <p>{data.disabled ? "Not available" : data.name}</p>
                       </center>
@@ -90,4 +90,4 @@ class BadgetListComponent extends React.Component {
   }
 }
 
-export default BadgetListComponent;
+export default BadgeListComponent;

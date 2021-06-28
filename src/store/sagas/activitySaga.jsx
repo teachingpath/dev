@@ -11,13 +11,16 @@ function* activitySaga({ payload }) {
       addPoint(user, payload.point || 1);
       break;
     case "complete_track":
-      addPoint(user, payload.point || 2);
+      addPoint(user, payload.point || 5);
       break;
     case "complete_quiz":
-      addPoint(user, payload.point || 5);
+      addPoint(user, payload.point || 10);
       break;
     case "complete_pathway":
       addPoint(user, payload.point || 100);
+      break;
+    case "new_track_response":
+      addPoint(user, payload.point || 1);
       break;
     default:
       break;

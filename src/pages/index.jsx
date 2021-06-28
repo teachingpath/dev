@@ -12,7 +12,7 @@ import InfoSyncCarousel from "components/widgets/InfoSyncCarousel";
 import Activities from "components/widgets/Activities";
 import Pathways from "components/widgets/PathwayList";
 import Journeys from "../components/widgets/JourneyList";
-import BadgetList from "../components/widgets/BadgetList";
+import BadgeList from "../components/widgets/BadgeList";
 import InfoPanel from "components/widgets/InfoPanel";
 import Head from "next/head";
 
@@ -61,7 +61,7 @@ class DashboardPage extends React.Component {
                 <Activities {...this.props} />
               </Col>
               <Col md="12">
-                <BadgetList />
+                <BadgeList />
               </Col>
             </Row>
           )}

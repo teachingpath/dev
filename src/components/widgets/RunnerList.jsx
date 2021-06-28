@@ -199,7 +199,7 @@ class RunnerList extends React.Component {
                       <Dropdown.Item
                         onClick={() => {
                           Router.push({
-                            pathname: "/runner/badget",
+                            pathname: "/runner/badge",
                             query: {
                               runnerId: id,
                               pathwayId: this.props.pathwayId,
@@ -208,7 +208,7 @@ class RunnerList extends React.Component {
                         }}
                         icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
                       >
-                        Add Badget
+                        Add Badge
                       </Dropdown.Item>
                       <Dropdown.Item
                         onClick={() => {

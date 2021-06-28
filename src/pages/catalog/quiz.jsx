@@ -198,7 +198,7 @@ class QuizPage extends React.Component {
         icon={<FontAwesomeIcon icon={SolidIcon.faTimes} />}
       >
         The Quiz was not passed, you must try again in order to get the Runner's
-        Badget. Cheer up and try again.
+        Badge. Cheer up and try again.
         <h4 className="mt-3">Result</h4>
         <div>
           <Label>

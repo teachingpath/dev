@@ -6,7 +6,12 @@ import Router from "next/router";
 import swalContent from "sweetalert2-react-content";
 import Swal from "@panely/sweetalert2";
 import Spinner from "@panely/components/Spinner";
-import { deletePathway, getMyPathways, publishPathway } from "consumer/pathway";
+import {
+  deletePathway,
+  getMyPathways,
+  publishPathway,
+  unpublushPathway,
+} from "consumer/pathway";
 
 const ReactSwal = swalContent(Swal);
 const swal = ReactSwal.mixin({
@@ -51,6 +56,12 @@ class PathwaysComponent extends React.Component {
         });
       }
     );
+  }
+
+  onUnpublishPathway(pathwayId) {
+    unpublushPathway(pathwayId).then(() => {
+      this.componentDidMount();
+    });
   }
 
   onDelete(pathwayId) {
@@ -217,17 +228,26 @@ class PathwaysComponent extends React.Component {
               </Dropdown.Item>
             ) : (
               <Dropdown.Item
-                onClick={() => {
-                  Router.push({
-                    pathname: "/catalog/pathway/",
-                    query: { id: id },
-                  });
-                }}
-                icon={<FontAwesomeIcon icon={SolidIcon.faThList} />}
+                onClick={() => this.onUnpublishPathway(id)}
+                icon={<FontAwesomeIcon icon={SolidIcon.faStop} />}
               >
-                Catalog
+                Unpublish
               </Dropdown.Item>
             )}
+
+            {draft === false &&  (
+                <Dropdown.Item
+                  onClick={() => {
+                    Router.push({
+                      pathname: "/catalog/pathway/",
+                      query: { id: id },
+                    });
+                  }}
+                  icon={<FontAwesomeIcon icon={SolidIcon.faThList} />}
+                >
+                  Catalog
+                </Dropdown.Item>
+              )}
           </Dropdown.Menu>
         </Dropdown.Uncontrolled>
         {/* END Dropdown */}

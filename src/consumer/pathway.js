@@ -165,6 +165,15 @@ export const publishPathway = (pathwayId, resolve, reject) => {
     });
 };
 
+export const unpublushPathway = (pathwayId) => {
+  return firestoreClient
+    .collection("pathways")
+    .doc(pathwayId)
+    .update({
+      draft: true,
+    });
+};
+
 async function publishPathwayFor(doc, pathwayId, resolve, reject) {
   if (doc.exists) {
     const data = doc.data();
@@ -176,12 +185,12 @@ async function publishPathwayFor(doc, pathwayId, resolve, reject) {
 
     const runners = await getRunners(pathwayId);
     for (const key in runners) {
-      if (!Object.keys(runners[key].badget || {}).length) {
+      if (!Object.keys(runners[key].badge || {}).length) {
         console.log(runners[key]);
         reject(
           'The runner "' +
             runners[key].name +
-            '" requires a badget to publish this pathway.'
+            '" requires a badge to publish this pathway.'
         );
         return;
       }
@@ -214,5 +223,3 @@ function onPublish(pathwayId, data, resolve) {
       console.error("Error removing document: ", error);
     });
 }
-
-
