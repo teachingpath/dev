@@ -58,7 +58,11 @@ function LoginPage() {
                   create your pathways and help others to follow your path.
                 </p>
 
-                <Link href="https://docs.teachingpath.info/" target="_back">
+                <Link
+                  href="https://docs.teachingpath.info/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   <Button pill variant="outline-light" size="lg" width="widest">
                     See docs
                   </Button>
