@@ -2,7 +2,6 @@ import {
   firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
-import uuid from "components/helpers/uuid";
 
 export const getBadges = (journeyId, resolve, reject) => {
   firestoreClient
@@ -25,46 +24,172 @@ export const getBadges = (journeyId, resolve, reject) => {
     });
 };
 
+export const getStatsByUser = (resolve, reject) => {
+  const user = firebaseClient.auth().currentUser;
+  if (user) {
+    firestoreClient
+      .collection("journeys")
+      .where("userId", "==", user.uid)
+      .get()
+      .then(async (querySnapshot) => {
+        const completeBadges = [];
+        const incompleteBadges = [];
+        const completePathways = [];
+        const incompletePathways = [];
+        const completeRunners = [];
+        const incompleteRunners = [];
+        const incompleteTracks = [];
+        const completeTracks = [];
+        const completeTrophes = [];
+
+        if (!querySnapshot.empty) {
+          querySnapshot.forEach(async (doc) => {
+            const journey = doc.data();
+
+            if (journey.progress >= 100) {
+              completePathways.push({ name: journey.name });
+              completeTrophes.push({ name: journey.trophy.name });
+            } else {
+              incompletePathways.push({ name: journey.name });
+            }
+
+            journey.breadcrumbs.forEach((breadcrumb) => {
+              const totalTime = breadcrumb.tracks
+                ?.filter((t) => t.status !== null)
+                ?.filter((t) => t.status !== "finish")
+                ?.map((t) => t.timeLimit)
+                .reduce((a, b) => a + b, 0);
+
+              if (totalTime > 0) {
+                incompleteRunners.push({ name: breadcrumb.name });
+              } else {
+                completeRunners.push({ name: breadcrumb.name });
+              }
+              breadcrumb.tracks.forEach((t) => {
+                if (t.status === null) {
+                  completeTracks.push({ name: t.name });
+                } else {
+                  incompleteTracks.push({ name: t.name });
+                }
+              });
+            });
+           const data = await firestoreClient
+              .collection("journeys")
+              .doc(doc.id)
+              .collection("badges")
+              .get()
+              .then((querySnapshot) => {
+                if (!querySnapshot.empty) {
+                  querySnapshot.forEach((doc) => {
+                    const badge = doc.data();
+                    if (badge.disabled) {
+                      incompleteBadges.push({
+                        name: badge.name,
+                      });
+                    } else {
+                      completeBadges.push({
+                        name: badge.name,
+                      });
+                    }
+                  });
+                }
+                return {
+                  incompleteBadges, completeBadges
+                }
+              });
+
+            resolve({
+              ...data,
+              completePathways,
+              incompletePathways,
+              completeRunners,
+              incompleteRunners,
+              incompleteTracks,
+              completeTracks,
+              completeTrophes,
+            });
+          }); //end foreach
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+        reject();
+      });
+  } else {
+    reject();
+  }
+};
+
 export const getBadgesByUser = (resolve, reject) => {
   const user = firebaseClient.auth().currentUser;
-  firestoreClient
-    .collection("journeys")
-    .where("userId", "==", user.uid)
-    .get()
-    .then(async (querySnapshot) => {
-      const dataList = [];
-      if (!querySnapshot.empty) {
-        querySnapshot.forEach(async (doc) => {
-         const result = await firestoreClient
-            .collection("journeys")
-            .doc(doc.id)
-            .collection("badges")
-            .where("disabled", "==", false)
-            .get()
-            .then((querySnapshot) => {
-              if (!querySnapshot.empty) {
-                querySnapshot.forEach((doc) => {
-                  dataList.push(doc.data());
-                });
-              }
-              return dataList;
-            });
+  if (user) {
+    firestoreClient
+      .collection("journeys")
+      .where("userId", "==", user.uid)
+      .get()
+      .then(async (querySnapshot) => {
+        const dataList = [];
+        if (!querySnapshot.empty) {
+          querySnapshot.forEach(async (doc) => {
+            const result = await firestoreClient
+              .collection("journeys")
+              .doc(doc.id)
+              .collection("badges")
+              .where("disabled", "==", false)
+              .get()
+              .then((querySnapshot) => {
+                if (!querySnapshot.empty) {
+                  querySnapshot.forEach((doc) => {
+                    dataList.push(doc.data());
+                  });
+                }
+                return dataList;
+              });
             resolve({ data: result });
-        });
+          });
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+        reject();
+      });
+  } else {
+    reject();
+  }
+};
 
-      }
-    })
-    .catch((error) => {
-      console.log("Error getting documents: ", error);
-      reject();
-    });
+export const getTrophiesByUser = (resolve, reject) => {
+  const user = firebaseClient.auth().currentUser;
+  if (user) {
+    firestoreClient
+      .collection("journeys")
+      .where("userId", "==", user.uid)
+      .where("progress", ">=", 100)
+      .get()
+      .then((querySnapshot) => {
+        const dataList = [];
+
+        if (!querySnapshot.empty) {
+          querySnapshot.forEach((doc) => {
+            dataList.push(doc.data().trophy);
+          });
+        }
+        resolve({ data: dataList });
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+        reject();
+      });
+  } else {
+    reject();
+  }
 };
 
 export const enableBadge = (journeyId, runnerId, totalPoints) => {
   return firestoreClient
     .collection("journeys")
     .doc(journeyId)
-    .collection("badge")
+    .collection("badges")
     .doc(runnerId)
     .update({
       disabled: false,
@@ -89,7 +214,7 @@ export const getJourney = (journeyId, resolve, reject) => {
           id: doc.id,
         });
       } else {
-        console.log("Empty documents"); 
+        console.log("Empty documents");
       }
     })
     .catch((error) => {

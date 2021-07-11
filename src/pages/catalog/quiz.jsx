@@ -112,11 +112,11 @@ class QuizPage extends React.Component {
       data.breadcrumbs[data.current].current = 0;
       data.breadcrumbs[data.current].tracks[0].status = "process";
     } catch (e) {
-      console.log("There are no more runners");
+      console.log("There are no more runners, complete pathway");
     }
     enableBadge(id, runnerId, totalPoints)
       .then((doc) => {
-        return updateJourney(id, data).then((docRef) => {
+        return updateJourney(id, data).then(() => {
           this.props.activityChange({
             type: "complete_quiz",
             msn: 'Runner "' + currentRunner.name + '" completed.',

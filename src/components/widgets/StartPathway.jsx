@@ -157,7 +157,7 @@ class StartPathway extends React.Component {
     await firestoreClient
       .collection("journeys")
       .doc(journeyId)
-      .collection("badges")
+      .collection("badge")
       .doc(data.id)
       .set({
         ...data.badge,
@@ -226,7 +226,7 @@ const StatusProgress = ({ progress, journeyId }) => {
   return (
     <Widget1.Group>
       <Widget1.Title>
-        <h4>Progress</h4>
+        Progress
         <Progress striped variant="dark" value={progress} className="mr-5 w-50">
           {progress}%
         </Progress>

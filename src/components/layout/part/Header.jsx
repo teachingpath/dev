@@ -68,7 +68,7 @@ function HeaderComponent(props) {
               </div>
             </Header.Wrap>
             <Header.Wrap>
-              <HeaderNav />
+              <HeaderNav user={props.user}/>
 
               <Button
                 icon
@@ -78,7 +78,7 @@ function HeaderComponent(props) {
               >
                 <FontAwesomeIcon icon={SolidIcon.faCog} />
               </Button>
-              <HeaderUser />
+              <HeaderUser  user={props.user}/>
             </Header.Wrap>
           </Header.Container>
         </Header.Holder>
@@ -120,7 +120,7 @@ function HeaderComponent(props) {
               >
                 <FontAwesomeIcon icon={SolidIcon.faCog} />
               </Button>
-              <HeaderUser className="ml-2" />
+              <HeaderUser className="ml-2" user={props.user} />
             </Header.Wrap>
           </Header.Container>
         </Header.Holder>
@@ -143,6 +143,7 @@ function mapStateToProps(state) {
   return {
     headerTitle: state.page.headerTitle,
     pathway: state.pathway,
+    user: state.user
   };
 }
 

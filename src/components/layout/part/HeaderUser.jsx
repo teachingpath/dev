@@ -63,7 +63,6 @@ class HeaderUser extends React.Component {
   };
 
   handleSignOut = () => {
-    // Try to signing out
     firebaseClient
       .auth()
       .signOut()
@@ -106,7 +105,7 @@ class HeaderUser extends React.Component {
                 {/* BEGIN Rich List */}
                 <RichList.Item className="w-100 p-0">
                   <RichList.Addon addonType="prepend">
-                    <WidgetAvatar image={this.props.user?.image}/>
+                    <WidgetAvatar image={this.props.user?.image} />
                   </RichList.Addon>
                   <RichList.Content>
                     <RichList.Title
@@ -161,14 +160,8 @@ class HeaderUser extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    user: state.user,
-  };
-}
-
 function mapDispatchToProps(dispatch) {
   return bindActionCreators({ firebaseChange }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HeaderUser);
+export default connect(null, mapDispatchToProps)(HeaderUser);

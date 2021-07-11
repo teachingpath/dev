@@ -216,7 +216,6 @@ const Core = ({questions, appLocale, showDefaultResult, onComplete, customResult
       multipleSelectionTagText,
       pickNumberOfSelection
     } = appLocale;
-    console.log(appLocale);
     return (
         <div className="tag-container">
           {answerSelectionType === 'single' &&

@@ -15,6 +15,7 @@ import Journeys from "../components/widgets/JourneyList";
 import BadgeList from "../components/widgets/BadgeList";
 import InfoPanel from "components/widgets/InfoPanel";
 import Head from "next/head";
+import TrophtyListComponent from "components/widgets/TrophyList";
 
 class DashboardPage extends React.Component {
   componentDidMount() {
@@ -59,6 +60,9 @@ class DashboardPage extends React.Component {
               </Col>
               <Col md="6">
                 <Activities {...this.props} />
+              </Col>
+              <Col md="12">
+                <TrophtyListComponent />
               </Col>
               <Col md="12">
                 <BadgeList />

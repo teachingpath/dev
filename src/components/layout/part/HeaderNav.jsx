@@ -1,16 +1,41 @@
 import { Nav, Dropdown, GridNav } from "@panely/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
-import { Router } from "next/router";
+import { useEffect, useState } from "react";
+import { getStatsByUser } from "consumer/journey";
 
-function HeaderNav(props) {
+function HeaderNav({user}) {
+  const [stat, setStat] = useState({
+    completeBadges: [],
+    incompleteBadges: [],
+    completePathways: [],
+    incompletePathways: [],
+    completeRunners: [],
+    incompleteRunners: [],
+    incompleteTracks: [],
+    completeTracks: [],
+    completeTrophes: [],
+  });
+
+  useEffect(() => {
+    getStatsByUser(
+      (data) => {
+        setStat(data);
+      },
+      () => {}
+    );
+  }, [user]);
+  
   return (
     <Nav pills className="ml-2">
       {/* BEGIN Dropdown */}
       <Dropdown.Uncontrolled nav>
-        <Dropdown.Toggle nav active>
-          Show more
-        </Dropdown.Toggle>
+        {user && (
+          <Dropdown.Toggle nav active>
+            Show more
+          </Dropdown.Toggle>
+        )}
+
         <Dropdown.Menu animated wide className="overflow-hidden">
           <Dropdown.Row>
             <Dropdown.Col className="d-flex flex-column align-items-start justify-content-center bg-primary text-white">
@@ -22,61 +47,52 @@ function HeaderNav(props) {
               </p>
             </Dropdown.Col>
             <Dropdown.Col>
-              <Dropdown.Header size="lg">Features</Dropdown.Header>
+              <Dropdown.Header size="lg">Statistics</Dropdown.Header>
               {/* BEGIN Grid Nav */}
               <GridNav action>
                 <GridNav.Row>
                   <GridNav.Item
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={"https://docs.teachingpath.info/concepts/pathway"}
                     icon={<FontAwesomeIcon icon={SolidIcon.faRoute} />}
                   >
-                    Pathway
+                    Pathways ({stat.completePathways.length}/
+                    {stat.incompletePathways.length +
+                      stat.completePathways.length}
+                    )
                   </GridNav.Item>
                   <GridNav.Item
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={"https://docs.teachingpath.info/concepts/runner"}
                     icon={<FontAwesomeIcon icon={SolidIcon.faRoad} />}
                   >
-                    Runner
+                    Runners ({stat.completeRunners.length}/
+                    {stat.incompleteRunners.length +
+                      stat.completeRunners.length}
+                    )
                   </GridNav.Item>
                   <GridNav.Item
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={"https://docs.teachingpath.info/concepts/track"}
                     icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
                   >
-                    Track
+                    Tracks ({stat.completeTracks.length}/
+                    {stat.incompleteTracks.length + stat.completeTracks.length})
                   </GridNav.Item>
                 </GridNav.Row>
                 <GridNav.Row>
                   <GridNav.Item
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={
-                      "https://docs.teachingpath.info/concepts/pathway#trophy"
-                    }
                     icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
                   >
-                    Trophy
+                    Trophies ({stat.completeTrophes.length}/
+                    {stat.incompletePathways.length +
+                      stat.completeTrophes.length}
+                    )
                   </GridNav.Item>
                   <GridNav.Item
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={"https://docs.teachingpath.info/concepts/quiz"}
-                    icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
+                    icon={<FontAwesomeIcon icon={SolidIcon.faRibbon} />}
                   >
-                    Quiz
+                    Badges ({stat.completeBadges.length}/
+                    {stat.incompleteBadges.length + stat.completeBadges.length})
                   </GridNav.Item>
                   <GridNav.Item
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    href={"https://docs.teachingpath.info/concepts/journey"}
-                    icon={<FontAwesomeIcon icon={SolidIcon.faPlaneDeparture} />}
+                    icon={<FontAwesomeIcon icon={SolidIcon.faFlagCheckered} />}
                   >
-                    Journey
+                    Targets (0/0)
                   </GridNav.Item>
                 </GridNav.Row>
               </GridNav>

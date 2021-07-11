@@ -76,9 +76,6 @@ function LoginPage() {
                   <div className="text-center mt-2 mb-4">
                     <img src="/images/logo.png" alt="teaching path" />
                   </div>
-                  <InfoSyncCarousel />
-                  <br></br>
-
                   <Label>Sing in</Label>
                   <LoginForm />
                 </Portlet.Body>

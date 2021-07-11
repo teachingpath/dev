@@ -125,6 +125,7 @@ class CatalogPage extends React.Component {
                                 {data.tags.map((tag, index) => {
                                   return (
                                     <Badge
+                                      key={"tags-key"+index}
                                       variant="label-info"
                                       className="mr-1"
                                     >

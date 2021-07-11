@@ -10,7 +10,7 @@ import Footer from "components/layout/part/Footer"
 
 function BlankLayout({ children }) {
   return (
-    <Layout className="holder">
+    <Layout className="holder road-background">
       <Layout type="wrapper">
         <Layout type="content">
           {children}
