@@ -188,7 +188,7 @@ function TrackForm({ onSave, data, onExtend }) {
             invalid={Boolean(errors.timeLimit)}
             placeholder="Inserte un límite de tiempo en horas"
           />
-          <Label for="timeLimit">Tiempo unitario x 10 minutos</Label>
+          <Label for="timeLimit">Unidad de Tiempo x 10 minutos</Label>
           {errors.timeLimit && (
             <Form.Feedback children={errors.timeLimit.message} />
           )}

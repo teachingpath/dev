@@ -67,7 +67,7 @@ class PathwaysComponent extends React.Component {
   onDelete(pathwayId) {
     swal
       .fire({
-        title: "¿Estas seguro?",
+        title: "¿Estas seguro/segura?",
         text: "¡No podrás revertir esto!",
         icon: "warning",
         showCancelButton: true,

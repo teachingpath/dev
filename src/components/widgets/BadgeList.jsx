@@ -56,7 +56,7 @@ class BadgeListComponent extends React.Component {
         <Portlet.Body>
           <div className="mt-4">
             {this.state.data.length === 0 && (
-              <p className="text-center text-muted">Aún no tiene registrada emblemas</p>
+              <p className="text-center text-muted">No hay emblemas aún.</p>
             )}
 
             {this.state.data.length !== 0 && (

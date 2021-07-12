@@ -104,7 +104,7 @@ const DropDownImage = (props) => {
         getImage().then();
       }} />
       <p>
-        <small className="text-muted">Required image size  {width || 125}x{height || 125}px</small>
+        <small className="text-muted">Tamaño requerida  {width || 125}x{height || 125}px</small>
       </p>
     </>
   );

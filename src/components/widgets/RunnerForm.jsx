@@ -109,7 +109,7 @@ function RunnerForm({ onSave, data }) {
               )}
           />
           <Label for="feedback">Resumen/feedback</Label>
-          <Form.Text>Escriba un resumen o feedback para que el alumno sepa lo que aprendió después de completar los Runners.</Form.Text>
+          <Form.Text>Escriba un resumen o feedback para que el aprendiz sepa lo que aprendió después de completar los Runners.</Form.Text>
           {errors.feedback && (
             <Form.Feedback children={errors.feedback.message} />
           )}
