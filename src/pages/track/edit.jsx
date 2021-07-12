@@ -107,12 +107,12 @@ class FormBasePage extends React.Component {
         });
         toast.fire({
           icon: "success",
-          title: "Track saved successfully",
+          title: "Track fue actualizado correctamente",
         });
         this.props.activityChange({
           pathwayId: pathwayId,
           type: "edit_track",
-          msn: 'The "' + data.name + '" track was updated.',
+          msn: 'El track "' + data.name + '"  fue actualizado.',
           ...data,
         });
         return updateToDraft(pathwayId);
@@ -135,7 +135,7 @@ class FormBasePage extends React.Component {
 
   render() {
     if (!this.state.saved) {
-      return <Spinner>Loading</Spinner>;
+      return <Spinner>Cargando...</Spinner>;
     }
     return (
       <React.Fragment>
@@ -148,7 +148,7 @@ class FormBasePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Track | Edit</Portlet.Title>
+                  <Portlet.Title>Track | Editar</Portlet.Title>
                   <Portlet.Addon>
                     <TrackAddon
                       extend={this.state.extend}
@@ -161,8 +161,8 @@ class FormBasePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                    After creating the Pathway you must create the runners to
-                    add the tracks.
+                  Cree cada track para evaluar las competencias dentro del
+                     runner.
                   </p>
                   <hr />
                   <TrackForm
@@ -174,7 +174,6 @@ class FormBasePage extends React.Component {
                       }
                     }}
                   />
-                  {/* END Portlet */}
                 </Portlet.Body>
               </Portlet>
             </Col>
@@ -197,7 +196,7 @@ const TrackAddon = ({ extend, toggle, runnerId, id, pathwayId }) => {
             onClick={toggle}
             icon={<FontAwesomeIcon icon={SolidIcon.faExpand} />}
           >
-            {extend ? "Collapse" : "Expand"}
+            {extend ? "Colapsar" : "Expandir"}
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
@@ -212,7 +211,7 @@ const TrackAddon = ({ extend, toggle, runnerId, id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faBook} />}
           >
-            Preview
+            Vista Previa
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
@@ -226,7 +225,7 @@ const TrackAddon = ({ extend, toggle, runnerId, id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
           >
-            New Track
+            Nuevo Track
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>

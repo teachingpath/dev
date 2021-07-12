@@ -64,7 +64,7 @@ class FormBasePage extends React.Component {
       .then((response) => {
         toast.fire({
           icon: "success",
-          title: "Pathway updated successfully",
+          title: "Pathway actualizado correctamente",
         });
         this.props.loadPathway({
           pathwayId: pathway.id,
@@ -73,7 +73,7 @@ class FormBasePage extends React.Component {
         this.props.activityChange({
           pathwayId: pathway.id,
           type: "edit_pathway",
-          msn: 'The "' + data.name + '" pathway was changed.',
+          msn: 'El pathway "' + data.name + '"  fue cambiado.',
           ...response,
         });
       })
@@ -81,7 +81,7 @@ class FormBasePage extends React.Component {
         console.error("Error adding document: ", error);
         toast.fire({
           icon: "error",
-          title: "Creation pathway",
+          title: "Actualizado el pathway",
         });
       });
   }
@@ -89,7 +89,7 @@ class FormBasePage extends React.Component {
   render() {
     const pathway = this.props.pathway;
     if (!pathway) {
-      return <Spinner>Loading</Spinner>;
+      return <Spinner>Cargando...</Spinner>;
     }
     return (
       <React.Fragment>
@@ -102,7 +102,7 @@ class FormBasePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Pathway | Edit</Portlet.Title>
+                  <Portlet.Title>Pathway | Editar</Portlet.Title>
                   <Portlet.Addon>
                     <PathwayAddon id={pathway.id} />
                   </Portlet.Addon>
@@ -126,15 +126,13 @@ class FormBasePage extends React.Component {
                       });
                     }}
                   >
-                    Add Trophy
+                    Agregar Trofeo
                     <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
                   </Button>
                 </Portlet.Footer>
               </Portlet>
-              {/* END Portlet */}
             </Col>
             <Col md="6">
-              {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Runners</Portlet.Title>
@@ -154,7 +152,7 @@ class FormBasePage extends React.Component {
                       });
                     }}
                   >
-                    Add Runner
+                    Agregar Runner
                     <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
                   </Button>
                 </Portlet.Footer>
@@ -170,7 +168,6 @@ class FormBasePage extends React.Component {
 const PathwayAddon = ({ id }) => {
   return (
     <>
-      {/* BEGIN Dropdown */}
       <Dropdown.Uncontrolled>
         <Dropdown.Toggle icon variant="text-secondary">
           <FontAwesomeIcon icon={SolidIcon.faEllipsisV} />
@@ -185,7 +182,7 @@ const PathwayAddon = ({ id }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faRunning} />}
           >
-            Add runner
+            Agregar Runner
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
@@ -196,7 +193,7 @@ const PathwayAddon = ({ id }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
           >
-            Add trophy
+            Agregar Trofeo
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
@@ -207,7 +204,7 @@ const PathwayAddon = ({ id }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faObjectGroup} />}
           >
-            Add group
+            Agregar Grupo
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
@@ -220,11 +217,10 @@ const PathwayAddon = ({ id }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faBook} />}
           >
-            Preview
+            Vista Previa
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>
-      {/* END Dropdown */}
     </>
   );
 };

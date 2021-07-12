@@ -50,13 +50,13 @@ class BadgeListComponent extends React.Component {
             <FontAwesomeIcon icon={SolidIcon.faCertificate} />
           </Portlet.Icon>
           <Portlet.Title>
-            Insignia {this.props.journeyId && ("("+inComplete+"/"+tolta+")") }
+            Emblemas {this.props.journeyId && ("("+inComplete+"/"+tolta+")") }
           </Portlet.Title>
         </Portlet.Header>
         <Portlet.Body>
           <div className="mt-4">
             {this.state.data.length === 0 && (
-              <p className="text-center text-muted">Empty badges</p>
+              <p className="text-center text-muted">Aún no tiene registrada emblemas</p>
             )}
 
             {this.state.data.length !== 0 && (
@@ -64,7 +64,6 @@ class BadgeListComponent extends React.Component {
                 {this.state.data.map((data, index) => {
                   return (
                     <CarouselItem key={"badge-key"+index}>
-                      {/* BEGIN Card */}
                       <center>
                         <img
                           className={
@@ -75,10 +74,9 @@ class BadgeListComponent extends React.Component {
                           src={data.image}
                           alt="Badge Image"
                         />
-                        <p>{data.disabled ? "Not available" : data.name}</p>
+                        <p>{data.disabled ? "No disponible" : data.name}</p>
                         <small>{!data.disabled  && data.description}</small>
                       </center>
-                      {/* END Card */}
                     </CarouselItem>
                   );
                 })}

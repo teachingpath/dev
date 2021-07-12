@@ -24,8 +24,8 @@ function SolutionForm({ onSave }) {
   const schema = yup.object().shape({
     solution: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your solution"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor ingrese su solución"),
   });
 
   const { control, errors, handleSubmit, reset } = useForm({
@@ -53,9 +53,9 @@ function SolutionForm({ onSave }) {
                 name="solution"
                 control={control}
                 invalid={Boolean(errors.solution)}
-                placeholder="Insert your solution"
+                placeholder="Ingrese su solución aquí"
               />
-              <Label for="name">My Solution</Label>
+              <Label for="name">Mi Solución</Label>
               {errors.solution && (
                 <Form.Feedback children={errors.solution.message} />
               )}
@@ -64,7 +64,7 @@ function SolutionForm({ onSave }) {
         </Col>
         <Col sm="12">
           <Button type="submit" variant="primary">
-            Respond
+            Responder
           </Button>
         </Col>
       </Row>
@@ -101,7 +101,7 @@ class HackingTrack extends React.Component {
     return (
       <>
         <Card>
-          <Card.Header>Guidelines</Card.Header>
+          <Card.Header>Pautas</Card.Header>
           <Card.Body>
             <Card.Text>
               {
@@ -125,7 +125,7 @@ class HackingTrack extends React.Component {
         </Card>
 
         <Card className="mt-3">
-          <Card.Header>Criteria</Card.Header>
+          <Card.Header>Criterios</Card.Header>
           <Card.Body>
             <Card.Text>
               <div dangerouslySetInnerHTML={{ __html: data.criteria }} />
@@ -135,12 +135,12 @@ class HackingTrack extends React.Component {
         {user && (
           <Card>
             <Card.Header>
-              <h3 className="mt-3">Solution</h3>
+              <h3 className="mt-3">Solución</h3>
             </Card.Header>
             <Card.Body>
               <Card.Text>
-                Add here your hacking answer, add links, repositories or
-                comments.
+              Agregue aquí su respuesta de piratería, agregue enlaces, repositorios o
+                 comentarios.
               </Card.Text>
               <SolutionForm
                 onSave={(data) => {
@@ -148,8 +148,8 @@ class HackingTrack extends React.Component {
                     if (this.props.activityChange) {
                       this.props.activityChange({
                         type: "new_track_response",
-                        msn: 'New track response inside group "'+group+'".',
-                        msnForGroup:'New track response by <i>'+user.displayName+'</i> from hacking task <b>'+trackName+'</b>.',
+                        msn: 'Respuesta de nueva Track dentro del grupo "'+group+'".',
+                        msnForGroup:'Nueva respuesta  por <i>'+user.displayName+'</i> para el hacking task <b>'+trackName+'</b>.',
                         group: group,
                       });
                     }

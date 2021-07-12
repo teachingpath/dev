@@ -1,15 +1,15 @@
 export function timeConvert(num) { 
   var hours = Math.floor(num / 60);  
   var minutes = num % 60;
-  var hoursText = hours > 1 ? " hours" : " hour";
-  var minutesText = minutes > 1 ? " minutes" : " minute";
+  var hoursText = hours > 1 ? " horas" : " hora";
+  var minutesText = minutes > 1 ? " minutos" : " minuto";
 
   if(!minutes){
     return (hours+"").padStart(2, "0") + hoursText;         
   }
 
   if(hours){
-    return (hours+"").padStart(2, "0") + hoursText+" and " + (minutes+"").padStart(2, "0")+minutesText;         
+    return (hours+"").padStart(2, "0") + hoursText+" y " + (minutes+"").padStart(2, "0")+minutesText;         
   }
   return (minutes+"").padStart(2, "0")+minutesText;         
 

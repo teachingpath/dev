@@ -78,7 +78,7 @@ class RunnerTab extends React.Component {
     return (
       <React.Fragment>
         <p>
-          Estimated time approximately:{" "}
+          Tiempo estimado aproximadamente:{" "}
           <strong>{timeConvert(timePowerTen(this.state.estimation))}</strong>
         </p>
         {this.state.tabs.length === 0 && <Spinner />}
@@ -100,7 +100,7 @@ class RunnerTab extends React.Component {
                 <Portlet.Header bordered>
                   <Portlet.Title>Tracks</Portlet.Title>
                   <Portlet.Addon>
-                    Estimation:{" "}
+                    Estimación:{" "}
                     <strong>
                       {timeConvert(
                         timePowerTen(
@@ -116,7 +116,7 @@ class RunnerTab extends React.Component {
                     const titleLink =
                       index + 1 + "." + (indexTrack + 1) + ". " + title;
                     return (
-                      <RichList.Item key={indexTrack}>
+                      <RichList.Item key={"runnerTab"+indexTrack}>
                         <RichList.Content>
                           <RichList.Title children={titleLink} />
                           <RichList.Subtitle children={subtitle} />

@@ -22,12 +22,12 @@ function PathwayForm({ onSave, data }) {
   const schema = yup.object().shape({
     name: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your name"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor, escriba el nombre"),
     description: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your description"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor, escriba la descripción"),
   });
   const { control, handleSubmit, errors, reset } = useForm({
     resolver: yupResolver(schema),
@@ -62,7 +62,6 @@ function PathwayForm({ onSave, data }) {
       </Form.Group>
       <Row>
         <Col xs="12">
-          {/* BEGIN Form Group */}
           <Form.Group>
             <FloatLabel>
               <Controller
@@ -72,15 +71,12 @@ function PathwayForm({ onSave, data }) {
                 name="name"
                 control={control}
                 invalid={Boolean(errors.name)}
-                placeholder="Insert your name"
+                placeholder="Ingrese el nombre del pathway"
               />
-              <Label for="name">Name</Label>
+              <Label for="name">Nombre</Label>
               {errors.name && <Form.Feedback children={errors.name.message} />}
             </FloatLabel>
           </Form.Group>
-          {/* END Form Group */}
-
-          {/* BEGIN Form Group */}
           <Form.Group>
             <FloatLabel>
               <Controller
@@ -90,17 +86,14 @@ function PathwayForm({ onSave, data }) {
                 name="description"
                 control={control}
                 invalid={Boolean(errors.description)}
-                placeholder="Insert your description"
+                placeholder="Ingrese la descripción"
               />
-              <Label for="description">Description</Label>
+              <Label for="description">Descripción</Label>
               {errors.description && (
                 <Form.Feedback children={errors.description.message} />
               )}
             </FloatLabel>
           </Form.Group>
-          {/* END Form Group */}
-
-          {/* BEGIN Form Group */}
           <Form.Group>
             <FloatLabel>
               <Controller
@@ -109,13 +102,12 @@ function PathwayForm({ onSave, data }) {
                 id="tags"
                 name="tags"
                 control={control}
-                placeholder="Insert your tags separated by commas"
+                placeholder="Inserta tus etiquetas separadas por comas"
               />
               <Label for="tags">Tags</Label>
             </FloatLabel>
-            <Form.Text>Separate tags with commas.</Form.Text>
+            <Form.Text>Separa las etiquetas con comas.</Form.Text>
           </Form.Group>
-          {/* END Form Group */}
         </Col>
       </Row>
       <Button
@@ -126,7 +118,7 @@ function PathwayForm({ onSave, data }) {
         width="widest"
       >
         {loading && <Spinner className="mr-2" />}
-        {isNew ? "Create" : "Update"}
+        {isNew ? "Crear" : "Actualizar"}
       </Button>
       <Button
         type="button"
@@ -138,7 +130,7 @@ function PathwayForm({ onSave, data }) {
           Router.back();
         }}
       >
-        Cancel
+        Cancelar
       </Button>
     </Form>
   );

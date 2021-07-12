@@ -41,13 +41,13 @@ class TrackPage extends React.Component {
 
     if (Router.query.journeyId) {
       this.props.breadcrumbChange([
-        { text: "Catalog", link: "/catalog" },
+        { text: "Catálogo", link: "/catalog" },
         {
           text: "Pathway",
           link: "/catalog/pathway?id=" + Router.query.pathwayId,
         },
         {
-          text: "My Journey",
+          text: "Mi Journey",
           link: "/catalog/journey?id=" + Router.query.journeyId,
         },
         { text: "Track" },
@@ -57,7 +57,7 @@ class TrackPage extends React.Component {
       }
     } else if (Router.query.pathwayId) {
       this.props.breadcrumbChange([
-        { text: "Catalog", link: "/catalog" },
+        { text: "Catálogo", link: "/catalog" },
         {
           text: "Pathway",
           link: "/catalog/pathway?id=" + Router.query.pathwayId,
@@ -69,7 +69,7 @@ class TrackPage extends React.Component {
       this.loadTracks();
     } else {
       this.props.breadcrumbChange([
-        { text: "Catalog", link: "/catalog" },
+        { text: "Catálogo", link: "/catalog" },
         { text: "Runner", link: "/catalog/runner?id=" + Router.query.runnerId },
         { text: "Track" },
       ]);
@@ -127,7 +127,7 @@ class TrackPage extends React.Component {
     getRunners(pathwayId, (result) => {
       const list = trackList;
       list.push({
-        title: "Related Runners",
+        title: "Runners relacionados",
         section: true,
       });
       result.list.forEach((data) => {
@@ -161,7 +161,7 @@ class TrackPage extends React.Component {
     const { asideToggle } = this.props;
     const { trackId, runnerId, trackList, pathwayId } = this.state;
     if (trackId === null || runnerId == null) {
-      return <Spinner>Loading</Spinner>;
+      return <Spinner>Cargando...</Spinner>;
     }
     return (
       <React.Fragment>
@@ -199,7 +199,7 @@ class TrackPage extends React.Component {
                     {this.state.description}
                     <div className="text-right">
                       <small>
-                        <i>Last update: {new Date().toDateString()}</i>
+                        <i>Ultima actualización: {new Date().toDateString()}</i>
                       </small>
                     </div>
                   </Widget1.Body>

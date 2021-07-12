@@ -21,7 +21,7 @@ import RunnersExecutor from "components/widgets/RunnersExecutor";
 import { getJourney } from "consumer/journey";
 
 class JourneyGeneralPage extends React.Component {
-  state = { name: "Loading", trophy: {}, progress: 0, badges: [] };
+  state = { name: "Cargando...", trophy: {}, progress: 0, badges: [] };
 
   componentDidMount() {
     if (!Router.query.id) {
@@ -29,8 +29,8 @@ class JourneyGeneralPage extends React.Component {
     }
     this.props.pageChangeHeaderTitle("Pathways");
     this.props.breadcrumbChange([
-      { text: "Catalog", link: "/catalog" },
-      { text: "My Journey" },
+      { text: "Catálogo", link: "/catalog" },
+      { text: "Mi Journey" },
     ]);
 
     getJourney(
@@ -39,9 +39,9 @@ class JourneyGeneralPage extends React.Component {
         data.runners = data.breadcrumbs;
         this.setState(data);
         this.props.breadcrumbChange([
-          { text: "Catalog", link: "/catalog" },
+          { text: "Catálogo", link: "/catalog" },
           { text: "Pathway", link: "/catalog/pathway?id=" + data.pathwayId },
-          { text: "My Journey" },
+          { text: "Mi Journey" },
         ]);
       },
       () => {}
@@ -86,7 +86,7 @@ class JourneyGeneralPage extends React.Component {
                         children={name?.toUpperCase()}
                       />
                       <h5>
-                        Your Group: <Badge>{group}</Badge>
+                        Tu Grupo: <Badge>{group}</Badge>
                       </h5>
                     </Widget1.DialogContent>
                   </Widget1.Dialog>
@@ -131,11 +131,11 @@ class JourneyGeneralPage extends React.Component {
                             });
                             this.props.activityChange({
                               type: "complete_track",
-                              msn: 'Track "' + data.title + '" completed.',
+                              msn: 'El Track "' + data.title + '" está completo.',
                               msnForGroup:
                                 "<i>" +
                                 user.displayName +
-                                '</i> has completed track <b>"' +
+                                '</i> ha completado el track <b>"' +
                                 data.title +
                                 '"</b>',
                               group: group,

@@ -63,7 +63,7 @@ class FormBasePage extends React.Component {
         text: "Pathway",
         link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
       },
-      { text: "Trophy" },
+      { text: "Trofeo" },
     ]);
     get(
       Router.query.pathwayId,
@@ -98,7 +98,7 @@ class FormBasePage extends React.Component {
                   <Portlet.Title>Trophy</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
-                  <p>This is the trophy that goes to the end of the pathway.</p>
+                  <p>Este es el trofeo que que conseguirá el aprendiz al finalizar el pathway. </p>
                   <hr />
                   <TrophyForm
                     activityChange={this.props.activityChange}
@@ -107,7 +107,6 @@ class FormBasePage extends React.Component {
                   />
                 </Portlet.Body>
               </Portlet>
-              {/* END Portlet */}
             </Col>
           </Row>
         </Container>
@@ -123,12 +122,12 @@ function TrophyForm({ pathwayId, data, activityChange }) {
   const schema = yup.object().shape({
     name: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your name"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor, ingrese un nombre"),
     description: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your description"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor, ingrese una descripción"),
   });
 
   const { control, handleSubmit, errors } = useForm({
@@ -144,12 +143,12 @@ function TrophyForm({ pathwayId, data, activityChange }) {
       .then((docRef) => {
         toast.fire({
           icon: "success",
-          title: "Trophy saved successfully",
+          title: "El trofeo fue guardado correctamente.",
         });
         activityChange({
           pathwayId: pathwayId,
           type: "edit_pathway",
-          msn: 'The "' + data.name + '" trophy was changed.',
+          msn: 'El trofeo "' + data.name + '" fue cambiado.',
         });
         setLoading(false);
       })
@@ -176,8 +175,6 @@ function TrophyForm({ pathwayId, data, activityChange }) {
       </Form.Group>
       <Row>
         <Col xs="12">
-          {/* BEGIN Form Group */}
-
           <Form.Group>
             <FloatLabel>
               <Controller
@@ -187,15 +184,12 @@ function TrophyForm({ pathwayId, data, activityChange }) {
                 name="name"
                 control={control}
                 invalid={Boolean(errors.name)}
-                placeholder="Insert your name"
+                placeholder="Ingrese un nombre"
               />
-              <Label for="trophy-name">Name</Label>
+              <Label for="trophy-name">Nombre</Label>
               {errors.name && <Form.Feedback children={errors.name.message} />}
             </FloatLabel>
           </Form.Group>
-          {/* END Form Group */}
-
-          {/* BEGIN Form Group */}
           <Form.Group>
             <FloatLabel>
               <Controller
@@ -205,18 +199,17 @@ function TrophyForm({ pathwayId, data, activityChange }) {
                 name="description"
                 control={control}
                 invalid={Boolean(errors.description)}
-                placeholder="Insert your description"
+                placeholder="Ingrese una descripción"
               />
               <Label for="trophy-description">
-                What logos would the apprentice get?
+              ¿Qué logotipos obtendría el aprendiz?
               </Label>
               {errors.description && (
                 <Form.Feedback children={errors.description.message} />
               )}
-              <Form.Text>Specify a list of achievements.</Form.Text>
+              <Form.Text>Especifique una lista de logros.</Form.Text>
             </FloatLabel>
           </Form.Group>
-          {/* END Form Group */}
         </Col>
       </Row>
       <Button
@@ -227,7 +220,7 @@ function TrophyForm({ pathwayId, data, activityChange }) {
         width="widest"
       >
         {loading && <Spinner className="mr-2" />}
-        {data === null || data === undefined ? "Save" : "Update"}
+        {data === null || data === undefined ? "Guardar" : "Actualizar"}
       </Button>
       <Button
         type="button"
@@ -239,7 +232,7 @@ function TrophyForm({ pathwayId, data, activityChange }) {
           Router.back();
         }}
       >
-        Cancel
+        Cancelar
       </Button>
     </Form>
   );

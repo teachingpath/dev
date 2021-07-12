@@ -12,7 +12,6 @@ class InfoSyncCarousel extends React.Component {
   }
 
   componentDidMount() {
-    // Set carousel elements references and store to states
     this.setState({
       main: this.mainRef,
       nav: this.navRef

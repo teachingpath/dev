@@ -79,12 +79,12 @@ class RunnerCreatePage extends React.Component {
         });
         toast.fire({
           icon: "success",
-          title: "Runner saved successfully",
+          title: "El Runner guardado correctamente",
         });
         this.props.activityChange({
           pathwayId,
           type: "new_runner",
-          msn: 'The "' + data.name + '" runner was created.',
+          msn: 'El runner "' + data.name + '" fue creado.',
         });
         return updateToDraft(pathwayId);
       })
@@ -99,7 +99,7 @@ class RunnerCreatePage extends React.Component {
 
   render() {
     if (!this.state.pathwayId) {
-      return <Spinner>Loading</Spinner>;
+      return <Spinner>Cargando...</Spinner>;
     }
     return (
       <React.Fragment>
@@ -112,13 +112,12 @@ class RunnerCreatePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Runner | Create</Portlet.Title>
+                  <Portlet.Title>Runner | Crear</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                    The runners are the objectives that contain tasks or tracks
-                    to achieve that objective, each objective must be created a
-                    quiz.
+                  Los Runners son los objetivos que contienen tareas o tracks
+                     para lograr una base de conocimiento, cada Runner debe crearse un Quiz para validar conocimientos.
                   </p>
                   <hr />
                   <RunnerForm onSave={this.onCreate} />
@@ -129,7 +128,7 @@ class RunnerCreatePage extends React.Component {
                       variant="outline-info"
                       icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
                     >
-                      Add the quiz or tracks of the created runner.
+                       Agregue el Quiz o Track de la Runner creado.
                       <Button
                         type="button"
                         disabled={!this.state.saved}
@@ -144,7 +143,7 @@ class RunnerCreatePage extends React.Component {
                           });
                         }}
                       >
-                        Add Quiz
+                        Agregar Quiz
                         <FontAwesomeIcon
                           className="ml-2"
                           icon={SolidIcon.faPlus}
@@ -164,7 +163,7 @@ class RunnerCreatePage extends React.Component {
                           });
                         }}
                       >
-                        Add Tracks
+                        Agregar Tracks
                         <FontAwesomeIcon
                           className="ml-2"
                           icon={SolidIcon.faPlus}

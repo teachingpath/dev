@@ -65,7 +65,7 @@ class FormBasePage extends React.Component {
         text: "Runner",
         link: "/runner/create?pathwayId=" + pathwayId,
       },
-      { text: "Edit" },
+      { text: "Editar" },
     ]);
   }
 
@@ -75,12 +75,12 @@ class FormBasePage extends React.Component {
       .then((docRef) => {
         toast.fire({
           icon: "success",
-          title: "Runner saved successfully",
+          title: "Runner fue guadado correctamente",
         });
         this.props.activityChange({
           pathwayId,
           type: "edit_runner",
-          msn: 'The "' + data.name + '" runner was updated.',
+          msn: 'El runner "' + data.name + '" fue actualizado.',
           ...data,
         });
         this.props.loadRunner({
@@ -102,7 +102,7 @@ class FormBasePage extends React.Component {
   render() {
     const runner = this.props.runner;
     if (!runner) {
-      return <Spinner>Loading</Spinner>;
+      return <Spinner>Cargando...</Spinner>;
     }
     return (
       <React.Fragment>
@@ -115,7 +115,7 @@ class FormBasePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Runner | Update</Portlet.Title>
+                  <Portlet.Title>Runner | Editar</Portlet.Title>
                   <Portlet.Addon>
                     <RunnerAddon
                       id={runner.runnerId}
@@ -125,12 +125,11 @@ class FormBasePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                    After creating the Pathway you must create the runners to
-                    add the tracks.
+                    Después de crear el Pathway, debe crear los Runners para
+                     agregue Tracks de aprendizaje.
                   </p>
                   <hr />
                   <RunnerForm onSave={this.onEdit} data={runner} />
-                  {/* END Portlet */}
                 </Portlet.Body>
                 <Portlet.Footer>
                   <Button
@@ -146,14 +145,13 @@ class FormBasePage extends React.Component {
                       });
                     }}
                   >
-                    Add Quiz
+                    Agrega Quiz
                     <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
                   </Button>
                 </Portlet.Footer>
               </Portlet>
             </Col>
             <Col md="6">
-              {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Tracks</Portlet.Title>
@@ -179,7 +177,7 @@ class FormBasePage extends React.Component {
                       });
                     }}
                   >
-                    Add Tracks
+                    Agrega Tracks
                     <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
                   </Button>
                 </Portlet.Footer>
@@ -226,7 +224,7 @@ const RunnerAddon = ({ id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
           >
-            Add Badge
+            Agregar Emblema
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
@@ -240,7 +238,7 @@ const RunnerAddon = ({ id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
           >
-            Add Tracks
+            Agregar Tracks
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
@@ -253,7 +251,7 @@ const RunnerAddon = ({ id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faBook} />}
           >
-            Preview
+            Vista Previa
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>

@@ -51,11 +51,9 @@ function LoginPage() {
             {/* BEGIN Portlet */}
             <Col md="12">
               <Portlet.Body className="d-flex flex-column justify-content-center align-items-start h-100 bg-primary text-white">
-                <h2>Welcome back!</h2>
+                <h2>¡Bienvenido/Bienvenida!</h2>
                 <p>
-                  In this site you can find the best science and technology
-                  pathways, learn programming, English and calculus, etc. Also
-                  create your pathways and help others to follow your path.
+                En este sitio puedes encontrar los mejores pathway de ciencia y tecnología, aprender programación, inglés y cálculo, etc. También crea tus pathway y ayuda a otros a seguir tu camino hacia el conocimiento.
                 </p>
 
                 <Link
@@ -64,7 +62,7 @@ function LoginPage() {
                   rel="noopener noreferrer"
                 >
                   <Button pill variant="outline-light" size="lg" width="widest">
-                    See docs
+                   Ver más información
                   </Button>
                 </Link>
               </Portlet.Body>
@@ -76,13 +74,13 @@ function LoginPage() {
                   <div className="text-center mt-2 mb-4">
                     <img src="/images/logo.png" alt="teaching path" />
                   </div>
-                  <Label>Sing in</Label>
+                  <Label>Iniciar sesión</Label>
                   <LoginForm />
                 </Portlet.Body>
                 <Portlet.Footer>
                   <Link href="/catalog">
                     <Button pill size="lg" width="widest">
-                      See catalog
+                      Ver catálogo de pathways
                     </Button>
                   </Link>
                 </Portlet.Footer>
@@ -99,16 +97,15 @@ function LoginForm() {
   // Loading state
   const [loading, setLoading] = React.useState(false);
 
-  // Define Yup schema for form validation
   const schema = yup.object().shape({
     email: yup
       .string()
-      .email("Your email is not valid")
-      .required("Please enter your email"),
+      .email("Su correo eléctronico no es valido")
+      .required("Por favor introduzca su correo electrónico"),
     password: yup
       .string()
-      .min(6, "Please enter at least 6 characters")
-      .required("Please provide your password"),
+      .min(6, "Por favor ingrese al menos 6 caracteres")
+      .required("Por favor ingrese su contraseña"),
   });
 
   const { control, handleSubmit, errors } = useForm({
@@ -119,7 +116,6 @@ function LoginForm() {
     },
   });
 
-  // Handle form submit event
   const onSubmit = async ({ email, password }) => {
     setLoading(true);
 
@@ -138,7 +134,6 @@ function LoginForm() {
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
-      {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel size="lg">
           <Controller
@@ -149,14 +144,12 @@ function LoginForm() {
             size="lg"
             control={control}
             invalid={Boolean(errors.email)}
-            placeholder="Please insert your email"
+            placeholder="Por favor inserte su correo electrónico"
           />
           <Label for="email">Email</Label>
           {errors.email && <Form.Feedback children={errors.email.message} />}
         </FloatLabel>
       </Form.Group>
-      {/* END Form Group */}
-      {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel size="lg">
           <Controller
@@ -167,9 +160,9 @@ function LoginForm() {
             size="lg"
             control={control}
             invalid={Boolean(errors.password)}
-            placeholder="Please insert your password"
+            placeholder="Por favor ingrese su contraseña"
           />
-          <Label for="password">Password</Label>
+          <Label for="password">Contraseña</Label>
           {errors.password && (
             <Form.Feedback children={errors.password.message} />
           )}
@@ -178,7 +171,7 @@ function LoginForm() {
       {/* END Form Group */}
       <div className="d-flex align-items-center justify-content-between">
         <span>
-          Don't have an account ? <Link href="/register">Sign Up</Link>
+        ¿No tienes una cuenta? <Link href="/register">Sign Up</Link>
         </span>
         <Button
           type="submit"
@@ -196,7 +189,6 @@ function LoginForm() {
 
 LoginPage.getInitialProps = async (ctx) => {
   const cookies = nookies.get(ctx);
-  // Redirect to dashboard page if the user has logged in
   if (cookies?.token) {
     if (ctx.res) {
       ctx.res.writeHead(302, {

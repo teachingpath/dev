@@ -19,7 +19,7 @@ function HeaderSearch() {
           type="text"
           name="q"
           defaultValue={query}
-          placeholder="Type to search..."
+          placeholder="Escribe para buscar..."
         />
       </InputGroup>
     </Form>

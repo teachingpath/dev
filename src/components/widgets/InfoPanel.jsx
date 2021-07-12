@@ -20,7 +20,7 @@ class InfoPanelComponent extends React.Component {
     data: [
       {
         title: "100%",
-        subtitle: "Popularity",
+        subtitle: "Popularidad",
         avatar: () => (
           <Widget8.Avatar
             display
@@ -35,7 +35,7 @@ class InfoPanelComponent extends React.Component {
       },
       {
         title: "0",
-        subtitle: "Trainees running",
+        subtitle: "Pathways Corriendo",
         avatar: () => (
           <Widget8.Avatar
             display
@@ -50,7 +50,7 @@ class InfoPanelComponent extends React.Component {
       },
       {
         title: "0",
-        subtitle: "Trainees finished",
+        subtitle: "Pathways Finalizado",
         avatar: () => (
           <Widget8.Avatar display circle variant="label-danger" className="m-0">
             <FontAwesomeIcon icon={SolidIcon.faCheck} />
@@ -188,15 +188,13 @@ class InfoModal extends React.Component {
                           </h5>
                           <RichList.Item
                             key={index}
-                            title={"User: " + user.email}
+                            title={"Usuario: " + user.email}
                           >
                             <RichList.Addon addonType="prepend">
-                              {/* BEGIN Avatar */}
                               <Avatar block>
                                 <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
                               </Avatar>
 
-                              {/* END Avatar */}
                             </RichList.Addon>
                             <RichList.Content>
                               <RichList.Title
@@ -214,7 +212,7 @@ class InfoModal extends React.Component {
                               <RichList.Title children={name} />
                               <RichList.Subtitle
                                 children={
-                                  "Date: " +
+                                  "Fecha: " +
                                   dateUpdated.toLocaleDateString() +
                                   " " +
                                   dateUpdated.toLocaleTimeString()
@@ -239,11 +237,10 @@ class InfoModal extends React.Component {
                 this.toggle();
               }}
             >
-              Close
+              Cerrar
             </Button>
           </Modal.Footer>
         </Modal>
-        {/* END Modal */}
       </React.Fragment>
     );
   }

@@ -41,12 +41,12 @@ class Teacher extends React.Component {
                   window.location = "mailto:" + data.email;
                 }}
               >
-                Contact
+                Contactar
               </Button>
               {data?.phone && <ReactWhatsapp
                 className="ml-2 btn btn-primary"
                 number={data?.phone}
-                message="Hello Teacher, I am speaking to you from Teaching Path."
+                message="Hola Maestro, te hablo desde Teaching Path."
               >
                 Chat
               </ReactWhatsapp>}

@@ -10,9 +10,7 @@ import {
   Container,
   CustomInput,
   FloatLabel,
-  Widget12,
 } from "@panely/components";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useForm, Controller } from "react-hook-form";
 import {
   firebaseClient,
@@ -29,10 +27,9 @@ import Link from "next/link";
 import Head from "next/head";
 import PAGE from "config/page.config";
 
-// Use SweetAlert React Content library
 const ReactSwal = swalContent(Swal);
 
-// Set SweetAlert options
+
 const swal = ReactSwal.mixin({
   customClass: {
     confirmButton: "btn btn-label-success btn-wide mx-1",
@@ -53,7 +50,7 @@ function RegisterPage() {
           className="align-items-center justify-content-center h-100"
         >
           <Col sm="8" md="6" lg="4">
-            {/* BEGIN Portlet */}
+          
             <Portlet>
               <Portlet.Body>
                 <div className="text-center mt-2 mb-4">
@@ -65,7 +62,7 @@ function RegisterPage() {
             <Portlet.Footer>
                   <Link href="/catalog">
                     <Button pill size="lg" width="widest">
-                      See catalog
+                     Ver catálogo de pathways 
                     </Button>
                   </Link>
                 </Portlet.Footer>
@@ -80,36 +77,33 @@ function RegisterForm() {
   // Loading state
   const [loading, setLoading] = React.useState(false);
 
-  // Define Yup schema for form validation
   const schema = yup.object().shape({
     firstName: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your lastname"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor ingrese su apellido"),
     lastName: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your lastname"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor ingrese su apellido"),
     email: yup
       .string()
-      .email("Your email is not valid")
-      .required("Please enter your email"),
+      .email("Su correo eléctronico no es valido")
+      .required("Por favor introduzca su correo electrónico"),
     password: yup
       .string()
-      .min(6, "Please enter at least 6 characters")
-      .required("Please provide your password"),
+      .min(6, "Por favor ingrese al menos 6 caracteres")
+      .required("Por favor ingrese su contraseña"),
     passwordRepeat: yup
       .string()
-      .min(6, "Please enter at least 6 characters")
-      .oneOf([yup.ref("password")], "Your password not match")
-      .required("Please repeat your password"),
-    agreement: yup.boolean().oneOf([true], "You must accept the agreement"),
+      .min(6, "Por favor ingrese al menos 6 caracteres")
+      .oneOf([yup.ref("password")], "Tu contraseña no coincide")
+      .required("Repite tu contraseña"),
+    agreement: yup.boolean().oneOf([true], "Debes aceptar el acuerdo"),
   });
 
   const { control, handleSubmit, errors } = useForm({
-    // Apply Yup as resolver for react-hook-form
     resolver: yupResolver(schema),
-    // Define the default values for all input forms
     defaultValues: {
       firstName: "",
       lastName: "",
@@ -121,40 +115,32 @@ function RegisterForm() {
     },
   });
 
-  // Handle form submit event
   const onSubmit = async ({ firstName, lastName, email, password, profile }) => {
-    // Show loading indicator
     setLoading(true);
 
-    // Trying to register user account to firebase
     await firebaseClient
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
-        // Trying to login with the user account that been registered before
         return firebaseClient
           .auth()
           .signInWithEmailAndPassword(email, password)
           .then(() => {
             const user = firebaseClient.auth().currentUser;
 
-            // Trying to update user name
             return user
               .updateProfile({
                 displayName: `${firstName} ${lastName}`,
               })
               .then(() => {
-                // Set the user login credential data
                 const credential = firebaseClient.auth.EmailAuthProvider.credential(
                   user.email,
                   password
                 );
 
-                // Trying to reauthenticate user account
                 return user
                   .reauthenticateWithCredential(credential)
                   .then(() => {
-                    // Redirect to dashboard page
                     Router.push(
                       Router.query.redirect || PAGE.dashboardPagePath
                     );
@@ -172,26 +158,21 @@ function RegisterForm() {
                       });
                   })
                   .catch((err) => {
-                    // Show the error message if reauthentication is failed
                     swal.fire({ text: err.message, icon: "error" });
                   });
               })
               .catch((err) => {
-                // Show the error message if update user data is failed
                 swal.fire({ text: err.message, icon: "error" });
               });
           })
           .catch((err) => {
-            // Show the error message if login is failed
             swal.fire({ text: err.message, icon: "error" });
           });
       })
       .catch((err) => {
-        // Show the error message if register is failed
         swal.fire({ text: err.message, icon: "error" });
       });
 
-    // Hide loading indicator
     setLoading(false);
   };
 
@@ -199,7 +180,6 @@ function RegisterForm() {
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Row>
         <Col xs="6">
-          {/* BEGIN Form Group */}
           <Form.Group>
             <FloatLabel size="lg">
               <Controller
@@ -210,9 +190,9 @@ function RegisterForm() {
                 name="firstName"
                 control={control}
                 invalid={Boolean(errors.firstName)}
-                placeholder="Insert your firstname"
+                placeholder="Inserta tu nombre"
               />
-              <Label for="first-name">First name</Label>
+              <Label for="first-name">Nombres propio</Label>
               {errors.firstName && (
                 <Form.Feedback children={errors.firstName.message} />
               )}
@@ -232,18 +212,16 @@ function RegisterForm() {
                 name="lastName"
                 control={control}
                 invalid={Boolean(errors.lastName)}
-                placeholder="Insert your lastname"
+                placeholder="Inserta tu apellido"
               />
-              <Label for="last-name">last name</Label>
+              <Label for="last-name">Apellidos propio</Label>
               {errors.lastName && (
                 <Form.Feedback children={errors.lastName.message} />
               )}
             </FloatLabel>
           </Form.Group>
-          {/* END Form Group */}
         </Col>
       </Row>
-      {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel size="lg">
           <Controller
@@ -254,14 +232,13 @@ function RegisterForm() {
             size="lg"
             control={control}
             invalid={Boolean(errors.email)}
-            placeholder="Please insert your email"
+            placeholder="Por favor, ingrese su email"
           />
           <Label for="email">Email</Label>
           {errors.email && <Form.Feedback children={errors.email.message} />}
         </FloatLabel>
       </Form.Group>
-      {/* END Form Group */}
-      {/* BEGIN Form Group */}
+    
       <Form.Group>
         <FloatLabel size="lg">
           <Controller
@@ -272,16 +249,14 @@ function RegisterForm() {
             name="password"
             control={control}
             invalid={Boolean(errors.password)}
-            placeholder="Please provide your password"
+            placeholder="Por favor ingrese una contraseña"
           />
-          <Label for="password">Password</Label>
+          <Label for="password">Contraseña</Label>
           {errors.password && (
             <Form.Feedback children={errors.password.message} />
           )}
         </FloatLabel>
       </Form.Group>
-      {/* END Form Group */}
-      {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel size="lg">
           <Controller
@@ -292,9 +267,9 @@ function RegisterForm() {
             name="passwordRepeat"
             control={control}
             invalid={Boolean(errors.passwordRepeat)}
-            placeholder="Repeat your password"
+            placeholder="Repita su contraseña"
           />
-          <Label for="passwordRepeat">Confirm password</Label>
+          <Label for="passwordRepeat">Confirme su contraseña</Label>
           {errors.passwordRepeat && (
             <Form.Feedback children={errors.passwordRepeat.message} />
           )}
@@ -309,7 +284,7 @@ function RegisterForm() {
                 type="switch"
                 size="lg"
                 id="profile"
-                label="Activate coach mode"
+                label="Active como Teacher"
                 invalid={Boolean(errors.profile)}
                 onBlur={onBlur}
                 onChange={(e) => onChange(e.target.checked)}
@@ -319,9 +294,7 @@ function RegisterForm() {
             )}
           />
         </Form.Group>
-      {/* END Form Group */}
       <div className="d-flex align-items-center justify-content-between mb-3">
-        {/* BEGIN Form Group */}
         <Form.Group className="mb-0">
           <Controller
             control={control}
@@ -331,7 +304,7 @@ function RegisterForm() {
                 type="checkbox"
                 size="lg"
                 id="agreement"
-                label="Accept agreement"
+                label="Aceptar acuerdo"
                 invalid={Boolean(errors.agreement)}
                 onBlur={onBlur}
                 onChange={(e) => onChange(e.target.checked)}
@@ -341,13 +314,11 @@ function RegisterForm() {
             )}
           />
         </Form.Group>
-        {/* END Form Group */}
 
-      
       </div>
       <div className="d-flex align-items-center justify-content-between">
         <span>
-          Already have an account ? <Link href="/login">Sign In</Link>
+          ¿Ya tienes una cuenta? <Link href="/login">Iniciar sesión</Link>
         </span>
         <Button
           type="submit"
@@ -356,7 +327,7 @@ function RegisterForm() {
           width="widest"
           disabled={loading}
         >
-          {loading ? <Spinner className="mr-2" /> : null} Register
+          {loading ? <Spinner className="mr-2" /> : null} Registrar
         </Button>
       </div>
     </Form>

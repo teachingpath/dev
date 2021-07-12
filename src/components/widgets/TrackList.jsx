@@ -48,13 +48,13 @@ class TrackList extends React.Component {
   onDelete(trackId) {
     swal
       .fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
+        title: "¿Estas seguro/segura?",
+        text: "¡No podrás revertir esto!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonText: "¡Sí, bórralo!",
       })
       .then((result) => {
         if (result.value) {
@@ -84,20 +84,18 @@ class TrackList extends React.Component {
       <RichList bordered action>
         {this.state.loaded === false && <Spinner>loading...</Spinner>}
         {this.state.loaded === true && this.state.data.length === 0 && (
-          <p className="text-center">Empty tracks</p>
+          <p className="text-center">No hay tracks.</p>
         )}
         <ReactSortable list={this.state.data} setList={this.onSortList}>
           {this.state.data.map((data, index) => {
             const { title, subtitle,typeContent, type, id } = data;
 
             return (
-              <RichList.Item key={index}>
+              <RichList.Item key={"tracks"+index}>
                 <RichList.Addon addonType="prepend">
-                  {/* BEGIN Avatar */}
                   <Avatar display>
                     <FontAwesomeIcon icon={SolidIcon.faSort} />
                   </Avatar>
-                  {/* END Avatar */}
                 </RichList.Addon>
                 <RichList.Content>
                   <RichList.Title
@@ -121,7 +119,6 @@ class TrackList extends React.Component {
                   </RichList.Subtitle>
                 </RichList.Content>
                 <RichList.Addon addonType="append">
-                  {/* BEGIN Dropdown */}
                   <Dropdown.Uncontrolled>
                     <Dropdown.Toggle icon variant="text-secondary">
                       <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
@@ -148,7 +145,7 @@ class TrackList extends React.Component {
                         }}
                         icon={<FontAwesomeIcon icon={SolidIcon.faTrashAlt} />}
                       >
-                        Delete
+                        Eliminar
                       </Dropdown.Item>
                       <Dropdown.Item
                         onClick={() => {
@@ -163,11 +160,10 @@ class TrackList extends React.Component {
                         }}
                         icon={<FontAwesomeIcon icon={SolidIcon.faBook} />}
                       >
-                        {"Preview"}
+                        Vista Previa
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown.Uncontrolled>
-                  {/* END Dropdown */}
                 </RichList.Addon>
               </RichList.Item>
             );

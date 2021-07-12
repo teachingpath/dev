@@ -28,17 +28,16 @@ const StatusProgress = ({ progress, journeyId, pathwayId, runners }) => {
       <Widget1.Group>
         {!isFinish ? (
           <Widget1.Title>
-            <h4>My Progress</h4>
+            <h4>Mi progreso</h4>
             <Progress striped value={progress} className="mr-5 w-50">
               {progress}%
             </Progress>
           </Widget1.Title>
         ) : (
-          <h4 className="mr-5 w-100">Pathway Successful</h4>
+          <h4 className="mr-5 w-100">Pathway Finalizado</h4>
         )}
 
         <Widget1.Addon>
-          {/* BEGIN Dropdown */}
           <Dropdown.Uncontrolled>
             <Dropdown.Toggle caret children="Option" />
             <Dropdown.Menu right animated>
@@ -48,16 +47,10 @@ const StatusProgress = ({ progress, journeyId, pathwayId, runners }) => {
                   onReCreateJourney(pathwayId, journeyId, runners);
                 }}
               >
-                Reset
-              </Dropdown.Item>
-              <Dropdown.Item
-                icon={<FontAwesomeIcon icon={SolidIcon.faShare} />}
-              >
-                Share
+                Reiniciar
               </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown.Uncontrolled>
-          {/* END Dropdown */}
         </Widget1.Addon>
       </Widget1.Group>
     </>

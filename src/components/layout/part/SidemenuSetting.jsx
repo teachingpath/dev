@@ -12,7 +12,6 @@ class SidemenuSetting extends React.Component {
   bodyRef = React.createRef();
 
   componentDidMount() {
-    // Initialize custom scrollbar
     new SimpleBar(this.bodyRef.current);
   }
 
@@ -27,7 +26,7 @@ class SidemenuSetting extends React.Component {
         backdropOnClick={() => sidemenuToggle("setting")}
       >
         <Sidemenu.Header>
-          <Sidemenu.Title>Settings</Sidemenu.Title>
+          <Sidemenu.Title>Configuración</Sidemenu.Title>
           <Sidemenu.Addon>
             <Button
               icon

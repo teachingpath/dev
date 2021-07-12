@@ -50,7 +50,7 @@ class PathwayResume extends React.Component {
                   Router.push("/catalog/pathway?id=" + this.props.pathwayId);
                 }}
               >
-                Start pathway
+                Iniciar pathway
               </Button>
             </Card.Body>
           </Col>

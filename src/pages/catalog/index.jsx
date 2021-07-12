@@ -29,7 +29,7 @@ class CatalogPage extends React.Component {
     const tags = Router.query.tag;
 
     this.props.pageChangeHeaderTitle("Pathways");
-    this.props.breadcrumbChange([{ text: "Catalog", link: "/catalog" }]);
+    this.props.breadcrumbChange([{ text: "Catálogo", link: "/catalog" }]);
     let db = firestoreClient.collection("pathways").where("draft", "==", false);
     if (q) {
       db = db.where("searchTypes", ">=", q).where("searchTypes", "<=", q + "\uf8ff");
@@ -56,7 +56,7 @@ class CatalogPage extends React.Component {
 
   render() {
     if (this.state.data === null) {
-      return <Spinner className="m-5">Loading</Spinner>;
+      return <Spinner className="m-5">Cargando...</Spinner>;
     }
     return (
       <React.Fragment>
@@ -68,16 +68,16 @@ class CatalogPage extends React.Component {
             <Col md="12">
               <div>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Available pathways</Portlet.Title>
+                  <Portlet.Title>Pathways disponibles</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                    You can see the pathways here but in order to apply you must
-                    have a user account.
+                  Puede ver los Pathways aquí, pero para postularse debe
+                     tener una cuenta de usuario. 
                   </p>
                   <CardColumns>
                     {this.state.data.length === 0 && (
-                      <p className="p-5">There is no match to display.</p>
+                      <p className="p-5">No hay coincidencias para mostrar.</p>
                     )}
                     {this.state.data.map((data, index) => {
                       return (
@@ -101,7 +101,7 @@ class CatalogPage extends React.Component {
                                 });
                               }}
                             >
-                              Start
+                              Iniciar
                             </Button>
 
                             <Button

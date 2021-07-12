@@ -4,7 +4,6 @@ import * as RegularIcon from "@fortawesome/free-regular-svg-icons"
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons"
 
 function FooterComponent() {
-  // Get current year and store to the variabke
   const copyrightYear = new Date().getFullYear()
 
   return (
@@ -19,7 +18,7 @@ function FooterComponent() {
           </Col>
           <Col md="6" className="d-none d-md-block">
             <p className="text-right mb-0">
-              Hand-crafted and made with{" "}
+               Hecho a mano y hecho con {" "}
               <FontAwesomeIcon icon={SolidIcon.faHeart} className="text-danger" />
             </p>
           </Col>

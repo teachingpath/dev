@@ -92,12 +92,12 @@ class FormBasePage extends React.Component {
         });
         toast.fire({
           icon: "success",
-          title: "Question saved successfully",
+          title: "La pregunta fue actualizada correctamente",
         });
         this.props.activityChange({
           pathwayId: pathwayId,
           type: "edit_question",
-          msn: 'The "' + data.question + '" question was updated.',
+          msn: 'La pregunta "' + data.question + '" fue actualizada.',
         });
       })
       .catch((error) => {
@@ -124,19 +124,17 @@ class FormBasePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Question | Update</Portlet.Title>
+                  <Portlet.Title>Pregunta | Editar</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                    Add all the questions related to this runner, these
-                    questions should help validate the knowledge.
+                  Agregue todas las preguntas relacionadas con este corredor, estas
+                     Las preguntas deberían ayudar a validar el conocimiento.
                   </p>
                   <hr />
                   <QuizForm onSave={this.onEdit} data={this.state} />
-                  {/* END Portlet */}
                 </Portlet.Body>
               </Portlet>
-              {/* END Portlet */}
             </Col>
           </Row>
         </Container>

@@ -24,9 +24,9 @@ class QuizPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      quizTitle: "Check your knowledge of the runner",
+      quizTitle: "Comprueba tu conocimiento del Runner.",
       quizSynopsis:
-        "Welcome to the Knowledge Verification Quiz for the Runner, by passing this Quiz you can get the pathway trophy. Solve the Quiz in the shortest time.",
+        "Bienvenido al Quiz de verificación de conocimientos para el Runner. Al aprobar este Cuestionario, puede obtener el trofeo del Pathway. Resuelve el cuestionario en el menor tiempo posible.",
       questions: [],
     };
     this.onFinish = this.onFinish.bind(this);
@@ -38,8 +38,8 @@ class QuizPage extends React.Component {
     }
     this.props.pageChangeHeaderTitle("Pathway");
     this.props.breadcrumbChange([
-      { text: "Catalog", link: "/catalog" },
-      { text: "My Journey", link: "/catalog/journey?id=" + Router.query.id },
+      { text: "Catálogo", link: "/catalog" },
+      { text: "Mi Journey", link: "/catalog/journey?id=" + Router.query.id },
       { text: "Quiz" },
     ]);
     this.onLoad(Router.query);
@@ -119,14 +119,14 @@ class QuizPage extends React.Component {
         return updateJourney(id, data).then(() => {
           this.props.activityChange({
             type: "complete_quiz",
-            msn: 'Runner "' + currentRunner.name + '" completed.',
+            msn: 'Runner "' + currentRunner.name + '" está completo.',
             point: totalPoints,
             msnForGroup:
               "<i>" +
               user.displayName +
-              '</i> has completed runner <b>"' +
+              '</i> ha completado el runner <b>"' +
               currentRunner.name +
-              '"</b> your new process is: ' +
+              '"</b> y su nuevo progreso es: ' +
               data.progress.toFixed(2) +
               "%",
             group: data.group,
@@ -135,11 +135,11 @@ class QuizPage extends React.Component {
           if (data.progress >= 100) {
             this.props.activityChange({
               type: "complete_pathway",
-              msn: 'Pathway "' + data.name + '" completed.',
+              msn: 'Pathway "' + data.name + '" esta completo.',
               msnForGroup:
                 "<i>" +
                 user.displayName +
-                '</i> has completed pathway <b>"' +
+                '</i> ha complatado el pathway <b>"' +
                 data.name +
                 '"</b>',
               group: data.group,
@@ -171,12 +171,12 @@ class QuizPage extends React.Component {
         variant={"outline-success"}
         icon={<FontAwesomeIcon icon={SolidIcon.faCheckCircle} />}
       >
-        Congratulations you passed the Quiz. You have gotten {totalPoints}{" "}
-        bonuses.
-        <h4 className="mt-3">Result</h4>
+       Felicitaciones, pasó el quiz. Has conseguido {totalPoints}{" "}
+        puntos.
+        <h4 className="mt-3">Resultado</h4>
         <div>
           <Label>
-            Number of correct answers:{" "}
+          Número de respuestas correctas:{" "}
             <strong>
               {numberOfCorrectAnswers}/{numberOfQuestions}
             </strong>
@@ -188,7 +188,7 @@ class QuizPage extends React.Component {
               this.onFinish({ ...Router.query, totalPoints });
             }}
           >
-            Finish
+            Finalizar
           </Button>
         </p>
       </Alert>
@@ -197,12 +197,13 @@ class QuizPage extends React.Component {
         variant={"outline-danger"}
         icon={<FontAwesomeIcon icon={SolidIcon.faTimes} />}
       >
-        The Quiz was not passed, you must try again in order to get the Runner's
-        Badge. Cheer up and try again.
+        El quiz no se aprobó, debe intentarlo de nuevo 
+        para obtener el emblema del Runner y pasar el Pathway. 
+        Anímate y vuelve a intentarlo.
         <h4 className="mt-3">Result</h4>
         <div>
           <Label>
-            Number of correct answers:{" "}
+          Número de respuestas correctas:{" "}
             <strong>
               {numberOfCorrectAnswers} / {numberOfQuestions}
             </strong>
@@ -214,7 +215,7 @@ class QuizPage extends React.Component {
               Router.reload();
             }}
           >
-            Retry Quiz
+            Repetir Quiz
           </Button>
         </p>
       </Alert>
@@ -231,7 +232,7 @@ class QuizPage extends React.Component {
           <Portlet>
             <Portlet.Header bordered>
               <Portlet.Title>
-                {this.state?.trophy?.name || "Validation runner"}
+                {this.state?.trophy?.name || "Validar runner"}
               </Portlet.Title>
             </Portlet.Header>
             <Portlet.Body>

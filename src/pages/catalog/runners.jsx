@@ -27,7 +27,7 @@ class CatalogPage extends React.Component {
 
     this.props.pageChangeHeaderTitle("Pathways");
     this.props.breadcrumbChange([
-      { text: "Catalog", link: "/catalog" },
+      { text: "Catálogo", link: "/catalog" },
       { text: "Runners" },
     ]);
     firestoreClient
@@ -67,12 +67,12 @@ class CatalogPage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                    You can see the runners here but in order to apply you must
-                    have a user account.
+                  Puedes ver los corredores aquí pero para postularte debes
+                     tener una cuenta de usuario.
                   </p>
                   <CardColumns>
                     {this.state.data.length === 0 && (
-                      <p className="p-5">There is no match to display.</p>
+                      <p className="p-5">No hay coincidencias para mostrar.</p>
                     )}
                     {this.state.data.map((data, index) => {
                       return (

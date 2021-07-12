@@ -25,12 +25,12 @@ function RunnerForm({ onSave, data }) {
   const schema = yup.object().shape({
     name: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your name"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor, ingrese el nombre del runner"),
     description: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your description")
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor, ingrese la descripción del runner")
   });
 
   const { control, errors, handleSubmit, reset } = useForm({
@@ -55,7 +55,6 @@ function RunnerForm({ onSave, data }) {
         });
       })}
     >
-      {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel>
           <Controller
@@ -65,15 +64,12 @@ function RunnerForm({ onSave, data }) {
             name="name"
             control={control}
             invalid={Boolean(errors.name)}
-            placeholder="Insert your name"
+            placeholder="Ingrese un nombre"
           />
-          <Label for="name">Name</Label>
+          <Label for="name">Nombre</Label>
           {errors.name && <Form.Feedback children={errors.name.message} />}
         </FloatLabel>
       </Form.Group>
-      {/* END Form Group */}
-
-      {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel>
           <Controller
@@ -83,17 +79,14 @@ function RunnerForm({ onSave, data }) {
             name="description"
             control={control}
             invalid={Boolean(errors.description)}
-            placeholder="Insert your description"
+            placeholder="Ingrese una descripción"
           />
-          <Label for="description">Description</Label>
+          <Label for="description">Descripción</Label>
           {errors.description && (
             <Form.Feedback children={errors.description.message} />
           )}
         </FloatLabel>
       </Form.Group>
-      {/* END Form Group */}
-
-      {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel>
 
@@ -108,21 +101,20 @@ function RunnerForm({ onSave, data }) {
                       value={value}
                       id="feedback"
                       name={"feedback"}
-                      placeholder="Insert your Summary/feedback"
+                      placeholder="Ingrese un Resumen/Feedback"
                       modules={modulesBasic}
                       onChange={onChange}
                       style={{ minHeight: "15rem" }}
                   />
               )}
           />
-          <Label for="feedback">Summary/feedback</Label>
-          <Form.Text>Write a summary or feedback so that the learner knows what he learned after completing the runners</Form.Text>
+          <Label for="feedback">Resumen/feedback</Label>
+          <Form.Text>Escriba un resumen o feedback para que el alumno sepa lo que aprendió después de completar los Runners.</Form.Text>
           {errors.feedback && (
             <Form.Feedback children={errors.feedback.message} />
           )}
         </FloatLabel>
       </Form.Group>
-      {/* END Form Group */}
       <Button
         disabled={loading}
         type="submit"
@@ -131,7 +123,7 @@ function RunnerForm({ onSave, data }) {
         width="widest"
       >
         {loading && <Spinner className="mr-2"></Spinner>}
-        {data === null || data === undefined ? "Create" : "Update"}
+        {data === null || data === undefined ? "Crear" : "Actualizar"}
       </Button>
       <Button
         type="button"
@@ -142,7 +134,7 @@ function RunnerForm({ onSave, data }) {
           Router.back();
         }}
       >
-        Cancel
+        Cancelar
       </Button>
     </Form>
   );

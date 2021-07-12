@@ -105,13 +105,8 @@ class StartPathway extends React.Component {
         .then((doc) => {
           this.props.activityChange({
             type: "start_pathway",
-            msn: 'Start pathway "' + name + '".',
-            msnForGroup:
-              "<i>" +
-              user.displayName +
-              '</i> starts the pathway "<b>' +
-              name +
-              '</b>".',
+            msn: 'Inicia pathway "' + name + '".',
+            msnForGroup:  "<i>" + user.displayName + '</i> inició el pathway "<b>' +  name + '</b>".',
             group: groupSlug,
           });
 
@@ -242,7 +237,7 @@ const StatusProgress = ({ progress, journeyId }) => {
             });
           }}
         >
-          Go to journey
+          Ir al journey
         </Button>
       </Widget1.Addon>
     </Widget1.Group>
@@ -262,16 +257,14 @@ const Login = () => {
         });
       }}
     >
-      Start Pathway
+      Iniciar Pathway
     </Button>
   );
 };
 
 class StartPathwayButton extends React.Component {
-  // Default state
   state = { isOpen: false, data: [] };
 
-  // Handle modal toggle event
   toggle = () => this.setState({ isOpen: !this.state.isOpen });
 
   componentDidMount() {
@@ -288,13 +281,13 @@ class StartPathwayButton extends React.Component {
   onSubmitPathwayGroup = () => {
     swal
       .fire({
-        title: "Submit your pathway group",
+        title: "Seleccione su grupo de ruta",
         input: "text",
         inputAttributes: {
           autocapitalize: "off",
         },
         showCancelButton: true,
-        confirmButtonText: "Look up",
+        confirmButtonText: "Buscar",
         showLoaderOnConfirm: true,
         preConfirm: (group) => {
           return Promise.resolve({
@@ -316,7 +309,7 @@ class StartPathwayButton extends React.Component {
           swal.fire({
             icon: "error",
             title: "Oops...",
-            text: "The group does not exist for this pathway",
+            text: "El grupo no existe para este pathway.",
           });
         }
       });
@@ -326,20 +319,20 @@ class StartPathwayButton extends React.Component {
     return (
       <>
         <Button onClick={this.toggle} className="w-25">
-          Start Pathway
+          Iniciar Pathway
         </Button>
-        {/* BEGIN Modal */}
         <Modal isOpen={this.state.isOpen} toggle={this.toggle}>
-          <Modal.Header toggle={this.toggle}>Select Group</Modal.Header>
+          <Modal.Header toggle={this.toggle}>Selecciona grupo</Modal.Header>
           <Modal.Body>
             <p className="mb-0">
-              Select a group to work the pathway as a group
+            {this.props.loading && <Spinner className="mr-2" />} 
+              Seleccione un grupo para trabajar el pathway como grupo
             </p>
             <RichList bordered action>
               {this.state.data === null && <Spinner className="mr-2" />}
-              {this.props.loading && <Spinner className="mr-2" />}
+             
               {this.state.data && this.state.data.length === 0 && (
-                <p className="text-center">Empty groups</p>
+                <p className="text-center">No existe grupos para este pathway</p>
               )}
               {this.state.data
                 .filter((item) => item.isPrivate !== true)
@@ -365,10 +358,10 @@ class StartPathwayButton extends React.Component {
               className="mr-2"
               onClick={this.onSubmitPathwayGroup}
             >
-              Enter private group
+              Ingrese un grupo privado
             </Button>
             <Button variant="outline-danger" onClick={this.toggle}>
-              Cancel
+              Cancelar
             </Button>
           </Modal.Footer>
         </Modal>

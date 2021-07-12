@@ -129,8 +129,8 @@ class TrackModal extends React.Component {
       activityChange,
     } = this.props;
     const titleButton = timeLimit
-      ? "Time limit [" + timeShortPowerTen(timeLimit) + "]"
-      : "Start this track";
+      ? "Tiempo limite[" + timeShortPowerTen(timeLimit) + "]"
+      : "Inicia el Track";
     const date = this.countdownRef?.current?.props?.date
       ? this.countdownRef?.current?.props?.date
       : Date.now() + time;
@@ -144,9 +144,8 @@ class TrackModal extends React.Component {
               date={date}
               renderer={this.renderer}
             />
-          )) || <>Start</>}
+          )) || <>Iniciar</>}
         </Button>
-        {/* BEGIN Modal */}
         <Modal
           scrollable
           isOpen={this.state.isOpen}
@@ -202,14 +201,14 @@ class TrackModal extends React.Component {
             <Button
               variant="primary"
               className="mr-2"
-              title={"I have completed this track"}
+              title={"He completado este Track"}
               onClick={() => {
                 this.complete().then(() => {
                   onComplete();
                 });
               }}
             >
-              Complete
+              Completar
             </Button>
             <Button
               variant="secondary"
@@ -219,11 +218,10 @@ class TrackModal extends React.Component {
                 this.toggle();
               }}
             >
-              Close
+              Cerrar
             </Button>
           </Modal.Footer>
         </Modal>
-        {/* END Modal */}
       </React.Fragment>
     );
   }

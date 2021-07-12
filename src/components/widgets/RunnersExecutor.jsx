@@ -45,12 +45,12 @@ class RunnersExecutor extends React.Component {
                 <Card.Title>{item.name.toUpperCase()}</Card.Title>
                 {totalTime > 0 ? (
                   <Portlet.Addon>
-                    Time limit:{" "}
+                    Limite de tiempo:{" "}
                     <strong>{timeShortPowerTen(totalTime)} + Quiz</strong>
                   </Portlet.Addon>
                 ) : (
                   <Portlet.Addon>
-                    <strong>Finished</strong>
+                    <strong>Finalizado</strong>
                   </Portlet.Addon>
                 )}
               </Card.Header>
@@ -172,7 +172,7 @@ class Tracks extends React.Component {
                 {activeQuiz && (
                   <div dangerouslySetInnerHTML={{ __html: feedback }} />
                 )}
-                <p>Present Quiz to validate knowledge.</p>
+                <p>Presentar Quiz para validar conocimientos.</p>
                 <Button
                   disabled={!activeQuiz}
                   onClick={() => {
@@ -185,7 +185,7 @@ class Tracks extends React.Component {
                     });
                   }}
                 >
-                  Take quiz
+                  Tomar Quiz
                 </Button>
               </div>
             }

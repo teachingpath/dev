@@ -47,13 +47,12 @@ class ActivitiesComponent extends React.Component {
           <Portlet.Icon>
             <FontAwesomeIcon icon={SolidIcon.faClipboardList} />
           </Portlet.Icon>
-          <Portlet.Title>Activities Group</Portlet.Title>
+          <Portlet.Title>Actividades del Grupo</Portlet.Title>
         </Portlet.Header>
         <Portlet.Body>
-          {/* BEGIN Timeline */}
           {this.state.data === null && <Spinner />}
           {this.state.data && this.state.data.length === 0 && (
-            <p className="text-center">Empty activities</p>
+            <p className="text-center">No hay activiades aún.</p>
           )}
           <Timeline timed>
             {this.state.data &&
@@ -72,7 +71,6 @@ class ActivitiesComponent extends React.Component {
                 );
               })}
           </Timeline>
-          {/* END Timeline */}
         </Portlet.Body>
       </Portlet>
     );

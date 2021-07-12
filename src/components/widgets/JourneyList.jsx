@@ -54,7 +54,7 @@ class JourneyListComponent extends React.Component {
                 Router.push("/catalog");
               }}
             >
-              Search
+              Buscar
             </Button>
           </Portlet.Addon>
         </Portlet.Header>
@@ -62,7 +62,7 @@ class JourneyListComponent extends React.Component {
           {/* BEGIN Rich List */}
           <RichList bordered action>
             {this.state.data.length === 0 && (
-                <p className="text-center">Empty pathways</p>
+                <p className="text-center">No hay pathways.</p>
             )}
             {this.state.data.map((data, index) => {
               const { name, description, progress, id, pathwayId } = data;
@@ -103,7 +103,7 @@ class JourneyListComponent extends React.Component {
                         });
                       }}
                     >
-                      Go to journey
+                     Ir al Journey
                     </Button>
                   </RichList.Addon>
                 </RichList.Item>

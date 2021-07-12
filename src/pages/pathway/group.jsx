@@ -95,10 +95,10 @@ class FormBasePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Groups</Portlet.Title>
+                  <Portlet.Title>Groupos</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
-                  <p>You can create groups to divide the learning process as a group, and also create private groups for more personalized accompaniment.</p>
+                  <p>Puede crear grupos para dividir el proceso de aprendizaje como grupo, y también crear grupos privados para un acompañamiento más personalizado.</p>
                   <hr />
                   <GroupForm
                     activityChange={this.props.activityChange}
@@ -130,19 +130,19 @@ function GroupForm({ pathwayId, groups, activityChange }) {
       .then((docRef) => {
         toast.fire({
           icon: "success",
-          title: "Groups saved successfully",
+          title: "El grupo fue creado correctamente",
         });
         activityChange({
           pathwayId: pathwayId,
           type: "edit_pathway",
-          msn: 'The "' + data.name + '" groups was changed.',
+          msn: 'El grupo "' + data.name + '" fue actualizado o creado.',
         });
         setLoading(false);
       })
       .catch((error) => {
         toast.fire({
           icon: "error",
-          title: "Updating groups",
+          title: "Actualizando grupo",
         });
         setLoading(false);
       });
@@ -170,7 +170,7 @@ function GroupForm({ pathwayId, groups, activityChange }) {
         </FloatLabel>
         <Button type="submit" variant="label-primary" size="lg" width="widest">
           {loading && <Spinner className="mr-2" />}
-          Update
+          Actualizar
         </Button>
 
         <Button
@@ -182,7 +182,7 @@ function GroupForm({ pathwayId, groups, activityChange }) {
             Router.back();
           }}
         >
-          Cancel{" "}
+          Cancelar
         </Button>
       </Form.Group>
     </Form>
@@ -202,7 +202,6 @@ function FieldGroup({ data, onChange }) {
     remove: optionsRemove,
   } = useFieldArray({ control, name: "groups" });
 
-  // Handle form submit event
   const onChangeContent = (index, data) => {
     if (!value[index]) {
       value[index] = data;
@@ -245,7 +244,7 @@ function FieldGroup({ data, onChange }) {
                       />
                     )}
                   />
-                  <Label for={`groups_${index}_.name`}>Group#{index + 1}</Label>
+                  <Label for={`groups_${index}_.name`}>Grupo#{index + 1}</Label>
                 </FloatLabel>
               </Form.Group>
               <Form.Group>
@@ -259,7 +258,7 @@ function FieldGroup({ data, onChange }) {
                         <CustomInput
                           type={"checkbox"}
                           id={`groups_${index}_.isPrivate`}
-                          label="it's private?"
+                          label="¿Es privado el grupo?"
                           name={`groups[${index}].isPrivate`}
                           onChange={(e) => {
                             onChange(e.target.checked);
@@ -306,11 +305,9 @@ function FieldGroup({ data, onChange }) {
             optionsAppend({});
           }}
         >
-          Add Group <FontAwesomeIcon icon={SolidIcon.faPlus} />
+          Agregar Grupo <FontAwesomeIcon icon={SolidIcon.faPlus} />
         </Button>
       </p>
-
-      {/* END Form Group */}
     </Form>
   );
 }

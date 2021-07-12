@@ -6,7 +6,6 @@ import HeaderSearch from "./HeaderSearch";
 import Sticky from "react-stickynode";
 import HeaderUser from "./HeaderUser";
 import HeaderNav from "./HeaderNav";
-import { Link } from "react-feather";
 
 function HeaderComponent(props) {
   const { headerTitle } = props;
@@ -19,7 +18,6 @@ function HeaderComponent(props) {
         bottomBoundary={0}
         className="sticky-header"
       >
-        {/* BEGIN Header Holder */}
         <Header.Holder desktop>
           <Header.Container fluid>
             <Header.Wrap justify="start" className="pr-3">
@@ -43,8 +41,6 @@ function HeaderComponent(props) {
             </Header.Wrap>
           </Header.Container>
         </Header.Holder>
-        {/* END Header Holder */}
-        {/* BEGIN Header Holder */}
         <Header.Holder mobile>
           <Header.Container fluid>
             <Header.Wrap justify="start" className="pr-3">
@@ -67,9 +63,7 @@ function HeaderComponent(props) {
             </Header.Wrap>
           </Header.Container>
         </Header.Holder>
-        {/* END Header Holder */}
       </Sticky>
-      {/* BEGIN Header Holder */}
       <Header.Holder>
         <Header.Container fluid>
           <Header.Title children={headerTitle} />

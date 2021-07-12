@@ -17,7 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Quill from "@panely/quill";
 import Router from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {  useState } from "react";
 import Alert from "@panely/components/Alert";
 import Spinner from "@panely/components/Spinner";
 import { timeConvert } from "components/helpers/time";
@@ -64,17 +64,17 @@ function TrackForm({ onSave, data, onExtend }) {
   const schema = yup.object().shape({
     name: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your name"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor, igrese el nombre del Track"),
     description: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your description"),
-    type: yup.string().required("Please enter your type"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor, ingrese la descripción"),
+    type: yup.string().required("Seleccione un tipo"),
     timeLimit: yup
       .number()
-      .min(1, "Please enter at least 1 time")
-      .required("Please enter your time limit"),
+      .min(1, "Por favor ingrese al menos una unidad de tiempo")
+      .required("Por favor ingrese su límite de tiempo"),
   });
 
   const defaultValues = {
@@ -144,7 +144,6 @@ function TrackForm({ onSave, data, onExtend }) {
         });
       })}
     >
-      {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel>
           <Controller
@@ -154,15 +153,12 @@ function TrackForm({ onSave, data, onExtend }) {
             name="name"
             control={control}
             invalid={Boolean(errors.name)}
-            placeholder="Insert your name"
+            placeholder="Ingrese un nombre"
           />
-          <Label for="name">Name</Label>
+          <Label for="name">Nombre</Label>
           {errors.name && <Form.Feedback children={errors.name.message} />}
         </FloatLabel>
       </Form.Group>
-      {/* END Form Group */}
-
-      {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel>
           <Controller
@@ -172,17 +168,14 @@ function TrackForm({ onSave, data, onExtend }) {
             name="description"
             control={control}
             invalid={Boolean(errors.description)}
-            placeholder="Insert your description"
+            placeholder="Ingrese una descripción"
           />
-          <Label for="description">Description</Label>
+          <Label for="description">Descripción</Label>
           {errors.description && (
             <Form.Feedback children={errors.description.message} />
           )}
         </FloatLabel>
       </Form.Group>
-      {/* END Form Group */}
-
-      {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel>
           <Controller
@@ -193,21 +186,18 @@ function TrackForm({ onSave, data, onExtend }) {
             control={control}
             className="w-25"
             invalid={Boolean(errors.timeLimit)}
-            placeholder="Insert your time limit in hour"
+            placeholder="Inserte un límite de tiempo en horas"
           />
-          <Label for="timeLimit">Unit time x 10 minutes</Label>
+          <Label for="timeLimit">Tiempo unitario x 10 minutos</Label>
           {errors.timeLimit && (
             <Form.Feedback children={errors.timeLimit.message} />
           )}
           <div className="text-muted">
-            Calculate: {timeConvert(watchFields.timeLimit * 10)} to finish the
-            track.
+            Calcular: {timeConvert(watchFields.timeLimit * 10)} para terminar el
+             Track.
           </div>
         </FloatLabel>
       </Form.Group>
-      {/* END Form Group */}
-
-      {/* BEGIN Form Group */}
       <Form.Group>
         <Controller
           as={CustomInput}
@@ -217,20 +207,18 @@ function TrackForm({ onSave, data, onExtend }) {
           control={control}
           invalid={Boolean(errors.type)}
         >
-          <option value="default">Select your type</option>
+          <option value="default">Seleccione su tipo</option>
           <option value="learning">
-            Learning (Documents, guides or videos)
+            Learning (Documentos, guias, videos)
           </option>
-          <option value="hacking">Hacking (Challenges or evaluations)</option>
-          <option value="questions">Q&A (Questions and answers session)</option>
+          <option value="hacking">Hacking (Reto o evaluaciones)</option>
+          <option value="questions">Q&A (Preguntas y respuestas abiertas)</option>
           <option value="training">
-            Training (Tutorial or Step-by-step guides)
+            Training (Tutorial o guias paso a paso)
           </option>
         </Controller>
         {errors.type && <Form.Feedback children={errors.type.message} />}
       </Form.Group>
-      {/* END Form Group */}
-
       {
         {
           learning: (
@@ -239,7 +227,7 @@ function TrackForm({ onSave, data, onExtend }) {
                 variant="outline-primary"
                 icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
               >
-                Write here what the learner should read and learn.
+                Escriba aquí lo que el aprendiz debería leer y aprender. 
               </Alert>
               <Option
                 typeContent={typeContent}
@@ -263,12 +251,12 @@ function TrackForm({ onSave, data, onExtend }) {
                               name={"content"}
                               modules={modulesFull}
                               onChange={onChange}
-                              placeholder="Compose an epic learning hire..."
+                              placeholder="Redacte aquí una prosa de parendizaje..."
                               style={{ minHeight: "50rem" }}
                             />
                           )}
                         />
-                        <Label for="content">Content</Label>
+                        <Label for="content">Contenido</Label>
                       </FloatLabel>
                     </Form.Group>
                   ),
@@ -282,7 +270,7 @@ function TrackForm({ onSave, data, onExtend }) {
                           style={{ minHeight: "10rem" }}
                           name="content"
                           control={control}
-                          placeholder="Insert your html embed"
+                          placeholder="Ingrese un html embebido"
                         />
                         <Label for="content">HTML Embed</Label>
                       </FloatLabel>
@@ -300,7 +288,7 @@ function TrackForm({ onSave, data, onExtend }) {
                           onKeyUp={(event) => {
                             setUrl(event.target.value);
                           }}
-                          placeholder="Insert your URL"
+                          placeholder="Ingrese una URL"
                         />
                         <Label for="content">URL Youtube</Label>
                         <p className="mt-3">
@@ -321,9 +309,9 @@ function TrackForm({ onSave, data, onExtend }) {
                           onKeyUp={(event) => {
                             setUrl(event.target.value);
                           }}
-                          placeholder="Insert your URL"
+                          placeholder="Ingrese una URL"
                         />
-                        <Label for="content"> URL External</Label>
+                        <Label for="content">URL Externa</Label>
                         <p className="mt-3">
                           {url && <DescribeURL url={url} />}
                         </p>
@@ -340,9 +328,9 @@ function TrackForm({ onSave, data, onExtend }) {
                 variant="outline-primary"
                 icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
               >
-                Write a series of indications, steps and guidelines that the
-                learner can validate their own knowledge by doing an individual
-                practical activity.
+                 Escribe una serie de indicaciones, pasos y pautas que el
+                 el aprendiz puede validar su propio conocimiento haciendo un
+                 actividad práctica.
               </Alert>
               <Option
                 typeContent={typeContent}
@@ -371,7 +359,7 @@ function TrackForm({ onSave, data, onExtend }) {
                             />
                           )}
                         />
-                        <Label for="guidelines">Guidelines</Label>
+                        <Label for="guidelines">Pautas</Label>
                       </FloatLabel>
                     </Form.Group>
                   ),
@@ -385,9 +373,9 @@ function TrackForm({ onSave, data, onExtend }) {
                           style={{ minHeight: "10rem" }}
                           name="guidelines"
                           control={control}
-                          placeholder="Insert your html embed"
+                          placeholder="Ingrese un html embebido"
                         />
-                        <Label for="guidelines">Guidelines (HTML Embed)</Label>
+                        <Label for="guidelines">Pautas (HTML Embed)</Label>
                       </FloatLabel>
                     </Form.Group>
                   ),
@@ -403,9 +391,9 @@ function TrackForm({ onSave, data, onExtend }) {
                             setUrl(event.target.value);
                           }}
                           control={control}
-                          placeholder="Insert your URL"
+                          placeholder="Ingrese una URL"
                         />
-                        <Label for="guidelines">Guidelines (URL Youtube)</Label>
+                        <Label for="guidelines">Pautas (URL Youtube)</Label>
                       </FloatLabel>
                       <p className="mt-3">
                         <ReactPlayer url={url} controls />
@@ -424,10 +412,10 @@ function TrackForm({ onSave, data, onExtend }) {
                           onKeyUp={(event) => {
                             setUrl(event.target.value);
                           }}
-                          placeholder="Insert your URL"
+                          placeholder="Ingrese una URL"
                         />
                         <Label for="guidelines">
-                          Guidelines (URL External)
+                          Pautas (URL External)
                         </Label>
                       </FloatLabel>
                       <p className="mt-3">{url && <DescribeURL url="url" />}</p>
@@ -456,7 +444,7 @@ function TrackForm({ onSave, data, onExtend }) {
                     )}
                   />
 
-                  <Label for="criteria">Criteria</Label>
+                  <Label for="criteria">Criterios</Label>
                 </FloatLabel>
               </Form.Group>
             </>
@@ -467,8 +455,8 @@ function TrackForm({ onSave, data, onExtend }) {
                 variant="outline-primary"
                 icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
               >
-                Create questions where learners can then freely answer. They are
-                open questions to discuss.
+               Cree preguntas donde los aprendices puedan responder libremente. Son
+                 preguntas abiertas para discutir en grupo.
               </Alert>
               <Form.Group>
                 <FloatLabel>
@@ -499,8 +487,8 @@ function TrackForm({ onSave, data, onExtend }) {
                 variant="outline-primary"
                 icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
               >
-                Create a series of steps to complete an individual activity,
-                such as a tutorial or step-by-step guide.
+                Cree una serie de pasos para completar una actividad individual,
+                 como un tutorial o una guía paso a paso.
               </Alert>
               <Form.Group>
                 <FloatLabel>
@@ -527,7 +515,7 @@ function TrackForm({ onSave, data, onExtend }) {
 
       <Button type="submit" variant="label-primary" size="lg" width="widest">
         {loading && <Spinner className="mr-2" />}
-        {isNew ? "Create" : "Update"}
+        {isNew ? "Crear" : "Actualizar"}
       </Button>
 
       <Button
@@ -539,7 +527,7 @@ function TrackForm({ onSave, data, onExtend }) {
           Router.back();
         }}
       >
-        Cancel{" "}
+        Cancelar
       </Button>
     </Form>
   );

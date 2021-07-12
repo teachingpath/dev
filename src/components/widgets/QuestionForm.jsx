@@ -24,13 +24,13 @@ function QuizForm({ onSave, data }) {
   const schema = yup.object().shape({
     question: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your question"),
-    type: yup.string().required("Please enter your type"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor ingrese una pregunta"),
+    type: yup.string().required("Por favor seleccione un tipo"),
     options: yup
       .array()
-      .min(2, "Please enter at least 2 options")
-      .required("Please enter your options"),
+      .min(2, "Ingrese al menos 2 opciones")
+      .required("Por favor seleccione una opción"),
   });
 
   const { control, handleSubmit, errors, setError, reset, watch } = useForm({
@@ -66,7 +66,7 @@ function QuizForm({ onSave, data }) {
       } else {
         setError("options", {
           type: "manual",
-          message: "Please select some correct option!"
+          message: "¡Seleccione alguna opción correcta!"
         });
         setLoading(false);
       }
@@ -82,15 +82,14 @@ function QuizForm({ onSave, data }) {
             name="question"
             control={control}
             invalid={Boolean(errors.question)}
-            placeholder="Insert your question"
+            placeholder="Ingrese una pregunta"
           />
-          <Label for="question">Question</Label>
+          <Label for="question">Pregunta</Label>
           {errors.question && (
             <Form.Feedback children={errors.question.message} />
           )}
         </FloatLabel>
       </Form.Group>
-      {/* BEGIN Form Group */}
       <Form.Group>
         <Controller
           as={CustomInput}
@@ -100,15 +99,12 @@ function QuizForm({ onSave, data }) {
           control={control}
           invalid={Boolean(errors.type)}
         >
-          <option value="default">Select your type</option>
-          <option value="multiple">Multiple</option>
-          <option value="single">Single</option>
+          <option value="default">Seleccione un tipo</option>
+          <option value="multiple">Multiple respuesta</option>
+          <option value="single">Unica respuesta</option>
         </Controller>
         {errors.type && <Form.Feedback children={errors.type.message} />}
       </Form.Group>
-      {/* END Form Group */}
-      {/* BEGIN Form Group */}
-
       {optionsFields.map((item, index) => {
         return (
           <Row key={item.id} className="pt-4">
@@ -124,7 +120,7 @@ function QuizForm({ onSave, data }) {
                       control={control}
                   />
                   <Label for={`options_${index}_.name`}>
-                    Option#{index + 1}
+                    Opción #{index + 1}
                   </Label>
                 </FloatLabel>
               </Form.Group>
@@ -152,7 +148,7 @@ function QuizForm({ onSave, data }) {
             });
           }}
         >
-          Add Option <FontAwesomeIcon icon={SolidIcon.faPlus} />
+          Agregar Opción <FontAwesomeIcon icon={SolidIcon.faPlus} />
         </Button>
       </div>
 
@@ -205,7 +201,7 @@ function RadioComponent({index, item, control}) {
                 <CustomInput
                     type={"radio"}
                     id={`options_${index}_.isCorrect`}
-                    label="it's correct?"
+                    label="¿es correcto?"
                     name={`options.isCorrect`}
                     onChange={(e) => {
                       item.isCorrect = e.target.checked;

@@ -23,7 +23,7 @@ class PathwayPage extends React.Component {
     super(props);
 
     this.state = {
-      name: "Loading",
+      name: "Cargando...",
       id: null,
       draft: true,
     };
@@ -99,7 +99,7 @@ class PathwayGeneralPage extends React.Component {
   componentDidMount() {
     this.props.pageChangeHeaderTitle("Pathway");
     this.props.breadcrumbChange([
-      { text: "Catalog", link: "/catalog" },
+      { text: "Catálogo", link: "/catalog" },
       { text: "Pathway" },
     ]);
   }

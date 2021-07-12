@@ -22,8 +22,8 @@ function FeedbackForm({ onSave }) {
   const schema = yup.object().shape({
     feedback: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your feedback"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor ingrese su feedback"),
   });
 
   const { control, errors, handleSubmit, reset } = useForm({
@@ -51,9 +51,9 @@ function FeedbackForm({ onSave }) {
                 name="feedback"
                 control={control}
                 invalid={Boolean(errors.feedback)}
-                placeholder="Insert your feedback"
+                placeholder="Ingrese su feedback"
               />
-              <Label for="name">My Feedback</Label>
+              <Label for="name">Mi Feedback</Label>
               {errors.feedback && (
                 <Form.Feedback children={errors.feedback.message} />
               )}
@@ -62,7 +62,7 @@ function FeedbackForm({ onSave }) {
         </Col>
         <Col sm="12">
           <Button type="submit" variant="primary">
-            Send
+            Enviar
           </Button>
         </Col>
       </Row>
@@ -115,15 +115,15 @@ class LearningTrack extends React.Component {
               <h3 className="mt-3">Feedback</h3>
             </Card.Header>
             <Card.Body>
-              <Card.Text>Write a feedback about what you learned.</Card.Text>
+              <Card.Text>Escribe un feedback sobre lo que aprendiste.</Card.Text>
               <FeedbackForm
                 onSave={(data) => {
                   return saveTrackResponse(id, group, data).then(() => {
                     if (this.props.activityChange) {
                       this.props.activityChange({
                         type: "new_track_response",
-                        msn: 'New track response inside group "'+group+'".',
-                        msnForGroup:'New track response by <i>'+user.displayName+'</i> from learning task <b>'+trackName+'</b>.',
+                        msn: 'Respuesta de nuevo Track dentro del grupo "'+group+'".',
+                        msnForGroup:'Respuesta de nueva por <i>'+user.displayName+'</i> desde learning task <b>'+trackName+'</b>.',
                         group: group,
                       });
                     }

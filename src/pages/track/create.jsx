@@ -82,12 +82,12 @@ class TrackCreatePage extends React.Component {
         });
         toast.fire({
           icon: "success",
-          title: "Track saved successfully",
+          title: "Track fue creado correctamente",
         });
         this.props.activityChange({
           pathwayId: pathwayId,
           type: "new_track",
-          msn: 'The "' + data.name + '" track was created.',
+          msn: 'El track "' + data.name + '" fue creado.',
           ...data,
         });
         return updateToDraft(pathwayId);
@@ -117,10 +117,9 @@ class TrackCreatePage extends React.Component {
         <Container fluid={!this.state.extend}>
           <Row>
             <Col md={this.state.extend ? "12" : "6"}>
-              {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Track | Create</Portlet.Title>
+                  <Portlet.Title>Track | Nuevo</Portlet.Title>
                   <Portlet.Addon>
                     <TrackAddon
                       extend={this.state.extend}
@@ -130,8 +129,8 @@ class TrackCreatePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <div>
-                    Create each track to evaluate the competencies within the
-                    runner.
+                  Cree cada track para evaluar las competencias dentro del
+                     runner.
                   </div>
                   <hr />
                   <TrackForm
@@ -142,13 +141,11 @@ class TrackCreatePage extends React.Component {
                       }
                     }}
                   />
-                  {/* END Portlet */}
                 </Portlet.Body>
               </Portlet>
             </Col>
 
             <Col md={this.state.extend ? "12" : "6"}>
-              {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Tracks</Portlet.Title>
@@ -181,7 +178,7 @@ const TrackAddon = ({ extend, toggle }) => {
             onClick={toggle}
             icon={<FontAwesomeIcon icon={SolidIcon.faExpand} />}
           >
-            {extend ? "Collapse" : "Expand"}
+            {extend ? "Colapsar" : "Expandir"}
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>

@@ -2,9 +2,6 @@ import {
   Container,
   Portlet,
   RichList,
-  Card,
-  Row,
-  Col,
 } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import {
@@ -38,7 +35,6 @@ class RunnerList extends React.Component {
     };
   }
 
-  // Handle toggling tab
   toggle = (id) => {
     if (this.state.activeTab !== id) {
       this.setState({ activeTab: id });
@@ -106,7 +102,7 @@ class RunnerList extends React.Component {
               </Portlet.Icon>
               <Portlet.Title>Tracks</Portlet.Title>
               <Portlet.Addon>
-                Estimation:{" "}
+                Estimación:{" "}
                 <strong>
                 {timeConvert(
                   timePowerTen(
@@ -153,7 +149,6 @@ class RunnerList extends React.Component {
                 );
               })}
             </RichList>
-            {/* END Rich List */}
           </Portlet>
         )}
       </React.Fragment>
@@ -166,7 +161,7 @@ class RunnerGeneralPage extends React.Component {
   componentDidMount() {
     this.props.pageChangeHeaderTitle("Pathways");
     this.props.breadcrumbChange([
-      { text: "Catalog", link: "/catalog" },
+      { text: "Catálogo", link: "/catalog" },
       { text: "Runner" },
     ]);
     if (!Router.query.id) {

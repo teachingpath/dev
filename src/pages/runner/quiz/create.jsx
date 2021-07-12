@@ -76,12 +76,12 @@ class FormBasePage extends React.Component {
         });
         toast.fire({
           icon: "success",
-          title: "Question saved successfully",
+          title: "La pregunta fue guardad correctamente.",
         });
         this.props.activityChange({
           pathwayId: this.state.pathwayId,
           type: "new_question",
-          msn: 'The "' + data.question + '" question was created.',
+          msn: 'La pregunta "' + data.question + '" fue creada.',
         });
       })
       .catch((error) => {
@@ -108,26 +108,24 @@ class FormBasePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Question | Create </Portlet.Title>
+                  <Portlet.Title>Pregunta | Nueva </Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                    Add all the questions related to this runner, these
-                    questions should help validate the knowledge.
+                  Agregue todas las preguntas relacionadas con este Runner, estas
+                     Las preguntas deberían ayudar a validar el conocimiento.
                   </p>
                   <hr />
                   <QuizForm onSave={this.onCreate} />
-                  {/* END Portlet */}
                 </Portlet.Body>
               </Portlet>
-              {/* END Portlet */}
             </Col>
 
             <Col md="6">
-              {/* BEGIN Portlet */}
+
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Questions</Portlet.Title>
+                  <Portlet.Title>Preguntas</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <QuestionList

@@ -45,7 +45,7 @@ class PathwaysComponent extends React.Component {
         this.props.activityChange({
           type: "publish_pathway",
           pathwayId: pathwayId,
-          msn: 'The pathway "' + data.name + '" is published.',
+          msn: 'El pathway "' + data.name + '" está publicado.',
         });
       },
       (error) => {
@@ -67,24 +67,23 @@ class PathwaysComponent extends React.Component {
   onDelete(pathwayId) {
     swal
       .fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
+        title: "¿Estas seguro?",
+        text: "¡No podrás revertir esto!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonText: "¡Sí, bórralo!",
       })
       .then((result) => {
         if (result.value) {
           deletePathway(pathwayId)
             .then(() => {
-              console.log("Document successfully deleted!");
               this.componentDidMount();
               this.props.activityChange({
                 type: "delete_pathway",
                 pathwayId: pathwayId,
-                msn: "The pathway deleted.",
+                msn: "El pathway fue eliminado.",
               });
             })
             .catch((error) => {
@@ -108,16 +107,15 @@ class PathwaysComponent extends React.Component {
                 Router.push("/pathway/create");
               }}
             >
-              New
+              Nuevo
             </Button>
           </Portlet.Addon>
         </Portlet.Header>
         <Portlet.Body>
-          {/* BEGIN Rich List */}
           <RichList bordered action>
             {this.state.data === null && <Spinner />}
             {this.state.data && this.state.data.length === 0 && (
-              <p className="text-center">Empty pathways</p>
+              <p className="text-center">No hay pathways aún.</p>
             )}
             {this.state.data &&
               this.state.data.map((data, index) => {
@@ -137,9 +135,9 @@ class PathwaysComponent extends React.Component {
                       <RichList.Subtitle
                         children={
                           draft ? (
-                            <Badge variant="label-info">In draft</Badge>
+                            <Badge variant="label-info">En borrador</Badge>
                           ) : (
-                            <Badge variant="label-success">Published</Badge>
+                            <Badge variant="label-success">Publicado</Badge>
                           )
                         }
                       />
@@ -151,7 +149,6 @@ class PathwaysComponent extends React.Component {
                 );
               })}
           </RichList>
-          {/* END Rich List */}
         </Portlet.Body>
       </Portlet>
     );
@@ -183,7 +180,7 @@ class PathwaysComponent extends React.Component {
               }}
               icon={<FontAwesomeIcon icon={SolidIcon.faTrashAlt} />}
             >
-              Delete
+              Eliminar
             </Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item
@@ -195,7 +192,7 @@ class PathwaysComponent extends React.Component {
               }}
               icon={<FontAwesomeIcon icon={SolidIcon.faRunning} />}
             >
-              Add runner
+              Agregar Runner
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
@@ -206,7 +203,7 @@ class PathwaysComponent extends React.Component {
               }}
               icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
             >
-              Add trophy
+              Agregar Trofeo
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
@@ -217,21 +214,21 @@ class PathwaysComponent extends React.Component {
               }}
               icon={<FontAwesomeIcon icon={SolidIcon.faObjectGroup} />}
             >
-              Add group
+              Agregar Grupo
             </Dropdown.Item>
             {draft ? (
               <Dropdown.Item
                 onClick={() => this.onPublishPathway(id)}
                 icon={<FontAwesomeIcon icon={SolidIcon.faShareSquare} />}
               >
-                Publish
+                Publicar
               </Dropdown.Item>
             ) : (
               <Dropdown.Item
                 onClick={() => this.onUnpublishPathway(id)}
                 icon={<FontAwesomeIcon icon={SolidIcon.faStop} />}
               >
-                Unpublish
+                Despublicar
               </Dropdown.Item>
             )}
 
@@ -245,12 +242,11 @@ class PathwaysComponent extends React.Component {
                   }}
                   icon={<FontAwesomeIcon icon={SolidIcon.faThList} />}
                 >
-                  Catalog
+                  Catálogo
                 </Dropdown.Item>
               )}
           </Dropdown.Menu>
         </Dropdown.Uncontrolled>
-        {/* END Dropdown */}
       </>
     );
   }

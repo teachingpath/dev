@@ -27,12 +27,12 @@ class TrophtyListComponent extends React.Component {
           <Portlet.Icon>
             <FontAwesomeIcon icon={SolidIcon.faTrophy} />
           </Portlet.Icon>
-          <Portlet.Title>Trophy</Portlet.Title>
+          <Portlet.Title>Trafeo</Portlet.Title>
         </Portlet.Header>
         <Portlet.Body>
           <div className="mt-4">
             {this.state.data.length === 0 && (
-              <p className="text-center text-muted">Empty trophies</p>
+              <p className="text-center text-muted">No hay trofeos aún.</p>
             )}
 
             {this.state.data.length !== 0 && (
@@ -40,7 +40,6 @@ class TrophtyListComponent extends React.Component {
                 {this.state.data.map((data, index) => {
                   return (
                     <CarouselItem key={"trohy-key"+index}>
-                      {/* BEGIN Card */}
                       <center>
                         <img
                           className={
@@ -52,7 +51,6 @@ class TrophtyListComponent extends React.Component {
                         <p>{data.name}</p>
                         <small>{data.description}</small>
                       </center>
-                      {/* END Card */}
                     </CarouselItem>
                   );
                 })}

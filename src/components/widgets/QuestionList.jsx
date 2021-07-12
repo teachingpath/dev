@@ -40,7 +40,7 @@ class QuestionList extends React.Component {
           list.push({
             id: doc.id,
             title: doc.data().question,
-            subtitle: "Options: "+doc.data().options.length,
+            subtitle: "Opción: "+doc.data().options.length,
             type: doc.data().type,
           });
         });
@@ -57,13 +57,13 @@ class QuestionList extends React.Component {
 
   onDelete(questionId) {
     swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      title: "¿Estas seguro/segura?",
+      text: "¡No podrás revertir esto!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
+      confirmButtonText: "¡Sí, bórralo!"
     }).then(result => {
       if (result.value) {
         firestoreClient
@@ -73,7 +73,6 @@ class QuestionList extends React.Component {
             .doc(questionId)
             .delete()
             .then(() => {
-              console.log("Document successfully deleted!");
               this.componentDidMount();
             })
             .catch((error) => {
@@ -112,7 +111,7 @@ class QuestionList extends React.Component {
     return (
       <RichList bordered action>
         {this.state.data.length === 0 && (
-          <p className="text-center">Empty questions</p>
+          <p className="text-center">Aún no tiene preguntas.</p>
         )}
         <ReactSortable list={this.state.data} setList={this.onSortList}>
           {this.state.data.map((data, index) => {
@@ -121,11 +120,9 @@ class QuestionList extends React.Component {
             return (
               <RichList.Item key={index}>
                 <RichList.Addon addonType="prepend">
-                  {/* BEGIN Avatar */}
                   <Avatar display>
                     <FontAwesomeIcon icon={SolidIcon.faSort} />
                   </Avatar>
-                  {/* END Avatar */}
                 </RichList.Addon>
                 <RichList.Content>
                   <RichList.Title
@@ -148,7 +145,6 @@ class QuestionList extends React.Component {
                   </RichList.Subtitle>
                 </RichList.Content>
                 <RichList.Addon addonType="append">
-                  {/* BEGIN Dropdown */}
                   <Dropdown.Uncontrolled>
                     <Dropdown.Toggle icon variant="text-secondary">
                       <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
@@ -175,11 +171,10 @@ class QuestionList extends React.Component {
                         }}
                         icon={<FontAwesomeIcon icon={SolidIcon.faTrashAlt} />}
                       >
-                        Delete
+                        Eliminar
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown.Uncontrolled>
-                  {/* END Dropdown */}
                 </RichList.Addon>
               </RichList.Item>
             );

@@ -14,12 +14,11 @@ function ErrorPage() {
             <Widget15>404</Widget15>
             <h2 className="mb-3">Page Not Found!</h2>
             <p className="mb-4">
-              Sorry we can't seem to find the page you're looking for. There may be amisspelling in
-              the URL entered, or the page you are looking for may no longer exist.
+            Lo sentimos, parece que no podemos encontrar la página que estás buscando. Es posible que haya errores de ortografía en la URL ingresada o que la página que está buscando ya no exista.
             </p>
             <Link href="/">
               <Button variant="label-primary" size="lg" width="widest">
-                Back to home
+                Volver a Home
               </Button>
             </Link>
           </Col>

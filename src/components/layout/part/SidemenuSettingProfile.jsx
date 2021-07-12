@@ -5,7 +5,6 @@ import {  pageChangeTheme, userChange } from "store/actions";
 import { connect } from "react-redux";
 
 class SidemenuSettingProfile extends React.Component {
-  // Handle switch element
   handleProfileClick = (e) => {
     const userUpdated = {
       ...this.props.user,
@@ -35,14 +34,14 @@ class SidemenuSettingProfile extends React.Component {
     return (
       <Portlet bordered >
         <Portlet.Header bordered>
-          <Portlet.Title>Profile</Portlet.Title>
+          <Portlet.Title>Perfil</Portlet.Title>
         </Portlet.Header>
         <Portlet.Body>
           <Form.Group>
             <CustomInput
               type="switch"
               id="customerSetting1"
-              label="Activate trainee mode"
+              label="Activar el modo aprendiz"
               checked={user?.profile === "trainee"}
               onChange={this.handleProfileClick}
             />
@@ -51,7 +50,7 @@ class SidemenuSettingProfile extends React.Component {
             <CustomInput
               type="switch"
               id="customerSetting2"
-              label={"Enable "+(!darkModeActive ? "dark" : "light")+" mode"}
+              label={"Habilitar modo "+(!darkModeActive ? "dark" : "light")}
               checked={darkModeActive}
               onChange={this.handleLayautClick}
             />

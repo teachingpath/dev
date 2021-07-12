@@ -28,26 +28,26 @@ function HeaderNav({user}) {
   
   return (
     <Nav pills className="ml-2">
-      {/* BEGIN Dropdown */}
       <Dropdown.Uncontrolled nav>
         {user && (
           <Dropdown.Toggle nav active>
-            Show more
+            {user.firstName} ({user.point} pts)
           </Dropdown.Toggle>
         )}
 
         <Dropdown.Menu animated wide className="overflow-hidden">
           <Dropdown.Row>
             <Dropdown.Col className="d-flex flex-column align-items-start justify-content-center bg-primary text-white">
-              <h2 className="font-weight-bolder">Welcome back!</h2>
+              <h2 className="font-weight-bolder">Tu Teaching Path</h2>
               <p>
-                Develop knowledge and skills at your own pace through sequential
-                learning experiences that include learning, training, quizzes,
-                and hacking.
+              Desarrolle conocimientos y habilidades a su propio ritmo a través de experiencias de aprendizaje secuenciales 
+              que incluyen aprendizaje, capacitación, cuestionarios y desafíos.
               </p>
+              <strong> {user?.point || 0} pts</strong>
+
             </Dropdown.Col>
             <Dropdown.Col>
-              <Dropdown.Header size="lg">Statistics</Dropdown.Header>
+              <Dropdown.Header size="lg">Estadísticas</Dropdown.Header>
               {/* BEGIN Grid Nav */}
               <GridNav action>
                 <GridNav.Row>
@@ -99,7 +99,7 @@ function HeaderNav({user}) {
               {/* END Grid Nav */}
             </Dropdown.Col>
             <Dropdown.Col className="border-left">
-              <Dropdown.Header size="lg">Tools</Dropdown.Header>
+              <Dropdown.Header size="lg">Herramienta</Dropdown.Header>
               <Dropdown.Item bullet>Forum</Dropdown.Item>
               <Dropdown.Item bullet>Slack group</Dropdown.Item>
               <Dropdown.Item
@@ -108,10 +108,10 @@ function HeaderNav({user}) {
                 rel="noopener noreferrer"
                 href="https://docs.teachingpath.info/"
               >
-                Documentation
+                Documentación
               </Dropdown.Item>
-              <Dropdown.Item bullet>Knowledge Base</Dropdown.Item>
-              <Dropdown.Item bullet>Testimonials</Dropdown.Item>
+              <Dropdown.Item bullet>Base de Conocimiento</Dropdown.Item>
+              <Dropdown.Item bullet>Testimonios</Dropdown.Item>
             </Dropdown.Col>
           </Dropdown.Row>
         </Dropdown.Menu>

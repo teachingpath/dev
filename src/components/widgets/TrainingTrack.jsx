@@ -23,8 +23,8 @@ function SolutionForm({ onSave }) {
   const schema = yup.object().shape({
     result: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your result"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor, ingrese su resultado aquí"),
   });
 
   const { control, errors, handleSubmit, reset } = useForm({
@@ -52,9 +52,9 @@ function SolutionForm({ onSave }) {
                 name="result"
                 control={control}
                 invalid={Boolean(errors.result)}
-                placeholder="Insert your result"
+                placeholder="Ingrese su resultado"
               />
-              <Label for="name">My Result</Label>
+              <Label for="name">Mi resultado</Label>
               {errors.result && (
                 <Form.Feedback children={errors.result.message} />
               )}
@@ -63,7 +63,7 @@ function SolutionForm({ onSave }) {
         </Col>
         <Col sm="12">
           <Button type="submit" variant="primary">
-            Reply
+            Resultado
           </Button>
         </Col>
       </Row>
@@ -119,7 +119,7 @@ class TrainingTrack extends React.Component {
                           });
                         }}
                       >
-                        Done
+                        Hecho
                       </Button>
                     </>
                   )}
@@ -135,8 +135,8 @@ class TrainingTrack extends React.Component {
             <Card>
               <Card.Body>
                 <Card.Text>
-                  Add here your training answer, add links, repositories or
-                  comments.
+                  Agregue aquí su respuesta de Training, agregue enlaces, repositorios o
+                   comentarios.
                 </Card.Text>
                 {this.state.current === training?.length && (
                   <>
@@ -147,8 +147,8 @@ class TrainingTrack extends React.Component {
                             if (this.props.activityChange) {
                               this.props.activityChange({
                                 type: "new_track_response",
-                                msn: 'New track response inside group "'+group+'".',
-                                msnForGroup:'New track response by <i>'+user.displayName+'</i> from training task <b>'+trackName+'</b>.',
+                                msn: 'Nueva respuesta dentro del group "'+group+'".',
+                                msnForGroup:'Nueva respuesta por <i>'+user.displayName+'</i> desde el training task <b>'+trackName+'</b>.',
                                 group: group,
                               });
                             }

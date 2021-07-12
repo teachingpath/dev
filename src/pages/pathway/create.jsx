@@ -58,12 +58,12 @@ class PathwayPage extends React.Component {
         });
         toast.fire({
           icon: "success",
-          title: "Pathway saved successfully",
+          title: "Pathway guadardo correctamente",
         });
         this.props.activityChange({
           pathwayId: docRef.id,
           type: "new_pathway",
-          msn: 'The "' + data.name + '" pathway was created.',
+          msn: 'El pathway "' + data.name + '"  fue creado.',
           ...data,
         });
       })
@@ -71,7 +71,7 @@ class PathwayPage extends React.Component {
         console.error("Error adding document: ", error);
         toast.fire({
           icon: "error",
-          title: "Creation pathway",
+          title: "Creando el pathway",
         });
       });
   }
@@ -88,12 +88,12 @@ class PathwayPage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Pathway | Create</Portlet.Title>
+                  <Portlet.Title>Pathway | Crear</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <div>
-                    After creating the Pathway you must create the runners to
-                    add the tracks.
+                  Después de crear el Pathway, debe crear los Runners para
+                     agreguar los tracks de aprendizaje.
                   </div>
                   <hr />
                   <PathwayForm
@@ -107,7 +107,7 @@ class PathwayPage extends React.Component {
                       variant="outline-info"
                       icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
                     >
-                      Add the trophy or runner of the created pathway.
+                    Agrega el trofeo o runner del pathway creado.
                       <Button
                         type="button"
                         disabled={!this.state.saved}
@@ -119,7 +119,7 @@ class PathwayPage extends React.Component {
                           });
                         }}
                       >
-                        Add Runner
+                        Agregar Runner
                         <FontAwesomeIcon
                           className="ml-2"
                           icon={SolidIcon.faPlus}
@@ -136,7 +136,7 @@ class PathwayPage extends React.Component {
                           });
                         }}
                       >
-                        Add Trophy
+                        Agregar Trafeo
                         <FontAwesomeIcon
                           className="ml-2"
                           icon={SolidIcon.faPlus}
@@ -146,7 +146,6 @@ class PathwayPage extends React.Component {
                   )}
                 </Portlet.Footer>
               </Portlet>
-              {/* END Portlet */}
             </Col>
           </Row>
         </Container>

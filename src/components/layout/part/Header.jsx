@@ -38,7 +38,6 @@ function HeaderComponent(props) {
         bottomBoundary={0}
         className="sticky-header"
       >
-        {/* BEGIN Header Holder */}
         <Header.Holder desktop>
           <Header.Container fluid>
             <Header.Wrap justify="start" className="pr-3">
@@ -56,9 +55,9 @@ function HeaderComponent(props) {
                   <h5>
                     {pathway.pathwaySeleted.name.toUpperCase()}
                     {pathway.pathwaySeleted.draft ? (
-                      <Badge variant="label-info" className="ml-2">In draft</Badge>
+                      <Badge variant="label-info" className="ml-2">En borrador</Badge>
                     ) : (
-                      <Badge variant="label-success" className="ml-2">Published</Badge>
+                      <Badge variant="label-success" className="ml-2">Publicado</Badge>
                     )}
                   </h5>
                 )}
@@ -82,9 +81,7 @@ function HeaderComponent(props) {
             </Header.Wrap>
           </Header.Container>
         </Header.Holder>
-        {/* END Header Holder */}
       </Sticky>
-      {/* BEGIN Header Holder */}
       <Header.Holder desktop>
         <Header.Container fluid>
           <Header.Title children={headerTitle} />
@@ -94,14 +91,12 @@ function HeaderComponent(props) {
           </Header.Wrap>
         </Header.Container>
       </Header.Holder>
-      {/* END Header Holder */}
       <Sticky
         enabled={true}
         top={0}
         bottomBoundary={0}
         className="sticky-header"
       >
-        {/* BEGIN Header Holder */}
         <Header.Holder mobile>
           <Header.Container fluid>
             <Header.Wrap block justify="start" className="px-3">
@@ -124,7 +119,6 @@ function HeaderComponent(props) {
             </Header.Wrap>
           </Header.Container>
         </Header.Holder>
-        {/* BEGIN Header Holder */}
       </Sticky>
       {/* BEGIN Header Holder */}
       <Header.Holder mobile>

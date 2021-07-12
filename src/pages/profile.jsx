@@ -25,7 +25,6 @@ import {
 import { yupResolver } from "@hookform/resolvers";
 import * as yup from "yup";
 import Head from "next/head";
-import Link from "next/link";
 import Col from "../../docs/template/src/modules/components/Col";
 import { ImageEditor } from "@panely/components";
 import { useRef } from "react";
@@ -38,7 +37,7 @@ class ProfilePage extends React.Component {
     this.props.pageChangeHeaderTitle("Profile");
     this.props.breadcrumbChange([
       { text: "Home", link: "/" },
-      { text: "Profile" },
+      { text: "Perfil" },
     ]);
 
     firestoreClient
@@ -49,7 +48,7 @@ class ProfilePage extends React.Component {
         console.log(doc.data());
         this.setState({ data: doc.data(), id: user.uid });
         this.props.pageChangeHeaderTitle(
-          this.state.data?.firstName.toUpperCase() || "Profile"
+          this.state.data?.firstName.toUpperCase() || "Perfil"
         );
       })
       .catch((error) => {
@@ -79,20 +78,18 @@ class ProfilePage extends React.Component {
 }
 
 function ProfileForm({ data, id }) {
-  // Loading state
   const [loading, setLoading] = React.useState(false);
   const imageRef = useRef(null);
 
-  // Define Yup schema for form validation
   const schema = yup.object().shape({
     specialty: yup
       .string()
-      .min(6, "Please enter at least 6 characters")
-      .required("Please enter your specialty"),
+      .min(6, "Por favor ingrese al menos 6 caracteres")
+      .required("Por favor proporcione su especialidad"),
     bio: yup
       .string()
-      .min(6, "Please enter at least 6 characters")
-      .required("Please provide your bio"),
+      .min(6, "Por favor ingrese al menos 6 caracteres")
+      .required("Por favor proporcione su biografía"),
   });
 
   const { control, handleSubmit, errors } = useForm({
@@ -104,7 +101,6 @@ function ProfileForm({ data, id }) {
     },
   });
 
-  // Handle form submit event
   const onSubmit = async (data) => {
     setLoading(true);
     imageRef.current.getImage().then((url) => {
@@ -127,7 +123,7 @@ function ProfileForm({ data, id }) {
       </Form.Group>
       <Form.Group>
         <Label>
-          Hi, {data?.firstName} {data?.lastName} ({data?.email})
+          Hola, {data?.firstName} {data?.lastName} ({data?.email})
         </Label>
       </Form.Group>
       <Form.Group>
@@ -140,9 +136,9 @@ function ProfileForm({ data, id }) {
             size="lg"
             control={control}
             invalid={Boolean(errors.specialty)}
-            placeholder="Please insert your specialty"
+            placeholder="Por favor inserte su especialidad"
           />
-          <Label for="specialty">Specialty</Label>
+          <Label for="specialty">Especialidad</Label>
           {errors.specialty && (
             <Form.Feedback children={errors.specialty.message} />
           )}
@@ -158,13 +154,12 @@ function ProfileForm({ data, id }) {
             size="lg"
             control={control}
             invalid={Boolean(errors.specialty)}
-            placeholder="Please insert your phone"
+            placeholder="Por favor inserte su teléfono"
           />
-          <Label for="specialty">Phone</Label>
+          <Label for="specialty">Teléfono</Label>
           {errors.phone && <Form.Feedback children={errors.phone.message} />}
         </FloatLabel>
       </Form.Group>
-      {/* BEGIN Form Group */}
       <Form.Group>
         <FloatLabel size="lg">
           <Controller
@@ -175,13 +170,12 @@ function ProfileForm({ data, id }) {
             size="lg"
             control={control}
             invalid={Boolean(errors.bio)}
-            placeholder="Please insert your bio"
+            placeholder="Por favor inserte su biografía"
           />
-          <Label for="bio">Bio</Label>
+          <Label for="bio">Biografía</Label>
           {errors.bio && <Form.Feedback children={errors.bio.message} />}
         </FloatLabel>
       </Form.Group>
-      {/* END Form Group */}
       <div className="d-flex align-items-center justify-content-between">
         <Button
           type="submit"
@@ -190,7 +184,7 @@ function ProfileForm({ data, id }) {
           width="widest"
           disabled={loading}
         >
-          {loading ? <Spinner className="mr-2" /> : null} Save
+          {loading ? <Spinner className="mr-2" /> : null} Guardar
         </Button>
       </div>
     </Form>

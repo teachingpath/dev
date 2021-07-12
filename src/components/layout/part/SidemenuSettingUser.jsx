@@ -1,4 +1,4 @@
-import { Portlet, Progress, Widget4 } from "@panely/components";
+import { Portlet } from "@panely/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
@@ -11,12 +11,13 @@ class SidemenuSettingUser extends React.Component {
           <Portlet.Icon>
             <FontAwesomeIcon icon={SolidIcon.faUser} />
           </Portlet.Icon>
-          <Portlet.Title>User info</Portlet.Title>
+          <Portlet.Title>Usuario</Portlet.Title>
         </Portlet.Header>
         <Portlet.Body>
           <p>Email: {user?.email}</p>
-          <p>First name: {user?.firstName}</p>
-          <p>Last name: {user?.lastName}</p>
+          <p>Teléfono: {user?.phone}</p>
+          <p>Nombres: {user?.firstName}</p>
+          <p>Apellidos: {user?.lastName}</p>
           </Portlet.Body>
       </Portlet>
     );

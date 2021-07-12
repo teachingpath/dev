@@ -7,7 +7,6 @@ class AsideBodyComponent extends React.Component {
   constructor(props) {
     super(props)
     const { states, submenuActive } = this.setInitialState(props.menuList)
-    // Set initial data
     this.linkRefs = []
     this.submenuRefs = []
     this.state = states
@@ -18,7 +17,6 @@ class AsideBodyComponent extends React.Component {
   setInitialState = (menuList) => {
     let states = {}
     let submenuActive = []
-    // Loop the MENU object tree
     menuList.forEach((menu, index1) => {
       if (Boolean(menu.child)) {
         states = this.addDataToObject(states, [index1], {

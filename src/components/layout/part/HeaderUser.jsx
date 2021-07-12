@@ -19,10 +19,8 @@ import Router from "next/router";
 import Swal from "@panely/sweetalert2";
 import PAGE from "config/page.config";
 
-// Use SweetAlert React Content library
 const ReactSwal = swalContent(Swal);
 
-// Set SweetAlert options
 const swal = ReactSwal.mixin({
   customClass: {
     confirmButton: "btn btn-label-success btn-wide mx-1",
@@ -46,13 +44,13 @@ class HeaderUser extends React.Component {
       [
         {
           icon: () => <FontAwesomeIcon icon={RegularIcon.faAddressCard} />,
-          title: "Profile",
+          title: "Perfil",
           link: "/profile",
         },
 
         {
           icon: () => <FontAwesomeIcon icon={RegularIcon.faClone} />,
-          title: "Activities",
+          title: "Actividades",
         },
         {
           icon: () => <FontAwesomeIcon icon={SolidIcon.faHeart} />,
@@ -99,10 +97,8 @@ class HeaderUser extends React.Component {
         </Widget13>
         {this.props.user?.uid && (
           <Dropdown.Menu wide right animated className="overflow-hidden py-0">
-            {/* BEGIN Portlet */}
             <Portlet scroll className="border-0">
               <Portlet.Header className="bg-primary rounded-0">
-                {/* BEGIN Rich List */}
                 <RichList.Item className="w-100 p-0">
                   <RichList.Addon addonType="prepend">
                     <WidgetAvatar image={this.props.user?.image} />
@@ -110,7 +106,7 @@ class HeaderUser extends React.Component {
                   <RichList.Content>
                     <RichList.Title
                       className="text-white"
-                      children={"Hi, " + this.props.user.firstName}
+                      children={"Hola, " + this.props.user.firstName}
                     />
                     <RichList.Subtitle
                       className="text-white"
@@ -118,10 +114,8 @@ class HeaderUser extends React.Component {
                     />
                   </RichList.Content>
                 </RichList.Item>
-                {/* END Rich List */}
               </Portlet.Header>
               <Portlet.Body className="p-0">
-                {/* BEGIN Grid Nav */}
                 <GridNav flush action noRounded>
                   {navs.map((nav, index) => (
                     <GridNav.Row key={index}>
@@ -144,15 +138,13 @@ class HeaderUser extends React.Component {
                     </GridNav.Row>
                   ))}
                 </GridNav>
-                {/* END Grid Nav */}
               </Portlet.Body>
               <Portlet.Footer bordered className="rounded-0">
                 <Button variant="label-danger" onClick={this.handleSignOut}>
-                  Sign out
+                  Desconectar
                 </Button>
               </Portlet.Footer>
             </Portlet>
-            {/* END Portlet */}
           </Dropdown.Menu>
         )}
       </Dropdown.Uncontrolled>

@@ -62,12 +62,12 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
   const schema = yup.object().shape({
     name: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your name"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor, ingrese un nombre"),
     description: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your description"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor, ingrese una descripción"),
   });
 
   const { control, handleSubmit, errors } = useForm({
@@ -83,12 +83,12 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
       .then((docRef) => {
         toast.fire({
           icon: "success",
-          title: "Badge saved successfully",
+          title: "El emblema fue guardado correctamente",
         });
         activityChange({
           pathwayId: pathwayId,
           type: "edit_runner",
-          msn: 'The "' + data.name + '" badge was changed.',
+          msn: 'El emblema "' + data.name + '" fue creado o actualizado.',
         });
         setLoading(false);
       })
@@ -101,7 +101,6 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
       });
   }
 
-  // Handle form submit event
   const onSubmit = (data) => {
     getQuestions(runnerId).then((questions) => {
       if (questions.length >= 3) {
@@ -110,7 +109,7 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
         alert.fire({
           icon: "error",
           title: "Oops...",
-          text: "To create the badge there must be a quiz with more than 3 questions.",
+          text: "Para crear el emblema debe haber un quiz con más de 3 preguntas.",
         });
         setLoading(false);
       }
@@ -131,7 +130,6 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
       </Form.Group>
       <Row>
         <Col xs="12">
-          {/* BEGIN Form Group */}
           <Form.Group>
             <FloatLabel>
               <Controller
@@ -141,15 +139,12 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
                 name="name"
                 control={control}
                 invalid={Boolean(errors.name)}
-                placeholder="Insert your name"
+                placeholder="Ingrese un nombre"
               />
-              <Label for="badge-name">Name</Label>
+              <Label for="badge-name">Nombre</Label>
               {errors.name && <Form.Feedback children={errors.name.message} />}
             </FloatLabel>
           </Form.Group>
-          {/* END Form Group */}
-
-          {/* BEGIN Form Group */}
           <Form.Group>
             <FloatLabel>
               <Controller
@@ -159,18 +154,17 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
                 name="description"
                 control={control}
                 invalid={Boolean(errors.description)}
-                placeholder="Insert your description"
+                placeholder="Ingrese una descripción"
               />
               <Label for="badge-description">
-                What logos would the apprentice get?
+                ¿Qué logotipos obtendría el aprendiz?
               </Label>
               {errors.description && (
                 <Form.Feedback children={errors.description.message} />
               )}
-              <Form.Text>Specify a list of achievements.</Form.Text>
+              <Form.Text>Especifica una lista de logros.</Form.Text>
             </FloatLabel>
           </Form.Group>
-          {/* END Form Group */}
         </Col>
       </Row>
       <Button type="submit" variant="label-primary" size="lg" width="widest">
@@ -186,7 +180,7 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
           Router.back();
         }}
       >
-        Cancel
+        Cancelar
       </Button>
     </Form>
   );
@@ -218,7 +212,7 @@ class FormBasePage extends React.Component {
         text: "Runner",
         link: "/runner/create?pathwayId=" + pathwayId,
       },
-      { text: "Badge" },
+      { text: "Emblema" },
     ]);
   }
 
@@ -234,7 +228,7 @@ class FormBasePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Badge | Update</Portlet.Title>
+                  <Portlet.Title>Badge | Editar</Portlet.Title>
                   <Portlet.Addon>
                     <BadgeAddon
                       id={this.state.runnerId}
@@ -244,8 +238,8 @@ class FormBasePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                    This badge is awarded to the trainee if they successfully
-                    complete the Quiz.{" "}
+                  Este emblema se otorga al aprendiz si tiene éxito
+                     al completar el Quiz.{" "}
                   </p>
                   <hr />
                   {this.props?.runner?.id && <BadgeForm
@@ -256,7 +250,6 @@ class FormBasePage extends React.Component {
                   />}
                 </Portlet.Body>
               </Portlet>
-              {/* END Portlet */}
             </Col>
           </Row>
         </Container>
@@ -285,7 +278,7 @@ const BadgeAddon = ({ id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
           >
-            Add Quiz
+            Agregar Quiz
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>

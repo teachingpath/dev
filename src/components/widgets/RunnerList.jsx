@@ -58,13 +58,13 @@ class RunnerList extends React.Component {
   onDelete(runnerId) {
     swal
       .fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
+        title: "¿Estas seguro/segura?",
+        text: "¡No podrás revertir esto!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonText: "¡Sí, bórralo!",
       })
       .then((result) => {
         if (result.value) {
@@ -94,20 +94,18 @@ class RunnerList extends React.Component {
       <RichList bordered action>
         {this.state.loaded === false && <Spinner />}
         {this.state.loaded === true && this.state.data.length === 0 && (
-          <p className="text-center">Empty runners</p>
+          <p className="text-center">Aún no hay runeers</p>
         )}
         <ReactSortable list={this.state.data} setList={this.onSortList}>
           {this.state.data.map((data, index) => {
             const { title, subtitle, id, tracks } = data;
 
             return (
-              <RichList.Item key={index}>
+              <RichList.Item key={"runner"+index}>
                 <RichList.Addon addonType="prepend">
-                  {/* BEGIN Avatar */}
                   <Avatar display>
                     <FontAwesomeIcon icon={SolidIcon.faSort} />
                   </Avatar>
-                  {/* END Avatar */}
                 </RichList.Addon>
                 <RichList.Content>
                   <RichList.Title
@@ -179,7 +177,7 @@ class RunnerList extends React.Component {
                         }}
                         icon={<FontAwesomeIcon icon={SolidIcon.faTrashAlt} />}
                       >
-                        Delete
+                        Eliminar
                       </Dropdown.Item>
                       <Dropdown.Divider />
                       <Dropdown.Item
@@ -194,7 +192,7 @@ class RunnerList extends React.Component {
                         }}
                         icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
                       >
-                        Add Quiz
+                       Agregar Quiz
                       </Dropdown.Item>
                       <Dropdown.Item
                         onClick={() => {
@@ -208,7 +206,7 @@ class RunnerList extends React.Component {
                         }}
                         icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
                       >
-                        Add Badge
+                        Agregar Emblema
                       </Dropdown.Item>
                       <Dropdown.Item
                         onClick={() => {
@@ -222,11 +220,10 @@ class RunnerList extends React.Component {
                         }}
                         icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
                       >
-                        Add Tracks
+                        Agrgar Track
                       </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown.Uncontrolled>
-                  {/* END Dropdown */}
                 </RichList.Addon>
               </RichList.Item>
             );
