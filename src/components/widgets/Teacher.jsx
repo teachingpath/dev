@@ -2,6 +2,7 @@ import { Row, Col, Card, Button } from "@panely/components";
 import { getUser } from "consumer/user";
 
 import React from "react";
+import ReactWhatsapp from "react-whatsapp";
 
 class Teacher extends React.Component {
   state = { data: {} };
@@ -21,7 +22,7 @@ class Teacher extends React.Component {
         <Row noGutters>
           <Col md="4">
             <Card.Img
-              className="avatar-circle p-3"
+              className=" p-3"
               src={data?.image || "/images/avatar/blank.webp"}
               alt="Profile Image"
             />
@@ -42,6 +43,14 @@ class Teacher extends React.Component {
               >
                 Contact
               </Button>
+              {data?.phone && <ReactWhatsapp
+                className="ml-2 btn btn-primary"
+                number={data?.phone}
+                message="Hello Teacher, I am speaking to you from Teaching Path."
+              >
+                Chat
+              </ReactWhatsapp>}
+              
             </Card.Body>
           </Col>
         </Row>

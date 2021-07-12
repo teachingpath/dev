@@ -49,6 +49,7 @@
     "react-sortablejs": "^6.0.0",
     "react-stickynode": "^3.0.3",
     "react-transition-group": "^4.4.1",
+    "react-whatsapp": "^0.2.1",
     "redux": "^4.0.5",
     "redux-devtools-extension": "^2.13.8",
     "redux-saga": "^1.1.3",

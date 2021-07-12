@@ -8,6 +8,7 @@ export const getUser = (leaderId, resolve, reject) => {
       resolve({ data: doc.data() });
     })
     .catch((error) => {
+      console.log("Error getting documents: ", error);
       reject();
     });
 };
