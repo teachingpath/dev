@@ -791,7 +791,7 @@ function QuestionForm({ data, onChange }) {
                   optionsAppend({});
                 }}
               >
-                Add Question <FontAwesomeIcon icon={SolidIcon.faPlus} />
+                Agregar Pregunta <FontAwesomeIcon icon={SolidIcon.faPlus} />
               </Button>
             </p>
 

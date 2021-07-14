@@ -210,7 +210,7 @@ const RunnerAddon = ({ id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
           >
-            Add Quiz
+            Agregar Quiz
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {

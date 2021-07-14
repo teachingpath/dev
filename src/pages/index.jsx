@@ -19,7 +19,7 @@ import TrophtyListComponent from "components/widgets/TrophyList";
 
 class DashboardPage extends React.Component {
   componentDidMount() {
-    this.props.pageChangeHeaderTitle("Control Panel");
+    this.props.pageChangeHeaderTitle("Panel de Control");
     this.props.breadcrumbChange([{ text: "Home", link: "/" }]);
   }
 

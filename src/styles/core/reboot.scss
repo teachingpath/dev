@@ -353,6 +353,8 @@ textarea {
   line-height: inherit;
 }
 
+
+
 button,
 input {
   overflow: visible; // Show the overflow in Edge
@@ -421,8 +423,12 @@ textarea {
   overflow: auto; // Remove the default vertical scrollbar in IE.
   // Textareas should really only resize vertically so they don't break their (horizontal) containers.
   resize: vertical;
+  min-height: 150px;;
 }
 
+label {
+  font-weight: 400;
+}
 fieldset {
   // Browsers set a default `min-width: min-content;` on fieldsets,
   // unlike e.g. `<div>`s, which have `min-width: 0;` by default.

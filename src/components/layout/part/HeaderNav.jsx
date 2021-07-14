@@ -25,7 +25,6 @@ function HeaderNav({user}) {
       () => {}
     );
   }, [user]);
-  
   return (
     <Nav pills className="ml-2">
       <Dropdown.Uncontrolled nav>
@@ -38,17 +37,16 @@ function HeaderNav({user}) {
         <Dropdown.Menu animated wide className="overflow-hidden">
           <Dropdown.Row>
             <Dropdown.Col className="d-flex flex-column align-items-start justify-content-center bg-primary text-white">
-              <h2 className="font-weight-bolder">Tu Teaching Path</h2>
+              <h2 className="font-weight-bolder">Mi Teaching Path</h2>
               <p>
               Desarrolle conocimientos y habilidades a su propio ritmo a través de experiencias de aprendizaje secuenciales 
               que incluyen aprendizaje, capacitación, cuestionarios y desafíos.
               </p>
-              <strong> {user?.point || 0} pts</strong>
+              <strong> Tus putons son: {user?.point || 0}</strong>
 
             </Dropdown.Col>
             <Dropdown.Col>
               <Dropdown.Header size="lg">Estadísticas</Dropdown.Header>
-              {/* BEGIN Grid Nav */}
               <GridNav action>
                 <GridNav.Row>
                   <GridNav.Item

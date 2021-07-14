@@ -17,6 +17,7 @@ import StartPathway from "components/widgets/StartPathway";
 import Teacher from "components/widgets/Teacher";
 import RunnerTab from "components/widgets/RunnerTab";
 import { get } from "consumer/pathway";
+import Badge from "../../../docs/template/src/modules/components/Badge";
 
 class PathwayPage extends React.Component {
   constructor(props) {
@@ -61,7 +62,7 @@ class PathwayPage extends React.Component {
               <h1 className="display-5" children={name.toUpperCase()} />
             </Widget1.DialogContent>
           </Widget1.Dialog>
-          <Widget1.Offset>
+          {draft === false &&  <Widget1.Offset>
             {!this.state?.trophy?.image && <Spinner />}
             {this.state?.trophy?.image && (
               <img
@@ -70,7 +71,8 @@ class PathwayPage extends React.Component {
                 className="bg-yellow p-2 border mx-auto d-block mg-thumbnail avatar-circle"
               />
             )}
-          </Widget1.Offset>
+          </Widget1.Offset>}
+          {draft === true && <Badge>Aún no esta disponible este Pathway</Badge>}
         </Widget1.Display>
         <Widget1.Body className="pt-5">
           <Portlet className="mt-4">

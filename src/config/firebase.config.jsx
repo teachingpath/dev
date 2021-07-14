@@ -4,12 +4,13 @@
  */
 
 const FIREBASE = {
-  apiKey: "AIzaSyCTEUvOS5cYl_kj_-4HJweAgniYhR_clhM",
-  authDomain: "teachingpath-co.firebaseapp.com",
-  projectId: "teachingpath-co",
-  storageBucket: "teachingpath-co.appspot.com",
-  messagingSenderId: "654834840574",
-  appId: "1:654834840574:web:0bdd86943eaeb1f7af06af"
+  apiKey: "AIzaSyDLG7_JbXCdaHhsvKCgexa0WYmNVijMVgg",
+  authDomain: "teaching-path-dev.firebaseapp.com",
+  projectId: "teaching-path-dev",
+  storageBucket: "teaching-path-dev.appspot.com",
+  messagingSenderId: "796291215088",
+  appId: "1:796291215088:web:22351241885ed74c315c35",
+  measurementId: "G-4RYGR72KHY"
 }
 
 export default FIREBASE
