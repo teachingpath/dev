@@ -21,7 +21,7 @@ class AsideComponent extends React.Component {
         backdropOnClick={() => asideChange({ mobileMinimized: true })}
       >
         <Aside.Header>
-          <Aside.Title>Opciones</Aside.Title>
+          <Aside.Title>Rutas</Aside.Title>
           <Aside.Addon>
             <Button icon size="lg" variant="label-primary" onClick={() => asideToggle()}>
               <FontAwesomeIcon icon={SolidIcon.faTimes} className="aside-icon-minimize" />

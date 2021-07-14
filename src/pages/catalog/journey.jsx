@@ -56,7 +56,6 @@ class JourneyGeneralPage extends React.Component {
       <React.Fragment>
         <Head>
           <title>Journey | Teaching Path</title>
-          <script src="/script.js"></script>
         </Head>
         <Container fluid>
           <Row portletFill="xl">

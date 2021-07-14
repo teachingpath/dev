@@ -1,4 +1,4 @@
-import { Row, Col, Container, Portlet, Widget1 } from "@panely/components";
+import { Row, Col, Container, Portlet, Widget1, Badge } from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -17,7 +17,6 @@ import StartPathway from "components/widgets/StartPathway";
 import Teacher from "components/widgets/Teacher";
 import RunnerTab from "components/widgets/RunnerTab";
 import { get } from "consumer/pathway";
-import Badge from "../../../docs/template/src/modules/components/Badge";
 
 class PathwayPage extends React.Component {
   constructor(props) {
@@ -116,7 +115,6 @@ class PathwayGeneralPage extends React.Component {
         <Container fluid>
           <Row portletFill="xl">
             <Col xl="12">
-              <div id="webpushr-subscription-button">Notificarme</div>
               <PathwayPage activityChange={this.props.activityChange} />
             </Col>
           </Row>

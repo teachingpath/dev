@@ -23,20 +23,22 @@ class PathwayResume extends React.Component {
     return (
       <Card>
         <Row noGutters>
-          <Col md="2">
-            <Link href={"/catalog/pathway?id=" + this.props.pathwayId}>
-              <Card.Img
-                className="avatar-circle p-3"
-                src={data?.trophy?.image}
-                alt="Card Image"
-              />
-            </Link>
-          </Col>
+          {data?.trophy?.image && (
+            <Col md="2">
+              <Link href={"/catalog/pathway?id=" + this.props.pathwayId}>
+                <Card.Img
+                  className="avatar-circle p-3"
+                  src={data?.trophy?.image}
+                  alt="Card Image"
+                />
+              </Link>
+            </Col>
+          )}
           <Col md="10">
             <Card.Body>
               <Card.Title>
                 <a href={"/catalog/pathway?id=" + this.props.pathwayId}>
-                  {data?.name}
+                  Pathway: {data?.name}
                 </a>
               </Card.Title>
               <Card.Text>{data?.description}</Card.Text>
@@ -45,13 +47,15 @@ class PathwayResume extends React.Component {
                   {data?.trophy?.description}
                 </small>
               </Card.Text>
+              {data?.draft === true && <strong>Aún no disponible</strong>}
+              {data?.draft === false && 
               <Button
                 onClick={() => {
                   Router.push("/catalog/pathway?id=" + this.props.pathwayId);
                 }}
               >
                 Iniciar pathway
-              </Button>
+              </Button>}
             </Card.Body>
           </Col>
         </Row>

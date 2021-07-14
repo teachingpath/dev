@@ -57,6 +57,7 @@ class CatalogPage extends React.Component {
       <React.Fragment>
         <Head>
           <title>Runners | Teaching Path</title>
+          <script src="/script.js"></script>
         </Head>
         <Container fluid>
           <Row>

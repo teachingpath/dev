@@ -17,6 +17,7 @@ import Col from "@panely/components/Col";
 import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
 import { getTracksResponses, saveTrackResponse } from "consumer/track";
+import { linkify } from "components/helpers/mapper";
 
 function FeedbackForm({ onSave }) {
   const schema = yup.object().shape({
@@ -115,15 +116,25 @@ class LearningTrack extends React.Component {
               <h3 className="mt-3">Feedback</h3>
             </Card.Header>
             <Card.Body>
-              <Card.Text>Escribe un feedback sobre lo que aprendiste.</Card.Text>
+              <Card.Text>
+                Escribe un feedback sobre lo que aprendiste.
+              </Card.Text>
               <FeedbackForm
                 onSave={(data) => {
                   return saveTrackResponse(id, group, data).then(() => {
                     if (this.props.activityChange) {
                       this.props.activityChange({
                         type: "new_track_response",
-                        msn: 'Respuesta de nuevo Track dentro del grupo "'+group+'".',
-                        msnForGroup:'Respuesta de nueva por <i>'+user.displayName+'</i> desde learning task <b>'+trackName+'</b>.',
+                        msn:
+                          'Respuesta de nuevo Track dentro del grupo "' +
+                          group +
+                          '".',
+                        msnForGroup:
+                          "Respuesta de nueva por <i>" +
+                          user.displayName +
+                          "</i> desde learning task <b>" +
+                          trackName +
+                          "</b>.",
                         group: group,
                       });
                     }
@@ -137,8 +148,16 @@ class LearningTrack extends React.Component {
                   const { date, feedback } = data;
 
                   return (
-                    <Timeline.Item date={date} pin={<Marker type="dot" />}>
-                      {feedback}
+                    <Timeline.Item
+                      date={date}
+                      key={"timeline" + index}
+                      pin={<Marker type="dot" />}
+                    >
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: linkify(feedback),
+                        }}
+                      />
                     </Timeline.Item>
                   );
                 })}

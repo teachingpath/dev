@@ -16,6 +16,7 @@ export const create = (runnerId, data) => {
     leaderId: user.uid,
     searchTypes,
     slug: createSlug(data.name),
+    date: Date.now(),
     ...data,
   };
   return firestoreClient
@@ -65,6 +66,7 @@ export const updateTrack = (runnerId, trackId, data) => {
     .update({
       ...data,
       slug: createSlug(data.name),
+      date: Date.now(),
     });
 };
 
@@ -85,6 +87,7 @@ export const updateTrackLevel = (runnerId, trackId, level) => {
     .doc(trackId)
     .update({
       level: level,
+      date: Date.now(),
     });
 };
 

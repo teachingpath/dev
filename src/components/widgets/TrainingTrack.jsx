@@ -9,15 +9,14 @@ import {
   Timeline,
   Row,
   Col,
-  Card
+  Card,
 } from "@panely/components";
-import {
-  firebaseClient,
-} from "components/firebase/firebaseClient";
+import { firebaseClient } from "components/firebase/firebaseClient";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import { getTracksResponses, saveTrackResponse } from "consumer/track";
+import { linkify } from "components/helpers/mapper";
 
 function SolutionForm({ onSave }) {
   const schema = yup.object().shape({
@@ -77,7 +76,7 @@ class TrainingTrack extends React.Component {
   componentDidMount() {
     const {
       data: { id },
-      group
+      group,
     } = this.props;
     getTracksResponses(
       id,
@@ -135,8 +134,8 @@ class TrainingTrack extends React.Component {
             <Card>
               <Card.Body>
                 <Card.Text>
-                  Agregue aquí su respuesta de Training, agregue enlaces, repositorios o
-                   comentarios.
+                  Agregue aquí su respuesta de Training, agregue enlaces,
+                  repositorios o comentarios.
                 </Card.Text>
                 {this.state.current === training?.length && (
                   <>
@@ -147,8 +146,16 @@ class TrainingTrack extends React.Component {
                             if (this.props.activityChange) {
                               this.props.activityChange({
                                 type: "new_track_response",
-                                msn: 'Nueva respuesta dentro del group "'+group+'".',
-                                msnForGroup:'Nueva respuesta por <i>'+user.displayName+'</i> desde el training task <b>'+trackName+'</b>.',
+                                msn:
+                                  'Nueva respuesta dentro del group "' +
+                                  group +
+                                  '".',
+                                msnForGroup:
+                                  "Nueva respuesta por <i>" +
+                                  user.displayName +
+                                  "</i> desde el training task <b>" +
+                                  trackName +
+                                  "</b>.",
                                 group: group,
                               });
                             }
@@ -165,10 +172,15 @@ class TrainingTrack extends React.Component {
 
                         return (
                           <Timeline.Item
+                            key={"timeline" + index}
                             date={date}
                             pin={<Marker type="dot" />}
                           >
-                            {result}
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: linkify(result),
+                              }}
+                            />
                           </Timeline.Item>
                         );
                       })}

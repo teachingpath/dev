@@ -428,6 +428,7 @@ textarea {
 
 label {
   font-weight: 400;
+  z-index: 1 !important;
 }
 fieldset {
   // Browsers set a default `min-width: min-content;` on fieldsets,

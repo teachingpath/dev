@@ -23,6 +23,16 @@ class TrackModal extends React.Component {
     };
     this.countdownRef = React.createRef();
   }
+
+  componentDidMount(){
+    document.querySelectorAll("pre").forEach((el) => {
+      hljs.configure({   // optionally configure hljs
+        languages: ['javascript', 'ruby', 'python', 'java']
+      });
+      hljs.highlightElement(el);
+    });
+  }
+  
   toggle = () => {
     this.setState({ isOpen: !this.state.isOpen });
     if (!this.state.isOpen) {

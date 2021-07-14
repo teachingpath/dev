@@ -1,16 +1,18 @@
 import { useState } from "react";
 import Card from "./Card";
 import Link from "next/link";
+import { useEffect } from "react";
 
 const DescribeURL = ({ url }) => {
   const [data, setData] = useState(null);
-  if (data == null || data.metadata.website !== url) {
+  useEffect(() => {
     fetch("/api/metadata/?url=" + url)
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-      });
-  }
+    .then((res) => res.json())
+    .then((data) => {
+      setData(data);
+    });
+  }, [url])
+ 
   return !data ? (
     <p>Loading</p>
   ) : (
@@ -45,8 +47,9 @@ const DescribeURL = ({ url }) => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Show more
+          Ir a la referencia
         </Card.Link>
+        <Card.Text>{data.metadata.website}</Card.Text>
       </Card.Body>
     </Card>
   );

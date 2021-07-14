@@ -1,9 +1,4 @@
-import {
-  Container,
-  Portlet,
-  RichList,
-} from "@panely/components";
-import { firestoreClient } from "components/firebase/firebaseClient";
+import { Container, Portlet, RichList } from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -23,6 +18,8 @@ import React from "react";
 import Badge from "@panely/components/Badge";
 import { timeConvert, timePowerTen } from "components/helpers/time";
 import PathwayResume from "components/widgets/PathwayResume";
+import { getTracks } from "consumer/track";
+import { getRunner } from "consumer/runner";
 
 class RunnerList extends React.Component {
   constructor(props) {
@@ -32,6 +29,7 @@ class RunnerList extends React.Component {
       list: props.data || [],
       estimation: 0,
       id: null,
+      pathwayId: null,
     };
   }
 
@@ -42,42 +40,35 @@ class RunnerList extends React.Component {
   };
 
   componentDidMount() {
-    firestoreClient
-      .collection("runners")
-      .doc(this.props.id)
-      .get()
-      .then(async (doc) => {
-        const runner = doc.data();
-        const data = await firestoreClient
-          .collection("runners")
-          .doc(doc.id)
-          .collection("tracks")
-          .orderBy("level")
-          .get()
-          .then((querySnapshot) => {
-            const list = [];
-            querySnapshot.forEach((doc) => {
-              list.push({
-                id: doc.id,
-                title: doc.data().name,
-                subtitle: doc.data().description,
-                time: doc.data().timeLimit,
-                type: doc.data().type,
-              });
-            });
-            return list;
+    getRunner(
+      this.props.pathwayId,
+      this.props.id,
+      async (runner) => {
+        const tracks = await getTracks(runner.id);
+        const list = [];
+        tracks.forEach((track) => {
+          list.push({
+            id: track.id,
+            title: track.name,
+            subtitle: track.description,
+            time: track.timeLimit,
+            type: track.type,
           });
-        const estimation = data.map((el) => el.time).reduce((a, b) => a + b);
+        });
+        
+        const estimation = tracks
+          .map((track) => track.time)
+          .reduce((a, b) => a + b);
+
         this.setState({
           ...runner,
-          runnerId: doc.id,
-          list: data,
+          runnerId: runner.id,
+          list: list,
           estimation: this.state.estimation + estimation,
         });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
+      },
+      () => {}
+    );
   }
 
   render() {
@@ -104,13 +95,12 @@ class RunnerList extends React.Component {
               <Portlet.Addon>
                 Estimación:{" "}
                 <strong>
-                {timeConvert(
-                  timePowerTen(
-                    list.map((t) => t.time).reduce((a, b) => a + b, 0)
-                  )
-                )}
+                  {timeConvert(
+                    timePowerTen(
+                      list.map((t) => t.time).reduce((a, b) => a + b, 0)
+                    )
+                  )}
                 </strong>
-               
               </Portlet.Addon>
             </Portlet.Header>
 
@@ -176,16 +166,18 @@ class RunnerGeneralPage extends React.Component {
       <React.Fragment>
         <Head>
           <title>Runner | Teaching Path</title>
+          <script src="/script.js"></script>
         </Head>
         <Container fluid>
           {this.state.id && <RunnerList id={this.state.id} />}
-          {this.state.pathwayId && <PathwayResume pathwayId={this.state.pathwayId} />}
+          {this.state.pathwayId && (
+            <PathwayResume pathwayId={this.state.pathwayId} />
+          )}
         </Container>
       </React.Fragment>
     );
   }
 }
-
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(

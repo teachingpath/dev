@@ -17,12 +17,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Quill from "@panely/quill";
 import Router from "next/router";
-import {  useState } from "react";
+import { useState } from "react";
 import Alert from "@panely/components/Alert";
 import Spinner from "@panely/components/Spinner";
 import { timeConvert } from "components/helpers/time";
 import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
+import { useEffect } from "react";
+
+
 
 const modulesFull = {
   toolbar: [
@@ -32,10 +35,8 @@ const modulesFull = {
     [
       { list: "ordered" },
       { list: "bullet" },
-      { indent: "-1" },
-      { indent: "+1" },
     ],
-    [{ direction: "rtl" }, { align: [] }],
+    [ { align: [] }],
     ["link", "image", "video"],
     ["clean"],
     ["fullscreen"],
@@ -57,9 +58,17 @@ const modulesBasic = {
 };
 
 function TrackForm({ onSave, data, onExtend }) {
+
+  useEffect(() => {
+    document.querySelectorAll("pre").forEach((el) => {
+      hljs.configure({   // optionally configure hljs
+        languages: ['javascript', 'ruby', 'python', 'java']
+      });
+      hljs.highlightElement(el);
+    });
+  })
   const [loading, setLoading] = useState(false);
   const [typeContent, setTypeContent] = useState(data?.typeContent || "file");
-  const [url, setUrl] = useState(null);
 
   const schema = yup.object().shape({
     name: yup
@@ -87,6 +96,7 @@ function TrackForm({ onSave, data, onExtend }) {
     content: data?.content || "",
     guidelines: data?.guidelines || "",
     criteria: data?.criteria || "",
+    references: data?.references || "",
   };
 
   const { control, errors, handleSubmit, watch, setValue, reset, getValues } =
@@ -193,8 +203,8 @@ function TrackForm({ onSave, data, onExtend }) {
             <Form.Feedback children={errors.timeLimit.message} />
           )}
           <div className="text-muted">
-            Calcular: {timeConvert(watchFields.timeLimit * 10)} para terminar el
-             Track.
+            Calcular tiempo: {timeConvert(watchFields.timeLimit * 10)} para
+            terminar el Track.
           </div>
         </FloatLabel>
       </Form.Group>
@@ -208,11 +218,11 @@ function TrackForm({ onSave, data, onExtend }) {
           invalid={Boolean(errors.type)}
         >
           <option value="default">Seleccione su tipo</option>
-          <option value="learning">
-            Learning (Documentos, guias, videos)
-          </option>
+          <option value="learning">Learning (Documentos, guias, videos)</option>
           <option value="hacking">Hacking (Reto o evaluaciones)</option>
-          <option value="questions">Q&A (Preguntas y respuestas abiertas)</option>
+          <option value="questions">
+            Q&A (Preguntas y respuestas abiertas)
+          </option>
           <option value="training">
             Training (Tutorial o guias paso a paso)
           </option>
@@ -227,7 +237,7 @@ function TrackForm({ onSave, data, onExtend }) {
                 variant="outline-primary"
                 icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
               >
-                Escriba aquí lo que el aprendiz debería leer y aprender. 
+                Escriba aquí lo que el aprendiz debería leer y aprender.
               </Alert>
               <Option
                 typeContent={typeContent}
@@ -285,15 +295,10 @@ function TrackForm({ onSave, data, onExtend }) {
                           id="content"
                           name="content"
                           control={control}
-                          onKeyUp={(event) => {
-                            setUrl(event.target.value);
-                          }}
                           placeholder="Ingrese una URL"
                         />
                         <Label for="content">URL Youtube</Label>
-                        <p className="mt-3">
-                          <ReactPlayer url={url} controls />
-                        </p>
+                        <LoadVideo getValues={getValues} />
                       </FloatLabel>
                     </Form.Group>
                   ),
@@ -306,15 +311,10 @@ function TrackForm({ onSave, data, onExtend }) {
                           id="content"
                           name="content"
                           control={control}
-                          onKeyUp={(event) => {
-                            setUrl(event.target.value);
-                          }}
                           placeholder="Ingrese una URL"
                         />
                         <Label for="content">URL Externa</Label>
-                        <p className="mt-3">
-                          {url && <DescribeURL url={url} />}
-                        </p>
+                        <LoadReference getValues={getValues} />
                       </FloatLabel>
                     </Form.Group>
                   ),
@@ -328,9 +328,9 @@ function TrackForm({ onSave, data, onExtend }) {
                 variant="outline-primary"
                 icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
               >
-                 Escribe una serie de indicaciones, pasos y pautas que el
-                 el aprendiz puede validar su propio conocimiento haciendo un
-                 actividad práctica.
+                Escribe una serie de indicaciones, pasos y pautas que el el
+                aprendiz puede validar su propio conocimiento haciendo un
+                actividad práctica.
               </Alert>
               <Option
                 typeContent={typeContent}
@@ -395,9 +395,7 @@ function TrackForm({ onSave, data, onExtend }) {
                         />
                         <Label for="guidelines">Pautas (URL Youtube)</Label>
                       </FloatLabel>
-                      <p className="mt-3">
-                        <ReactPlayer url={url} controls />
-                      </p>
+                      <LoadVideo getValues={getValues} />
                     </Form.Group>
                   ),
                   url: (
@@ -414,11 +412,9 @@ function TrackForm({ onSave, data, onExtend }) {
                           }}
                           placeholder="Ingrese una URL"
                         />
-                        <Label for="guidelines">
-                          Pautas (URL External)
-                        </Label>
+                        <Label for="guidelines">Pautas (URL External)</Label>
                       </FloatLabel>
-                      <p className="mt-3">{url && <DescribeURL url="url" />}</p>
+                      <LoadReference getValues={getValues} />
                     </Form.Group>
                   ),
                 }[typeContent]
@@ -455,8 +451,8 @@ function TrackForm({ onSave, data, onExtend }) {
                 variant="outline-primary"
                 icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
               >
-               Cree preguntas donde los aprendices puedan responder libremente. Son
-                 preguntas abiertas para discutir en grupo.
+                Cree preguntas donde los aprendices puedan responder libremente.
+                Son preguntas abiertas para discutir en grupo.
               </Alert>
               <Form.Group>
                 <FloatLabel>
@@ -488,7 +484,7 @@ function TrackForm({ onSave, data, onExtend }) {
                 icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
               >
                 Cree una serie de pasos para completar una actividad individual,
-                 como un tutorial o una guía paso a paso.
+                como un tutorial o una guía paso a paso.
               </Alert>
               <Form.Group>
                 <FloatLabel>
@@ -513,6 +509,69 @@ function TrackForm({ onSave, data, onExtend }) {
         }[watchFields.type]
       }
 
+      <Form.Group className="scrolling-container">
+        <FloatLabel>
+          <Controller
+            name={`references`}
+            control={control}
+            render={({ onChange, onBlur, value, name, ref }) => (
+              <Quill
+                innerRef={ref}
+                onBlur={onBlur}
+                theme="snow"
+                value={value}
+                id="references"
+                name={"references"}
+                modules={modulesBasic}
+                onChange={onChange}
+                style={{ minHeight: "15rem" }}
+              />
+            )}
+          />
+          <Button
+            type="button"
+            className="mt-2"
+            onClick={() => {
+              var urlRegex =
+                /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+              const testUrls = (getValues().content || "").match(urlRegex);
+              let references = "";
+              (testUrls || []).forEach((url) => {
+                let detectedUrl = url;
+                const isYoutube = (url) => {
+                  var regExp =
+                    /^https?\:\/\/(?:www\.youtube(?:\-nocookie)?\.com\/|m\.youtube\.com\/|youtube\.com\/)?(?:ytscreeningroom\?vi?=|youtu\.be\/|vi?\/|user\/.+\/u\/\w{1,2}\/|embed\/|watch\?(?:.*\&)?vi?=|\&vi?=|\?(?:.*\&)?vi?=)([^#\&\?\n\/<>"']*)/i;
+                  var match = url.match(regExp);
+                  return match && match[1].length == 11 ? match[1] : false;
+                };
+                if(isYoutube(detectedUrl)){
+                  detectedUrl =  url.replace("embed/", "watch?v=");
+                }
+                fetch("/api/metadata/?url=" + detectedUrl)
+                  .then((res) => res.json())
+                  .then((data) => {
+                    const { title, website, description } = data.metadata;
+                    references +=
+                      "<li><b>" +
+                      title.toUpperCase() +
+                      "</b>. <i>" +
+                      (description || "") +
+                      "</i> [<a href='" +
+                      website +
+                      "'>" +
+                      website +
+                      "</a>].</li>";
+                    setValue("references", "<ul>" + references + "</ul>");
+                  });
+              });
+            }}
+          >
+            Obtener Referencias
+          </Button>
+          <Label for="content">Referencias del contenido</Label>
+        </FloatLabel>
+      </Form.Group>
+
       <Button type="submit" variant="label-primary" size="lg" width="widest">
         {loading && <Spinner className="mr-2" />}
         {isNew ? "Crear" : "Actualizar"}
@@ -530,6 +589,42 @@ function TrackForm({ onSave, data, onExtend }) {
         Cancelar
       </Button>
     </Form>
+  );
+}
+
+function LoadVideo({ getValues }) {
+  const [url, setUrl] = useState(null);
+  return (
+    <>
+      <Button
+        className="mt-2"
+        type={"button"}
+        onClick={() => {
+          setUrl(getValues().content);
+        }}
+      >
+        Cargar
+      </Button>
+      <p className="mt-3">{url && <ReactPlayer url={url} controls />}</p>
+    </>
+  );
+}
+
+function LoadReference({ getValues }) {
+  const [url, setUrl] = useState(null);
+  return (
+    <>
+      <Button
+        className="mt-2"
+        type={"button"}
+        onClick={() => {
+          setUrl(getValues().content);
+        }}
+      >
+        Cargar
+      </Button>
+      <p className="mt-3">{url && <DescribeURL url={url} />}</p>
+    </>
   );
 }
 

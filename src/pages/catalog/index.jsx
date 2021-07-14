@@ -10,13 +10,13 @@ import {
 import { pageChangeHeaderTitle, breadcrumbChange } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { firestoreClient } from "components/firebase/firebaseClient";
 import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
 import Link from "next/link";
 import Badge from "@panely/components/Badge";
 import Spinner from "@panely/components/Spinner";
+import { searchPathways } from "consumer/catalog";
 
 class CatalogPage extends React.Component {
   constructor(props) {
@@ -30,28 +30,14 @@ class CatalogPage extends React.Component {
 
     this.props.pageChangeHeaderTitle("Pathways");
     this.props.breadcrumbChange([{ text: "Catálogo", link: "/catalog" }]);
-    let db = firestoreClient.collection("pathways").where("draft", "==", false);
-    if (q) {
-      db = db.where("searchTypes", ">=", q).where("searchTypes", "<=", q + "\uf8ff");
-    }
-    if (tags) {
-      console.log(tags);
-      db = db.where("tags", "array-contains", tags);
-    }
-    db.get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push({
-            id: doc.id,
-            ...doc.data(),
-          });
-        });
+    searchPathways(
+      tags,
+      q,
+      (list) => {
         this.setState({ data: list });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
+      },
+      () => {}
+    );
   }
 
   render() {
@@ -62,6 +48,7 @@ class CatalogPage extends React.Component {
       <React.Fragment>
         <Head>
           <title>Pathway | Teaching Path</title>
+          <script src="/script.js"></script>
         </Head>
         <Container fluid>
           <Row>
@@ -72,8 +59,8 @@ class CatalogPage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                  Puede ver los Pathways aquí, pero para postularse debe
-                     tener una cuenta de usuario. 
+                    Puede ver los Pathways aquí, pero para postularse debe tener
+                    una cuenta de usuario.
                   </p>
                   <CardColumns>
                     {this.state.data.length === 0 && (
@@ -125,7 +112,7 @@ class CatalogPage extends React.Component {
                                 {data.tags.map((tag, index) => {
                                   return (
                                     <Badge
-                                      key={"tags-key"+index}
+                                      key={"tags-key" + index}
                                       variant="label-info"
                                       className="mr-1"
                                     >

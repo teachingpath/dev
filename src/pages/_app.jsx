@@ -12,7 +12,6 @@ import "styles/slick-carousel/index.scss";
 import "rc-steps/assets/index.css";
 import "styles/quiz/styles.css";
 
-
 import { AuthProvider } from "components/firebase/firebaseAuth";
 import { bindActionCreators } from "redux";
 import { pageChangeTheme } from "store/actions";
@@ -27,12 +26,14 @@ import App from "next/app";
 class MyApp extends App {
   componentDidMount() {
     // Check whether dark mode support is available or not
-    const darkModeActive = window.matchMedia("(prefers-color-scheme: dark)")
-      .matches;
-
-    // TODO: change for window drive
+    const darkModeActive = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+  
+  // TODO: change for window drive
     this.props.pageChangeTheme("light");
   }
+
 
   componentDidUpdate(prevProps) {
     if (this.props.theme !== prevProps.theme) {
@@ -45,6 +46,7 @@ class MyApp extends App {
         document.body.classList.add("theme-light");
       }
     }
+    
   }
 
   render() {

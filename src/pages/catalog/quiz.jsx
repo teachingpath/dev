@@ -1,6 +1,6 @@
 import Quiz from "@panely/quiz";
 
-import { Row, Col, Card, Portlet, Container, Button } from "@panely/components";
+import { Row, Col,  Portlet, Container, Button } from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,

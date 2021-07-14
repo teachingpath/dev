@@ -199,7 +199,7 @@ class TrackPage extends React.Component {
                     {this.state.description}
                     <div className="text-right">
                       <small>
-                        <i>Ultima actualización: {new Date().toDateString()}</i>
+                        <i>Ultima actualización: {new Date(this.state.date).toDateString()}</i>
                       </small>
                     </div>
                   </Widget1.Body>

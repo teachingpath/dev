@@ -19,6 +19,7 @@ import Col from "@panely/components/Col";
 import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
 import { getTracksResponses, saveTrackResponse } from "consumer/track";
+import {linkify} from "components/helpers/mapper";
 
 function SolutionForm({ onSave }) {
   const schema = yup.object().shape({
@@ -163,8 +164,12 @@ class HackingTrack extends React.Component {
                   const { date, solution } = data;
 
                   return (
-                    <Timeline.Item date={date} pin={<Marker type="dot" />}>
-                      {solution}
+                    <Timeline.Item key={"timeline"+index} date={date} pin={<Marker type="dot" />}>
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: linkify(solution),
+                        }}
+                      />
                     </Timeline.Item>
                   );
                 })}
