@@ -32,11 +32,8 @@ const modulesFull = {
     ["bold", "italic", "underline", "strike"],
     ["blockquote", "code-block"],
     [{ header: [2, 3, 4, 5, 6, false] }],
-    [
-      { list: "ordered" },
-      { list: "bullet" },
-    ],
-    [ { align: [] }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ align: [] }],
     ["link", "image", "video"],
     ["clean"],
     ["fullscreen"],
@@ -58,15 +55,15 @@ const modulesBasic = {
 };
 
 function TrackForm({ onSave, data, onExtend }) {
-
   useEffect(() => {
     document.querySelectorAll("pre").forEach((el) => {
-      hljs.configure({   // optionally configure hljs
-        languages: ['javascript', 'ruby', 'python', 'java']
+      hljs.configure({
+        // optionally configure hljs
+        languages: ["javascript", "ruby", "python", "java"],
       });
       hljs.highlightElement(el);
     });
-  })
+  });
   const [loading, setLoading] = useState(false);
   const [typeContent, setTypeContent] = useState(data?.typeContent || "file");
 
@@ -544,22 +541,22 @@ function TrackForm({ onSave, data, onExtend }) {
                   var match = url.match(regExp);
                   return match && match[1].length == 11 ? match[1] : false;
                 };
-                if(isYoutube(detectedUrl)){
-                  detectedUrl =  url.replace("embed/", "watch?v=");
+                if (isYoutube(detectedUrl)) {
+                  detectedUrl = url.replace("embed/", "watch?v=");
                 }
                 fetch("/api/metadata/?url=" + detectedUrl)
                   .then((res) => res.json())
                   .then((data) => {
-                    const { title, website, description } = data.metadata;
+                    const { title, url, description } = data;
                     references +=
                       "<li><b>" +
                       title.toUpperCase() +
                       "</b>. <i>" +
                       (description || "") +
                       "</i> [<a href='" +
-                      website +
+                      url +
                       "'>" +
-                      website +
+                      url +
                       "</a>].</li>";
                     setValue("references", "<ul>" + references + "</ul>");
                   });
@@ -630,7 +627,7 @@ function LoadReference({ getValues }) {
 
 function Option({ typeContent, setTypeContent }) {
   return (
-    <div className="mb-3">
+    <div className="mb-4">
       <GridNav bordered action>
         <GridNav.Row>
           <GridNav.Item
@@ -642,6 +639,9 @@ function Option({ typeContent, setTypeContent }) {
             active={typeContent === "file"}
           >
             <GridNav.Title>Richard HTML</GridNav.Title>
+            <GridNav.Subtitle>
+             Texto Plano, Pegado con HTML especial y con formato
+            </GridNav.Subtitle>
           </GridNav.Item>
           <GridNav.Item
             href="javascript:void(0)"
@@ -652,6 +652,9 @@ function Option({ typeContent, setTypeContent }) {
             icon={<FontAwesomeIcon icon={SolidIcon.faFileCode} />}
           >
             <GridNav.Title>Embed HTML</GridNav.Title>
+            <GridNav.Subtitle>
+              HTML puro sin Javascript
+            </GridNav.Subtitle>
           </GridNav.Item>
 
           <GridNav.Item
@@ -662,7 +665,11 @@ function Option({ typeContent, setTypeContent }) {
             active={typeContent === "video"}
             icon={<FontAwesomeIcon icon={SolidIcon.faVideo} />}
           >
-            <GridNav.Title>Youtube Video</GridNav.Title>
+            <GridNav.Title>Player Media</GridNav.Title>
+            <GridNav.Subtitle>
+              Soundcloud, youtube, facebook, dailymotion,
+              vimeo, mixcloud,  twitch
+            </GridNav.Subtitle>
           </GridNav.Item>
           <GridNav.Item
             href="javascript:void(0)"
@@ -673,6 +680,9 @@ function Option({ typeContent, setTypeContent }) {
             icon={<FontAwesomeIcon icon={SolidIcon.faBook} />}
           >
             <GridNav.Title>External URL</GridNav.Title>
+            <GridNav.Subtitle>
+            Sitio web, paginas, blogs, wikipedia, youtube
+            </GridNav.Subtitle>
           </GridNav.Item>
         </GridNav.Row>
       </GridNav>

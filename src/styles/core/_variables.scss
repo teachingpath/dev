@@ -468,7 +468,7 @@ $table-caption-color:         $text-muted-light !default;
 $input-btn-padding-y:         .375rem !default;
 $input-btn-padding-x:         .75rem !default;
 $input-btn-font-family:       null !default;
-$input-btn-font-size:         $font-size-md  !default;
+$input-btn-font-size:         $font-size-md +  .2rem !default;
 $input-btn-line-height:       $line-height-base !default;
 
 $input-btn-padding-y-sm:      .25rem !default;
@@ -486,10 +486,10 @@ $input-btn-border-width:      $border-width !default;
 // Forms
 $label-margin-bottom:                   .5rem !default;
 
-$input-padding-y:                       1.1rem !default;
-$input-padding-x:                       1.1rem !default;
+$input-padding-y:                       $input-btn-padding-y !default;
+$input-padding-x:                       $input-btn-padding-x !default;
 $input-font-family:                     $input-btn-font-family !default;
-$input-font-size:                       $input-btn-font-size !default;
+$input-font-size:                       $input-btn-font-size - .2rem !default;
 $input-font-weight:                     $font-weight-base !default;
 $input-line-height:                     $input-btn-line-height !default;
 
@@ -1302,9 +1302,9 @@ $carousel-gutter:                   .5rem !default;
 // Float Label
 $fltlabel-label-color-light:            $text-level-1-light !default;
 $fltlabel-label-color-dark:             $text-level-1-dark !default;
-$fltlabel-label-font-size:              $input-btn-font-size + .1rem !default;
-$fltlabel-label-font-size-lg:           $input-btn-font-size-lg + .1rem !default;
-$fltlabel-label-font-size-sm:           $input-btn-font-size-sm + .1rem !default;
+$fltlabel-label-font-size:              $input-btn-font-size  !default;
+$fltlabel-label-font-size-lg:           $input-btn-font-size-lg  !default;
+$fltlabel-label-font-size-sm:           $input-btn-font-size-sm  !default;
 $fltlabel-label-transition:             $transition-base !default;
 $fltlabel-label-offset:                 $input-btn-padding-x !default;
 $fltlabel-label-offset-lg:              $input-btn-padding-x-lg !default;
