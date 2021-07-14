@@ -13,7 +13,6 @@ class MyDocument extends Document {
                     />
                     <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css"/>
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
-                    <script src="/script.js"></script>
 
                 </Head>
                 <body className="theme-light">

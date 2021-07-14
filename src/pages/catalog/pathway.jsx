@@ -115,6 +115,7 @@ class PathwayGeneralPage extends React.Component {
         <Container fluid>
           <Row portletFill="xl">
             <Col xl="12">
+              <div id="webpushr-subscription-button">Notificarme</div>
               <PathwayPage activityChange={this.props.activityChange} />
             </Col>
           </Row>
