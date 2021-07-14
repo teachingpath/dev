@@ -111,6 +111,7 @@ class PathwayGeneralPage extends React.Component {
       <React.Fragment>
         <Head>
           <title>Pathway | Teaching Path</title>
+          <script src="/script.js"></script>
         </Head>
         <Container fluid>
           <Row portletFill="xl">
