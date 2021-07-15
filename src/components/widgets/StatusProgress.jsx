@@ -39,7 +39,7 @@ const StatusProgress = ({ progress, journeyId, pathwayId, runners }) => {
 
         <Widget1.Addon>
           <Dropdown.Uncontrolled>
-            <Dropdown.Toggle caret children="Option" />
+            <Dropdown.Toggle caret children="Opciones" />
             <Dropdown.Menu right animated>
               <Dropdown.Item
                 icon={<FontAwesomeIcon icon={SolidIcon.faRedo} />}

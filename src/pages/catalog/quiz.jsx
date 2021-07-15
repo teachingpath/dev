@@ -244,13 +244,14 @@ class QuizPage extends React.Component {
                       <img
                         className={
                           this.state.trophy.disabled
-                            ? "bg-white mg-thumbnail avatar-circle p-3 border border-warning"
-                            : "bg-yellow mg-thumbnail avatar-circle p-3 border border-success"
+                            ? "bg-white mg-thumbnail avatar-circle p-2 border border-warning"
+                            : "bg-yellow mg-thumbnail avatar-circle p-2 border border-success"
                         }
+                        style={{width:"160px"}}
                         src={this.state.trophy.image}
                         alt="Card Image"
                       />
-                      <p>{this.state.trophy.description}</p>
+                      <small className="text-muted">{this.state.trophy.description}</small>
                     </div>
                   )}
                 </Col>
@@ -279,4 +280,4 @@ function mapDispathToProps(dispatch) {
   );
 }
 
-export default connect(null, mapDispathToProps)(withLayout(QuizPage, "public"));
+export default connect(null, mapDispathToProps)(withLayout(QuizPage));

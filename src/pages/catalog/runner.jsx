@@ -78,7 +78,7 @@ class RunnerList extends React.Component {
         <Widget1>
           <Widget1.Display top size="sm" className="bg-primary text-white">
             <Widget1.Body>
-              <h1 className="display-3" children={name} />
+              <h1 className="display-4" children={name} />
             </Widget1.Body>
             <Widget1.Body>{description}</Widget1.Body>
           </Widget1.Display>

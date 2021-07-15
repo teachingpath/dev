@@ -41,21 +41,18 @@ class ImageEditor extends React.Component {
                 getImage={this.getImage}
               />
             </Col>
-            <Col xs="6" >
-              <br />
-              <p>
-                {this.state.image && (
-                  <img
-                    src={this.state.image}
-                    alt="Preview"
-                    className=" mg-thumbnail avatar-circle"
-                  />
-                )}
+            <Col xs="6" className="text-center">    
+              <h3>Herramientas</h3>        
+              <p className="text-muted">
+                Para crear tu propio emblema, ingresa{" "}
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="https://badge.design/"
+                >
+                  aquí.
+                </a>
               </p>
-              <p className="text-muted"> 
-                Preview image to save
-              </p>
-
             </Col>
           </>
         ) : (
@@ -82,16 +79,16 @@ const DropDownImage = (props) => {
         onDrop={handleDrop}
         noClick
         noKeyboard
-        style={{ maxWidth: width || "120px", maxHeight: height || "120px" }}
+        style={{ maxWidth: width || "150px", maxHeight: height || "150px" }}
       >
         {({ getRootProps, getInputProps }) => (
           <div {...getRootProps()}>
             <AvatarEditor
               ref={setEditorRef}
-              width={width || 125}
-              height={height || 125}
-              scale={1.1}
-              border={10}
+              width={width || 180}
+              height={height || 180}
+              scale={1.0}
+              border={5}
               className="mg-thumbnail"
               image={image}
             />
@@ -99,12 +96,19 @@ const DropDownImage = (props) => {
           </div>
         )}
       </Dropzone>
-      <input type="file" name="image" accept="image/*" onChange={(e) => {
-        handleDrop(e.target.files);
-        getImage().then();
-      }} />
+      <input
+        type="file"
+        name="image"
+        accept="image/*"
+        onChange={(e) => {
+          handleDrop(e.target.files);
+          getImage().then();
+        }}
+      />
       <p>
-        <small className="text-muted">Tamaño requerida  {width || 125}x{height || 125}px</small>
+        <small className="text-muted">
+          Tamaño requerido {width || 135}x{height || 135}px
+        </small>
       </p>
     </>
   );

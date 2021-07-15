@@ -7,7 +7,7 @@ export const getBadges = (journeyId, resolve, reject) => {
   firestoreClient
     .collection("journeys")
     .doc(journeyId)
-    .collection("badges")
+    .collection("badge")
     .get()
     .then((querySnapshot) => {
       if (!querySnapshot.empty) {
@@ -76,7 +76,7 @@ export const getStatsByUser = (resolve, reject) => {
            const data = await firestoreClient
               .collection("journeys")
               .doc(doc.id)
-              .collection("badges")
+              .collection("badge")
               .get()
               .then((querySnapshot) => {
                 if (!querySnapshot.empty) {
@@ -134,7 +134,7 @@ export const getBadgesByUser = (resolve, reject) => {
             const result = await firestoreClient
               .collection("journeys")
               .doc(doc.id)
-              .collection("badges")
+              .collection("badge")
               .where("disabled", "==", false)
               .get()
               .then((querySnapshot) => {
@@ -189,7 +189,7 @@ export const enableBadge = (journeyId, runnerId, totalPoints) => {
   return firestoreClient
     .collection("journeys")
     .doc(journeyId)
-    .collection("badges")
+    .collection("badge")
     .doc(runnerId)
     .update({
       disabled: false,

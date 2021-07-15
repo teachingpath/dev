@@ -50,7 +50,7 @@ class TrackCreatePage extends React.Component {
   }
 
   componentDidMount() {
-    this.props.pageChangeHeaderTitle("Update Pathway");
+    this.props.pageChangeHeaderTitle("Actualizar");
     this.props.breadcrumbChange([
       { text: "Home", link: "/" },
       {

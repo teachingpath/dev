@@ -157,7 +157,7 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
                 placeholder="Ingrese una descripción"
               />
               <Label for="badge-description">
-                ¿Qué logotipos obtendría el aprendiz?
+                ¿Qué logros obtendría el aprendiz?
               </Label>
               {errors.description && (
                 <Form.Feedback children={errors.description.message} />
@@ -201,7 +201,7 @@ class FormBasePage extends React.Component {
 
   componentDidMount() {
     const { pathwayId } = this.state;
-    this.props.pageChangeHeaderTitle("Update Pathway");
+    this.props.pageChangeHeaderTitle("Actualizar");
     this.props.breadcrumbChange([
       { text: "Home", link: "/" },
       {
@@ -225,10 +225,9 @@ class FormBasePage extends React.Component {
         <Container fluid>
           <Row>
             <Col md="6">
-              {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Badge | Editar</Portlet.Title>
+                  <Portlet.Title>Emblema | Editar</Portlet.Title>
                   <Portlet.Addon>
                     <BadgeAddon
                       id={this.state.runnerId}

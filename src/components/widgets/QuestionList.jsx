@@ -8,6 +8,7 @@ import Badge from "@panely/components/Badge";
 
 import Swal from "@panely/sweetalert2"
 import swalContent from "sweetalert2-react-content"
+import { escapeHtml } from "components/helpers/mapper";
 const ReactSwal = swalContent(Swal)
 const swal = ReactSwal.mixin({
   customClass: {
@@ -137,7 +138,7 @@ class QuestionList extends React.Component {
                       });
                     }}
                   >
-                    {title}
+                    {escapeHtml(title)}
                   </RichList.Title>
                   <RichList.Subtitle>{subtitle}</RichList.Subtitle>
                   <RichList.Subtitle>

@@ -41,7 +41,7 @@ class PathwayPage extends React.Component {
     this.onCreate = this.onCreate.bind(this);
   }
   componentDidMount() {
-    this.props.pageChangeHeaderTitle("Create Pathway");
+    this.props.pageChangeHeaderTitle("Nuevo");
     this.props.breadcrumbChange([
       { text: "Home", link: "/" },
       { text: "Pathway" },

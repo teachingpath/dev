@@ -95,6 +95,7 @@ class JourneyGeneralPage extends React.Component {
                       <img
                         src={trophy?.image}
                         alt="loading"
+                        style={{width:"140px"}}
                         className="bg-yellow p-2 border mx-auto d-block mg-thumbnail avatar-circle"
                       />
                       <h4
@@ -181,4 +182,4 @@ function mapDispathToProps(dispatch) {
 export default connect(
   null,
   mapDispathToProps
-)(withAuth(withLayout(JourneyGeneralPage, "public")));
+)(withAuth(withLayout(JourneyGeneralPage)));

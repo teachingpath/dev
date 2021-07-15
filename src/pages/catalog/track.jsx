@@ -193,7 +193,7 @@ class TrackPage extends React.Component {
                   </Widget1.Addon>
 
                   <Widget1.Body>
-                    <h1 className="display-3" children={this.state.name} />
+                    <h1 className="display-4" children={this.state.name} />
                   </Widget1.Body>
                   <Widget1.Body>
                     {this.state.description}

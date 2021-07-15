@@ -206,6 +206,8 @@ function TrackForm({ onSave, data, onExtend }) {
         </FloatLabel>
       </Form.Group>
       <Form.Group>
+      <FloatLabel>
+        <Label for="type">Tipo de Track</Label>
         <Controller
           as={CustomInput}
           type="select"
@@ -214,7 +216,7 @@ function TrackForm({ onSave, data, onExtend }) {
           control={control}
           invalid={Boolean(errors.type)}
         >
-          <option value="default">Seleccione su tipo</option>
+          <option value="default">Seleccione un tipo</option>
           <option value="learning">Learning (Documentos, guias, videos)</option>
           <option value="hacking">Hacking (Reto o evaluaciones)</option>
           <option value="questions">
@@ -225,6 +227,7 @@ function TrackForm({ onSave, data, onExtend }) {
           </option>
         </Controller>
         {errors.type && <Form.Feedback children={errors.type.message} />}
+        </FloatLabel>
       </Form.Group>
       {
         {

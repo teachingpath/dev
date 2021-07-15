@@ -51,7 +51,7 @@ class FormBasePage extends React.Component {
     if (!Router.query.pathwayId) {
       Router.push("/pathway/create");
     }
-    this.props.pageChangeHeaderTitle("Update Pathway");
+    this.props.pageChangeHeaderTitle("Actualizar");
     this.props.breadcrumbChange([
       { text: "Home", link: "/" },
       { text: "Pathway" },

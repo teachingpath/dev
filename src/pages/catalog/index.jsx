@@ -34,7 +34,7 @@ class CatalogPage extends React.Component {
       tags,
       q,
       (list) => {
-        this.setState({ data: list });
+        this.setState(list);
       },
       () => {}
     );

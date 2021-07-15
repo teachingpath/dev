@@ -43,7 +43,7 @@ class TrophtyListComponent extends React.Component {
                       <center>
                         <img
                           className={
-                            "bg-yellow mg-thumbnail avatar-circle p-3 border border-success"
+                            "bg-yellow mg-thumbnail avatar-circle p-2 border border-success"
                           }
                           src={data.image}
                           alt="Trophy Image"

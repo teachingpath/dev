@@ -101,7 +101,7 @@ class RunnerList extends React.Component {
             const { title, subtitle, id, tracks } = data;
 
             return (
-              <RichList.Item key={"runner"+index}>
+              <RichList.Item key={"runner" + index}>
                 <RichList.Addon addonType="prepend">
                   <Avatar display>
                     <FontAwesomeIcon icon={SolidIcon.faSort} />
@@ -109,6 +109,7 @@ class RunnerList extends React.Component {
                 </RichList.Addon>
                 <RichList.Content>
                   <RichList.Title
+                    title={'Click en el runner para ver "' + title + '"'}
                     onClick={() => {
                       Router.push({
                         pathname: "/runner/edit",
@@ -122,7 +123,7 @@ class RunnerList extends React.Component {
                     {index + 1}. {title}
                   </RichList.Title>
                   <RichList.Subtitle>{subtitle}</RichList.Subtitle>
-                  <RichList className="ml-4 mt-2 mb-2">
+                  <RichList className=" mt-2 mb-2">
                     {tracks.map((track, indexTrack) => {
                       return (
                         <RichList.Item key={indexTrack}>
@@ -138,7 +139,9 @@ class RunnerList extends React.Component {
                               });
                             }}
                           >
-                            <RichList.Title>
+                            <RichList.Title
+                              title={'Click en el track para ver "' + track.name + '"'}
+                            >
                               {index + 1}.{indexTrack + 1}. {track.name}
                             </RichList.Title>
                           </RichList.Content>
@@ -192,7 +195,7 @@ class RunnerList extends React.Component {
                         }}
                         icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
                       >
-                       Agregar Quiz
+                        Agregar Quiz
                       </Dropdown.Item>
                       <Dropdown.Item
                         onClick={() => {

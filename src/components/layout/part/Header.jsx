@@ -13,13 +13,8 @@ import HeaderNav from "./HeaderNav";
 import Sticky from "react-stickynode";
 
 function HeaderComponent(props) {
-  const {
-    headerTitle,
-    sidemenuToggle,
-    getPathwayBy,
-    getRunnerBy,
-    pathway,
-  } = props;
+  const { headerTitle, sidemenuToggle, getPathwayBy, getRunnerBy, pathway } =
+    props;
   const router = useRouter();
 
   useEffect(() => {
@@ -55,9 +50,13 @@ function HeaderComponent(props) {
                   <h5>
                     {pathway.pathwaySeleted.name.toUpperCase()}
                     {pathway.pathwaySeleted.draft ? (
-                      <Badge variant="label-info" className="ml-2">En borrador</Badge>
+                      <Badge variant="label-info" className="ml-2">
+                        En borrador
+                      </Badge>
                     ) : (
-                      <Badge variant="label-success" className="ml-2">Publicado</Badge>
+                      <Badge variant="label-success" className="ml-2">
+                        Publicado
+                      </Badge>
                     )}
                   </h5>
                 )}
@@ -67,7 +66,7 @@ function HeaderComponent(props) {
               </div>
             </Header.Wrap>
             <Header.Wrap>
-              <HeaderNav user={props.user}/>
+              <HeaderNav user={props.user} />
 
               <Button
                 icon
@@ -77,7 +76,7 @@ function HeaderComponent(props) {
               >
                 <FontAwesomeIcon icon={SolidIcon.faCog} />
               </Button>
-              <HeaderUser  user={props.user}/>
+              <HeaderUser user={props.user} />
             </Header.Wrap>
           </Header.Container>
         </Header.Holder>
@@ -100,11 +99,13 @@ function HeaderComponent(props) {
         <Header.Holder mobile>
           <Header.Container fluid>
             <Header.Wrap block justify="start" className="px-3">
-              <img
-                src="/images/icon.png"
-                alt="teaching path"
-                style={{ height: "25px" }}
-              />
+              <a href="/">
+                <img
+                  src="/images/icon.png"
+                  alt="teaching path"
+                  style={{ height: "25px" }}
+                />
+              </a>
             </Header.Wrap>
             <Header.Wrap>
               <Button
@@ -137,7 +138,7 @@ function mapStateToProps(state) {
   return {
     headerTitle: state.page.headerTitle,
     pathway: state.pathway,
-    user: state.user
+    user: state.user,
   };
 }
 

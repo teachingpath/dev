@@ -6,7 +6,7 @@ import { useEffect } from "react";
 const DescribeURL = ({ url }) => {
   const [data, setData] = useState(null);
   useEffect(() => {
-    fetch("/api/metadata/?url=" + url)
+    fetch("/api/metadata/?url=" +encodeURI(url))
       .then((res) => res.json())
       .then((data) => {
         setData(data);

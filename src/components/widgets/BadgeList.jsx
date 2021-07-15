@@ -68,8 +68,8 @@ class BadgeListComponent extends React.Component {
                         <img
                           className={
                             data.disabled
-                              ? "bg-white mg-thumbnail avatar-circle p-3 border border-warning"
-                              : "bg-yellow mg-thumbnail avatar-circle p-3 border border-success"
+                              ? "bg-white mg-thumbnail avatar-circle p-2 border border-warning"
+                              : "bg-yellow mg-thumbnail avatar-circle p-2 border border-success"
                           }
                           src={data.image}
                           alt="Badge Image"
