@@ -169,9 +169,10 @@ function LoginForm() {
         </FloatLabel>
       </Form.Group>
       {/* END Form Group */}
+     <Link href="/forget"> ¿Olvido usuario/contraseña? </Link>
       <div className="d-flex align-items-center justify-content-between">
         <span>
-        ¿No tienes una cuenta? <Link href="/register">Sign Up</Link>
+        ¿No tienes una cuenta? <Link href="/register">Crear Cuenta</Link>
         </span>
         <Button
           type="submit"
