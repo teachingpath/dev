@@ -129,8 +129,16 @@ class TrackCreatePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <div>
-                  Cree cada track para evaluar las competencias dentro del
-                     runner.
+                    Cree cada track para evaluar las competencias dentro del
+                    runner.{" "}
+                    <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href="https://docs.teachingpath.info/concepts/track"
+                    >
+                      Ver más información
+                    </a>{" "}
+                    acerca de los tracks
                   </div>
                   <hr />
                   <TrackForm

@@ -93,7 +93,7 @@ class PathwayPage extends React.Component {
                 <Portlet.Body>
                   <div>
                   Después de crear el Pathway, debe crear los Runners para
-                     agreguar los tracks de aprendizaje.
+                     agreguar los tracks de aprendizaje. <a target="_blank" rel="noopener noreferrer" href="https://docs.teachingpath.info/concepts/pathway">Ver más información</a> acerca de los pathways
                   </div>
                   <hr />
                   <PathwayForm
@@ -107,7 +107,7 @@ class PathwayPage extends React.Component {
                       variant="outline-info"
                       icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
                     >
-                    Agrega el trofeo o runner del pathway creado.
+                    <p>Agrega el trofeo o runner del pathway creado.</p>
                       <Button
                         type="button"
                         disabled={!this.state.saved}

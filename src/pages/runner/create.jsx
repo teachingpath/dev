@@ -118,6 +118,7 @@ class RunnerCreatePage extends React.Component {
                   <p>
                   Los Runners son los objetivos que contienen tareas o tracks
                      para lograr una base de conocimiento, cada Runner debe crearse un Quiz para validar conocimientos.
+                      <a target="_blank" rel="noopener noreferrer" href="https://docs.teachingpath.info/concepts/runner">Ver más información</a> acerca de los runners
                   </p>
                   <hr />
                   <RunnerForm onSave={this.onCreate} />
@@ -128,7 +129,7 @@ class RunnerCreatePage extends React.Component {
                       variant="outline-info"
                       icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
                     >
-                       Agregue el Quiz o Track de la Runner creado.
+                       <p>Agregue el Quiz o Track de la Runner creado.</p>
                       <Button
                         type="button"
                         disabled={!this.state.saved}

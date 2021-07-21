@@ -113,7 +113,13 @@ class FormBasePage extends React.Component {
                 <Portlet.Body>
                   <p>
                   Agregue todas las preguntas relacionadas con este Runner, estas
-                     Las preguntas deberían ayudar a validar el conocimiento.
+                     Las preguntas deberían ayudar a validar el conocimiento. <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href="https://docs.teachingpath.info/concepts/quiz"
+                    >
+                      Ver más información
+                    </a>{" "}
                   </p>
                   <hr />
                   <QuizForm onSave={this.onCreate} />

@@ -238,7 +238,13 @@ class FormBasePage extends React.Component {
                 <Portlet.Body>
                   <p>
                   Este emblema se otorga al aprendiz si tiene éxito
-                     al completar el Quiz.{" "}
+                     al completar el Quiz. <a
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href="https://docs.teachingpath.info/concepts/runner#badges"
+                    >
+                      Ver más información
+                    </a>{" "}
                   </p>
                   <hr />
                   {this.props?.runner?.id && <BadgeForm
