@@ -95,10 +95,10 @@ class FormBasePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Groupos</Portlet.Title>
+                  <Portlet.Title>Salas</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
-                  <p>Puede crear grupos para dividir el proceso de aprendizaje como grupo, y también crear grupos privados para un acompañamiento más personalizado.</p>
+                  <p>Puede crear salas para dividir el proceso de aprendizaje como grupo, y también crear salas privados para un acompañamiento más personalizado.</p>
                   <hr />
                   <GroupForm
                     activityChange={this.props.activityChange}
@@ -130,19 +130,19 @@ function GroupForm({ pathwayId, groups, activityChange }) {
       .then((docRef) => {
         toast.fire({
           icon: "success",
-          title: "El grupo fue creado correctamente",
+          title: "La sala fue creado correctamente",
         });
         activityChange({
           pathwayId: pathwayId,
           type: "edit_pathway",
-          msn: 'El grupo "' + data.name + '" fue actualizado o creado.',
+          msn: 'La sala "' + data.name + '" fue actualizado o creado.',
         });
         setLoading(false);
       })
       .catch((error) => {
         toast.fire({
           icon: "error",
-          title: "Actualizando grupo",
+          title: "Actualizando sala",
         });
         setLoading(false);
       });
@@ -244,7 +244,7 @@ function FieldGroup({ data, onChange }) {
                       />
                     )}
                   />
-                  <Label for={`groups_${index}_.name`}>Grupo#{index + 1}</Label>
+                  <Label for={`groups_${index}_.name`}>Sala#{index + 1}</Label>
                 </FloatLabel>
               </Form.Group>
               <Form.Group>
@@ -258,7 +258,7 @@ function FieldGroup({ data, onChange }) {
                         <CustomInput
                           type={"checkbox"}
                           id={`groups_${index}_.isPrivate`}
-                          label="¿Es privado el grupo?"
+                          label="¿Es privado la Sala?"
                           name={`groups[${index}].isPrivate`}
                           onChange={(e) => {
                             onChange(e.target.checked);
@@ -305,7 +305,7 @@ function FieldGroup({ data, onChange }) {
             optionsAppend({});
           }}
         >
-          Agregar Grupo <FontAwesomeIcon icon={SolidIcon.faPlus} />
+          Agregar Sala <FontAwesomeIcon icon={SolidIcon.faPlus} />
         </Button>
       </p>
     </Form>

@@ -214,7 +214,7 @@ class PathwaysComponent extends React.Component {
               }}
               icon={<FontAwesomeIcon icon={SolidIcon.faObjectGroup} />}
             >
-              Agregar Grupo
+              Agregar Sala
             </Dropdown.Item>
             {draft ? (
               <Dropdown.Item

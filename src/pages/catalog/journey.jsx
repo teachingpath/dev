@@ -86,7 +86,7 @@ class JourneyGeneralPage extends React.Component {
                         children={name?.toUpperCase()}
                       />
                       <h5>
-                        Tu Grupo: <Badge>{group}</Badge>
+                        Tu Sala: <Badge>{group}</Badge>
                       </h5>
                     </Widget1.DialogContent>
                   </Widget1.Dialog>

@@ -130,7 +130,7 @@ class Questions extends React.Component {
                             if (this.props.activityChange) {
                               this.props.activityChange({
                                 type: "new_track_response",
-                                msn: 'Nueva respuesta dentro del grupo "'+group+'".',
+                                msn: 'Nueva respuesta dentro de la sala "'+group+'".',
                                 msnForGroup:'Nueva respuesta por <i>'+user.displayName+'</i> desde question track <b>'+trackName+'</b>.',
                                 group: group,
                               });

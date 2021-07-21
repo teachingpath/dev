@@ -202,3 +202,44 @@ export const getRunners = (pathwayId, resolve, reject) => {
 export const deleteRunner = (runnerId) => {
   return firestoreClient.collection("runners").doc(runnerId).delete();
 };
+
+export const getBadgesByLeaderId = (resolve, reject) => {
+  const user = firebaseClient.auth().currentUser;
+  if (user) {
+    firestoreClient
+      .collection("runners")
+      .where("leaderId", "==", user.uid)
+      .get()
+      .then(async (querySnapshot) => {
+        const badges = [];
+
+        if (!querySnapshot.empty) {
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            if (data.badge) {
+              badges.push({
+                ...data.badge,
+                id: doc.id,
+                pathwayId: data.pathwayId,
+                complete: true,
+              });
+            } else {
+              badges.push({
+                name: data.name,
+                id: doc.id,
+                pathwayId: data.pathwayId,
+                complete: false,
+              });
+            }
+          });
+          resolve({ badges });
+        }
+      })
+      .catch((error) => {
+        console.log("Error getting documents: ", error);
+        reject();
+      });
+  } else {
+    reject();
+  }
+};

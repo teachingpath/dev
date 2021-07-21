@@ -149,7 +149,7 @@ class HackingTrack extends React.Component {
                     if (this.props.activityChange) {
                       this.props.activityChange({
                         type: "new_track_response",
-                        msn: 'Respuesta de nueva Track dentro del grupo "'+group+'".',
+                        msn: 'Respuesta de nueva Track dentro de la sala "'+group+'".',
                         msnForGroup:'Nueva respuesta  por <i>'+user.displayName+'</i> para el hacking task <b>'+trackName+'</b>.',
                         group: group,
                       });

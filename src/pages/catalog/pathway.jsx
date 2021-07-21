@@ -67,6 +67,7 @@ class PathwayPage extends React.Component {
               <img
                 src={this.state?.trophy?.image}
                 alt="trophy"
+                style={{maxWidth: "145px"}}
                 className="bg-yellow p-2 border mx-auto d-block mg-thumbnail avatar-circle"
               />
             )}

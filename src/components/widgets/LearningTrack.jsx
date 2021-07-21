@@ -126,7 +126,7 @@ class LearningTrack extends React.Component {
                       this.props.activityChange({
                         type: "new_track_response",
                         msn:
-                          'Respuesta de nuevo Track dentro del grupo "' +
+                          'Respuesta de nuevo Track dentro de la sala "' +
                           group +
                           '".',
                         msnForGroup:

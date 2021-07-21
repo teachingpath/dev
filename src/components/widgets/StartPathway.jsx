@@ -281,7 +281,7 @@ class StartPathwayButton extends React.Component {
   onSubmitPathwayGroup = () => {
     swal
       .fire({
-        title: "Seleccione su grupo de ruta",
+        title: "Seleccione una sala",
         input: "text",
         inputAttributes: {
           autocapitalize: "off",
@@ -309,7 +309,7 @@ class StartPathwayButton extends React.Component {
           swal.fire({
             icon: "error",
             title: "Oops...",
-            text: "El grupo no existe para este pathway.",
+            text: "La sala no existe para este pathway.",
           });
         }
       });
@@ -322,17 +322,17 @@ class StartPathwayButton extends React.Component {
           Iniciar Pathway
         </Button>
         <Modal isOpen={this.state.isOpen} toggle={this.toggle}>
-          <Modal.Header toggle={this.toggle}>Selecciona grupo</Modal.Header>
+          <Modal.Header toggle={this.toggle}>Selecciona una sala</Modal.Header>
           <Modal.Body>
             <p className="mb-0">
             {this.props.loading && <Spinner className="mr-2" />} 
-              Seleccione un grupo para trabajar el pathway como grupo
+              Seleccione una sala para trabajar el pathway como grupo
             </p>
             <RichList bordered action>
               {this.state.data === null && <Spinner className="mr-2" />}
              
               {this.state.data && this.state.data.length === 0 && (
-                <p className="text-center">No existe grupos para este pathway</p>
+                <p className="text-center">No existe salas para este pathway</p>
               )}
               {this.state.data
                 .filter((item) => item.isPrivate !== true)
@@ -358,7 +358,7 @@ class StartPathwayButton extends React.Component {
               className="mr-2"
               onClick={this.onSubmitPathwayGroup}
             >
-              Ingrese un grupo privado
+              Ingrese una sala privada
             </Button>
             <Button variant="outline-danger" onClick={this.toggle}>
               Cancelar

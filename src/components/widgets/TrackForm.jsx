@@ -452,7 +452,7 @@ function TrackForm({ onSave, data, onExtend }) {
                 icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
               >
                 Cree preguntas donde los aprendices puedan responder libremente.
-                Son preguntas abiertas para discutir en grupo.
+                Son preguntas abiertas para discutir dentro de la sala.
               </Alert>
               <Form.Group>
                 <FloatLabel>

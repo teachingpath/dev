@@ -16,6 +16,7 @@ import BadgeList from "../components/widgets/BadgeList";
 import InfoPanel from "components/widgets/InfoPanel";
 import Head from "next/head";
 import TrophtyListComponent from "components/widgets/TrophyList";
+import BadgeAllListComponent from "components/widgets/BadgetAllList";
 
 class DashboardPage extends React.Component {
   componentDidMount() {
@@ -43,9 +44,11 @@ class DashboardPage extends React.Component {
                   <Row portletFill="md">
                     <Col md="6">
                       <Pathways {...this.props} />
+
                       <Activities {...this.props} />
                     </Col>
                     <Col md="6">
+                      <BadgeAllListComponent />
                       <InfoSyncCarousel {...this.props} />
                     </Col>
                   </Row>
@@ -59,13 +62,11 @@ class DashboardPage extends React.Component {
                 <Journeys {...this.props} />
               </Col>
               <Col md="6">
-                <Activities {...this.props} />
-              </Col>
-              <Col md="12">
                 <TrophtyListComponent />
+                <BadgeList />
               </Col>
               <Col md="12">
-                <BadgeList />
+                <Activities {...this.props} />
               </Col>
             </Row>
           )}

@@ -73,7 +73,7 @@ export const getStatsByUser = (resolve, reject) => {
                 }
               });
             });
-           const data = await firestoreClient
+            const data = await firestoreClient
               .collection("journeys")
               .doc(doc.id)
               .collection("badge")
@@ -94,8 +94,9 @@ export const getStatsByUser = (resolve, reject) => {
                   });
                 }
                 return {
-                  incompleteBadges, completeBadges
-                }
+                  incompleteBadges,
+                  completeBadges,
+                };
               });
 
             resolve({

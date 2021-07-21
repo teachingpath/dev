@@ -47,7 +47,7 @@ class ActivitiesComponent extends React.Component {
           <Portlet.Icon>
             <FontAwesomeIcon icon={SolidIcon.faClipboardList} />
           </Portlet.Icon>
-          <Portlet.Title>Actividades del Grupo</Portlet.Title>
+          <Portlet.Title>Actividades de la Sala</Portlet.Title>
         </Portlet.Header>
         <Portlet.Body>
           {this.state.data === null && <Spinner />}

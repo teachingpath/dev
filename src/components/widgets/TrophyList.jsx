@@ -1,8 +1,6 @@
 import Carousel from "@panely/slick";
 import { CarouselItem } from "@panely/components";
-import {
-  getTrophiesByUser,
-} from "consumer/journey";
+import { getTrophiesByUser } from "consumer/journey";
 import Portlet from "@panely/components/Portlet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
@@ -27,7 +25,7 @@ class TrophtyListComponent extends React.Component {
           <Portlet.Icon>
             <FontAwesomeIcon icon={SolidIcon.faTrophy} />
           </Portlet.Icon>
-          <Portlet.Title>Trafeo</Portlet.Title>
+          <Portlet.Title>Trafeo {"("+this.state.data.length+")"}</Portlet.Title>
         </Portlet.Header>
         <Portlet.Body>
           <div className="mt-4">
@@ -36,12 +34,13 @@ class TrophtyListComponent extends React.Component {
             )}
 
             {this.state.data.length !== 0 && (
-              <Carousel>
-                {this.state.data.map((data, index) => {
+              <Carousel slidesToShow={this.state.data.length >= 4? 4: this.state.data.length}>
+              {this.state.data.map((data, index) => {
                   return (
-                    <CarouselItem key={"trohy-key"+index}>
-                      <center>
+                    <CarouselItem key={"trohy-key" + index}>
+                      <center title={data.description}>
                         <img
+                          style={{ width: "145px" }}
                           className={
                             "bg-yellow mg-thumbnail avatar-circle p-2 border border-success"
                           }
@@ -49,7 +48,6 @@ class TrophtyListComponent extends React.Component {
                           alt="Trophy Image"
                         />
                         <p>{data.name}</p>
-                        <small>{data.description}</small>
                       </center>
                     </CarouselItem>
                   );

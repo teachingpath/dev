@@ -204,7 +204,7 @@ const PathwayAddon = ({ id }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faObjectGroup} />}
           >
-            Agregar Grupo
+            Agregar Sala
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
