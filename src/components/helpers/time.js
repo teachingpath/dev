@@ -19,7 +19,7 @@ export function timeShortConvert(num) {
   var hours = Math.floor(num / 60);  
   var minutes = num % 60;
   var hoursText = " h";
-  var minutesText = " m"
+  var minutesText = " min"
 
   if(!minutes){
     return (hours+"").padStart(2, "0") + hoursText;         

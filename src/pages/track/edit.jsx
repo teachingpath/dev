@@ -19,6 +19,8 @@ import TrackForm from "../../components/widgets/TrackForm";
 import Spinner from "@panely/components/Spinner";
 import { getTrack, updateTrack } from "consumer/track";
 import { updateToDraft } from "consumer/pathway";
+import Alert from "../../../docs/template/src/modules/components/Alert";
+import Button from "@panely/components/Button";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -134,9 +136,12 @@ class FormBasePage extends React.Component {
   }
 
   render() {
+    console.log(this.props);
     if (!this.state.saved) {
       return <Spinner>Cargando...</Spinner>;
     }
+
+    const isOwner = this.props.runner.leaderId === this.props.user.uid;
     return (
       <React.Fragment>
         <Head>
@@ -145,7 +150,6 @@ class FormBasePage extends React.Component {
         <Container fluid={!this.state.extend}>
           <Row>
             <Col md={this.state.extend ? "12" : "6"}>
-              {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Track | Editar</Portlet.Title>
@@ -159,22 +163,38 @@ class FormBasePage extends React.Component {
                     />
                   </Portlet.Addon>
                 </Portlet.Header>
-                <Portlet.Body>
-                  <p>
-                  Cree cada track para evaluar las competencias dentro del
-                     runner.
-                  </p>
-                  <hr />
-                  <TrackForm
-                    onSave={this.onEdit}
-                    data={this.state}
-                    onExtend={() => {
-                      if (!this.state.extend) {
-                        this.toggle();
-                      }
-                    }}
-                  />
-                </Portlet.Body>
+                {isOwner ? (
+                  <>
+                    <Portlet.Body>
+                      <p>
+                        Cree cada track para evaluar las competencias dentro del
+                        runner.
+                      </p>
+                      <hr />
+                      <TrackForm
+                        onSave={this.onEdit}
+                        data={this.state}
+                        onExtend={() => {
+                          if (!this.state.extend) {
+                            this.toggle();
+                          }
+                        }}
+                      />
+                    </Portlet.Body>
+                  </>
+                ) : (
+                  <Alert
+                    className="mt-4"
+                    variant="outline-danger"
+                    icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
+                  >
+                    <p>
+                     No tienes permisos para editar este Track.
+                    </p>
+
+                   
+                  </Alert>
+                )}
               </Portlet>
             </Col>
           </Row>
@@ -240,7 +260,14 @@ function mapDispathToProps(dispatch) {
   );
 }
 
+function mapStateToProps(state) {
+  return {
+    pathway: state.pathway.pathwaySeleted,
+    runner: state.pathway.runnerSeleted,
+  };
+}
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispathToProps
 )(withAuth(withLayout(FormBasePage)));

@@ -1,4 +1,4 @@
-import { Modal } from "@panely/components";
+import { Modal, Card } from "@panely/components";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import Button from "@panely/components/Button";
 import Countdown, { zeroPad } from "react-countdown";
@@ -24,15 +24,16 @@ class TrackModal extends React.Component {
     this.countdownRef = React.createRef();
   }
 
-  componentDidMount(){
+  componentDidMount() {
     document.querySelectorAll("pre").forEach((el) => {
-      hljs.configure({   // optionally configure hljs
-        languages: ['javascript', 'ruby', 'python', 'java']
+      hljs.configure({
+        // optionally configure hljs
+        languages: ["javascript", "ruby", "python", "java"],
       });
       hljs.highlightElement(el);
     });
   }
-  
+
   toggle = () => {
     this.setState({ isOpen: !this.state.isOpen });
     if (!this.state.isOpen) {
@@ -205,6 +206,19 @@ class TrackModal extends React.Component {
                 ),
               }[type]
             }
+
+            {this.state.references && (
+              <Card className="mt-4">
+                <Card.Header>
+                  <h3 className="mt-3">Referencias</h3>
+                </Card.Header>
+                <Card.Body>
+                  <div
+                    dangerouslySetInnerHTML={{ __html: this.state.references }}
+                  />
+                </Card.Body>
+              </Card>
+            )}
           </Modal.Body>
           <Modal.Footer className="bg-yellow">
             <strong className="mr-2">Time to finish {dataTime} hours.</strong>

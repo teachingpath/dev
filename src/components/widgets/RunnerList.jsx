@@ -42,6 +42,7 @@ class RunnerList extends React.Component {
           list.push({
             id: item.id,
             title: item.name,
+            pathwayId: item.pathwayId,
             subtitle: item.description,
             tracks: tracks,
           });
@@ -98,7 +99,7 @@ class RunnerList extends React.Component {
         )}
         <ReactSortable list={this.state.data} setList={this.onSortList}>
           {this.state.data.map((data, index) => {
-            const { title, subtitle, id, tracks } = data;
+            const { title, subtitle, id, pathwayId, tracks } = data;
 
             return (
               <RichList.Item key={"runner" + index}>
@@ -115,7 +116,7 @@ class RunnerList extends React.Component {
                         pathname: "/runner/edit",
                         query: {
                           runnerId: id,
-                          pathwayId: this.props.pathwayId,
+                          pathwayId: pathwayId,
                         },
                       });
                     }}
@@ -134,7 +135,7 @@ class RunnerList extends React.Component {
                                 query: {
                                   runnerId: id,
                                   trackId: track.id,
-                                  pathwayId: this.props.pathwayId,
+                                  pathwayId: pathwayId,
                                 },
                               });
                             }}
@@ -166,7 +167,7 @@ class RunnerList extends React.Component {
                             pathname: "/runner/edit",
                             query: {
                               runnerId: id,
-                              pathwayId: this.props.pathwayId,
+                              pathwayId: pathwayId,
                             },
                           });
                         }}
@@ -189,7 +190,7 @@ class RunnerList extends React.Component {
                             pathname: "/runner/quiz/create",
                             query: {
                               runnerId: id,
-                              pathwayId: this.props.pathwayId,
+                              pathwayId: pathwayId,
                             },
                           });
                         }}
@@ -203,7 +204,7 @@ class RunnerList extends React.Component {
                             pathname: "/runner/badge",
                             query: {
                               runnerId: id,
-                              pathwayId: this.props.pathwayId,
+                              pathwayId: pathwayId,
                             },
                           });
                         }}
@@ -217,7 +218,7 @@ class RunnerList extends React.Component {
                             pathname: "/track/create",
                             query: {
                               runnerId: id,
-                              pathwayId: this.props.pathwayId,
+                              pathwayId: pathwayId,
                             },
                           });
                         }}

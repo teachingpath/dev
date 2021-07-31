@@ -84,10 +84,12 @@ class FormBasePage extends React.Component {
           ...data,
         });
         this.props.loadRunner({
+          trackId: null,
           runnerId,
           pathwayId,
           ...data,
         });
+        
         return updateToDraft(pathwayId);
       })
       .catch((error) => {

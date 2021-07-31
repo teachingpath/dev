@@ -171,7 +171,7 @@ function TrophyForm({ pathwayId, data, activityChange }) {
       })}
     >
       <Form.Group>
-        <ImageEditor ref={imageRef} image={data?.image} withPreview />
+        <ImageEditor ref={imageRef} image={data?.image}  />
       </Form.Group>
       <Row>
         <Col xs="12">
@@ -202,7 +202,7 @@ function TrophyForm({ pathwayId, data, activityChange }) {
                 placeholder="Ingrese una descripción"
               />
               <Label for="trophy-description">
-              ¿Qué logotipos obtendría el aprendiz?
+              ¿Qué logros obtendría el aprendiz?
               </Label>
               {errors.description && (
                 <Form.Feedback children={errors.description.message} />

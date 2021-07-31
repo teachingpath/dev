@@ -4,7 +4,7 @@ import {
 } from "components/firebase/firebaseClient";
 import { createSlug } from "components/helpers/mapper";
 import uuid from "components/helpers/uuid";
-import { getRunners } from "./runner";
+import { getRunners, create as createRunner } from "./runner";
 import { getTracks } from "./track";
 
 export const create = (data) => {
@@ -33,7 +33,17 @@ export const create = (data) => {
         },
       ],
       leaderId: user.uid,
+      contributors: [user.uid],
       date: new Date(),
+    })
+    .then(async () => {
+      if(data.runners){
+        Object.keys(data.runners).forEach(async (key) => {
+          await createRunner(pathwayId, {
+              name: data.runners[key].name
+          });
+        });
+      }
     })
     .then(() => {
       return {
@@ -70,6 +80,15 @@ export const update = (id, data) => {
     .collection("pathways")
     .doc(id)
     .update(dataUpdated)
+    .then(async () => {
+      if(data.runners){
+        Object.keys(data.runners).forEach(async (key) => {
+          await createRunner(pathwayId, {
+              name: data.runners[key].name
+          });
+        });
+      }
+    })
     .then(() => dataUpdated);
 };
 

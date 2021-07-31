@@ -26,7 +26,6 @@ class ImageEditor extends React.Component {
   };
 
   render() {
-    const { width, height } = this.props;
 
     return (
       <Row>
@@ -41,19 +40,7 @@ class ImageEditor extends React.Component {
                 getImage={this.getImage}
               />
             </Col>
-            <Col xs="6" className="text-center">    
-              <h3>Herramientas</h3>        
-              <p className="text-muted">
-                Para crear tu propio emblema, ingresa{" "}
-                <a
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  href="https://badge.design/"
-                >
-                  aquí.
-                </a>
-              </p>
-            </Col>
+            
           </>
         ) : (
           <Col xs="12">
@@ -107,7 +94,22 @@ const DropDownImage = (props) => {
       />
       <p>
         <small className="text-muted">
-          Tamaño requerido {width || 135}x{height || 135}px
+          Tamaño requerido {width || 135}x{height || 135}px. 
+          {" "}
+          Para crear un   {" "}
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://badge.design/"
+          >
+            emblema
+          </a> o si necesitas crear un    {" "}<a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://www.canva.com/"
+          >
+            banner
+          </a>
         </small>
       </p>
     </>

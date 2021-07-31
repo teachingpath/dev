@@ -10,12 +10,12 @@ function pathwayReducer(state = initialState, action) {
     case TYPES.PATHWAY_LOAD:
       return {
         ...state,
-        pathwaySeleted: action.payload,
+        pathwaySeleted: { ...(state.pathwaySeleted || {}), ...action.payload },
       };
     case TYPES.RUNNER_LOAD:
       return {
         ...state,
-        runnerSeleted: action.payload,
+        runnerSeleted: { ...(state.runnerSeleted || {}), ...action.payload },
       };
     default:
       return state;

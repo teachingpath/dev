@@ -82,7 +82,7 @@ class StartPathway extends React.Component {
     user
   ) {
     return Promise.all(breadcrumbs).then((dataResolved) => {
-      const groupSlug = createSlug(name+" "+group);
+      const groupSlug = createSlug(name + " " + group);
       return firestoreClient
         .collection("journeys")
         .doc(journeyId)
@@ -106,7 +106,12 @@ class StartPathway extends React.Component {
           this.props.activityChange({
             type: "start_pathway",
             msn: 'Inicia pathway "' + name + '".',
-            msnForGroup:  "<i>" + user.displayName + '</i> inició el pathway "<b>' +  name + '</b>".',
+            msnForGroup:
+              "<i>" +
+              user.displayName +
+              '</i> inició el pathway "<b>' +
+              name +
+              '</b>".',
             group: groupSlug,
           });
 
@@ -199,18 +204,24 @@ class StartPathway extends React.Component {
         loading={loading}
         pathwayId={pathwayId}
         onStart={(group) => {
-          this.setState({
-            ...this.state,
-            loading: true,
-          });
-          this.onCreateJourney(
-            leaderId,
-            pathwayId,
-            journeyId,
-            trophy,
-            name,
-            group
-          );
+          const url = "https://tehachingpath.dev/teacher/?leaderId="+leaderId;
+          const sendeamil = "/api/sendemail/?email=" + user.email + "&template=start-pathway&url="+url;
+          fetch(sendeamil)
+            .then((res) => res.json())
+            .then(() => {
+              this.setState({
+                ...this.state,
+                loading: true,
+              });
+              this.onCreateJourney(
+                leaderId,
+                pathwayId,
+                journeyId,
+                trophy,
+                name,
+                group
+              );
+            });
         }}
       />
     );
@@ -325,12 +336,12 @@ class StartPathwayButton extends React.Component {
           <Modal.Header toggle={this.toggle}>Selecciona una sala</Modal.Header>
           <Modal.Body>
             <p className="mb-0">
-            {this.props.loading && <Spinner className="mr-2" />} 
+              {this.props.loading && <Spinner className="mr-2" />}
               Seleccione una sala para trabajar el pathway como grupo
             </p>
             <RichList bordered action>
               {this.state.data === null && <Spinner className="mr-2" />}
-             
+
               {this.state.data && this.state.data.length === 0 && (
                 <p className="text-center">No existe salas para este pathway</p>
               )}

@@ -4,6 +4,7 @@ import {
 } from "components/firebase/firebaseClient";
 import { createSlug } from "components/helpers/mapper";
 import uuid from "components/helpers/uuid";
+import { create as createTrack } from "./track";
 
 export const create = (pathwayId, data) => {
   const runnerId = uuid();
@@ -22,6 +23,17 @@ export const create = (pathwayId, data) => {
       slug: createSlug(data.name),
       ...data,
     })
+    .then(async () => {
+      if (data.tracks) {
+        Object.keys(data.tracks).forEach(async (key) => {
+          await createTrack(runnerId, {
+            name: data.tracks[key].name,
+            type:  "learning",
+            typeContent: "file",
+          });
+        });
+      }
+    })
     .then(() => {
       return {
         id: runnerId,
@@ -38,6 +50,17 @@ export const update = (runnerId, data) => {
       ...data,
       searchTypes,
       slug: createSlug(data.name),
+    })
+    .then(async () => {
+      if (data.tracks) {
+        Object.keys(data.tracks).forEach(async (key) => {
+          await createTrack(runnerId, {
+            name: data.tracks[key].name,
+            type:  "learning",
+            typeContent: "file",
+          });
+        });
+      }
     });
 };
 

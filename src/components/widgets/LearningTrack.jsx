@@ -105,7 +105,7 @@ class LearningTrack extends React.Component {
             fileCode: (
               <div dangerouslySetInnerHTML={{ __html: data.content }} />
             ),
-            video: <ReactPlayer url={data.content} />,
+            video: <p className="pt-2"><ReactPlayer url={data.content} /></p>,
             url: <DescribeURL url={data.content} />,
           }[typeContent]
         }

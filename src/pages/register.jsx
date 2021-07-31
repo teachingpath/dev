@@ -29,7 +29,6 @@ import PAGE from "config/page.config";
 
 const ReactSwal = swalContent(Swal);
 
-
 const swal = ReactSwal.mixin({
   customClass: {
     confirmButton: "btn btn-label-success btn-wide mx-1",
@@ -50,22 +49,21 @@ function RegisterPage() {
           className="align-items-center justify-content-center h-100"
         >
           <Col sm="8" md="6" lg="4">
-          
             <Portlet>
               <Portlet.Body>
                 <div className="text-center mt-2 mb-4">
-                  <img src="/images/logo.png" alt="teaching path"/>
+                  <img src="/images/logo.png" alt="teaching path" />
                 </div>
                 <RegisterForm />
               </Portlet.Body>
             </Portlet>
             <Portlet.Footer>
-                  <Link href="/catalog">
-                    <Button pill size="lg" width="widest">
-                     Ver catálogo de pathways 
-                    </Button>
-                  </Link>
-                </Portlet.Footer>
+              <Link href="/catalog">
+                <Button pill size="lg" width="widest">
+                  Ver catálogo de pathways
+                </Button>
+              </Link>
+            </Portlet.Footer>
           </Col>
         </Row>
       </Container>
@@ -111,11 +109,17 @@ function RegisterForm() {
       password: "",
       passwordRepeat: "",
       agreement: false,
-      profile: false
+      profile: false,
     },
   });
 
-  const onSubmit = async ({ firstName, lastName, email, password, profile }) => {
+  const onSubmit = async ({
+    firstName,
+    lastName,
+    email,
+    password,
+    profile,
+  }) => {
     setLoading(true);
 
     await firebaseClient
@@ -133,10 +137,11 @@ function RegisterForm() {
                 displayName: `${firstName} ${lastName}`,
               })
               .then(() => {
-                const credential = firebaseClient.auth.EmailAuthProvider.credential(
-                  user.email,
-                  password
-                );
+                const credential =
+                  firebaseClient.auth.EmailAuthProvider.credential(
+                    user.email,
+                    password
+                  );
 
                 return user
                   .reauthenticateWithCredential(credential)
@@ -150,11 +155,16 @@ function RegisterForm() {
                       .collection("users")
                       .doc(user.uid)
                       .set({
-                        profile: profile === true ? 'coach' : 'trainee',
+                        profile: profile === true ? "coach" : "trainee",
                         email: email,
                         firstName: firstName,
                         lastName: lastName,
-                        point: 5
+                        point: 5,
+                      })
+                      .then(() => {
+                        const template = "welcome-" + (profile === true ? "coach" : "trainee");
+                        const url ="/api/sendemail/?email=" + email +"&template=" + template;
+                        fetch(url).then((res) => res.json());
                       });
                   })
                   .catch((err) => {
@@ -238,7 +248,7 @@ function RegisterForm() {
           {errors.email && <Form.Feedback children={errors.email.message} />}
         </FloatLabel>
       </Form.Group>
-    
+
       <Form.Group>
         <FloatLabel size="lg">
           <Controller
@@ -276,24 +286,24 @@ function RegisterForm() {
         </FloatLabel>
       </Form.Group>
       <Form.Group>
-          <Controller
-            control={control}
-            name="profile"
-            render={({ onChange, onBlur, value, name, ref }) => (
-              <CustomInput
-                type="switch"
-                size="lg"
-                id="profile"
-                label="Active como Teacher"
-                invalid={Boolean(errors.profile)}
-                onBlur={onBlur}
-                onChange={(e) => onChange(e.target.checked)}
-                checked={value}
-                innerRef={ref}
-              />
-            )}
-          />
-        </Form.Group>
+        <Controller
+          control={control}
+          name="profile"
+          render={({ onChange, onBlur, value, name, ref }) => (
+            <CustomInput
+              type="switch"
+              size="lg"
+              id="profile"
+              label="Active como Teacher"
+              invalid={Boolean(errors.profile)}
+              onBlur={onBlur}
+              onChange={(e) => onChange(e.target.checked)}
+              checked={value}
+              innerRef={ref}
+            />
+          )}
+        />
+      </Form.Group>
       <div className="d-flex align-items-center justify-content-between mb-3">
         <Form.Group className="mb-0">
           <Controller
@@ -314,7 +324,6 @@ function RegisterForm() {
             )}
           />
         </Form.Group>
-
       </div>
       <div className="d-flex align-items-center justify-content-between">
         <span>
@@ -335,7 +344,7 @@ function RegisterForm() {
 }
 
 RegisterPage.getInitialProps = async (ctx) => {
-  const cookies = nookies.get(ctx)
+  const cookies = nookies.get(ctx);
   // Redirect to dashboard page if the user has logged in
   if (cookies?.token) {
     if (ctx.res) {

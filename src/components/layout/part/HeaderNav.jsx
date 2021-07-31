@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { getStatsByUser } from "consumer/journey";
+import Badge from "../../../../docs/template/src/modules/components/Badge";
 
 function HeaderNav({user}) {
   const [stat, setStat] = useState({
@@ -30,7 +31,7 @@ function HeaderNav({user}) {
       <Dropdown.Uncontrolled nav>
         {user && (
           <Dropdown.Toggle nav active>
-            {user.firstName} ({user.point} pts)
+            {user.firstName} <Badge variant="warning" pill className="ml-2">{user.point} pts</Badge>
           </Dropdown.Toggle>
         )}
 

@@ -18,11 +18,15 @@ function HeaderComponent(props) {
   const router = useRouter();
 
   useEffect(() => {
-    getPathwayBy(router.query.pathwayId);
+    if(router.query.pathwayId){
+      getPathwayBy(router.query.pathwayId);
+    }
   }, [router.query.pathwayId]);
 
   useEffect(() => {
-    getRunnerBy(router.query.runnerId, router.query.pathwayId);
+    if(router.query.runnerId && router.query.pathwayId){
+      getRunnerBy(router.query.runnerId, router.query.pathwayId);
+    }
   }, [router.query.runnerId, router.query.pathwayId]);
 
   return (

@@ -1,11 +1,13 @@
-import { Form, Label, Input, Button, FloatLabel } from "@panely/components";
-import { useForm, Controller } from "react-hook-form";
+import { Form, Row, Col, Label, Input, Button, FloatLabel } from "@panely/components";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Router from "next/router";
 import { useState } from "react";
 import Spinner from "@panely/components/Spinner";
 import Quill from "@panely/quill";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
 const modulesBasic = {
   toolbar: [
@@ -30,7 +32,7 @@ function RunnerForm({ onSave, data }) {
     description: yup
       .string()
       .min(5, "Ingrese al menos 5 caracteres")
-      .required("Por favor, ingrese la descripción del runner")
+      .required("Por favor, ingrese la descripción del runner"),
   });
 
   const { control, errors, handleSubmit, reset } = useForm({
@@ -50,7 +52,7 @@ function RunnerForm({ onSave, data }) {
         onSave(data).then(() => {
           if (isNew) {
             reset();
-          } 
+          }
           setLoading(false);
         });
       })}
@@ -89,27 +91,48 @@ function RunnerForm({ onSave, data }) {
       </Form.Group>
       <Form.Group>
         <FloatLabel>
-
           <Controller
-              name={`feedback`}
-              control={control}
-              render={({ onChange, onBlur, value, name, ref }) => (
-                  <Quill
-                      innerRef={ref}
-                      onBlur={onBlur}
-                      theme="snow"
-                      value={value}
-                      id="feedback"
-                      name={"feedback"}
-                      placeholder="Ingrese un Resumen/Feedback"
-                      modules={modulesBasic}
-                      onChange={onChange}
-                      style={{ minHeight: "15rem" }}
-                  />
-              )}
+            name={`tracks`}
+            control={control}
+            render={({ onChange, onBlur, value, name, ref }) => (
+              <FieldGroup
+                data={value || {}}
+                innerRef={ref}
+                onBlur={onBlur}
+                id="tracks"
+                name={"tracks"}
+                onChange={onChange}
+              />
+            )}
+          />
+          {errors.groups && <Form.Feedback children={errors.groups.message} />}
+        </FloatLabel>
+      </Form.Group>
+      <Form.Group>
+        <FloatLabel>
+          <Controller
+            name={`feedback`}
+            control={control}
+            render={({ onChange, onBlur, value, name, ref }) => (
+              <Quill
+                innerRef={ref}
+                onBlur={onBlur}
+                theme="snow"
+                value={value}
+                id="feedback"
+                name={"feedback"}
+                placeholder="Ingrese un Resumen/Feedback"
+                modules={modulesBasic}
+                onChange={onChange}
+                style={{ minHeight: "15rem" }}
+              />
+            )}
           />
           <Label for="feedback">Resumen/feedback</Label>
-          <Form.Text>Escriba un resumen o feedback para que el aprendiz sepa lo que aprendió después de completar el Runner.</Form.Text>
+          <Form.Text>
+            Escriba un resumen o feedback para que el aprendiz sepa lo que
+            aprendió después de completar el Runner.
+          </Form.Text>
           {errors.feedback && (
             <Form.Feedback children={errors.feedback.message} />
           )}
@@ -136,6 +159,98 @@ function RunnerForm({ onSave, data }) {
       >
         Cancelar
       </Button>
+    </Form>
+  );
+}
+
+function FieldGroup({ data, onChange }) {
+  const [value, setValue] = useState(data);
+  const { control } = useForm({
+    defaultValues: {
+      tracks: [],
+    },
+  });
+  const {
+    fields: optionsFields,
+    append: optionsAppend,
+    remove: optionsRemove,
+  } = useFieldArray({ control, name: "tracks" });
+
+  const onChangeContent = (index, data) => {
+    if (!value[index]) {
+      value[index] = data;
+    }
+    value[index] = { ...value[index], ...data, id: index };
+    setValue(value);
+    onChange(value);
+  };
+
+  return (
+    <Form>
+      {optionsFields.map((item, index) => {
+        return (
+          <Row key={item.id} className="pt-4">
+            <Col xs="11">
+              <Form.Group>
+                <FloatLabel>
+                  <Controller
+                    id={`tracks_${index}_.name`}
+                    name={`tracks[${index}].name`}
+                    control={control}
+                    render={({ onChange, onBlur, value, name, ref }) => (
+                      <Input
+                        innerRef={ref}
+                        type="text"
+                        value={value || ""}
+                        id={`tracks_${index}_.name`}
+                        name={`tracks[${index}].name`}
+                        placeholder="Ingrese el nombre del track"
+                        onChange={onChange}
+                        onBlur={onBlur}
+                        onKeyUp={(data) => {
+                          if (value?.name) {
+                            onChangeContent(index, value);
+                          } else {
+                            onChangeContent(index, {
+                              name: value,
+                            });
+                          }
+                        }}
+                      />
+                    )}
+                  />
+                  <Label for={`groups_${index}_.name`}>
+                    Track#{index + 1}
+                  </Label>
+                </FloatLabel>
+              </Form.Group>
+            </Col>
+            <Col xs="1">
+              <Button
+                type="button"
+                onClick={() => {
+                  optionsRemove(index);
+                  delete value[index];
+                }}
+              >
+                <FontAwesomeIcon icon={SolidIcon.faTrash} />
+              </Button>
+            </Col>
+          </Row>
+        );
+      })}
+
+      <p className="text-right">
+        <Button
+          variant={"primary"}
+          type="button"
+          onClick={() => {
+            optionsAppend({});
+          }}
+        >
+          Agregar Track <FontAwesomeIcon icon={SolidIcon.faPlus} />
+        </Button>
+      </p>
     </Form>
   );
 }

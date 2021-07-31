@@ -9,11 +9,13 @@ import {
   ImageEditor,
 } from "@panely/components";
 import { useRef, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Router from "next/router";
 import Spinner from "@panely/components/Spinner";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
 function PathwayForm({ onSave, data }) {
   const [loading, setLoading] = useState(false);
@@ -94,6 +96,30 @@ function PathwayForm({ onSave, data }) {
               )}
             </FloatLabel>
           </Form.Group>
+          {isNew && (
+            <Form.Group>
+              <FloatLabel>
+                <Controller
+                  name={`runners`}
+                  control={control}
+                  render={({ onChange, onBlur, value, name, ref }) => (
+                    <FieldGroup
+                      data={value || {}}
+                      innerRef={ref}
+                      onBlur={onBlur}
+                      id="runners"
+                      name={"runners"}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+                {errors.groups && (
+                  <Form.Feedback children={errors.groups.message} />
+                )}
+              </FloatLabel>
+            </Form.Group>
+          )}
+
           <Form.Group>
             <FloatLabel>
               <Controller
@@ -132,6 +158,98 @@ function PathwayForm({ onSave, data }) {
       >
         Cancelar
       </Button>
+    </Form>
+  );
+}
+
+function FieldGroup({ data, onChange }) {
+  const [value, setValue] = useState(data);
+  const { control } = useForm({
+    defaultValues: {
+      runners: [],
+    },
+  });
+  const {
+    fields: optionsFields,
+    append: optionsAppend,
+    remove: optionsRemove,
+  } = useFieldArray({ control, name: "runners" });
+
+  const onChangeContent = (index, data) => {
+    if (!value[index]) {
+      value[index] = data;
+    }
+    value[index] = { ...value[index], ...data, id: index };
+    setValue(value);
+    onChange(value);
+  };
+
+  return (
+    <Form>
+      {optionsFields.map((item, index) => {
+        return (
+          <Row key={item.id} className="pt-4">
+            <Col xs="11">
+              <Form.Group>
+                <FloatLabel>
+                  <Controller
+                    id={`runners_${index}_.name`}
+                    name={`runners[${index}].name`}
+                    control={control}
+                    render={({ onChange, onBlur, value, name, ref }) => (
+                      <Input
+                        innerRef={ref}
+                        type="text"
+                        value={value || ""}
+                        id={`runners_${index}_.name`}
+                        name={`runners[${index}].name`}
+                        onChange={onChange}
+                        placeholder="Ingrese el nombre del runner"
+                        onBlur={onBlur}
+                        onKeyUp={(data) => {
+                          if (value?.name) {
+                            onChangeContent(index, value);
+                          } else {
+                            onChangeContent(index, {
+                              name: value,
+                            });
+                          }
+                        }}
+                      />
+                    )}
+                  />
+                  <Label for={`groups_${index}_.name`}>
+                    Runner#{index + 1}
+                  </Label>
+                </FloatLabel>
+              </Form.Group>
+            </Col>
+            <Col xs="1">
+              <Button
+                type="button"
+                onClick={() => {
+                  optionsRemove(index);
+                  delete value[index];
+                }}
+              >
+                <FontAwesomeIcon icon={SolidIcon.faTrash} />
+              </Button>
+            </Col>
+          </Row>
+        );
+      })}
+
+      <p className="text-right">
+        <Button
+          variant={"primary"}
+          type="button"
+          onClick={() => {
+            optionsAppend({});
+          }}
+        >
+          Agregar Runner <FontAwesomeIcon icon={SolidIcon.faPlus} />
+        </Button>
+      </p>
     </Form>
   );
 }

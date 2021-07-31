@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { firestoreClient } from "components/firebase/firebaseClient";
 import Spinner from "@panely/components/Spinner";
+import { escapeHtml } from "components/helpers/mapper";
 
 class ActivitiesComponent extends React.Component {
   constructor(props) {
@@ -11,6 +12,7 @@ class ActivitiesComponent extends React.Component {
   }
 
   componentDidMount() {
+    
     firestoreClient
       .collection("activities")
       .where("leaderId", "==", this.props.firebase.user_id)
@@ -30,7 +32,7 @@ class ActivitiesComponent extends React.Component {
             time: time.substr(0, time.lastIndexOf(":")),
             date: new Date(data.date.seconds * 1000),
             color: data.color || "info",
-            content: () => <p className="mb-0">{data.msn}</p>,
+            content: () => <p className="mb-0">{ escapeHtml(data.msn)}</p>,
           });
         });
         this.setState({ data: list });

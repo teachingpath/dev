@@ -126,7 +126,7 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
       })}
     >
       <Form.Group>
-        <ImageEditor ref={imageRef} image={badge?.image} withPreview />
+        <ImageEditor ref={imageRef} image={badge?.image}  />
       </Form.Group>
       <Row>
         <Col xs="12">

@@ -119,7 +119,7 @@ function ProfileForm({ data, id }) {
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Form.Group>
-        <ImageEditor ref={imageRef} image={data?.image} withPreview />
+        <ImageEditor ref={imageRef} image={data?.image}  />
       </Form.Group>
       <Form.Group>
         <Label>
