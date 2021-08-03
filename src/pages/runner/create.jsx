@@ -3,6 +3,7 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  cleanRunner
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -65,6 +66,8 @@ class RunnerCreatePage extends React.Component {
       ...this.state,
       pathwayId: pathwayId,
     });
+    this.props.cleanRunner();
+
   }
 
   onCreate(data) {
@@ -95,6 +98,7 @@ class RunnerCreatePage extends React.Component {
           title: "Creation runner",
         });
       });
+      
   }
 
   render() {
@@ -198,7 +202,7 @@ class RunnerCreatePage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange,cleanRunner},
     dispatch
   );
 }

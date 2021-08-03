@@ -7,10 +7,24 @@ export function loadPathway(payload) {
   };
 }
 
+export function cleanPathway() {
+  return {
+    type: TYPES.PATHWAY_LOAD,
+    payload: null,
+  };
+}
+
 export function loadRunner(payload) {
   return {
     type: TYPES.RUNNER_LOAD,
     payload: payload,
+  };
+}
+
+export function cleanRunner() {
+  return {
+    type: TYPES.RUNNER_LOAD,
+    payload: null,
   };
 }
 

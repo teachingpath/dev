@@ -50,7 +50,7 @@ class FormBasePage extends React.Component {
   }
 
   componentDidMount() {
-    const {pathwayId, runnerId} = Router.query;
+    const { pathwayId, runnerId } = Router.query;
     if (!pathwayId || !runnerId) {
       Router.push("/pathway/create");
     }
@@ -89,7 +89,7 @@ class FormBasePage extends React.Component {
           pathwayId,
           ...data,
         });
-        
+
         return updateToDraft(pathwayId);
       })
       .catch((error) => {
@@ -128,7 +128,7 @@ class FormBasePage extends React.Component {
                 <Portlet.Body>
                   <p>
                     Después de crear el Pathway, debe crear los Runners para
-                     agregue Tracks de aprendizaje.
+                    agregue Tracks de aprendizaje.
                   </p>
                   <hr />
                   <RunnerForm onSave={this.onEdit} data={runner} />

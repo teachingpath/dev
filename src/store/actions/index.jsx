@@ -4,7 +4,7 @@ import { breadcrumbChange } from "./breadcrumbAction";
 import { firebaseChange } from "./firebaseAction";
 import { activityChange } from "./activityAction";
 import { userChange } from "./userAction";
-import { loadPathway, loadRunner, getPathwayBy, getRunnerBy } from "./pathwayAction";
+import { loadPathway, loadRunner, cleanRunner, cleanPathway, getPathwayBy, getRunnerBy } from "./pathwayAction";
 import { asideToggle, asideChange } from "./asideAction"
 
 
@@ -23,5 +23,7 @@ export {
   asideToggle,
   asideChange,
   getPathwayBy,
-  getRunnerBy
+  getRunnerBy,
+  cleanPathway,
+  cleanRunner
 };

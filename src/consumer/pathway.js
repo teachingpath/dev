@@ -4,7 +4,7 @@ import {
 } from "components/firebase/firebaseClient";
 import { createSlug } from "components/helpers/mapper";
 import uuid from "components/helpers/uuid";
-import { getRunners, create as createRunner } from "./runner";
+import { getRunners, create as createRunner, deleteRunner } from "./runner";
 import { getTracks } from "./track";
 
 export const create = (data) => {
@@ -18,7 +18,8 @@ export const create = (data) => {
     .collection("pathways")
     .doc(pathwayId)
     .set({
-      ...data,
+      description: data.description,
+      image: data.image,
       name: data.name,
       slug: createSlug(data.name),
       searchTypes: searchTypes,
@@ -38,9 +39,11 @@ export const create = (data) => {
     })
     .then(async () => {
       if(data.runners){
-        Object.keys(data.runners).forEach(async (key) => {
+        let level = 0;
+        Object.keys(data.runners || {}).forEach(async (key) => {
           await createRunner(pathwayId, {
-              name: data.runners[key].name
+              name: data.runners[key].name,
+              level: level++
           });
         });
       }
@@ -57,6 +60,16 @@ export const deletePathway = (pathwayId) => {
     .collection("pathways")
     .doc(pathwayId)
     .delete()
+    .then(() => {
+      return firestoreClient
+        .collection("runners")
+        .where("pathwayId", "==", pathwayId)
+        .get().then(function(querySnapshot) {
+          return querySnapshot.map(function(doc) {
+            deleteRunner(doc.id);
+          });
+        });
+    })
     .catch((error) => {
       console.error("Error removing document: ", error);
     });
@@ -82,9 +95,11 @@ export const update = (id, data) => {
     .update(dataUpdated)
     .then(async () => {
       if(data.runners){
+        let level = 0;
         Object.keys(data.runners).forEach(async (key) => {
           await createRunner(pathwayId, {
-              name: data.runners[key].name
+              name: data.runners[key].name,
+              level: level++
           });
         });
       }

@@ -8,11 +8,23 @@ const initialState = {
 function pathwayReducer(state = initialState, action) {
   switch (action.type) {
     case TYPES.PATHWAY_LOAD:
+      if(action.payload === null) {
+        return {
+          ...state,
+          pathwaySeleted: null,
+        };
+      }
       return {
         ...state,
         pathwaySeleted: { ...(state.pathwaySeleted || {}), ...action.payload },
       };
     case TYPES.RUNNER_LOAD:
+      if(action.payload === null) {
+        return {
+          ...state,
+          runnerSeleted: null,
+        };
+      }
       return {
         ...state,
         runnerSeleted: { ...(state.runnerSeleted || {}), ...action.payload },

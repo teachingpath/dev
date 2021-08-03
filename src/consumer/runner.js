@@ -10,26 +10,29 @@ export const create = (pathwayId, data) => {
   const runnerId = uuid();
   const user = firebaseClient.auth().currentUser;
   const searchTypes = data.name.toLowerCase();
-
   return firestoreClient
     .collection("runners")
     .doc(runnerId)
     .set({
+      description: data.description || "",
+      feedback: data.feedback || "",
+      name: data.name,
       level: 100,
       leaderId: user.uid,
       pathwayId: pathwayId,
       date: new Date(),
       searchTypes,
-      slug: createSlug(data.name),
-      ...data,
+      slug: createSlug(data.name)
     })
     .then(async () => {
       if (data.tracks) {
+        let level = 0;
         Object.keys(data.tracks).forEach(async (key) => {
           await createTrack(runnerId, {
             name: data.tracks[key].name,
             type:  "learning",
             typeContent: "file",
+            level: level++
           });
         });
       }
@@ -47,17 +50,23 @@ export const update = (runnerId, data) => {
     .collection("runners")
     .doc(runnerId)
     .update({
-      ...data,
       searchTypes,
+      name: data.name,
+      description: data.description,
+      feedback: data.feedback,
       slug: createSlug(data.name),
+      date: new Date(),
     })
     .then(async () => {
       if (data.tracks) {
+        let level = 0;
+        console.log(data.tracks);
         Object.keys(data.tracks).forEach(async (key) => {
           await createTrack(runnerId, {
             name: data.tracks[key].name,
             type:  "learning",
             typeContent: "file",
+            level: level++
           });
         });
       }

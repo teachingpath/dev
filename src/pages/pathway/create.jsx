@@ -3,6 +3,7 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  cleanPathway
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -43,6 +44,7 @@ class PathwayPage extends React.Component {
       { text: "Home", link: "/" },
       { text: "Pathway" },
     ]);
+    this.props.cleanPathway();
   }
 
   onCreate(data) {
@@ -114,7 +116,7 @@ class PathwayPage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, cleanPathway },
     dispatch
   );
 }

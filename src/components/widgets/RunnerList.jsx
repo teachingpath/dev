@@ -155,7 +155,6 @@ class RunnerList extends React.Component {
                   </RichList>
                 </RichList.Content>
                 <RichList.Addon addonType="append">
-                  {/* BEGIN Dropdown */}
                   <Dropdown.Uncontrolled>
                     <Dropdown.Toggle icon variant="text-secondary">
                       <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
