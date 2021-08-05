@@ -210,7 +210,7 @@ class FormBasePage extends React.Component {
       },
       {
         text: "Runner",
-        link: "/runner/create?pathwayId=" + pathwayId,
+        link: "/runner/edit?pathwayId=" + Router.query.pathwayId+"&runnerId="+Router.query.runnerId,
       },
       { text: "Emblema" },
     ]);

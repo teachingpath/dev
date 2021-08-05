@@ -189,7 +189,26 @@ class TrackPage extends React.Component {
                       >
                         <FontAwesomeIcon icon={SolidIcon.faBars} />
                       </Button>
+                      <Button
+                        icon
+                        circle
+                        variant="flat-primary"
+                        className="mr-2"
+                        onClick={() => {
+                          Router.push({
+                            pathname: "/track/edit",
+                            query: {
+                              trackId: this.state.id,
+                              runnerId: this.state.runnerId,
+                              pathwayId: this.state.pathwayId,
+                            },
+                          });
+                        }}
+                      >
+                        <FontAwesomeIcon icon={SolidIcon.faEdit} />
+                      </Button>
                     </DemoWrapper>
+                    
                   </Widget1.Addon>
 
                   <Widget1.Body>

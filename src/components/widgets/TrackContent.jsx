@@ -18,6 +18,7 @@ class TrackContent extends React.Component {
   render() {
     return (
       <React.Fragment>
+        <div className="mt-2"> 
         {
           {
             learning: <LearningTrack data={this.props} group={"default"} />,
@@ -26,6 +27,8 @@ class TrackContent extends React.Component {
             hacking: <HackingTrack data={this.props} group={"default"} />,
           }[this.props.type]
         }
+        </div>
+       
         {this.props.references && (
           <Card className="mt-4">
             <Card.Header>

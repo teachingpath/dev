@@ -56,22 +56,41 @@ class FormBasePage extends React.Component {
       Router.push("/pathway/create");
     }
     this.props.pageChangeHeaderTitle("Actualizar");
-    this.props.breadcrumbChange([
-      { text: "Home", link: "/" },
-      {
-        text: "Pathway",
-        link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
-      },
-      {
-        text: "Runner",
-        link:
-          "/runner/edit?pathwayId=" +
-          Router.query.pathwayId +
-          "&runnerId=" +
-          Router.query.runnerId,
-      },
-      { text: "Track" },
-    ]);
+    const isOwner = this.props.runner?.leaderId === this.props.user.uid;
+
+    if (isOwner) {
+      this.props.breadcrumbChange([
+        { text: "Home", link: "/" },
+        {
+          text: "Pathway",
+          link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
+        },
+        {
+          text: "Runner",
+          link:
+            "/runner/edit?pathwayId=" +
+            Router.query.pathwayId +
+            "&runnerId=" +
+            Router.query.runnerId,
+        },
+        { text: "Track" },
+      ]);
+    } else {
+      this.props.breadcrumbChange([
+        { text: "Home", link: "/" },
+        {
+          text: "Track",
+          link:
+            "/catalog/track?pathwayId=" +
+            Router.query.pathwayId +
+            "&runnerId=" +
+            Router.query.runnerId +
+            "&id=" +
+            Router.query.trackId,
+        },
+      ]);
+    }
+
     this.loadData(Router.query);
   }
 
@@ -136,12 +155,12 @@ class FormBasePage extends React.Component {
   }
 
   render() {
-    console.log(this.props);
     if (!this.state.saved) {
       return <Spinner>Cargando...</Spinner>;
     }
 
-    const isOwner = this.props.runner.leaderId === this.props.user.uid;
+    const isOwner = this.props.runner?.leaderId === this.props.user.uid;
+
     return (
       <React.Fragment>
         <Head>
@@ -153,48 +172,37 @@ class FormBasePage extends React.Component {
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Track | Editar</Portlet.Title>
-                  <Portlet.Addon>
-                    <TrackAddon
-                      extend={this.state.extend}
-                      toggle={this.toggle}
-                      runnerId={this.state.runnerId}
-                      pathwayId={this.state.pathwayId}
-                      id={this.state.id}
-                    />
-                  </Portlet.Addon>
-                </Portlet.Header>
-                {isOwner ? (
-                  <>
-                    <Portlet.Body>
-                      <p>
-                        Cree cada track para evaluar las competencias dentro del
-                        runner.
-                      </p>
-                      <hr />
-                      <TrackForm
-                        onSave={this.onEdit}
-                        data={this.state}
-                        onExtend={() => {
-                          if (!this.state.extend) {
-                            this.toggle();
-                          }
-                        }}
+                  {isOwner && (
+                    <Portlet.Addon>
+                      <TrackAddon
+                        extend={this.state.extend}
+                        toggle={this.toggle}
+                        runnerId={this.state.runnerId}
+                        pathwayId={this.state.pathwayId}
+                        id={this.state.id}
                       />
-                    </Portlet.Body>
-                  </>
-                ) : (
-                  <Alert
-                    className="mt-4"
-                    variant="outline-danger"
-                    icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
-                  >
-                    <p>
-                     No tienes permisos para editar este Track.
-                    </p>
+                    </Portlet.Addon>
+                  )}
+                </Portlet.Header>
 
-                   
-                  </Alert>
-                )}
+                <>
+                  <Portlet.Body>
+                    <p>
+                      Cree cada track para evaluar las competencias dentro del
+                      runner.
+                    </p>
+                    <hr />
+                    <TrackForm
+                      onSave={this.onEdit}
+                      data={this.state}
+                      onExtend={() => {
+                        if (!this.state.extend) {
+                          this.toggle();
+                        }
+                      }}
+                    />
+                  </Portlet.Body>
+                </>
               </Portlet>
             </Col>
           </Row>

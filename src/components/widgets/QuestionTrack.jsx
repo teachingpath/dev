@@ -18,14 +18,14 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
-import { saveTrackResponse } from "consumer/track";
+import { getTracksResponses, saveTrackResponse } from "consumer/track";
 
 function QuestionForm({ onSave }) {
   const schema = yup.object().shape({
     answer: yup
       .string()
-      .min(5, "Please enter at least 5 characters")
-      .required("Please enter your answer"),
+      .min(5, "Ingrese al menos 5 caracteres")
+      .required("Por favor escriba su respuesta"),
   });
 
   const { control, errors, handleSubmit, reset } = useForm({
@@ -53,9 +53,9 @@ function QuestionForm({ onSave }) {
                 name="answer"
                 control={control}
                 invalid={Boolean(errors.answer)}
-                placeholder="Insert your answer"
+                placeholder="Ingrese su respuesta aquí"
               />
-              <Label for="name">Answer</Label>
+              <Label for="name">Respuesta</Label>
               {errors.answer && (
                 <Form.Feedback children={errors.answer.message} />
               )}
@@ -64,7 +64,7 @@ function QuestionForm({ onSave }) {
         </Col>
         <Col sm="2">
           <Button type="submit" variant="primary" className="ml-2">
-            Send
+            Enviar
           </Button>
         </Col>
       </Row>
@@ -88,6 +88,7 @@ class Questions extends React.Component {
       data: { id },
       group,
     } = this.props;
+    
     getTracksResponses(
       id,
       group,
@@ -115,6 +116,7 @@ class Questions extends React.Component {
           return (
             <Card>
               <Card.Header
+                title="Click para expandir y ver el formulario de respuesta"
                 collapsed={!(activeCard === index)}
                 onClick={() => this.toggle(index)}
               >

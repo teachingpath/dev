@@ -24,15 +24,15 @@ const DescribeURL = ({ url }) => {
               src={data.icon}
               width="35"
               className="avatar-circle"
-              alt="Card Image"
+              alt={data.provider}
             ></img>
           </Card.Icon>
         )}
           <span className="ml-4">{data.provider}</span> 
         <Card.Title tag="h3">
-          <Link href={data.url} target="_blank" rel="noopener noreferrer">
+          <Card.Link href={data.url} target="_blank" rel="noopener noreferrer">
             {data.title}
-          </Link>
+          </Card.Link>
         </Card.Title>
         <Card.Text>{data.description}</Card.Text>
         <Card.Link href={data.url} target="_blank" rel="noopener noreferrer">

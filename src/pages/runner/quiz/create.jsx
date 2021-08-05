@@ -55,7 +55,7 @@ class FormBasePage extends React.Component {
       },
       {
         text: "Runner",
-        link: "/runner/create?pathwayId=" + Router.query.pathwayId,
+        link: "/runner/edit?pathwayId=" + Router.query.pathwayId+"&runnerId="+Router.query.runnerId,
       },
       { text: "Quiz" },
     ]);
@@ -112,7 +112,7 @@ class FormBasePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                  Agregue todas las preguntas relacionadas con este Runner, estas
+                  Agregue todas las preguntas relacionadas con este Runner.
                      Las preguntas deberían ayudar a validar el conocimiento. <a
                       target="_blank"
                       rel="noopener noreferrer"
