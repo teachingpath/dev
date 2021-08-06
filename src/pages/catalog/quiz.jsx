@@ -210,7 +210,7 @@ class QuizPage extends React.Component {
         icon={<FontAwesomeIcon icon={SolidIcon.faTimes} />}
       >
         El quiz no se aprobó, debe intentarlo de nuevo para obtener el emblema
-        del Runner y pasar el Pathway. Anímate y vuelve a intentarlo.
+        del Runner y pasar el Pathway. Anímate y vuelve a intentarlo. Te recomendamos volver al pathway y repasar los conceptos ahí descritos.
         <h4 className="mt-3">Result</h4>
         <div>
           <Label>
@@ -227,6 +227,13 @@ class QuizPage extends React.Component {
             }}
           >
             Repetir Quiz
+          </Button>
+          <Button
+            onClick={() => {
+              Router.back();
+            }}
+          >
+            Volver al Pathway
           </Button>
         </p>
       </Alert>
@@ -262,6 +269,7 @@ class QuizPage extends React.Component {
                         src={this.state.trophy.image}
                         alt="Card Image"
                       />
+                      <br />
                       <small className="text-muted">
                         {this.state.trophy.description}
                       </small>
