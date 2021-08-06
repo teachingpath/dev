@@ -134,7 +134,6 @@ class FormBasePage extends React.Component {
           pathwayId: pathwayId,
           type: "edit_track",
           msn: 'El track "' + data.name + '"  fue actualizado.',
-          ...data,
         });
         return updateToDraft(pathwayId);
       })

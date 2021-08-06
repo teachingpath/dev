@@ -86,7 +86,7 @@ async function sendemailHandler(req, res) {
       transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
           console.log(error);
-          res.send(500, error.message);
+          res.send(500, error);
         } else {
           console.log("Email sent");
           res.status(200).json({ result: "OK" });

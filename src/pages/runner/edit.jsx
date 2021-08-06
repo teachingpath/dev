@@ -81,7 +81,6 @@ class FormBasePage extends React.Component {
           pathwayId,
           type: "edit_runner",
           msn: 'El runner "' + data.name + '" fue actualizado.',
-          ...data,
         });
         this.props.loadRunner({
           trackId: null,

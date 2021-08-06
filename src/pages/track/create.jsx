@@ -88,7 +88,6 @@ class TrackCreatePage extends React.Component {
           pathwayId: pathwayId,
           type: "new_track",
           msn: 'El track "' + data.name + '" fue creado.',
-          ...data,
         });
         return updateToDraft(pathwayId);
       })
