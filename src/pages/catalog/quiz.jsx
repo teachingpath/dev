@@ -1,6 +1,6 @@
 import Quiz from "@panely/quiz";
 
-import { Row, Col,  Portlet, Container, Button } from "@panely/components";
+import { Row, Col, Portlet, Container, Button } from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -133,6 +133,12 @@ class QuizPage extends React.Component {
           });
 
           if (data.progress >= 100) {
+            fetch(
+              "/api/sendemail/?email=" +
+                user.email +
+                "&template=finish-pathway&name=" +
+                data.name
+            ).then((res) => res.json());
             this.props.activityChange({
               type: "complete_pathway",
               msn: 'Pathway "' + data.name + '" esta completo.',
@@ -144,6 +150,13 @@ class QuizPage extends React.Component {
                 '"</b>',
               group: data.group,
             });
+          } else {
+            fetch(
+              "/api/sendemail/?email=" +
+                user.email +
+                "&template=finish-runner&name=" +
+                currentRunner.name
+            ).then((res) => res.json());
           }
 
           Router.push({
@@ -171,12 +184,11 @@ class QuizPage extends React.Component {
         variant={"outline-success"}
         icon={<FontAwesomeIcon icon={SolidIcon.faCheckCircle} />}
       >
-       Felicitaciones, pasó el quiz. Has conseguido {totalPoints}{" "}
-        puntos.
+        Felicitaciones, pasó el quiz. Has conseguido {totalPoints} puntos.
         <h4 className="mt-3">Resultado</h4>
         <div>
           <Label>
-          Número de respuestas correctas:{" "}
+            Número de respuestas correctas:{" "}
             <strong>
               {numberOfCorrectAnswers}/{numberOfQuestions}
             </strong>
@@ -197,13 +209,12 @@ class QuizPage extends React.Component {
         variant={"outline-danger"}
         icon={<FontAwesomeIcon icon={SolidIcon.faTimes} />}
       >
-        El quiz no se aprobó, debe intentarlo de nuevo 
-        para obtener el emblema del Runner y pasar el Pathway. 
-        Anímate y vuelve a intentarlo.
+        El quiz no se aprobó, debe intentarlo de nuevo para obtener el emblema
+        del Runner y pasar el Pathway. Anímate y vuelve a intentarlo.
         <h4 className="mt-3">Result</h4>
         <div>
           <Label>
-          Número de respuestas correctas:{" "}
+            Número de respuestas correctas:{" "}
             <strong>
               {numberOfCorrectAnswers} / {numberOfQuestions}
             </strong>
@@ -247,11 +258,13 @@ class QuizPage extends React.Component {
                             ? "bg-white mg-thumbnail avatar-circle p-2 border border-warning"
                             : "bg-yellow mg-thumbnail avatar-circle p-2 border border-success"
                         }
-                        style={{width:"160px"}}
+                        style={{ width: "160px" }}
                         src={this.state.trophy.image}
                         alt="Card Image"
                       />
-                      <small className="text-muted">{this.state.trophy.description}</small>
+                      <small className="text-muted">
+                        {this.state.trophy.description}
+                      </small>
                     </div>
                   )}
                 </Col>

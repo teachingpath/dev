@@ -163,7 +163,7 @@ function RegisterForm() {
                       })
                       .then(() => {
                         const template = "welcome-" + (profile === true ? "coach" : "trainee");
-                        const url ="/api/sendemail/?email=" + email +"&template=" + template;
+                        const url ="/api/sendemail/?email=" + email +"&template=" + template+"&name="+firstName;
                         fetch(url).then((res) => res.json());
                       });
                   })

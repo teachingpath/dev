@@ -204,15 +204,15 @@ class StartPathway extends React.Component {
         loading={loading}
         pathwayId={pathwayId}
         onStart={(group) => {
-          const url = "https://tehachingpath.dev/teacher/?leaderId="+leaderId;
-          const sendeamil = "/api/sendemail/?email=" + user.email + "&template=start-pathway&url="+url;
+          this.setState({
+            ...this.state,
+            loading: true,
+          });
+          const sendeamil = "/api/sendemail/?email=" + user.email + "&template=start-pathway&name="+name;
           fetch(sendeamil)
             .then((res) => res.json())
             .then(() => {
-              this.setState({
-                ...this.state,
-                loading: true,
-              });
+             
               this.onCreateJourney(
                 leaderId,
                 pathwayId,
