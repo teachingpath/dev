@@ -98,7 +98,7 @@ class FormBasePage extends React.Component {
         </Head>
         <Container fluid>
           <Row>
-            <Col md="6">
+            <Col md="4">
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
@@ -132,7 +132,7 @@ class FormBasePage extends React.Component {
                 </Portlet.Footer>
               </Portlet>
             </Col>
-            <Col md="6">
+            <Col md="8">
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Runners</Portlet.Title>

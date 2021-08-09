@@ -9,6 +9,11 @@ import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
 import { getTracks, deleteTrack, updateTrackLevel } from "consumer/track";
+import {
+  timeConvert,
+  timePowerTen,
+  timeShortPowerTen,
+} from "components/helpers/time";
 const ReactSwal = swalContent(Swal);
 const swal = ReactSwal.mixin({
   customClass: {
@@ -38,7 +43,8 @@ class TrackList extends React.Component {
           title: item.name,
           subtitle: item.description,
           type: item.type,
-          typeContent: item.typeContent
+          time: item.timeLimit,
+          typeContent: item.typeContent,
         })),
         loaded: true,
       });
@@ -80,18 +86,32 @@ class TrackList extends React.Component {
   }
 
   render() {
+    const estimation = this.state.data
+      .map((el) => el.time)
+      .reduce((a, b) => a + b, 0);
+
     return (
       <RichList bordered action>
         {this.state.loaded === false && <Spinner>loading...</Spinner>}
         {this.state.loaded === true && this.state.data.length === 0 && (
           <p className="text-center">No hay tracks.</p>
         )}
+        {this.state.data.length >= 1 && (
+          <p>
+            Tiempo estimado aproximadamente:{" "}
+            <strong>{timeConvert(timePowerTen(estimation))}</strong>
+          </p>
+        )}
+
         <ReactSortable list={this.state.data} setList={this.onSortList}>
           {this.state.data.map((data, index) => {
-            const { title, subtitle,typeContent, type, id } = data;
+            const { title, subtitle, typeContent, type, id, time } = data;
 
             return (
-              <RichList.Item key={"tracks"+index}>
+              <RichList.Item
+                key={"tracks" + index}
+                className="d-flex align-items-start"
+              >
                 <RichList.Addon addonType="prepend">
                   <Avatar display>
                     <FontAwesomeIcon icon={SolidIcon.faSort} />
@@ -115,7 +135,12 @@ class TrackList extends React.Component {
                   <RichList.Subtitle>{subtitle}</RichList.Subtitle>
                   <RichList.Subtitle>
                     <Badge variant="label-info">{type}</Badge>
-                    <Badge variant="label-info" className="ml-2">{typeContent}</Badge>
+                    <Badge variant="label-info" className="ml-2">
+                      {typeContent}
+                    </Badge>
+                    <Badge variant="label-success" className="ml-2">
+                      {timeShortPowerTen(time)}
+                    </Badge>
                   </RichList.Subtitle>
                 </RichList.Content>
                 <RichList.Addon addonType="append">

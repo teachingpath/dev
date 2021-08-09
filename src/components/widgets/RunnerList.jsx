@@ -10,6 +10,7 @@ import Spinner from "@panely/components/Spinner";
 import { deleteRunner, getRunners, updateLevel } from "consumer/runner";
 import { getTracks } from "consumer/track";
 import Badge from "@panely/components/Badge";
+import { timeConvert, timePowerTen, timeShortPowerTen } from "components/helpers/time";
 const ReactSwal = swalContent(Swal);
 const swal = ReactSwal.mixin({
   customClass: {
@@ -39,12 +40,16 @@ class RunnerList extends React.Component {
         this.setState({ loaded: true });
         data.list.forEach(async (item) => {
           const tracks = await getTracks(item.id);
+          const estimation = tracks
+            .map((el) => el.timeLimit)
+            .reduce((a, b) => a + b, 0);
           list.push({
             id: item.id,
             title: item.name,
             pathwayId: item.pathwayId,
             subtitle: item.description,
             tracks: tracks,
+            estimation: estimation,
           });
           this.setState({
             ...this.state,
@@ -91,18 +96,31 @@ class RunnerList extends React.Component {
   }
 
   render() {
+    const estimation = this.state.data
+      .map((el) => el.estimation)
+      .reduce((a, b) => a + b, 0);
+
     return (
       <RichList bordered action>
         {this.state.loaded === false && <Spinner />}
         {this.state.loaded === true && this.state.data.length === 0 && (
           <p className="text-center">Aún no hay runeers</p>
         )}
+         {this.state.data.length >= 1 && (
+          <p>
+            Tiempo estimado aproximadamente:{" "}
+            <strong>{timeConvert(timePowerTen(estimation))}</strong>
+          </p>
+        )}
         <ReactSortable list={this.state.data} setList={this.onSortList}>
           {this.state.data.map((data, index) => {
-            const { title, subtitle, id, pathwayId, tracks } = data;
+            const { title, subtitle, id, pathwayId, tracks,estimation } = data;
 
             return (
-              <RichList.Item key={"runner" + index}>
+              <RichList.Item
+                key={"runner" + index}
+                className="d-flex align-items-start"
+              >
                 <RichList.Addon addonType="prepend">
                   <Avatar display>
                     <FontAwesomeIcon icon={SolidIcon.faSort} />
@@ -121,9 +139,10 @@ class RunnerList extends React.Component {
                       });
                     }}
                   >
-                    {index + 1}. {title}
+                    {index + 1}. {title} [ {timeShortPowerTen(estimation)}]
                   </RichList.Title>
                   <RichList.Subtitle>{subtitle}</RichList.Subtitle>
+               
                   <RichList className=" mt-2 mb-2">
                     {tracks.map((track, indexTrack) => {
                       return (
@@ -141,7 +160,11 @@ class RunnerList extends React.Component {
                             }}
                           >
                             <RichList.Title
-                              title={'Click en el track para ver "' + track.name + '"'}
+                              title={
+                                'Click en el track para ver "' +
+                                track.name +
+                                '"'
+                              }
                             >
                               {index + 1}.{indexTrack + 1}. {track.name}
                             </RichList.Title>

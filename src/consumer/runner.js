@@ -32,7 +32,9 @@ export const create = (pathwayId, data) => {
             name: data.tracks[key].name,
             type:  "learning",
             typeContent: "file",
-            level: level++
+            level: level++,
+            timeLimit: 1
+
           });
         });
       }
@@ -66,7 +68,8 @@ export const update = (runnerId, data) => {
             name: data.tracks[key].name,
             type:  "learning",
             typeContent: "file",
-            level: level++
+            level: level++,
+            timeLimit: 1
           });
         });
       }
