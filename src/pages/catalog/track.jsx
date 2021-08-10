@@ -26,6 +26,8 @@ import { getTrack, getTracks } from "consumer/track";
 import { getRunners } from "consumer/runner";
 import { Widget1 } from "@panely/components";
 import PathwayResume from "components/widgets/PathwayResume";
+import Badge from "../../../docs/template/src/modules/components/Badge";
+import { timePowerTen, timeShortConvert } from "components/helpers/time";
 
 class TrackPage extends React.Component {
   constructor(props) {
@@ -96,7 +98,7 @@ class TrackPage extends React.Component {
             icon: () => (
               <div className="rc-steps-item rc-steps-item-process">
                 <div className="rc-steps-item-icon">
-                  <span className="rc-steps-icon">{level+1}</span>
+                  <span className="rc-steps-icon">{level + 1}</span>
                 </div>
               </div>
             ),
@@ -208,7 +210,6 @@ class TrackPage extends React.Component {
                         <FontAwesomeIcon icon={SolidIcon.faEdit} />
                       </Button>
                     </DemoWrapper>
-                    
                   </Widget1.Addon>
 
                   <Widget1.Body>
@@ -218,9 +219,26 @@ class TrackPage extends React.Component {
                     {this.state.description}
                     <div className="text-right">
                       <small>
-                        <i>Ultima actualización: {new Date(this.state.date).toDateString()}</i>
+                        <i>
+                          Ultima actualización:{" "}
+                          {new Date(this.state.date).toDateString()}
+                        </i>
                       </small>
                     </div>
+                    <Badge>
+                      Duración:   {timeShortConvert(timePowerTen(this.state.timeLimit))}
+                      <FontAwesomeIcon
+                        className="ml-2"
+                        icon={SolidIcon.faClock}
+                      />
+                    </Badge>
+                    <Badge  className="ml-2">
+                      {this.state.type}
+                      <FontAwesomeIcon
+                        className="ml-2"
+                        icon={SolidIcon.faMarker}
+                      />
+                    </Badge>
                   </Widget1.Body>
                 </Widget1.Display>
               </Widget1>
@@ -242,7 +260,6 @@ class TrackPage extends React.Component {
     );
   }
 }
-
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(

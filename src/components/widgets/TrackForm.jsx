@@ -58,7 +58,6 @@ function TrackForm({ onSave, data, onExtend }) {
   useEffect(() => {
     document.querySelectorAll("pre").forEach((el) => {
       hljs.configure({
-        // optionally configure hljs
         languages: ["javascript", "ruby", "python", "java"],
       });
       hljs.highlightElement(el);
@@ -387,9 +386,6 @@ function TrackForm({ onSave, data, onExtend }) {
                           type="url"
                           id="guidelines"
                           name="guidelines"
-                          onKeyUp={(event) => {
-                            setUrl(event.target.value);
-                          }}
                           control={control}
                           placeholder="Ingrese una URL"
                         />
@@ -401,15 +397,12 @@ function TrackForm({ onSave, data, onExtend }) {
                   url: (
                     <Form.Group>
                       <FloatLabel>
-                        <Controller
+                      <Controller
                           as={Input}
                           type="url"
                           id="guidelines"
                           name="guidelines"
                           control={control}
-                          onKeyUp={(event) => {
-                            setUrl(event.target.value);
-                          }}
                           placeholder="Ingrese una URL"
                         />
                         <Label for="guidelines">Pautas (URL External)</Label>
@@ -532,9 +525,10 @@ function TrackForm({ onSave, data, onExtend }) {
             type="button"
             className="mt-2"
             onClick={() => {
+              console.log(getValues().training);
               var urlRegex =
                 /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
-              const testUrls = (getValues().content || "").match(urlRegex);
+              const testUrls = (getValues().content || (getValues().guidelines || "")).match(urlRegex);
               let references = "";
               (testUrls || []).forEach((url) => {
                 let detectedUrl = url;
@@ -600,7 +594,7 @@ function LoadVideo({ getValues }) {
         className="mt-2"
         type={"button"}
         onClick={() => {
-          setUrl(getValues().content);
+          setUrl(getValues().content || getValues().guidelines);
         }}
       >
         Cargar
@@ -618,7 +612,7 @@ function LoadReference({ getValues }) {
         className="mt-2"
         type={"button"}
         onClick={() => {
-          setUrl(getValues().content);
+          setUrl(getValues().content || getValues().guidelines);
         }}
       >
         Cargar
