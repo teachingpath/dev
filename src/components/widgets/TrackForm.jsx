@@ -525,10 +525,14 @@ function TrackForm({ onSave, data, onExtend }) {
             type="button"
             className="mt-2"
             onClick={() => {
-              console.log(getValues().training);
+              const extrator = () => {
+                return (getValues().training || []).map(data => data.name).reduce((a, b) => {
+                  return a + b;
+                })
+              }
               var urlRegex =
                 /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
-              const testUrls = (getValues().content || (getValues().guidelines || "")).match(urlRegex);
+              const testUrls = (getValues().content || (getValues().guidelines || extrator() || "")).match(urlRegex);
               let references = "";
               (testUrls || []).forEach((url) => {
                 let detectedUrl = url;
@@ -547,7 +551,7 @@ function TrackForm({ onSave, data, onExtend }) {
                     const { title, url, description } = data;
                     references +=
                       "<li><b>" +
-                      title.toUpperCase() +
+                      title?.toUpperCase() +
                       "</b>. <i>" +
                       (description || "") +
                       "</i> [<a href='" +
