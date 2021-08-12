@@ -22,6 +22,7 @@ class Teacher extends React.Component {
         <Row noGutters>
           <Col md="4">
             <Card.Img
+              style={{maxWidth: "220px"}}
               className=" p-3"
               src={data?.image || "/images/avatar/blank.webp"}
               alt="Profile Image"

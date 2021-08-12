@@ -236,7 +236,7 @@ class TrackPage extends React.Component {
                       {this.state.type}
                       <FontAwesomeIcon
                         className="ml-2"
-                        icon={SolidIcon.faMarker}
+                        icon={SolidIcon.faUserGraduate}
                       />
                     </Badge>
                   </Widget1.Body>

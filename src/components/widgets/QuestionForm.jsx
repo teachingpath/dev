@@ -40,7 +40,6 @@ function QuizForm({ onSave, data }) {
       .string()
       .min(5, "Ingrese al menos 5 caracteres")
       .required("Por favor ingrese una pregunta"),
-    type: yup.string().required("Por favor seleccione un tipo"),
     options: yup
       .array()
       .min(2, "Ingrese al menos 2 opciones")
@@ -51,7 +50,6 @@ function QuizForm({ onSave, data }) {
     resolver: yupResolver(schema),
     defaultValues: {
       question: data?.question || "",
-      type: data?.type || "",
       options: data?.options || [],
     },
   });
@@ -62,16 +60,17 @@ function QuizForm({ onSave, data }) {
     remove: optionsRemove,
   } = useFieldArray({ control, name: "options" });
 
-  const watchFields = watch(["type"]);
-
   return (
     <Form
       onSubmit={handleSubmit((data) => {
         setLoading(true);
-        if (
-          data.options.some((opt) => opt.isCorrect) ||
-          data.options.isCorrect !== undefined
-        ) {
+        const isValid = data.options.some((opt) => opt.isCorrect);
+
+        if (isValid) {
+          data.type =
+            data.options.filter((opt) => opt.isCorrect).length > 1
+              ? "multiple"
+              : "single";
           onSave(data).then(() => {
             if (isNew) {
               reset();
@@ -89,8 +88,6 @@ function QuizForm({ onSave, data }) {
         }
       })}
     >
- 
-
       <Form.Group className="scrolling-container">
         <FloatLabel>
           <Controller
@@ -114,21 +111,7 @@ function QuizForm({ onSave, data }) {
           <Label for="question">Pregunta</Label>
         </FloatLabel>
       </Form.Group>
-      <Form.Group>
-        <Controller
-          as={CustomInput}
-          type="select"
-          name="type"
-          id="type"
-          control={control}
-          invalid={Boolean(errors.type)}
-        >
-          <option value="default">Seleccione un tipo</option>
-          <option value="multiple">Multiple respuesta</option>
-          <option value="single">Unica respuesta</option>
-        </Controller>
-        {errors.type && <Form.Feedback children={errors.type.message} />}
-      </Form.Group>
+
       {optionsFields.map((item, index) => {
         return (
           <Row key={item.id} className="pt-4">
@@ -155,16 +138,7 @@ function QuizForm({ onSave, data }) {
               </Button>
             </Col>
             <Col xs="12">
-              {watchFields.type === "multiple" && (
-                <CheckboxComponent
-                  index={index}
-                  item={item}
-                  control={control}
-                />
-              )}
-              {watchFields.type === "single" && (
-                <RadioComponent index={index} item={item} control={control} />
-              )}
+              <CheckboxComponent index={index} item={item} control={control} />
             </Col>
           </Row>
         );
@@ -221,35 +195,6 @@ function QuizForm({ onSave, data }) {
   );
 }
 
-function RadioComponent({ index, item, control }) {
-  return (
-    <Form.Group>
-      <FloatLabel>
-        <Controller
-          name={`options.isCorrect`}
-          control={control}
-          render={({ onChange, onBlur, value, name, ref }) => {
-            return (
-              <CustomInput
-                type={"radio"}
-                id={`options_${index}_.isCorrect`}
-                label="¿es correcto?"
-                name={`options.isCorrect`}
-                onChange={(e) => {
-                  item.isCorrect = e.target.checked;
-                  onChange(index);
-                }}
-                checked={item.isCorrect}
-                innerRef={ref}
-              />
-            );
-          }}
-        />
-      </FloatLabel>
-    </Form.Group>
-  );
-}
-
 function CheckboxComponent({ index, item, control }) {
   return (
     <Form.Group>
@@ -263,7 +208,7 @@ function CheckboxComponent({ index, item, control }) {
               <CustomInput
                 type={"checkbox"}
                 id={`options_${index}_.isCorrect`}
-                label="it's correct?"
+                label="¿es correcta?"
                 name={`options[${index}].isCorrect`}
                 onChange={(e) => {
                   item.isCorrect = e.target.checked;

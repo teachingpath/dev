@@ -64,11 +64,11 @@ class CatalogPage extends React.Component {
             <Col md="12">
               <div>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Available runners</Portlet.Title>
+                  <Portlet.Title>Runners disponibles </Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                  Puedes ver los corredores aquí pero para postularte debes
+                  Puedes ver los Runners aquí pero para postularte debes
                      tener una cuenta de usuario.
                   </p>
                   <CardColumns>

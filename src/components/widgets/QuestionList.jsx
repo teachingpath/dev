@@ -38,10 +38,12 @@ class QuestionList extends React.Component {
       .then((querySnapshot) => {
         const list = [];
         querySnapshot.forEach((doc) => {
+          const options = doc.data().options.length;
+          const optionsCorrects = doc.data().options.filter(it => it.isCorrect).length;
           list.push({
             id: doc.id,
             title: doc.data().question,
-            subtitle: "Opción: "+doc.data().options.length,
+            subtitle: "Opciones: "+options+"/"+optionsCorrects,
             type: doc.data().type,
           });
         });
@@ -138,7 +140,7 @@ class QuestionList extends React.Component {
                       });
                     }}
                   >
-                    {escapeHtml(title)}
+                    {index +1}. {escapeHtml(title)}
                   </RichList.Title>
                   <RichList.Subtitle>{subtitle}</RichList.Subtitle>
                   <RichList.Subtitle>

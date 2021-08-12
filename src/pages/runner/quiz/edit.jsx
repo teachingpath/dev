@@ -1,4 +1,4 @@
-import { Container, Row, Col, Portlet } from "@panely/components";
+import { Container, Button, Row, Col, Portlet } from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
@@ -15,6 +15,8 @@ import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
 import QuizForm from "../../../components/widgets/QuestionForm";
 import { getQuiz, updateQuiz } from "consumer/runner";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -134,6 +136,25 @@ class FormBasePage extends React.Component {
                   <hr />
                   <QuizForm onSave={this.onEdit} data={this.state} />
                 </Portlet.Body>
+                <Portlet.Footer>
+                 
+                  <Button
+                    type="button"
+                    className="float-right mr-2"
+                    onClick={() => {
+                      Router.push({
+                        pathname: "/runner/badge",
+                        query: {
+                          runnerId: this.state.runnerId,
+                          pathwayId: this.state.pathwayId,
+                        },
+                      });
+                    }}
+                  >
+                    Agregar Emblema
+                    <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
+                  </Button> 
+                </Portlet.Footer>
               </Portlet>
             </Col>
           </Row>

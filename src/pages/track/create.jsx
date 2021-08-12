@@ -115,7 +115,7 @@ class TrackCreatePage extends React.Component {
         </Head>
         <Container fluid={!this.state.extend}>
           <Row>
-            <Col md={this.state.extend ? "12" : "6"}>
+            <Col md={this.state.extend ? "12" : "4"}>
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Track | Nuevo</Portlet.Title>
@@ -152,7 +152,7 @@ class TrackCreatePage extends React.Component {
               </Portlet>
             </Col>
 
-            <Col md={this.state.extend ? "12" : "6"}>
+            <Col md={this.state.extend ? "12" : "8"}>
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Tracks</Portlet.Title>

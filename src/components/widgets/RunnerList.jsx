@@ -1,4 +1,11 @@
-import { Avatar, Dropdown, RichList } from "@panely/components";
+import {
+  Avatar,
+  Dropdown,
+  RichList,
+  Badge,
+  Col,
+  Row,
+} from "@panely/components";
 import { ReactSortable } from "react-sortablejs";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,8 +16,12 @@ import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
 import { deleteRunner, getRunners, updateLevel } from "consumer/runner";
 import { getTracks } from "consumer/track";
-import Badge from "@panely/components/Badge";
-import { timeConvert, timePowerTen, timeShortPowerTen } from "components/helpers/time";
+import {
+  timeConvert,
+  timePowerTen,
+  timeShortPowerTen,
+} from "components/helpers/time";
+
 const ReactSwal = swalContent(Swal);
 const swal = ReactSwal.mixin({
   customClass: {
@@ -50,6 +61,7 @@ class RunnerList extends React.Component {
             subtitle: item.description,
             tracks: tracks,
             estimation: estimation,
+            badge: item.badge,
           });
           this.setState({
             ...this.state,
@@ -106,7 +118,7 @@ class RunnerList extends React.Component {
         {this.state.loaded === true && this.state.data.length === 0 && (
           <p className="text-center">Aún no hay runeers</p>
         )}
-         {this.state.data.length >= 1 && (
+        {this.state.data.length >= 1 && (
           <p>
             Tiempo estimado aproximadamente:{" "}
             <strong>{timeConvert(timePowerTen(estimation))}</strong>
@@ -114,7 +126,15 @@ class RunnerList extends React.Component {
         )}
         <ReactSortable list={this.state.data} setList={this.onSortList}>
           {this.state.data.map((data, index) => {
-            const { title, subtitle, id, pathwayId, tracks,estimation } = data;
+            const {
+              title,
+              subtitle,
+              id,
+              pathwayId,
+              tracks,
+              estimation,
+              badge,
+            } = data;
 
             return (
               <RichList.Item
@@ -139,10 +159,26 @@ class RunnerList extends React.Component {
                       });
                     }}
                   >
+                   {badge && <FontAwesomeIcon icon={SolidIcon.faCheckCircle} className="mr-2"/>} 
                     {index + 1}. {title} [ {timeShortPowerTen(estimation)}]
                   </RichList.Title>
-                  <RichList.Subtitle>{subtitle}</RichList.Subtitle>
-               
+                  <RichList.Subtitle>
+                    <Row>
+                      {badge && (
+                        <Col md="1">
+                          <img
+                            alt="badge"
+                            title={badge.name}
+                            style={{ width: "60px" }}
+                            src={badge.image}
+                          />
+                        </Col>
+                      )}
+
+                      <Col md="11"> {subtitle}</Col>
+                    </Row>
+                  </RichList.Subtitle>
+
                   <RichList className=" mt-2 mb-2">
                     {tracks.map((track, indexTrack) => {
                       return (

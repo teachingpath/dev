@@ -254,6 +254,25 @@ class FormBasePage extends React.Component {
                     data={this.props?.runner}
                   />}
                 </Portlet.Body>
+                <Portlet.Footer>
+                 
+                 <Button
+                   type="button"
+                   className="float-right mr-2"
+                   onClick={() => {
+                     Router.push({
+                       pathname: "/runner/quiz/create",
+                       query: {
+                         runnerId: this.props?.runner.runnerId,
+                         pathwayId: this.props?.runner.pathwayId,
+                       },
+                     });
+                   }}
+                 >
+                   Agregar Quiz
+                   <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
+                 </Button> 
+               </Portlet.Footer>
               </Portlet>
             </Col>
           </Row>

@@ -150,10 +150,7 @@ export const updateQuiz = (runnerId, questionId, data) => {
       options: data.options.map((item, index) => {
         return {
           name: item.name,
-          isCorrect:
-            data.type === "multiple"
-              ? item.isCorrect === true
-              : data.options.isCorrect === index,
+          isCorrect:item.isCorrect === true,
         };
       }),
     });
@@ -173,10 +170,7 @@ export const createQuiz = (runnerId, data) => {
       options: data.options.map((item, index) => {
         return {
           name: item.name,
-          isCorrect:
-            data.type === "multiple"
-              ? item.isCorrect === true
-              : data.options.isCorrect === index,
+          isCorrect: item.isCorrect === true,
         };
       }),
     })

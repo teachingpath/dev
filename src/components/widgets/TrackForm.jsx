@@ -743,7 +743,7 @@ function TrainingForm({ data, onChange }) {
                               onChange={onChange}
                               onBlur={onBlur}
                               onKeyUp={(data) => {
-                                if (value.name) {
+                                if (value?.name) {
                                   onChangeContent(index, value);
                                 } else {
                                   onChangeContent(index, {

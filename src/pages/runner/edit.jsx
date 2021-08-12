@@ -146,7 +146,7 @@ class FormBasePage extends React.Component {
                       });
                     }}
                   >
-                    Agrega Quiz
+                    Agregar Quiz
                     <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
                   </Button>
                 </Portlet.Footer>
