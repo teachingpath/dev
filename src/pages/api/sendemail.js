@@ -62,9 +62,6 @@ const templates = {
 
 const transporter = nodemailer.createTransport({
   service: 'Godaddy',
-  host: "smtpout.secureserver.net",  
-  port: 587,
-  secure: false, // upgrade later with STARTTLS
   auth: {
       user: "assistant@teachingpath.info",
       pass: "Rauloko250360." 
