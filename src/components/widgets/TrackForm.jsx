@@ -591,6 +591,7 @@ function TrackForm({ onSave, data, onExtend }) {
 }
 
 function LoadVideo({ getValues }) {
+  const data = getValues().content || getValues().guidelines;
   const [url, setUrl] = useState(null);
   return (
     <>
@@ -598,17 +599,18 @@ function LoadVideo({ getValues }) {
         className="mt-2"
         type={"button"}
         onClick={() => {
-          setUrl(getValues().content || getValues().guidelines);
+          setUrl(data);
         }}
       >
         Cargar
       </Button>
-      <p className="mt-3">{url && <ReactPlayer url={url} controls />}</p>
+      <p className="mt-3">{(url || data) && <ReactPlayer url={(url || data)} controls />}</p>
     </>
   );
 }
 
 function LoadReference({ getValues }) {
+  const data = getValues().content || getValues().guidelines;
   const [url, setUrl] = useState(null);
   return (
     <>
@@ -616,12 +618,12 @@ function LoadReference({ getValues }) {
         className="mt-2"
         type={"button"}
         onClick={() => {
-          setUrl(getValues().content || getValues().guidelines);
+          setUrl(data);
         }}
       >
         Cargar
       </Button>
-      <p className="mt-3">{url && <DescribeURL url={url} />}</p>
+      <p className="mt-3">{(url || data) && <DescribeURL url={(url || data)} />}</p>
     </>
   );
 }

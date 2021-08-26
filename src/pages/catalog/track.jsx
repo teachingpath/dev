@@ -141,7 +141,7 @@ class TrackPage extends React.Component {
             icon: () => (
               <div className="rc-steps-item rc-steps-item-process">
                 <div className="rc-steps-item-icon">
-                  <span className="rc-steps-icon">{level}</span>
+                  <span className="rc-steps-icon">{level + 1}</span>
                 </div>
               </div>
             ),

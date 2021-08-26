@@ -61,16 +61,19 @@ const templates = {
 };
 
 const transporter = nodemailer.createTransport({
-  service: "Gmail",
+  service: 'Godaddy',
+  host: "smtpout.secureserver.net",  
+  secureConnection: true,
+  port: 465,
   auth: {
-    user: "teachingpath.dev@gmail.com",
-    pass: "Rauloko250360.",
-  },
+      user: "assistant@teachingpath.info",
+      pass: "Rauloko250360." 
+  }
 });
 
 const mailOptions = {
-  from: '"Teaching Path 🎓" <teachingpath.dev@gmail.com>',
-  to: "alzategomez.raul@gmail.com",
+  from: '"Teaching Path 🎓" <assistant@teachingpath.info>',
+  to: "assistant@teachingpath.info",
   subject: "",
   html: "",
 };
