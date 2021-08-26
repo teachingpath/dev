@@ -67,9 +67,9 @@ export const getStatsByUser = (resolve, reject) => {
               }
               breadcrumb.tracks.forEach((t) => {
                 if (t.status === null) {
-                  completeTracks.push({ name: t.name });
+                  completeTracks.push({ name: t.title });
                 } else {
-                  incompleteTracks.push({ name: t.name });
+                  incompleteTracks.push({ name: t.title });
                 }
               });
             });

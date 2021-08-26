@@ -16,7 +16,7 @@ const templates = {
     <p>¿Tienes dudas, inquietudes o sugerencias?</p>
     <h3>¿Tienes dudas, inquietudes o sugerencias?</h3>
     <center>Puedes escribirnos y ponerte en contacto con nosotros para responder a tus dudas, inquietudes o darnos alguna sugerencia acerca de la plataforma.</center>
-    <center>teachingpath.dev@gmail.com</center>
+    <center>assistant@teachingpath.info</center>
     `,
   },
   "welcome-trainee": {
@@ -31,7 +31,7 @@ const templates = {
     <p>¿Tienes dudas, inquietudes o sugerencias?</p>
     <h3>¿Tienes dudas, inquietudes o sugerencias?</h3>
     <center>Puedes escribirnos y ponerte en contacto con nosotros para responder a tus dudas, inquietudes o darnos alguna sugerencia acerca de la plataforma.</center>
-    <center>teachingpath.dev@gmail.com</center>
+    <center>assistant@teachingpath.info</center>
     `,
   },
   "start-pathway": {
