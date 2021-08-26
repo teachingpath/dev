@@ -1,5 +1,5 @@
 const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+sgMail.setApiKey(process.env.SENDGRID_API_KEY || "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");
 const Mustache = require("mustache");
 
 const templates = {
@@ -69,7 +69,7 @@ async function sendemailHandler(req, res) {
       sgMail
         .send({
           to: req.query.email,
-          from: '"Teaching Path 🎓" <assistant@teachingpath.info>',
+          from: 'Teaching Path 🎓 <assistant@teachingpath.info>',
           subject: template.subject,
           html:output,
         })
