@@ -1,4 +1,5 @@
-const nodemailer = require("nodemailer");
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const Mustache = require("mustache");
 
 const templates = {
@@ -57,43 +58,29 @@ const templates = {
     <p>Completaste el Pathway, te felicito, tu experiencia en el pathway puede ser replicado en tu vida profesional, gracias por vivir y compartir tu viaje en Teaching Path, sigue el camino al exito</p>
     <h3>¡Felicidades, ya tiene un nuevo trofeo del pathway {{name}}! 👏🥳🥳. Visita tu panel para observar los emblemas el trofeo del pathway.</h3>
     `,
-  }
-};
-
-const transporter = nodemailer.createTransport({
-  service: 'Godaddy',
-  auth: {
-      user: "assistant@teachingpath.info",
-      pass: "Rauloko250360." 
-  }
-});
-
-const mailOptions = {
-  from: '"Teaching Path 🎓" <assistant@teachingpath.info>',
-  to: "assistant@teachingpath.info",
-  subject: "",
-  html: "",
+  },
 };
 
 async function sendemailHandler(req, res) {
-  console.log("sendemailHandler....");
   if (req.method === "GET") {
     try {
       const template = templates[req.query.template];
       const output = Mustache.render(template.body, req.query);
-      mailOptions.html = output;
-      mailOptions.subject = template.subject;
-      mailOptions.to = req.query.email;
-      console.log("sending....");
-      transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-          console.log(error);
-          res.send(500, error);
-        } else {
+      sgMail
+        .send({
+          to: req.query.email,
+          from: '"Teaching Path 🎓" <assistant@teachingpath.info>',
+          subject: template.subject,
+          html:output,
+        })
+        .then(() => {
           console.log("Email sent");
           res.status(200).json({ result: "OK" });
-        }
-      });
+        })
+        .catch((error) => {
+          console.log(error);
+          res.send(500, error);
+        });
     } catch (err) {
       res.status(403).send(err.message);
     }
