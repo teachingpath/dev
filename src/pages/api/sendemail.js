@@ -79,6 +79,7 @@ const mailOptions = {
 };
 
 async function sendemailHandler(req, res) {
+  console.log("sendemailHandler....");
   if (req.method === "GET") {
     try {
       const template = templates[req.query.template];
@@ -86,6 +87,7 @@ async function sendemailHandler(req, res) {
       mailOptions.html = output;
       mailOptions.subject = template.subject;
       mailOptions.to = req.query.email;
+      console.log("sending....");
       transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
           console.log(error);
