@@ -6,8 +6,7 @@ const sgMail = require("@sendgrid/mail");
 const Mustache = require("mustache");
 
 sgMail.setApiKey(
-  process.env.SENDGRID_API_KEY ||
-    "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"
+  process.env.SENDGRID_API_KEY
 );
 
 if (!firebaseAdmin.apps.length) {
