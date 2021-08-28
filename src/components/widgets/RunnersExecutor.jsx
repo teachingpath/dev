@@ -42,7 +42,9 @@ class RunnersExecutor extends React.Component {
                 collapsed={!(activeCard === index)}
                 onClick={() => this.toggle(index)}
               >
-                <Card.Title>{item.name.toUpperCase()}</Card.Title>
+                <Card.Title>
+                  <i className={"fas fa-"+(activeCard === index? 'running': '')}></i> {item.name.toUpperCase()}
+                </Card.Title>
                 {totalTime > 0 ? (
                   <Portlet.Addon>
                     Limite de tiempo:{" "}

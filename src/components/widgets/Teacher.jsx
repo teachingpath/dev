@@ -1,6 +1,5 @@
 import { Row, Col, Card, Button } from "@panely/components";
 import { getUser } from "consumer/user";
-
 import React from "react";
 import ReactWhatsapp from "react-whatsapp";
 
@@ -22,7 +21,7 @@ class Teacher extends React.Component {
         <Row noGutters>
           <Col md="4">
             <Card.Img
-              style={{maxWidth: "220px"}}
+              style={{ maxWidth: "200px" }}
               className=" p-3"
               src={data?.image || "/images/avatar/blank.webp"}
               alt="Profile Image"
@@ -42,16 +41,18 @@ class Teacher extends React.Component {
                   window.location = "mailto:" + data.email;
                 }}
               >
-                Contactar
+                {" "}
+                <i className="fas fa-envelope"></i> Contactar
               </Button>
-              {data?.phone && <ReactWhatsapp
-                className="ml-2 btn btn-primary"
-                number={data?.phone}
-                message="Hola Maestro, te hablo desde Teaching Path."
-              >
-                Chat
-              </ReactWhatsapp>}
-              
+              {data?.phone && (
+                <ReactWhatsapp
+                  className="ml-2 btn btn-primary"
+                  number={data?.phone}
+                  message="Hola Maestro, te hablo desde Teaching Path."
+                >
+                  <i className="fab fa-whatsapp"></i> Chat
+                </ReactWhatsapp>
+              )}
             </Card.Body>
           </Col>
         </Row>

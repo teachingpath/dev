@@ -1,4 +1,4 @@
-import { Col, Container, Row, Widget1 } from "@panely/components";
+import { Col, Container, Row, Widget1, Badge } from "@panely/components";
 import { firebaseClient } from "components/firebase/firebaseClient";
 import {
   activityChange,
@@ -13,7 +13,6 @@ import withAuth from "components/firebase/firebaseWithAuth";
 import Router from "next/router";
 import BadgeList from "../../components/widgets/BadgeList";
 import React from "react";
-import Badge from "@panely/components/Badge";
 import ActivitiesComponent from "components/widgets/ActivitiesGroup";
 import Teacher from "components/widgets/Teacher";
 import StatusProgress from "components/widgets/StatusProgress";
@@ -86,7 +85,7 @@ class JourneyGeneralPage extends React.Component {
                         children={name?.toUpperCase()}
                       />
                       <h5>
-                        Tu Sala: <Badge>{group}</Badge>
+                      <i className="fas fa-users"></i> <Badge title="tu sala o grupo">{group}</Badge>
                       </h5>
                     </Widget1.DialogContent>
                   </Widget1.Dialog>
@@ -95,7 +94,7 @@ class JourneyGeneralPage extends React.Component {
                       <img
                         src={trophy?.image}
                         alt="loading"
-                        style={{width:"140px"}}
+                        style={{ width: "140px" }}
                         className="bg-yellow p-2 border mx-auto d-block mg-thumbnail avatar-circle"
                       />
                       <h4
@@ -126,20 +125,27 @@ class JourneyGeneralPage extends React.Component {
                           pathwayId={this.state.pathwayId}
                           activityChange={this.props.activityChange}
                           onComplete={(data) => {
-                            this.setState({
-                              ...this.state,
-                              id: null
-                            });
+                            const linkResume = this.state.id
+                              ? '<i><a href="/pathway/resume?id=' +
+                                this.state.id +
+                                '">' +
+                                user.displayName +
+                                "</a></i>"
+                              : "<i>" + user.displayName + "</i>";
                             this.props.activityChange({
                               type: "complete_track",
-                              msn: 'El Track "' + data.title + '" está completo.',
+                              msn:
+                                'El Track "' + data.title + '" está completo.',
                               msnForGroup:
-                                "<i>" +
-                                user.displayName +
-                                '</i> ha completado el track <b>"' +
+                                linkResume +
+                                ' ha completado el track <b>"' +
                                 data.title +
                                 '"</b>',
                               group: group,
+                            });
+                            this.setState({
+                              ...this.state,
+                              id: null,
                             });
                             this.componentDidMount();
                           }}

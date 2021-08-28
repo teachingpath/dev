@@ -8,9 +8,7 @@ import {
   Marker,
   Card,
 } from "@panely/components";
-import {
-  firebaseClient,
-} from "components/firebase/firebaseClient";
+import { firebaseClient } from "components/firebase/firebaseClient";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
@@ -19,7 +17,7 @@ import Col from "@panely/components/Col";
 import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
 import { getTracksResponses, saveTrackResponse } from "consumer/track";
-import {linkify} from "components/helpers/mapper";
+import { linkify } from "components/helpers/mapper";
 
 function SolutionForm({ onSave }) {
   const schema = yup.object().shape({
@@ -79,7 +77,7 @@ class HackingTrack extends React.Component {
   componentDidMount() {
     const {
       data: { id },
-      group
+      group,
     } = this.props;
     getTracksResponses(
       id,
@@ -94,7 +92,7 @@ class HackingTrack extends React.Component {
     );
   }
   render() {
-    const { data, group } = this.props;
+    const { data, group, journeyId } = this.props;
     const id = data.id;
     const user = firebaseClient.auth().currentUser;
     const typeContent = data?.typeContent;
@@ -140,17 +138,32 @@ class HackingTrack extends React.Component {
             </Card.Header>
             <Card.Body>
               <Card.Text>
-              Agregue aquí su respuesta de piratería, agregue enlaces, repositorios o
-                 comentarios.
+                Agregue aquí su respuesta de piratería, agregue enlaces,
+                repositorios o comentarios.
               </Card.Text>
               <SolutionForm
                 onSave={(data) => {
                   saveTrackResponse(id, group, data).then(() => {
                     if (this.props.activityChange) {
+                      const linkResume = journeyId
+                        ? '<i><a href="/pathway/resume?id=' +
+                          journeyId +
+                          '">' +
+                          user.displayName +
+                          "</a></i>"
+                        : "<i>" + user.displayName + "</i>";
                       this.props.activityChange({
                         type: "new_track_response",
-                        msn: 'Respuesta de nueva Track dentro de la sala "'+group+'".',
-                        msnForGroup:'Nueva respuesta  por <i>'+user.displayName+'</i> para el hacking task <b>'+trackName+'</b>.',
+                        msn:
+                          'Respuesta de nueva Track dentro de la sala "' +
+                          group +
+                          '".',
+                        msnForGroup:
+                          "Nueva respuesta  por " +
+                          linkResume +
+                          " para el hacking task <b>" +
+                          trackName +
+                          "</b>.",
                         group: group,
                       });
                     }
@@ -164,7 +177,11 @@ class HackingTrack extends React.Component {
                   const { date, solution } = data;
 
                   return (
-                    <Timeline.Item key={"timeline"+index} date={date} pin={<Marker type="dot" />}>
+                    <Timeline.Item
+                      key={"timeline" + index}
+                      date={date}
+                      pin={<Marker type="dot" />}
+                    >
                       <div
                         dangerouslySetInnerHTML={{
                           __html: linkify(solution),

@@ -103,15 +103,19 @@ class StartPathway extends React.Component {
           breadcrumbs: dataResolved,
         })
         .then((doc) => {
+          const linkResume = journeyId
+            ? '<i><a href="/pathway/resume?id=' +
+              journeyId +
+              '">' +
+              user.displayName +
+              "</a></i>"
+            : "<i>" + user.displayName + "</i>";
+            
           this.props.activityChange({
             type: "start_pathway",
             msn: 'Inicia pathway "' + name + '".',
             msnForGroup:
-              "<i>" +
-              user.displayName +
-              '</i> inició el pathway "<b>' +
-              name +
-              '</b>".',
+              +linkResume + ' inició el pathway "<b>' + name + '</b>".',
             group: groupSlug,
           });
 
@@ -208,11 +212,14 @@ class StartPathway extends React.Component {
             ...this.state,
             loading: true,
           });
-          const sendeamil = "/api/sendemail/?email=" + user.email + "&template=start-pathway&name="+name;
+          const sendeamil =
+            "/api/sendemail/?email=" +
+            user.email +
+            "&template=start-pathway&name=" +
+            name;
           fetch(sendeamil)
             .then((res) => res.json())
             .then(() => {
-             
               this.onCreateJourney(
                 leaderId,
                 pathwayId,

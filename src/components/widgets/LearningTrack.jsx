@@ -92,7 +92,7 @@ class LearningTrack extends React.Component {
     );
   }
   render() {
-    const { data, group } = this.props;
+    const { data, group, journeyId } = this.props;
     const user = firebaseClient.auth().currentUser;
     const id = data.id;
     const trackName = this.props.data?.name;
@@ -105,7 +105,11 @@ class LearningTrack extends React.Component {
             fileCode: (
               <div dangerouslySetInnerHTML={{ __html: data.content }} />
             ),
-            video: <p className="pt-2"><ReactPlayer url={data.content} /></p>,
+            video: (
+              <p className="pt-2">
+                <ReactPlayer url={data.content} />
+              </p>
+            ),
             url: <DescribeURL url={data.content} />,
           }[typeContent]
         }
@@ -123,6 +127,14 @@ class LearningTrack extends React.Component {
                 onSave={(data) => {
                   return saveTrackResponse(id, group, data).then(() => {
                     if (this.props.activityChange) {
+                      const linkResume = journeyId
+                        ? '<i><a href="/pathway/resume?id=' +
+                          journeyId +
+                          '">' +
+                          user.displayName +
+                          "</a></i>"
+                        : "<i>" + user.displayName + "</i>";
+
                       this.props.activityChange({
                         type: "new_track_response",
                         msn:
@@ -130,9 +142,9 @@ class LearningTrack extends React.Component {
                           group +
                           '".',
                         msnForGroup:
-                          "Respuesta de nueva por <i>" +
-                          user.displayName +
-                          "</i> desde learning task <b>" +
+                          "Respuesta de nueva por " +
+                          linkResume +
+                          " desde learning task <b>" +
                           trackName +
                           "</b>.",
                         group: group,

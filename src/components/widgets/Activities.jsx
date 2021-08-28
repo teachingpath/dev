@@ -12,10 +12,15 @@ class ActivitiesComponent extends React.Component {
   }
 
   componentDidMount() {
-    
-    firestoreClient
-      .collection("activities")
-      .where("leaderId", "==", this.props.firebase.user_id)
+    const activities = firestoreClient.collection("activities");
+    if (this.props.filterByGroup) {
+      activities
+        .where("group", "==", this.props.filterByGroup)
+        .where("leaderId", "==", this.props.firebase.user_id);
+    } else {
+      activities.where("leaderId", "==", this.props.firebase.user_id);
+    }
+    activities
       .orderBy("date", "desc")
       .limit(12)
       .get()
@@ -32,7 +37,7 @@ class ActivitiesComponent extends React.Component {
             time: time.substr(0, time.lastIndexOf(":")),
             date: new Date(data.date.seconds * 1000),
             color: data.color || "info",
-            content: () => <p className="mb-0">{ escapeHtml(data.msn)}</p>,
+            content: () => <p className="mb-0">{escapeHtml(data.msn)}</p>,
           });
         });
         this.setState({ data: list });

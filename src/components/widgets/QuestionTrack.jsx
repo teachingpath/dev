@@ -10,11 +10,9 @@ import {
   Timeline,
   Marker,
   Row,
-  Col
+  Col,
 } from "@panely/components";
-import {
-  firebaseClient,
-} from "components/firebase/firebaseClient";
+import { firebaseClient } from "components/firebase/firebaseClient";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
@@ -88,7 +86,7 @@ class Questions extends React.Component {
       data: { id },
       group,
     } = this.props;
-    
+
     getTracksResponses(
       id,
       group,
@@ -107,6 +105,7 @@ class Questions extends React.Component {
     const {
       data: { questions, id },
       group,
+      journeyId,
     } = this.props;
     const user = firebaseClient.auth().currentUser;
     const trackName = this.props.data?.name;
@@ -130,10 +129,25 @@ class Questions extends React.Component {
                         saveTrackResponse(id, group, data, question.id).then(
                           () => {
                             if (this.props.activityChange) {
+                              const linkResume = journeyId
+                                ? '<i><a href="/pathway/resume?id=' +
+                                  journeyId +
+                                  '">' +
+                                  user.displayName +
+                                  "</a></i>"
+                                : "<i>" + user.displayName + "</i>";
                               this.props.activityChange({
                                 type: "new_track_response",
-                                msn: 'Nueva respuesta dentro de la sala "'+group+'".',
-                                msnForGroup:'Nueva respuesta por <i>'+user.displayName+'</i> desde question track <b>'+trackName+'</b>.',
+                                msn:
+                                  'Nueva respuesta dentro de la sala "' +
+                                  group +
+                                  '".',
+                                msnForGroup:
+                                  "Nueva respuesta por " +
+                                  linkResume +
+                                  " desde question track <b>" +
+                                  trackName +
+                                  "</b>.",
                                 group: group,
                               });
                             }

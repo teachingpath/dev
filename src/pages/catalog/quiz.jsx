@@ -117,14 +117,19 @@ class QuizPage extends React.Component {
     enableBadge(id, runnerId, totalPoints)
       .then((doc) => {
         return updateJourney(id, data).then(() => {
+          const linkResume = id
+            ? '<i><a href="/pathway/resume?id=' + id +'">' +
+              user.displayName +
+              "</a></i>"
+            : "<i>" + user.displayName + "</i>";
+
           this.props.activityChange({
             type: "complete_quiz",
             msn: 'Runner "' + currentRunner.name + '" está completo.',
             point: totalPoints,
             msnForGroup:
-              "<i>" +
-              user.displayName +
-              '</i> ha completado el runner <b>"' +
+              linkResume +
+              ' ha completado el runner <b>"' +
               currentRunner.name +
               '"</b> y su nuevo progreso es: ' +
               data.progress.toFixed(2) +
@@ -143,9 +148,8 @@ class QuizPage extends React.Component {
               type: "complete_pathway",
               msn: 'Pathway "' + data.name + '" esta completo.',
               msnForGroup:
-                "<i>" +
-                user.displayName +
-                '</i> ha complatado el pathway <b>"' +
+                linkResume +
+                ' ha complatado el pathway <b>"' +
                 data.name +
                 '"</b>',
               group: data.group,
@@ -210,7 +214,8 @@ class QuizPage extends React.Component {
         icon={<FontAwesomeIcon icon={SolidIcon.faTimes} />}
       >
         El quiz no se aprobó, debe intentarlo de nuevo para obtener el emblema
-        del Runner y pasar el Pathway. Anímate y vuelve a intentarlo. Te recomendamos volver al pathway y repasar los conceptos ahí descritos.
+        del Runner y pasar el Pathway. Anímate y vuelve a intentarlo. Te
+        recomendamos volver al pathway y repasar los conceptos ahí descritos.
         <h4 className="mt-3">Result</h4>
         <div>
           <Label>

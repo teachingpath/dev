@@ -94,6 +94,7 @@ class TrainingTrack extends React.Component {
   render() {
     const {
       data: { training, id },
+      journeyId,
       group,
     } = this.props;
     const user = firebaseClient.auth().currentUser;
@@ -144,6 +145,14 @@ class TrainingTrack extends React.Component {
                         onSave={(data) => {
                           saveTrackResponse(id, group, data).then(() => {
                             if (this.props.activityChange) {
+                              const linkResume = journeyId
+                                ? '<i><a href="/pathway/resume?id=' +
+                                  journeyId +
+                                  '">' +
+                                  user.displayName +
+                                  "</a></i>"
+                                : "<i>" + user.displayName + "</i>";
+
                               this.props.activityChange({
                                 type: "new_track_response",
                                 msn:
@@ -151,9 +160,9 @@ class TrainingTrack extends React.Component {
                                   group +
                                   '".',
                                 msnForGroup:
-                                  "Nueva respuesta por <i>" +
-                                  user.displayName +
-                                  "</i> desde el training task <b>" +
+                                  "Nueva respuesta por " +
+                                  linkResume +
+                                  " desde el training task <b>" +
                                   trackName +
                                   "</b>.",
                                 group: group,

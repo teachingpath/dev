@@ -136,6 +136,7 @@ class TrackModal extends React.Component {
       extarnalLink,
       tracksLength,
       trackIndex,
+      journeyId,
       group,
       activityChange,
     } = this.props;
@@ -180,6 +181,7 @@ class TrackModal extends React.Component {
                   <LearningTrack
                     data={this.state}
                     group={group}
+                    journeyId={journeyId}
                     activityChange={activityChange}
                   />
                 ),
@@ -187,6 +189,7 @@ class TrackModal extends React.Component {
                   <Questions
                     data={this.state}
                     group={group}
+                    journeyId={journeyId}
                     activityChange={activityChange}
                   />
                 ),
@@ -194,6 +197,7 @@ class TrackModal extends React.Component {
                   <TrainingTrack
                     data={this.state}
                     group={group}
+                    journeyId={journeyId}
                     activityChange={activityChange}
                   />
                 ),
@@ -201,6 +205,7 @@ class TrackModal extends React.Component {
                   <HackingTrack
                     data={this.state}
                     group={group}
+                    journeyId={journeyId}
                     activityChange={activityChange}
                   />
                 ),

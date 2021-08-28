@@ -80,6 +80,7 @@ class InfoPanelComponent extends React.Component {
             const inRunning = [];
             querySnapshot.forEach(async (doc) => {
               const data = doc.data();
+              data.id = doc.id;
               if (data.progress >= 100) {
                 finisheds.push(data);
               } else {
@@ -188,6 +189,7 @@ class InfoModal extends React.Component {
                           </h5>
                           <RichList.Item
                             key={index}
+                            href={"/pathway/resume?id="+id}
                             title={"Usuario: " + user.email}
                           >
                             <RichList.Addon addonType="prepend">

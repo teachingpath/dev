@@ -25,8 +25,6 @@ import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
 import { useEffect } from "react";
 
-
-
 const modulesFull = {
   toolbar: [
     ["bold", "italic", "underline", "strike"],
@@ -205,27 +203,29 @@ function TrackForm({ onSave, data, onExtend }) {
         </FloatLabel>
       </Form.Group>
       <Form.Group>
-      <FloatLabel>
-        <Label for="type">Tipo de Track</Label>
-        <Controller
-          as={CustomInput}
-          type="select"
-          name="type"
-          id="type"
-          control={control}
-          invalid={Boolean(errors.type)}
-        >
-          <option value="default">Seleccione un tipo</option>
-          <option value="learning">Learning (Documentos, guias, videos)</option>
-          <option value="hacking">Hacking (Reto o evaluaciones)</option>
-          <option value="questions">
-            Q&A (Preguntas y respuestas abiertas)
-          </option>
-          <option value="training">
-            Training (Tutorial o guias paso a paso)
-          </option>
-        </Controller>
-        {errors.type && <Form.Feedback children={errors.type.message} />}
+        <FloatLabel>
+          <Label for="type">Tipo de Track</Label>
+          <Controller
+            as={CustomInput}
+            type="select"
+            name="type"
+            id="type"
+            control={control}
+            invalid={Boolean(errors.type)}
+          >
+            <option value="default">Seleccione un tipo</option>
+            <option value="learning">
+              Learning (Documentos, guias, videos)
+            </option>
+            <option value="hacking">Hacking (Reto o evaluaciones)</option>
+            <option value="questions">
+              Q&A (Preguntas y respuestas abiertas)
+            </option>
+            <option value="training">
+              Training (Tutorial o guias paso a paso)
+            </option>
+          </Controller>
+          {errors.type && <Form.Feedback children={errors.type.message} />}
         </FloatLabel>
       </Form.Group>
       {
@@ -397,7 +397,7 @@ function TrackForm({ onSave, data, onExtend }) {
                   url: (
                     <Form.Group>
                       <FloatLabel>
-                      <Controller
+                        <Controller
                           as={Input}
                           type="url"
                           id="guidelines"
@@ -526,13 +526,20 @@ function TrackForm({ onSave, data, onExtend }) {
             className="mt-2"
             onClick={() => {
               const extrator = () => {
-                return (getValues().training || []).map(data => data.name).reduce((a, b) => {
-                  return a + b;
-                })
-              }
+                return (getValues().training || [])
+                  .map((data) => data.name)
+                  .reduce((a, b) => {
+                    return a + b;
+                  });
+              };
               var urlRegex =
                 /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
-              const testUrls = (getValues().content || (getValues().guidelines || extrator() || "")).match(urlRegex);
+              const testUrls = (
+                getValues().content ||
+                getValues().guidelines ||
+                extrator() ||
+                ""
+              ).match(urlRegex);
               let references = "";
               (testUrls || []).forEach((url) => {
                 let detectedUrl = url;
@@ -604,7 +611,9 @@ function LoadVideo({ getValues }) {
       >
         Cargar
       </Button>
-      <p className="mt-3">{(url || data) && <ReactPlayer url={(url || data)} controls />}</p>
+      <p className="mt-3">
+        {(url || data) && <ReactPlayer url={url || data} controls />}
+      </p>
     </>
   );
 }
@@ -623,7 +632,9 @@ function LoadReference({ getValues }) {
       >
         Cargar
       </Button>
-      <p className="mt-3">{(url || data) && <DescribeURL url={(url || data)} />}</p>
+      <p className="mt-3">
+        {(url || data) && <DescribeURL url={url || data} />}
+      </p>
     </>
   );
 }
@@ -643,7 +654,7 @@ function Option({ typeContent, setTypeContent }) {
           >
             <GridNav.Title>Richard HTML</GridNav.Title>
             <GridNav.Subtitle>
-             Texto Plano, Pegado con HTML especial y con formato
+              Texto Plano, Pegado con HTML especial y con formato
             </GridNav.Subtitle>
           </GridNav.Item>
           <GridNav.Item
@@ -655,9 +666,7 @@ function Option({ typeContent, setTypeContent }) {
             icon={<FontAwesomeIcon icon={SolidIcon.faFileCode} />}
           >
             <GridNav.Title>Embed HTML</GridNav.Title>
-            <GridNav.Subtitle>
-              HTML puro sin Javascript
-            </GridNav.Subtitle>
+            <GridNav.Subtitle>HTML puro sin Javascript</GridNav.Subtitle>
           </GridNav.Item>
 
           <GridNav.Item
@@ -670,8 +679,8 @@ function Option({ typeContent, setTypeContent }) {
           >
             <GridNav.Title>Player Media</GridNav.Title>
             <GridNav.Subtitle>
-              Soundcloud, youtube, facebook, dailymotion,
-              vimeo, mixcloud,  twitch
+              Soundcloud, youtube, facebook, dailymotion, vimeo, mixcloud,
+              twitch
             </GridNav.Subtitle>
           </GridNav.Item>
           <GridNav.Item
@@ -684,7 +693,7 @@ function Option({ typeContent, setTypeContent }) {
           >
             <GridNav.Title>External URL</GridNav.Title>
             <GridNav.Subtitle>
-            Sitio web, paginas, blogs, wikipedia, youtube
+              Sitio web, paginas, blogs, wikipedia, youtube
             </GridNav.Subtitle>
           </GridNav.Item>
         </GridNav.Row>

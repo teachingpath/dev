@@ -71,9 +71,10 @@ class JourneyListComponent extends React.Component {
                 <RichList.Item key={index}>
                   <RichList.Content onClick={() => {
                     Router.push({
-                      pathname: "/catalog/pathway",
+                      pathname: "/pathway/resume",
                       query: {
-                        id: pathwayId,
+                        id: id,
+                        pathwayId: pathwayId
                       },
                     });
                   }}>

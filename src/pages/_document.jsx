@@ -14,6 +14,7 @@ class MyDocument extends Document {
                     <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/monokai-sublime.min.css"/>
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
                     <script>hljs.highlightAll();</script>
+                    <script src="https://kit.fontawesome.com/1f858e8509.js" crossorigin="anonymous"></script>
 
                 </Head>
                 <body className="theme-light">
