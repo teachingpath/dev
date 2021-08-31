@@ -12,17 +12,17 @@ class ActivitiesComponent extends React.Component {
   }
 
   componentDidMount() {
-    const activities = firestoreClient.collection("activities");
+    let activities = firestoreClient.collection("activities");
     if (this.props.filterByGroup) {
-      activities
-        .where("group", "==", this.props.filterByGroup)
-        .where("leaderId", "==", this.props.firebase.user_id);
+      activities = activities
+        .where("leaderId", "==", this.props.firebase.user_id)
+        .where("group", "==", this.props.filterByGroup);
     } else {
-      activities.where("leaderId", "==", this.props.firebase.user_id);
+      activities =  activities.where("leaderId", "==", this.props.firebase.user_id);
     }
     activities
       .orderBy("date", "desc")
-      .limit(12)
+      .limit(15)
       .get()
       .then((querySnapshot) => {
         const list = [];
