@@ -13,6 +13,21 @@ import Button from "@panely/components/Button";
 import React from "react";
 import Progress from "@panely/components/Progress";
 import { groupBy } from "components/helpers/array";
+import Accordion from "@panely/components/Accordion";
+import Collapse from "@panely/components/Collapse";
+import Card from "@panely/components/Card";
+import Swal from "@panely/sweetalert2";
+import swalContent from "sweetalert2-react-content";
+import { deleteJourney } from "consumer/journey";
+import Router from "next/router";
+const ReactSwal = swalContent(Swal);
+const swal = ReactSwal.mixin({
+  customClass: {
+    confirmButton: "btn btn-label-success btn-wide mx-1",
+    cancelButton: "btn btn-label-danger btn-wide mx-1",
+  },
+  buttonsStyling: false,
+});
 
 class InfoPanelComponent extends React.Component {
   state = {
@@ -74,6 +89,7 @@ class InfoPanelComponent extends React.Component {
         firestoreClient
           .collection("journeys")
           .where("pathwayId", "in", list)
+          .orderBy("date", "desc")
           .get()
           .then((querySnapshot) => {
             const finisheds = [];
@@ -147,6 +163,7 @@ class InfoModal extends React.Component {
     super(props);
     this.state = {
       isOpen: false,
+      activeCard: -1,
     };
   }
 
@@ -154,7 +171,36 @@ class InfoModal extends React.Component {
     this.setState({ isOpen: !this.state.isOpen });
   };
 
+  toggleAccordion = (id) => {
+    if (this.state.activeCard === id) {
+      this.setState({ ...this.state, activeCard: null });
+    } else {
+      this.setState({ ...this.state, activeCard: id });
+    }
+  };
+
+  onDelete(id) {
+    swal
+      .fire({
+        title: "¿Estas seguro/segura?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "¡Sí, bórralo!",
+      })
+      .then((result) => {
+        if (result.value) {
+          deleteJourney(id).then(() => {
+            Router.reload();
+          });
+        }
+      });
+  }
+
   render() {
+    const activeCard = this.state.activeCard;
     const dataList = groupBy(this.props.data, "group");
     return (
       <React.Fragment>
@@ -173,61 +219,88 @@ class InfoModal extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <RichList bordered action>
-              {Object.keys(dataList).map((group) => {
-                return (
-                  <div>
-                    <h4>{group.toUpperCase()}</h4>
-                    {dataList[group].map((data, index) => {
-                      const { name, date, progress, id, user } = data;
-                      const dateUpdated = new Date(
-                        (date.seconds + date.nanoseconds * 10 ** -9) * 1000
-                      );
-                      return (
-                        <>
-                          <h5 className="mt-3">
-                            {user.displayName}
-                          </h5>
-                          <RichList.Item
-                            key={index}
-                            href={"/pathway/resume?id="+id}
-                            title={"Usuario: " + user.email}
-                          >
-                            <RichList.Addon addonType="prepend">
-                              <Avatar block>
-                                <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
-                              </Avatar>
+              <Accordion>
+                {Object.keys(dataList).map((group, index) => {
+                  return (
+                    <Card>
+                      <Card.Header
+                        title="Click para expandir"
+                        collapsed={!(activeCard === index)}
+                        onClick={() => this.toggleAccordion(index)}
+                      >
+                        <Card.Title>{group.toUpperCase()}</Card.Title>
+                      </Card.Header>
 
-                            </RichList.Addon>
-                            <RichList.Content>
-                              <RichList.Title
-                                children={
-                                  <Progress
-                                    striped
-                                    className="mr-2 mb-2"
-                                    value={progress.toFixed(2)}
+                      <Collapse isOpen={activeCard === index}>
+                        {dataList[group].map((data, index) => {
+                          const { name, date, progress, id, user } = data;
+                          const dateUpdated = new Date(
+                            (date.seconds + date.nanoseconds * 10 ** -9) * 1000
+                          );
+                          return (
+                            <Card.Body className="m-0">
+                              <h5 className="mt-3">{user.displayName}</h5>
+                              <RichList.Item
+                                key={index}
+                                title={"Usuario: " + user.email}
+                              >
+                                <RichList.Addon addonType="prepend">
+                                  <Avatar block>
+                                    <FontAwesomeIcon
+                                      icon={SolidIcon.faUserAlt}
+                                    />
+                                  </Avatar>
+                                </RichList.Addon>
+                                <RichList.Content>
+                                  <RichList.Title
+                                    onClick={() => {
+                                      Router.push("/pathway/resume?id=" + id);
+                                    }}
+                                    children={
+                                      <Progress
+                                        striped
+                                        className="mr-2 mb-2"
+                                        value={progress.toFixed(2)}
+                                      >
+                                        {progress.toFixed(2)}%
+                                      </Progress>
+                                    }
+                                  />
+
+                                  <RichList.Title
+                                    children={name}
+                                    onClick={() => {
+                                      Router.push("/pathway/resume?id=" + id);
+                                    }}
+                                  />
+                                  <RichList.Subtitle
+                                    children={
+                                      "Fecha: " +
+                                      dateUpdated.toLocaleDateString() +
+                                      " " +
+                                      dateUpdated.toLocaleTimeString()
+                                    }
+                                  />
+                                </RichList.Content>
+                                <RichList.Addon addonType="prepend">
+                                  <Button
+                                    type="button"
+                                    onClick={() => {
+                                      this.onDelete(id);
+                                    }}
                                   >
-                                    {progress.toFixed(2)}%
-                                  </Progress>
-                                }
-                              />
-
-                              <RichList.Title children={name} />
-                              <RichList.Subtitle
-                                children={
-                                  "Fecha: " +
-                                  dateUpdated.toLocaleDateString() +
-                                  " " +
-                                  dateUpdated.toLocaleTimeString()
-                                }
-                              />
-                            </RichList.Content>
-                          </RichList.Item>
-                        </>
-                      );
-                    })}
-                  </div>
-                );
-              })}
+                                    <FontAwesomeIcon icon={SolidIcon.faTrash} />
+                                  </Button>
+                                </RichList.Addon>
+                              </RichList.Item>
+                            </Card.Body>
+                          );
+                        })}
+                      </Collapse>
+                    </Card>
+                  );
+                })}
+              </Accordion>
             </RichList>
           </Modal.Body>
           <Modal.Footer>

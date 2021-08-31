@@ -15,7 +15,7 @@ class ActivitiesComponent extends React.Component {
       .collection("activities")
       .where("group", "==", this.props.group)
       .orderBy("date", "desc")
-      .limit(22)
+      .limit(30)
       .get()
       .then((querySnapshot) => {
         const list = [];

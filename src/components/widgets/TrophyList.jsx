@@ -25,7 +25,7 @@ class TrophtyListComponent extends React.Component {
           <Portlet.Icon>
             <FontAwesomeIcon icon={SolidIcon.faTrophy} />
           </Portlet.Icon>
-          <Portlet.Title>Trafeo {"("+this.state.data.length+")"}</Portlet.Title>
+          <Portlet.Title>Trofeos {"("+this.state.data.length+")"}</Portlet.Title>
         </Portlet.Header>
         <Portlet.Body>
           <div className="mt-4">

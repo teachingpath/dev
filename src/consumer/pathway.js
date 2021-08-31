@@ -169,6 +169,7 @@ export const getMyPathways = (resolve, reject) => {
   firestoreClient
     .collection("pathways")
     .where("leaderId", "==", user.uid)
+    .orderBy("date", "desc")
     .get()
     .then((querySnapshot) => {
       const list = [];
