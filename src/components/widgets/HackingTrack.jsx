@@ -18,8 +18,11 @@ import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
 import { getTracksResponses, saveTrackResponse } from "consumer/track";
 import { linkify } from "components/helpers/mapper";
+import { useState } from "react";
 
 function SolutionForm({ onSave }) {
+  const [load, setLoad] = useState(null);
+
   const schema = yup.object().shape({
     solution: yup
       .string()
@@ -36,8 +39,10 @@ function SolutionForm({ onSave }) {
   return (
     <Form
       onSubmit={handleSubmit((data) => {
+        setLoad(true)
         onSave(data).then(() => {
           reset();
+          setLoad(false)
         });
       })}
     >
@@ -62,7 +67,7 @@ function SolutionForm({ onSave }) {
           </Form.Group>
         </Col>
         <Col sm="12">
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" disabled={load}>
             Responder
           </Button>
         </Col>
@@ -143,21 +148,14 @@ class HackingTrack extends React.Component {
               </Card.Text>
               <SolutionForm
                 onSave={(data) => {
-                  saveTrackResponse(id, group, data).then(() => {
+                  return saveTrackResponse(id, group, data).then(() => {
                     if (this.props.activityChange) {
                       const linkResume = journeyId
-                        ? '<i><a href="/pathway/resume?id=' +
-                          journeyId +
-                          '">' +
-                          user.displayName +
-                          "</a></i>"
-                        : "<i>" + user.displayName + "</i>";
+                        ? '<i><a href="/pathway/resume?id=' +journeyId + '">' +
+                          user.displayName + "</a></i>" : "<i>" + user.displayName + "</i>";
                       this.props.activityChange({
                         type: "new_track_response",
-                        msn:
-                          'Respuesta de nueva Track dentro de la sala "' +
-                          group +
-                          '".',
+                        msn:  'Respuesta de nueva Track dentro de la sala "' +  group +  '".',
                         msnForGroup:
                           "Nueva respuesta  por " +
                           linkResume +
@@ -166,9 +164,11 @@ class HackingTrack extends React.Component {
                           "</b>.",
                         group: group,
                       });
-                    }
-                    this.componentDidMount();
+                    }                    
                     this.setState({ current: this.state.current + 1 });
+                    setTimeout(() => {
+                      this.componentDidMount();
+                    }, 500);
                   });
                 }}
               />

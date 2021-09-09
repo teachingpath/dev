@@ -10,16 +10,28 @@ import Link from "next/link";
 import { timeShortPowerTen } from "components/helpers/time";
 import Progress from "@panely/components/Progress";
 import { getTrack } from "consumer/track";
+import Swal from "@panely/sweetalert2";
+import swalContent from "sweetalert2-react-content";
+const ReactSwal = swalContent(Swal);
+const swal = ReactSwal.mixin({
+  customClass: {
+    confirmButton: "btn btn-label-success btn-wide mx-1",
+    cancelButton: "btn btn-label-danger btn-wide mx-1",
+  },
+  buttonsStyling: false,
+});
 
 class TrackModal extends React.Component {
-  time = 0;
+  minutes = 0;
+  countdownRef = null;
 
   constructor(props) {
     super(props);
     this.state = {
       isOpen: false,
-      dataTime: zeroPad(props.timeLimit) + ":00",
+      dataTime: "00:00",
       isRunning: props.isRunning || false,
+      wait: false,
     };
     this.countdownRef = React.createRef();
   }
@@ -76,7 +88,7 @@ class TrackModal extends React.Component {
       }
     });
     data.progress = (tracksCompleted / tracksTotal) * 100;
-
+    data.date = new Date();
     const tracks = data.breadcrumbs[runnerIndex].tracks;
 
     tracks[trackIndex].time = 0;
@@ -97,13 +109,55 @@ class TrackModal extends React.Component {
       this.props;
 
     if (completed) {
-      this.complete().then(() => {
-        onComplete();
-      });
+      if (this.minutes == 0) {
+        const element = this.countdownRef?.current;
+        this.setState({
+          ...this.state,
+          isRunning: false,
+          wait: true,
+        });
+        swal
+          .fire({
+            title: "¿Quieres agregar 5 minutos mas para completar el track?",
+            text: "¡Tu tiempo ha terminado!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí",
+          })
+          .then((result) => {
+            if (result.value === true) {
+              element.state.timeDelta.minutes = 5;
+              element.start();
+              this.minutes = 5;
+              const data = {
+                breadcrumbs: runners,
+              };
+              data.breadcrumbs[runnerIndex].tracks[trackIndex].time = 300000;
+              data.breadcrumbs[runnerIndex].tracks[trackIndex].isRunning = true;
+
+              firestoreClient
+                .collection("journeys")
+                .doc(journeyId)
+                .update(data)
+                .then((docRef) => {
+                  this.setState({
+                    ...this.state,
+                    isRunning: true,
+                    time: 300000,
+                    wait: false,
+                    dataTime: zeroPad(hours) + ":" + zeroPad(this.minutes),
+                  });
+                });
+            }
+          });
+      }
+
       return <span> 00:00:00 h</span>;
     } else {
-      if (minutes % 2 === 0 && minutes !== this.time) {
-        this.time = minutes;
+      if (minutes !== this.minutes) {
+        this.minutes = minutes;
         const data = {
           breadcrumbs: runners,
         };
@@ -114,6 +168,7 @@ class TrackModal extends React.Component {
           .doc(journeyId)
           .update(data)
           .then((docRef) => {
+            console.log("time updated");
             this.setState({
               ...this.state,
               dataTime: zeroPad(hours) + ":" + zeroPad(minutes),
@@ -131,7 +186,6 @@ class TrackModal extends React.Component {
   render() {
     const { name, type, isRunning, timeLimit, dataTime } = this.state;
     const {
-      time,
       onComplete,
       extarnalLink,
       tracksLength,
@@ -140,6 +194,7 @@ class TrackModal extends React.Component {
       group,
       activityChange,
     } = this.props;
+    const time = this.state.time || this.props.time;
     const titleButton = timeLimit
       ? "Tiempo limite[" + timeShortPowerTen(timeLimit) + "]"
       : "Inicia el Track";
@@ -156,23 +211,21 @@ class TrackModal extends React.Component {
               date={date}
               renderer={this.renderer}
             />
-          )) || <>Iniciar</>}
+          )) ||
+            (this.state.wait ? <>Stop [00:00:00 h]</> : <>Iniciar</>)}
         </Button>
-        <Modal
-          scrollable
-          isOpen={this.state.isOpen}
-          toggle={this.toggle}
-          className="modal-xl"
-        >
+        <Modal scrollable isOpen={this.state.isOpen} className="modal-xl">
           <Progress
             striped
             variant="primary"
             value={((trackIndex + 1) / tracksLength) * 100}
           />
           <Modal.Header toggle={this.toggle}>
+          
             <Link href={extarnalLink} className={"w-100"}>
-              {name || "..."}
+              <i className="fas fa-expand mr-1" style={{cursor: "pointer"}}></i>
             </Link>
+            {name || "..."}:
           </Modal.Header>
           <Modal.Body>
             {
@@ -226,7 +279,9 @@ class TrackModal extends React.Component {
             )}
           </Modal.Body>
           <Modal.Footer className="bg-yellow">
-            <strong className="mr-2">Time to finish {dataTime} hours.</strong>
+            <strong className="mr-2">
+              Tiempo para finalizar {dataTime} hrs.
+            </strong>
             <Button
               variant="primary"
               className="mr-2"

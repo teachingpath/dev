@@ -25,8 +25,7 @@ class QuizPage extends React.Component {
     super(props);
     this.state = {
       quizTitle: "Comprueba tu conocimiento del Runner.",
-      quizSynopsis:
-        "Bienvenido al Quiz de verificación de conocimientos para el Runner. Al aprobar este Cuestionario, puede obtener el trofeo del Pathway. Resuelve el cuestionario en el menor tiempo posible.",
+      quizSynopsis: "Bienvenido a la evaluación de conceptos de verificación del runner. Al aprobar este cuestionario, puede obtener el emblema del Runner. Resuelve el cuestionario en el menor tiempo posible. Con esta evaluación te permite asegurar el conocimiento, si por alguna razón te das cuenta que no puedes resolver el cuestionario, te invito a repasar los conceptos del Runner.",
       questions: [],
     };
     this.onFinish = this.onFinish.bind(this);
@@ -127,13 +126,9 @@ class QuizPage extends React.Component {
             type: "complete_quiz",
             msn: 'Runner "' + currentRunner.name + '" está completo.',
             point: totalPoints,
-            msnForGroup:
-              linkResume +
-              ' ha completado el runner <b>"' +
-              currentRunner.name +
-              '"</b> y su nuevo progreso es: ' +
-              data.progress.toFixed(2) +
-              "%",
+            msnForGroup:linkResume + ' ha completado el runner <b>"' +
+              currentRunner.name +   '"</b> y su nuevo progreso es: ' + 
+               data.progress.toFixed(2) + "%",
             group: data.group,
           });
 
@@ -188,7 +183,8 @@ class QuizPage extends React.Component {
         variant={"outline-success"}
         icon={<FontAwesomeIcon icon={SolidIcon.faCheckCircle} />}
       >
-        Felicitaciones, pasó el quiz. Has conseguido {totalPoints} puntos.
+       <i className="far fa-check-circle"></i> 
+       ¡Felicitaciones!, pasó la validación de conceptos. Has conseguido {totalPoints} puntos que te ayudan a continuar.
         <h4 className="mt-3">Resultado</h4>
         <div>
           <Label>
@@ -213,7 +209,7 @@ class QuizPage extends React.Component {
         variant={"outline-danger"}
         icon={<FontAwesomeIcon icon={SolidIcon.faTimes} />}
       >
-        El quiz no se aprobó, debe intentarlo de nuevo para obtener el emblema
+       <i className="fas fa-exclamation-triangle"></i> Esta evaluación de conceptos no se aprobó, debe intentarlo de nuevo para obtener el emblema
         del Runner y pasar el Pathway. Anímate y vuelve a intentarlo. Te
         recomendamos volver al pathway y repasar los conceptos ahí descritos.
         <h4 className="mt-3">Result</h4>
@@ -249,7 +245,7 @@ class QuizPage extends React.Component {
     return (
       <React.Fragment>
         <Head>
-          <title>Quiz | Teaching Path</title>
+          <title>Evaluación de conceptos | Teaching Path</title>
         </Head>
         <Container fluid>
           <Portlet>

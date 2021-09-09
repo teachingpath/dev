@@ -17,8 +17,11 @@ import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import { getTracksResponses, saveTrackResponse } from "consumer/track";
+import { useState } from "react";
 
 function QuestionForm({ onSave }) {
+  const [load, setLoad] = useState(null);
+
   const schema = yup.object().shape({
     answer: yup
       .string()
@@ -35,8 +38,10 @@ function QuestionForm({ onSave }) {
   return (
     <Form
       onSubmit={handleSubmit((data) => {
+        setLoad(true)
         onSave(data).then(() => {
           reset();
+          setLoad(false)
         });
       })}
     >
@@ -61,7 +66,7 @@ function QuestionForm({ onSave }) {
           </Form.Group>
         </Col>
         <Col sm="2">
-          <Button type="submit" variant="primary" className="ml-2">
+          <Button type="submit" variant="primary" className="ml-2" disabled={load}>
             Enviar
           </Button>
         </Col>
@@ -126,32 +131,25 @@ class Questions extends React.Component {
                   {user && (
                     <QuestionForm
                       onSave={(data) => {
-                        saveTrackResponse(id, group, data, question.id).then(
+                        return saveTrackResponse(id, group, data, question.id).then(
                           () => {
                             if (this.props.activityChange) {
                               const linkResume = journeyId
-                                ? '<i><a href="/pathway/resume?id=' +
-                                  journeyId +
-                                  '">' +
-                                  user.displayName +
-                                  "</a></i>"
+                                ? '<i><a href="/pathway/resume?id=' + journeyId +
+                                  '">' +user.displayName +"</a></i>"
                                 : "<i>" + user.displayName + "</i>";
                               this.props.activityChange({
                                 type: "new_track_response",
-                                msn:
-                                  'Nueva respuesta dentro de la sala "' +
-                                  group +
-                                  '".',
-                                msnForGroup:
-                                  "Nueva respuesta por " +
-                                  linkResume +
+                                msn: 'Nueva respuesta dentro de la sala "' + group +'".',
+                                msnForGroup: "Nueva respuesta por " + linkResume +
                                   " desde question track <b>" +
-                                  trackName +
-                                  "</b>.",
+                                  trackName + "</b>.",
                                 group: group,
                               });
                             }
-                            this.componentDidMount();
+                            setTimeout(() => {
+                              this.componentDidMount();
+                            }, 500);
                           }
                         );
                       }}

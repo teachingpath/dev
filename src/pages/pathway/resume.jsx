@@ -5,7 +5,7 @@ import {
   Portlet,
   Progress,
   Widget4,
-  Button
+  Button,
 } from "@panely/components";
 
 import { pageChangeHeaderTitle, breadcrumbChange } from "store/actions";
@@ -17,6 +17,9 @@ import Head from "next/head";
 import Router from "next/router";
 import ActivitiesComponent from "components/widgets/Activities";
 import { getJourney } from "consumer/journey";
+import { Timeline } from "@panely/components";
+import { getTracksResponses } from "consumer/user";
+import Marker from "@panely/components/Marker";
 
 class PathwayPage extends React.Component {
   constructor(props) {
@@ -24,6 +27,7 @@ class PathwayPage extends React.Component {
     this.state = {
       name: "Resumen",
       progress: 0,
+      list: [],
       waitTracks: 0,
       finishTracks: 0,
       dateUpdated: "--",
@@ -43,22 +47,34 @@ class PathwayPage extends React.Component {
 
     getJourney(
       Router.query.id,
-      (data) => {
+      async (data) => {
         this.props.breadcrumbChange([
           { text: "Home", link: "/" },
           { text: data.name },
         ]);
+        const trackMapper = {};
         const dateUpdated = new Date(
           (data.date.seconds + data.date.nanoseconds * 10 ** -9) * 1000
         );
 
         const tracks = data.breadcrumbs.flatMap((item) =>
-          item.tracks.map((track) => track.status)
+          item.tracks.map((track) => {
+            trackMapper[track.id] = "["+item.name + "] "+track.title.trim();
+            return {
+              status: track.status,
+              name: track.title.trim(),
+            };
+          })
         );
 
-        const waitTracks = tracks.filter((item) => item === "wait").length;
-        const finishTracks = tracks.filter((item) => item === "finish").length;
+        const waitTracks = tracks.filter(
+          (item) => item.status === "wait"
+        ).length;
 
+        const finishTracksTitles = tracks
+          .filter((item) => item.status === "finish")
+          .map((it) => it.name)
+          .join(", ");
         const runnerCurrent =
           data.progress >= 100
             ? "Pathway completado"
@@ -69,11 +85,21 @@ class PathwayPage extends React.Component {
               (data.breadcrumbs.length + 1) +
               ") [Running]";
 
+        const response = await getTracksResponses(data.userId, data.group);
+
         this.setState({
           name: data.name,
+          list: response.list.map(
+            (data) => {
+              return {
+                response: data.result || data.feedback || data.answer || data.solution,
+                track: trackMapper[data.trackId],
+              };
+            }
+          ),
           group: data.group,
           waitTracks: waitTracks,
-          finishTracks: finishTracks,
+          finishTracksTitles: finishTracksTitles,
           user: data.user,
           userId: data.userId,
           pathwayId: Router.query.pathwayId,
@@ -96,13 +122,14 @@ class PathwayPage extends React.Component {
       progress,
       waitTracks,
       dateUpdated,
-      finishTracks,
+      finishTracksTitles,
       user,
       runnerCurrent,
       userId,
       group,
       pathwayId,
-      journeyId
+      journeyId,
+      list,
     } = this.state;
     return (
       <React.Fragment>
@@ -111,7 +138,7 @@ class PathwayPage extends React.Component {
         </Head>
         <Container fluid>
           <Row>
-            <Col md="6">
+            <Col md="8">
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
@@ -121,10 +148,11 @@ class PathwayPage extends React.Component {
                   <Widget6Component user={user} runnerCurrent={runnerCurrent} />
                   <hr />
                   <Widget7Component
+                    list={list}
                     progress={progress}
                     waitTracks={waitTracks}
                     dateUpdated={dateUpdated}
-                    finishTracks={finishTracks}
+                    finishTracksTitles={finishTracksTitles}
                   />
                 </Portlet.Body>
                 {pathwayId && (
@@ -145,10 +173,10 @@ class PathwayPage extends React.Component {
                 )}
               </Portlet>
             </Col>
-            <Col md="6">
+            <Col md="4">
               {userId && (
                 <ActivitiesComponent
-                filterByGroup={group}
+                  filterByGroup={group}
                   firebase={{
                     user_id: userId,
                   }}
@@ -162,21 +190,24 @@ class PathwayPage extends React.Component {
   }
 }
 
-function Widget7Component({ progress, waitTracks, dateUpdated, finishTracks }) {
+function Widget7Component({
+  progress,
+  waitTracks,
+  dateUpdated,
+  finishTracksTitles,
+  list,
+}) {
   return (
     <Portlet>
       <Portlet.Body>
         <Row>
           <Col sm="6">
-            <Widget7Display
-              title="Tracks Finalizados"
-              highlight={finishTracks}
+            <Widget6Display
+              body={finishTracksTitles}
+              title="Tracks finalizados"
               className="mb-3"
             />
-            <Widget7Display
-              title="Ultima actualización"
-              highlight={dateUpdated}
-            />
+            <Widget6Display title="Ultima actualización" body={dateUpdated} />
           </Col>
           <Col sm="6">
             <Widget7Display
@@ -189,6 +220,11 @@ function Widget7Component({ progress, waitTracks, dateUpdated, finishTracks }) {
               highlight={progress + "%"}
               progress={progress}
             />
+          </Col>
+          <Col>
+            {list && <Widget5Display
+             title="Contribuciones" 
+             list={list} />}
           </Col>
         </Row>
       </Portlet.Body>
@@ -224,6 +260,50 @@ function Widget7Display(props) {
         <Widget4.Display>
           <Widget4.Subtitle children={title} />
           <Widget4.Highlight children={highlight} />
+        </Widget4.Display>
+      </Widget4.Group>
+    </Widget4>
+  );
+}
+
+function Widget6Display(props) {
+  const { title, body, ...attributes } = props;
+
+  return (
+    <Widget4 {...attributes}>
+      <Widget4.Group>
+        <Widget4.Display>
+          <Widget4.Highlight children={title} />
+          <Widget4.Subtitle children={body} />
+        </Widget4.Display>
+      </Widget4.Group>
+    </Widget4>
+  );
+}
+
+function Widget5Display(props) {
+  const { title, list, ...attributes } = props;
+
+  return (
+    <Widget4 {...attributes}>
+      <Widget4.Group>
+        <Widget4.Display>
+          <Widget4.Highlight children={title+" ("+list.length+")"} />
+          <Timeline>
+            {list.map((data, index) => {
+              const { date, response, track } = data;
+
+              return (
+                <Timeline.Item
+                  key={index}
+                  date={date}
+                  pin={<Marker type="circle" />}
+                >
+                  <strong>{track}:</strong> <i>{response}</i>
+                </Timeline.Item>
+              );
+            })}
+          </Timeline>
         </Widget4.Display>
       </Widget4.Group>
     </Widget4>

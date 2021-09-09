@@ -18,8 +18,10 @@ import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
 import { getTracksResponses, saveTrackResponse } from "consumer/track";
 import { linkify } from "components/helpers/mapper";
+import { useState } from "react";
 
 function FeedbackForm({ onSave }) {
+  const [load, setLoad] = useState(null);
   const schema = yup.object().shape({
     feedback: yup
       .string()
@@ -36,8 +38,10 @@ function FeedbackForm({ onSave }) {
   return (
     <Form
       onSubmit={handleSubmit((data) => {
+        setLoad(true)
         onSave(data).then(() => {
           reset();
+          setLoad(false)
         });
       })}
     >
@@ -62,7 +66,7 @@ function FeedbackForm({ onSave }) {
           </Form.Group>
         </Col>
         <Col sm="12">
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" disabled={load}>
             Enviar
           </Button>
         </Col>
@@ -75,14 +79,8 @@ class LearningTrack extends React.Component {
   state = { list: [] };
 
   componentDidMount() {
-    const {
-      data: { id },
-      group,
-    } = this.props;
-    getTracksResponses(
-      id,
-      group,
-      (data) => {
+    const {data: { id }, group, } = this.props;
+    getTracksResponses( id, group, (data) => {
         this.setState({
           ...this.state,
           list: data.list,
@@ -91,6 +89,7 @@ class LearningTrack extends React.Component {
       () => {}
     );
   }
+  
   render() {
     const { data, group, journeyId } = this.props;
     const user = firebaseClient.auth().currentUser;
@@ -128,19 +127,13 @@ class LearningTrack extends React.Component {
                   return saveTrackResponse(id, group, data).then(() => {
                     if (this.props.activityChange) {
                       const linkResume = journeyId
-                        ? '<i><a href="/pathway/resume?id=' +
-                          journeyId +
-                          '">' +
+                        ? '<i><a href="/pathway/resume?id=' + journeyId +'">' +
                           user.displayName +
-                          "</a></i>"
-                        : "<i>" + user.displayName + "</i>";
+                          "</a></i>"  : "<i>" + user.displayName + "</i>";
 
                       this.props.activityChange({
                         type: "new_track_response",
-                        msn:
-                          'Respuesta de nuevo Track dentro de la sala "' +
-                          group +
-                          '".',
+                        msn:'Respuesta de nuevo Track dentro de la sala "' + group + '".',
                         msnForGroup:
                           "Respuesta de nueva por " +
                           linkResume +
@@ -150,8 +143,10 @@ class LearningTrack extends React.Component {
                         group: group,
                       });
                     }
-                    this.componentDidMount();
                     this.setState({ current: this.state.current + 1 });
+                    setTimeout(() => {
+                      this.componentDidMount();
+                    }, 500);
                   });
                 }}
               />

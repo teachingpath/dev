@@ -22,7 +22,7 @@ class ActivitiesComponent extends React.Component {
     }
     activities
       .orderBy("date", "desc")
-      .limit(15)
+      .limit(25)
       .get()
       .then((querySnapshot) => {
         const list = [];

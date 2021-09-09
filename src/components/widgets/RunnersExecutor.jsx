@@ -1,13 +1,17 @@
 import { Accordion, Card, Collapse, Portlet } from "@panely/components";
-
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Router from "next/router";
 import Steps from "rc-steps";
 import Button from "@panely/components/Button";
 import TrackModal from "../../components/widgets/TrackModal";
-import React from "react";
+import React, { useState } from "react";
 import Badge from "@panely/components/Badge";
 import Link from "next/link";
 import { timeShortPowerTen } from "components/helpers/time";
+import { useEffect } from "react";
+import { getTracksResponseByUserId } from "consumer/track";
+import ResponseModal from "./ResponseModal";
 
 class RunnersExecutor extends React.Component {
   constructor(props) {
@@ -25,8 +29,15 @@ class RunnersExecutor extends React.Component {
 
   render() {
     const { activeCard } = this.state;
-    const { runners, journeyId, pathwayId, group, onComplete, activityChange } =
-      this.props;
+    const {
+      runners,
+      journeyId,
+      pathwayId,
+      group,
+      onComplete,
+      activityChange,
+      user,
+    } = this.props;
     return (
       <Accordion {...this.props}>
         {runners.map((item, index) => {
@@ -43,7 +54,12 @@ class RunnersExecutor extends React.Component {
                 onClick={() => this.toggle(index)}
               >
                 <Card.Title>
-                  <i className={"fas fa-"+(activeCard === index? 'running': '')}></i> {item.name.toUpperCase()}
+                  <i
+                    className={
+                      "fas fa-" + (activeCard === index ? "running" : "")
+                    }
+                  ></i>{" "}
+                  {item.name.toUpperCase()}
                 </Card.Title>
                 {totalTime > 0 ? (
                   <Portlet.Addon>
@@ -63,6 +79,7 @@ class RunnersExecutor extends React.Component {
                     onComplete={(track) => {
                       onComplete(track);
                     }}
+                    user={user}
                     activityChange={activityChange}
                     group={group}
                     pathwayId={pathwayId}
@@ -100,6 +117,7 @@ class Tracks extends React.Component {
       onComplete,
       group,
       activityChange,
+      user,
     } = this.props;
     const activeQuiz = tracks.every((track) => {
       return track.status === "finish";
@@ -130,7 +148,16 @@ class Tracks extends React.Component {
                   )}
                   <Badge className="mr-2">{item.type}</Badge>
                   {item.status !== "wait" && item.status !== "process" ? (
-                    <Link href={extarnalLink}>{item.title}</Link>
+                    <>
+                      <AttachResult
+                        item={item}
+                        user={user}
+                        activityChange={activityChange}
+                        journeyId={journeyId}
+                        group={group}
+                      />
+                      <Link href={extarnalLink}>{item.title}</Link>
+                    </>
                   ) : (
                     item.title
                   )}
@@ -168,13 +195,16 @@ class Tracks extends React.Component {
         {quiz && current !== null && (
           <Steps.Step
             status={activeQuiz ? "process" : "wait"}
-            title={"Quiz"}
+            title={"Preguntas de repaso"}
             description={
               <div>
                 {activeQuiz && (
                   <div dangerouslySetInnerHTML={{ __html: feedback }} />
                 )}
-                <p>Presentar Quiz para validar conocimientos.</p>
+                <p>
+                  Presentar Quiz para validar conocimientos y finalizar este
+                  Runner.
+                </p>
                 <Button
                   disabled={!activeQuiz}
                   onClick={() => {
@@ -187,7 +217,7 @@ class Tracks extends React.Component {
                     });
                   }}
                 >
-                  Tomar Quiz
+                  Tomar Emblema
                 </Button>
               </div>
             }
@@ -197,5 +227,83 @@ class Tracks extends React.Component {
     );
   }
 }
+
+const AttachResult = (props) => {
+  return (
+    <span className="float-left mr-1">
+      {
+        {
+          training: <Attach {...props} />,
+          hacking: <Attach {...props} />,
+          questions: <Attach {...props} />,
+          learning: <Attach {...props} />,
+        }[props.item.type]
+      }
+    </span>
+  );
+};
+
+const Attach = ({
+  item: { id, title, type },
+  user,
+  journeyId,
+  group,
+  activityChange,
+}) => {
+  const [att, setAtt] = useState(null);
+  useEffect(() => {
+    console.log(user.uid);
+    getTracksResponseByUserId(
+      id,
+      user.uid,
+      (result) => {
+        setAtt(result.list.length === 0);
+      },
+      () => {}
+    );
+  }, [id, user.uid]);
+
+  return (
+    <>
+      {att === true ? (
+        <Badge
+          variant="warning"
+          shape="circle"
+          title="No se tiene una respuesta o feedback para ente track."
+        >
+          <ResponseModal
+            id={id}
+            title={title}
+            group={group}
+            journeyId={journeyId}
+            type={type}
+            user={user}
+            activityChange={activityChange}
+          >
+            <FontAwesomeIcon icon={SolidIcon.faExclamationTriangle} />
+          </ResponseModal>
+        </Badge>
+      ) : (
+        <Badge
+          variant="outline-success"
+          shape="circle"
+          title="Se completo con un feedback o respuesta."
+        >
+          <ResponseModal
+            id={id}
+            title={title}
+            group={group}
+            journeyId={journeyId}
+            type={type}
+            user={user}
+            activityChange={activityChange}
+          >
+            <FontAwesomeIcon icon={SolidIcon.faCheckCircle} />
+          </ResponseModal>
+        </Badge>
+      )}
+    </>
+  );
+};
 
 export default RunnersExecutor;

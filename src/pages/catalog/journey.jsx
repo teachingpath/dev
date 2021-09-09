@@ -118,6 +118,7 @@ class JourneyGeneralPage extends React.Component {
                     <Col md="6">
                       {this.state?.runners && (
                         <RunnersExecutor
+                          user={user}
                           current={this.state.current}
                           runners={this.state.runners}
                           journeyId={this.state.id}
@@ -126,21 +127,12 @@ class JourneyGeneralPage extends React.Component {
                           activityChange={this.props.activityChange}
                           onComplete={(data) => {
                             const linkResume = this.state.id
-                              ? '<i><a href="/pathway/resume?id=' +
-                                this.state.id +
-                                '">' +
-                                user.displayName +
-                                "</a></i>"
+                              ? '<i><a href="/pathway/resume?id=' +this.state.id +'">' +user.displayName +"</a></i>"
                               : "<i>" + user.displayName + "</i>";
                             this.props.activityChange({
                               type: "complete_track",
-                              msn:
-                                'El Track "' + data.title + '" está completo.',
-                              msnForGroup:
-                                linkResume +
-                                ' ha completado el track <b>"' +
-                                data.title +
-                                '"</b>',
+                              msn:'El Track "' + data.title + '" está completo.',
+                              msnForGroup:linkResume +' ha completado el track <b>"' + data.title + '"</b>',
                               group: group,
                             });
                             this.setState({

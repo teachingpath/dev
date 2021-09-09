@@ -17,8 +17,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import { getTracksResponses, saveTrackResponse } from "consumer/track";
 import { linkify } from "components/helpers/mapper";
+import { useState } from "react";
 
 function SolutionForm({ onSave }) {
+  const [load, setLoad] = useState(null);
+
   const schema = yup.object().shape({
     result: yup
       .string()
@@ -35,8 +38,10 @@ function SolutionForm({ onSave }) {
   return (
     <Form
       onSubmit={handleSubmit((data) => {
+        setLoad(true);
         onSave(data).then(() => {
           reset();
+          setLoad(false);
         });
       })}
     >
@@ -61,8 +66,8 @@ function SolutionForm({ onSave }) {
           </Form.Group>
         </Col>
         <Col sm="12">
-          <Button type="submit" variant="primary">
-            Resultado
+          <Button type="submit" variant="primary" disabled={load}>
+            Responder
           </Button>
         </Col>
       </Row>
@@ -128,78 +133,79 @@ class TrainingTrack extends React.Component {
             />
           );
         })}
+        {this.state.current === training?.length && (
+          <Steps.Step
+            title={"Resultado de aprendizaje"}
+            description={
+              <div>
+                <Card.Body>
+                  <Card.Text>
+                    Agregue aquí su respuesta de Training, agregue enlaces,
+                    repositorios o comentarios.
+                  </Card.Text>
 
-        <Steps.Step
-          title={"Result"}
-          description={
-            <Card>
-              <Card.Body>
-                <Card.Text>
-                  Agregue aquí su respuesta de Training, agregue enlaces,
-                  repositorios o comentarios.
-                </Card.Text>
-                {this.state.current === training?.length && (
-                  <>
-                    {user && (
-                      <SolutionForm
-                        onSave={(data) => {
-                          saveTrackResponse(id, group, data).then(() => {
-                            if (this.props.activityChange) {
-                              const linkResume = journeyId
-                                ? '<i><a href="/pathway/resume?id=' +
-                                  journeyId +
-                                  '">' +
-                                  user.displayName +
-                                  "</a></i>"
-                                : "<i>" + user.displayName + "</i>";
+                  {user && (
+                    <SolutionForm
+                      onSave={(data) => {
+                        return saveTrackResponse(id, group, data).then(() => {
+                          if (this.props.activityChange) {
+                            const linkResume = journeyId
+                              ? '<i><a href="/pathway/resume?id=' +
+                                journeyId +
+                                '">' +
+                                user.displayName +
+                                "</a></i>"
+                              : "<i>" + user.displayName + "</i>";
 
-                              this.props.activityChange({
-                                type: "new_track_response",
-                                msn:
-                                  'Nueva respuesta dentro del group "' +
-                                  group +
-                                  '".',
-                                msnForGroup:
-                                  "Nueva respuesta por " +
-                                  linkResume +
-                                  " desde el training task <b>" +
-                                  trackName +
-                                  "</b>.",
-                                group: group,
-                              });
-                            }
+                            this.props.activityChange({
+                              type: "new_track_response",
+                              msn:
+                                'Nueva respuesta dentro del group "' +
+                                group +
+                                '".',
+                              msnForGroup:
+                                "Nueva respuesta por " +
+                                linkResume +
+                                " desde el training task <b>" +
+                                trackName +
+                                "</b>.",
+                              group: group,
+                            });
+                          }
+                          this.setState({ current: this.state.current + 1 });
+
+                          setTimeout(() => {
                             this.componentDidMount();
-                            this.setState({ current: this.state.current + 1 });
-                          });
-                        }}
-                      />
-                    )}
+                          }, 500);
+                        });
+                      }}
+                    />
+                  )}
 
-                    <Timeline>
-                      {this.state.list.map((data, index) => {
-                        const { date, result } = data;
+                  <Timeline>
+                    {this.state.list.map((data, index) => {
+                      const { date, result } = data;
 
-                        return (
-                          <Timeline.Item
-                            key={"timeline" + index}
-                            date={date}
-                            pin={<Marker type="dot" />}
-                          >
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: linkify(result),
-                              }}
-                            />
-                          </Timeline.Item>
-                        );
-                      })}
-                    </Timeline>
-                  </>
-                )}
-              </Card.Body>
-            </Card>
-          }
-        />
+                      return (
+                        <Timeline.Item
+                          key={"timeline" + index}
+                          date={date}
+                          pin={<Marker type="dot" />}
+                        >
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: linkify(result),
+                            }}
+                          />
+                        </Timeline.Item>
+                      );
+                    })}
+                  </Timeline>
+                </Card.Body>
+              </div>
+            }
+          />
+        )}
       </Steps>
     );
   }

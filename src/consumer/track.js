@@ -9,7 +9,7 @@ export const create = (runnerId, data) => {
   const trackId = uuid();
   const user = firebaseClient.auth().currentUser;
   const searchTypes = data.name.toLowerCase();
-  
+
   const model = {
     level: 100,
     id: trackId,
@@ -129,9 +129,9 @@ export const saveTrackResponse = (trackId, group, data, id = 1) => {
 export const getTracksResponses = (trackId, group, resolve, reject) => {
   let db = firestoreClient
     .collection("track-response")
-    .orderBy("date")
+    .orderBy("date", 'desc')
     .where("trackId", "==", trackId);
-    
+
   if (group) {
     db = db.where("group", "==", group);
   }
@@ -145,6 +145,32 @@ export const getTracksResponses = (trackId, group, resolve, reject) => {
           list.push(doc.data());
         });
         resolve({ list });
+      } else {
+        resolve({ list: [] });
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+      reject();
+    });
+};
+
+export const getTracksResponseByUserId = (trackId, userId, resolve, reject) => {
+  firestoreClient
+    .collection("track-response")
+    .where("trackId", "==", trackId)
+    .where("userId", "==", userId)
+    .limit(2)
+    .get()
+    .then((querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const list = [];
+        querySnapshot.forEach((doc) => {
+          list.push(doc.data());
+        });
+        resolve({ list });
+      } else {
+        resolve({ list: [] });
       }
     })
     .catch((error) => {
