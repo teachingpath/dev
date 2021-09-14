@@ -5,6 +5,7 @@ import {
   RichList,
   Widget10,
   Widget8,
+  Dropdown,
 } from "@panely/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
@@ -229,6 +230,47 @@ class InfoModal extends React.Component {
                         onClick={() => this.toggleAccordion(index)}
                       >
                         <Card.Title>{group.toUpperCase()}</Card.Title>
+                        <Portlet.Addon>
+                          <Dropdown.Uncontrolled>
+                            <Dropdown.Toggle icon variant="text-secondary">
+                              <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu right animated>
+                              <Dropdown.Item
+                                onClick={() => {
+                                  swal
+                                    .fire({
+                                      title:"¿Estas seguro/segura que deseas enviar reporte?",
+                                      text: "Se enviará un reporte a todos los suscritos",
+                                      icon: "warning",
+                                      showCancelButton: true,
+                                      confirmButtonColor: "#3085d6",
+                                      cancelButtonColor: "#d33",
+                                      confirmButtonText: "¡Sí, enviar!",
+                                    })
+                                    .then((result) => {
+                                      if (result.value) {
+                                        const pathwayId =  dataList[group][0].pathwayId;
+                                        const url = "/api/resumen?pathwayId=" + pathwayId;
+                                        fetch(url).then((res) => {
+                                          swal.fire({
+                                            text: "Se envio un correo con el reporte a todos los inscriptos al pathway.",
+                                            icon: "info",
+                                          });
+                                        });
+                            
+                                      }
+                                    });
+                                }}
+                                icon={
+                                  <FontAwesomeIcon icon={SolidIcon.faReply} />
+                                }
+                              >
+                                Enviar reporte
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown.Uncontrolled>
+                        </Portlet.Addon>
                       </Card.Header>
 
                       <Collapse isOpen={activeCard === index}>

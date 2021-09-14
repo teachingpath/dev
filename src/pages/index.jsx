@@ -31,18 +31,18 @@ class DashboardPage extends React.Component {
         <Head>
           <title>Pathway | Teaching Path</title>
         </Head>
-        <Container fluid>
+        <Container fluid >
           {user?.profile === "coach" && (
             <>
               <Row>
-                <Col xs="12">
+                <Col xs="12"  className="bloq-description">
                   <InfoPanel {...this.props} />
                 </Col>
               </Row>
-              <Row portletFill="xl">
+              <Row portletFill="xl" >
                 <Col xl="8">
                   <Row portletFill="md">
-                    <Col md="6">
+                    <Col md="6" >
                       <Pathways {...this.props} />
 
                       <Activities {...this.props} />

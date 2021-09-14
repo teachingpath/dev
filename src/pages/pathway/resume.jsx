@@ -6,8 +6,10 @@ import {
   Progress,
   Widget4,
   Button,
+  Dropdown,
 } from "@panely/components";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { pageChangeHeaderTitle, breadcrumbChange } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -20,6 +22,7 @@ import { getJourney } from "consumer/journey";
 import { Timeline } from "@panely/components";
 import { getTracksResponses } from "consumer/user";
 import Marker from "@panely/components/Marker";
+import { linkify } from "components/helpers/mapper";
 
 class PathwayPage extends React.Component {
   constructor(props) {
@@ -28,13 +31,17 @@ class PathwayPage extends React.Component {
       name: "Resumen",
       progress: 0,
       list: [],
+      runnerList: [],
       waitTracks: 0,
       finishTracks: 0,
       dateUpdated: "--",
+      runnerSelected: "",
       runnerCurrent: "--",
       user: { displayName: "--", email: "--" },
     };
+    this.onFilter = this.onFilter.bind(this);
   }
+
   componentDidMount() {
     if (!Router.query.id) {
       Router.push("/");
@@ -44,7 +51,10 @@ class PathwayPage extends React.Component {
       { text: "Home", link: "/" },
       { text: "Resumen" },
     ]);
+    this.onLoad();
+  }
 
+  onLoad = () => {
     getJourney(
       Router.query.id,
       async (data) => {
@@ -53,18 +63,16 @@ class PathwayPage extends React.Component {
           { text: data.name },
         ]);
         const trackMapper = {};
+        const runnerMapper = [];
         const dateUpdated = new Date(
           (data.date.seconds + data.date.nanoseconds * 10 ** -9) * 1000
         );
 
-        const tracks = data.breadcrumbs.flatMap((item) =>
-          item.tracks.map((track) => {
-            trackMapper[track.id] = "["+item.name + "] "+track.title.trim();
-            return {
-              status: track.status,
-              name: track.title.trim(),
-            };
-          })
+        const tracks = this.getTracksByBreadcrumbs(
+          data.breadcrumbs,
+          data.current,
+          trackMapper,
+          runnerMapper
         );
 
         const waitTracks = tracks.filter(
@@ -75,6 +83,7 @@ class PathwayPage extends React.Component {
           .filter((item) => item.status === "finish")
           .map((it) => it.name)
           .join(", ");
+
         const runnerCurrent =
           data.progress >= 100
             ? "Pathway completado"
@@ -85,20 +94,19 @@ class PathwayPage extends React.Component {
               (data.breadcrumbs.length + 1) +
               ") [Running]";
 
-        const response = await getTracksResponses(data.userId, data.group);
+        const list = await this.getResponseByUserAndGroup(
+          data.userId,
+          data.group,
+          trackMapper
+        );
 
         this.setState({
           name: data.name,
-          list: response.list.map(
-            (data) => {
-              return {
-                response: data.result || data.feedback || data.answer || data.solution,
-                track: trackMapper[data.trackId],
-              };
-            }
-          ),
+          list: list,
+          contributions: list,
           group: data.group,
           waitTracks: waitTracks,
+          runnerList: runnerMapper,
           finishTracksTitles: finishTracksTitles,
           user: data.user,
           userId: data.userId,
@@ -111,9 +119,66 @@ class PathwayPage extends React.Component {
             " " +
             dateUpdated.toLocaleTimeString(),
         });
+        this.onFilter(
+          data.breadcrumbs[data.current].id,
+          data.breadcrumbs[data.current].name
+        );
       },
       () => {}
     );
+  };
+
+  getTracksByBreadcrumbs(
+    breadcrumbs,
+    runnerCurrent,
+    trackMapper,
+    runnerMapper
+  ) {
+    return breadcrumbs.flatMap((item) => {
+      runnerMapper.push({
+        name: item.name,
+        id: item.id,
+        isCurrent: breadcrumbs[runnerCurrent].id === item.id,
+      });
+      return item.tracks.map((track) => {
+        trackMapper[track.id] = {
+          runnerId: item.id,
+          name: "[" + track.type + "] " + track.title.trim(),
+          runnerName: item.name,
+        };
+        return {
+          status: track.status,
+          name: track.title.trim(),
+        };
+      });
+    });
+  }
+  async getResponseByUserAndGroup(userId, group, trackMapper) {
+    const response = await getTracksResponses(userId, group);
+    return response.list.map((data) => {
+      return {
+        response: data.result || data.feedback || data.answer || data.solution,
+        track: trackMapper[data.trackId].name,
+        runnerName: trackMapper[data.trackId].runnerName,
+        runnerId: trackMapper[data.trackId].runnerId,
+      };
+    });
+  }
+
+  onFilter(runnerId, runnerName) {
+    const list = this.state.contributions.filter((item) => {
+      return runnerId === "__all__" || item.runnerId === runnerId;
+    });
+    this.setState({
+      ...this.state,
+      list: list,
+      runnerSelected:
+        "Runner [<a href='/catalog/runner?id=" +
+        runnerId +
+        "'rel='noopener noreferrer' target='_blank'>" +
+        runnerName +
+        "</a>]",
+    });
   }
 
   render() {
@@ -130,6 +195,8 @@ class PathwayPage extends React.Component {
       pathwayId,
       journeyId,
       list,
+      runnerList,
+      runnerSelected,
     } = this.state;
     return (
       <React.Fragment>
@@ -149,6 +216,9 @@ class PathwayPage extends React.Component {
                   <hr />
                   <Widget7Component
                     list={list}
+                    runnerSelected={runnerSelected}
+                    onFilter={this.onFilter}
+                    runnerList={runnerList}
                     progress={progress}
                     waitTracks={waitTracks}
                     dateUpdated={dateUpdated}
@@ -194,12 +264,15 @@ function Widget7Component({
   progress,
   waitTracks,
   dateUpdated,
+  runnerList,
   finishTracksTitles,
   list,
+  onFilter,
+  runnerSelected,
 }) {
   return (
     <Portlet>
-      <Portlet.Body>
+      <Portlet.Body className="list">
         <Row>
           <Col sm="6">
             <Widget6Display
@@ -222,9 +295,15 @@ function Widget7Component({
             />
           </Col>
           <Col>
-            {list && <Widget5Display
-             title="Contribuciones" 
-             list={list} />}
+            {list && (
+              <Widget5Display
+                onFilter={onFilter}
+                title={"Contribuciones "}
+                list={list}
+                runnerSelected={runnerSelected}
+                runnerList={runnerList}
+              />
+            )}
           </Col>
         </Row>
       </Portlet.Body>
@@ -282,24 +361,91 @@ function Widget6Display(props) {
 }
 
 function Widget5Display(props) {
-  const { title, list, ...attributes } = props;
+  const { title, list, runnerList, runnerSelected, onFilter, ...attributes } =
+    props;
+
+  const RunnersAddon = ({ list }) => {
+    let statusRunning = false;
+    return (
+      <Portlet.Addon addonType="prepend">
+        <Dropdown.Uncontrolled>
+          <Dropdown.Toggle icon variant="text-secondary">
+            <FontAwesomeIcon icon={SolidIcon.faFilter} />
+          </Dropdown.Toggle>
+          <Dropdown.Menu right animated>
+            {list.map((item) => {
+              if (statusRunning === false) {
+                statusRunning = item.isCurrent === true;
+              }
+              return (
+                <Dropdown.Item
+                  onClick={() => {
+                    onFilter(item.id, item.name);
+                  }}
+                  icon={
+                    <FontAwesomeIcon
+                      icon={
+                        item.isCurrent === true
+                          ? SolidIcon.faRunning
+                          : !statusRunning
+                          ? SolidIcon.faCheck
+                          : null
+                      }
+                    />
+                  }
+                >
+                  {item.name}
+                </Dropdown.Item>
+              );
+            })}
+
+            <Dropdown.Item
+              onClick={() => {
+                onFilter("__all__", "");
+              }}
+              icon={<FontAwesomeIcon icon={SolidIcon.faListAlt} />}
+            >
+              Ver Todos
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown.Uncontrolled>
+      </Portlet.Addon>
+    );
+  };
 
   return (
     <Widget4 {...attributes}>
       <Widget4.Group>
         <Widget4.Display>
-          <Widget4.Highlight children={title+" ("+list.length+")"} />
+          <Widget4.Highlight
+            children={
+              <Portlet.Header className="m-0 p-0">
+                <span>{title + " (" + list.length + ")"}</span>
+                <RunnersAddon list={runnerList} />
+              </Portlet.Header>
+            }
+          />
+          <Widget4.Subtitle
+            children={
+              <span dangerouslySetInnerHTML={{ __html: runnerSelected }} />
+            }
+          />
+
           <Timeline>
             {list.map((data, index) => {
-              const { date, response, track } = data;
-
+              const { date, response, track, runnerName } = data;
+              const title =
+                runnerSelected === "" ? "[" + runnerName + "] " + track : track;
               return (
                 <Timeline.Item
                   key={index}
                   date={date}
                   pin={<Marker type="circle" />}
                 >
-                  <strong>{track}:</strong> <i>{response}</i>
+                  <strong>{title}:</strong>{" "}
+                  <i
+                    dangerouslySetInnerHTML={{ __html: linkify(response) }}
+                  ></i>
                 </Timeline.Item>
               );
             })}

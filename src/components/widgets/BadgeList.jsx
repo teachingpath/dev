@@ -54,7 +54,7 @@ class BadgeListComponent extends React.Component {
             {this.props.journeyId ? "(" + inComplete + "/" + tolta + ")" : "("+tolta+")"}
           </Portlet.Title>
         </Portlet.Header>
-        <Portlet.Body>
+        <Portlet.Body className="list">
           <div className="mt-4">
             {this.state.data.length === 0 && (
               <p className="text-center text-muted">No hay emblemas aún.</p>

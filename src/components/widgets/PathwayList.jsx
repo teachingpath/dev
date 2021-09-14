@@ -111,7 +111,7 @@ class PathwaysComponent extends React.Component {
             </Button>
           </Portlet.Addon>
         </Portlet.Header>
-        <Portlet.Body>
+        <Portlet.Body className="list">
           <RichList bordered action>
             {this.state.data === null && <Spinner />}
             {this.state.data && this.state.data.length === 0 && (

@@ -37,7 +37,7 @@ class BadgeAllListComponent extends React.Component {
           </Portlet.Icon>
           <Portlet.Title>Emblemas ({this.state.data.length})</Portlet.Title>
         </Portlet.Header>
-        <Portlet.Body>
+        <Portlet.Body className="list">
           <div className="mt-4">
             {this.state.data.length === 0 && (
               <p className="text-center text-muted">No hay emblemas aún.</p>

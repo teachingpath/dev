@@ -124,7 +124,7 @@ class RunnerList extends React.Component {
             <strong>{timeConvert(timePowerTen(estimation))}</strong>
           </p>
         )}
-        <ReactSortable list={this.state.data} setList={this.onSortList}>
+        <ReactSortable list={this.state.data} setList={this.onSortList} className="list">
           {this.state.data.map((data, index) => {
             const {
               title,

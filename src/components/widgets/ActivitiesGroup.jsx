@@ -49,7 +49,7 @@ class ActivitiesComponent extends React.Component {
           </Portlet.Icon>
           <Portlet.Title>Actividades de la Sala</Portlet.Title>
         </Portlet.Header>
-        <Portlet.Body>
+        <Portlet.Body className="list">
           {this.state.data === null && <Spinner />}
           {this.state.data && this.state.data.length === 0 && (
             <p className="text-center">No hay activiades aún.</p>

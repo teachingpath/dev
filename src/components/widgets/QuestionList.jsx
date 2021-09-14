@@ -116,7 +116,7 @@ class QuestionList extends React.Component {
         {this.state.data.length === 0 && (
           <p className="text-center">Aún no tiene preguntas.</p>
         )}
-        <ReactSortable list={this.state.data} setList={this.onSortList}>
+        <ReactSortable list={this.state.data} setList={this.onSortList} className="list">
           {this.state.data.map((data, index) => {
             const { title, subtitle, type, id } = data;
 

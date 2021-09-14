@@ -91,7 +91,7 @@ class TrackList extends React.Component {
       .reduce((a, b) => a + b, 0);
 
     return (
-      <RichList bordered action>
+      <RichList bordered action className="list">
         {this.state.loaded === false && <Spinner>loading...</Spinner>}
         {this.state.loaded === true && this.state.data.length === 0 && (
           <p className="text-center">No hay tracks.</p>
