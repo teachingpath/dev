@@ -3,7 +3,6 @@ import * as firebaseAdmin from "firebase-admin";
 import serviceAccount from "config/firebase-service-account.json";
 import FIREBASE from "config/firebase.config";
 import { groupBy } from "components/helpers/array";
-const { Parser } = require('json2csv');
 
 const Mustache = require("mustache");
 
