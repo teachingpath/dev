@@ -18,7 +18,7 @@ import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
 import Router from "next/router";
 import ActivitiesComponent from "components/widgets/Activities";
-import { getJourney } from "consumer/journey";
+import { getJourney, updateJourney } from "consumer/journey";
 import { Timeline } from "@panely/components";
 import { getTracksResponses } from "consumer/user";
 import Marker from "@panely/components/Marker";
@@ -55,9 +55,7 @@ class PathwayPage extends React.Component {
   }
 
   onLoad = () => {
-    getJourney(
-      Router.query.id,
-      async (data) => {
+    getJourney( Router.query.id, async (data) => {
         this.props.breadcrumbChange([
           { text: "Home", link: "/" },
           { text: data.name },
@@ -67,7 +65,7 @@ class PathwayPage extends React.Component {
         const dateUpdated = new Date(
           (data.date.seconds + data.date.nanoseconds * 10 ** -9) * 1000
         );
-
+        const isCompleted = data.current === data.breadcrumbs.length;
         const tracks = this.getTracksByBreadcrumbs(
           data.breadcrumbs,
           data.current,
@@ -79,20 +77,19 @@ class PathwayPage extends React.Component {
           (item) => item.status === "wait"
         ).length;
 
-        const finishTracksTitles = tracks
+        const finishTracksTitles = isCompleted ? tracks.length : tracks
           .filter((item) => item.status === "finish")
           .map((it) => it.name)
           .join(", ");
 
-        const runnerCurrent =
-          data.progress >= 100
-            ? "Pathway completado"
-            : data.breadcrumbs[data.current].name +
-              " (" +
-              (data.current + 1) +
-              "/" +
-              (data.breadcrumbs.length + 1) +
-              ") [Running]";
+        const runnerCurrent = (data.progress >= 100 || isCompleted) ? "PATHWAY COMPLETADO 👍"
+            : data.breadcrumbs[data.current]?.name +
+              "🏃🏻(" +(data.current + 1) + "/" + (data.breadcrumbs.length + 1) + ") [Running]";
+
+
+        if(isCompleted && data.progress < 100){
+          updateJourney(Router.query.id, {progress: 100});
+        } 
 
         const list = await this.getResponseByUserAndGroup(
           data.userId,
@@ -120,8 +117,8 @@ class PathwayPage extends React.Component {
             dateUpdated.toLocaleTimeString(),
         });
         this.onFilter(
-          data.breadcrumbs[data.current].id,
-          data.breadcrumbs[data.current].name
+          isCompleted ? "__all__":data.breadcrumbs[data.current]?.id,
+          isCompleted ? null :data.breadcrumbs[data.current]?.name
         );
       },
       () => {}
@@ -138,7 +135,7 @@ class PathwayPage extends React.Component {
       runnerMapper.push({
         name: item.name,
         id: item.id,
-        isCurrent: breadcrumbs[runnerCurrent].id === item.id,
+        isCurrent: breadcrumbs[runnerCurrent]?.id === item.id,
       });
       return item.tracks.map((track) => {
         trackMapper[track.id] = {
@@ -172,11 +169,9 @@ class PathwayPage extends React.Component {
     this.setState({
       ...this.state,
       list: list,
-      runnerSelected:
-        "Runner [<a href='/catalog/runner?id=" +
-        runnerId +
-        "'rel='noopener noreferrer' target='_blank'>" +
-        runnerName +
+      runnerSelected: !runnerName ? "" :
+        "Runner [<a href='/catalog/runner?id=" + runnerId +"'rel='noopener noreferrer' target='_blank'>" +
+          runnerName +
         "</a>]",
     });
   }

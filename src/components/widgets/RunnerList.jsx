@@ -21,6 +21,9 @@ import {
   timePowerTen,
   timeShortPowerTen,
 } from "components/helpers/time";
+import Accordion from "@panely/components/Accordion";
+import Card from "@panely/components/Card";
+import Collapse from "@panely/components/Collapse";
 
 const ReactSwal = swalContent(Swal);
 const swal = ReactSwal.mixin({
@@ -38,6 +41,7 @@ class RunnerList extends React.Component {
     this.state = {
       data: props.data || [],
       loaded: false,
+      activeCard: -1,
     };
 
     this.onSortList = this.onSortList.bind(this);
@@ -73,26 +77,6 @@ class RunnerList extends React.Component {
     );
   }
 
-  onDelete(runnerId) {
-    swal
-      .fire({
-        title: "¿Estas seguro/segura?",
-        text: "¡No podrás revertir esto!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "¡Sí, bórralo!",
-      })
-      .then((result) => {
-        if (result.value) {
-          deleteRunner(runnerId).then(() => {
-            this.componentDidMount();
-          });
-        }
-      });
-  }
-
   onSortList(list) {
     list.forEach((item, level) => {
       updateLevel(item.id, level);
@@ -107,11 +91,19 @@ class RunnerList extends React.Component {
     return true;
   }
 
+  toggleAccordion = (id) => {
+    if (this.state.activeCard === id) {
+      this.setState({ ...this.state, activeCard: null });
+    } else {
+      this.setState({ ...this.state, activeCard: id });
+    }
+  };
+
   render() {
     const estimation = this.state.data
       .map((el) => el.estimation)
       .reduce((a, b) => a + b, 0);
-
+    const activeCard = this.state.activeCard;
     return (
       <RichList bordered action>
         {this.state.loaded === false && <Spinner />}
@@ -124,7 +116,11 @@ class RunnerList extends React.Component {
             <strong>{timeConvert(timePowerTen(estimation))}</strong>
           </p>
         )}
-        <ReactSortable list={this.state.data} setList={this.onSortList} className="list">
+        <ReactSortable
+          list={this.state.data}
+          setList={this.onSortList}
+          className="list"
+        >
           {this.state.data.map((data, index) => {
             const {
               title,
@@ -159,7 +155,12 @@ class RunnerList extends React.Component {
                       });
                     }}
                   >
-                   {badge && <FontAwesomeIcon icon={SolidIcon.faCheckCircle} className="mr-2"/>} 
+                    {badge && (
+                      <FontAwesomeIcon
+                        icon={SolidIcon.faCheckCircle}
+                        className="mr-2"
+                      />
+                    )}
                     {index + 1}. {title} [ {timeShortPowerTen(estimation)}]
                   </RichList.Title>
                   <RichList.Subtitle>
@@ -178,115 +179,22 @@ class RunnerList extends React.Component {
                       <Col md="11"> {subtitle}</Col>
                     </Row>
                   </RichList.Subtitle>
-
-                  <RichList className=" mt-2 mb-2">
-                    {tracks.map((track, indexTrack) => {
-                      return (
-                        <RichList.Item key={indexTrack}>
-                          <RichList.Content
-                            onClick={() => {
-                              Router.push({
-                                pathname: "/track/edit",
-                                query: {
-                                  runnerId: id,
-                                  trackId: track.id,
-                                  pathwayId: pathwayId,
-                                },
-                              });
-                            }}
-                          >
-                            <RichList.Title
-                              title={
-                                'Click en el track para ver "' +
-                                track.name +
-                                '"'
-                              }
-                            >
-                              {index + 1}.{indexTrack + 1}. {track.name}
-                            </RichList.Title>
-                          </RichList.Content>
-                          <RichList.Addon addonType="append">
-                            <Badge variant="label-info">{track.type}</Badge>
-                          </RichList.Addon>
-                        </RichList.Item>
-                      );
-                    })}
-                  </RichList>
+                  <Accordion>
+                    <Badge
+                      style={{ cursor: "pointer", float: "right" }}
+                      title="Click para expandir o ocultar"
+                      onClick={() => this.toggleAccordion(index)}
+                    >
+                      {!(activeCard === index) ? "Ver" : "Ocultar"} los tracks (
+                      {tracks.length})
+                    </Badge>
+                    <br /> <br />
+                    <Collapse isOpen={activeCard === index}>
+                      <TrackList tracks={tracks} index={index} />
+                    </Collapse>
+                  </Accordion>
                 </RichList.Content>
-                <RichList.Addon addonType="append">
-                  <Dropdown.Uncontrolled>
-                    <Dropdown.Toggle icon variant="text-secondary">
-                      <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu right animated>
-                      <Dropdown.Item
-                        onClick={() => {
-                          Router.push({
-                            pathname: "/runner/edit",
-                            query: {
-                              runnerId: id,
-                              pathwayId: pathwayId,
-                            },
-                          });
-                        }}
-                        icon={<FontAwesomeIcon icon={SolidIcon.faEdit} />}
-                      >
-                        Editar
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        onClick={() => {
-                          this.onDelete(id);
-                        }}
-                        icon={<FontAwesomeIcon icon={SolidIcon.faTrashAlt} />}
-                      >
-                        Eliminar
-                      </Dropdown.Item>
-                      <Dropdown.Divider />
-                      <Dropdown.Item
-                        onClick={() => {
-                          Router.push({
-                            pathname: "/runner/quiz/create",
-                            query: {
-                              runnerId: id,
-                              pathwayId: pathwayId,
-                            },
-                          });
-                        }}
-                        icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
-                      >
-                        Agregar Quiz
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        onClick={() => {
-                          Router.push({
-                            pathname: "/runner/badge",
-                            query: {
-                              runnerId: id,
-                              pathwayId: pathwayId,
-                            },
-                          });
-                        }}
-                        icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
-                      >
-                        Agregar Emblema
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        onClick={() => {
-                          Router.push({
-                            pathname: "/track/create",
-                            query: {
-                              runnerId: id,
-                              pathwayId: pathwayId,
-                            },
-                          });
-                        }}
-                        icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
-                      >
-                        Agrgar Track
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown.Uncontrolled>
-                </RichList.Addon>
+                <AddonRunner />
               </RichList.Item>
             );
           })}
@@ -295,5 +203,134 @@ class RunnerList extends React.Component {
     );
   }
 }
-
+const AddonRunner = ({ id, pathwayId }) => {
+  const onDelete = (runnerId) => {
+    swal
+      .fire({
+        title: "¿Estas seguro/segura?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "¡Sí, bórralo!",
+      })
+      .then((result) => {
+        if (result.value) {
+          deleteRunner(runnerId).then(() => {
+            this.componentDidMount();
+          });
+        }
+      });
+  };
+  return (
+    <RichList.Addon addonType="append">
+      <Dropdown.Uncontrolled>
+        <Dropdown.Toggle icon variant="text-secondary">
+          <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
+        </Dropdown.Toggle>
+        <Dropdown.Menu right animated>
+          <Dropdown.Item
+            onClick={() => {
+              Router.push({
+                pathname: "/runner/edit",
+                query: {
+                  runnerId: id,
+                  pathwayId: pathwayId,
+                },
+              });
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faEdit} />}
+          >
+            Editar
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              onDelete(id);
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faTrashAlt} />}
+          >
+            Eliminar
+          </Dropdown.Item>
+          <Dropdown.Divider />
+          <Dropdown.Item
+            onClick={() => {
+              Router.push({
+                pathname: "/runner/quiz/create",
+                query: {
+                  runnerId: id,
+                  pathwayId: pathwayId,
+                },
+              });
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faQuestion} />}
+          >
+            Agregar Quiz
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              Router.push({
+                pathname: "/runner/badge",
+                query: {
+                  runnerId: id,
+                  pathwayId: pathwayId,
+                },
+              });
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
+          >
+            Agregar Emblema
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              Router.push({
+                pathname: "/track/create",
+                query: {
+                  runnerId: id,
+                  pathwayId: pathwayId,
+                },
+              });
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
+          >
+            Agrgar Track
+          </Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown.Uncontrolled>
+    </RichList.Addon>
+  );
+};
+const TrackList = ({ tracks, index }) => {
+  return (
+    <RichList className=" mt-2 mb-2">
+      {tracks.map((track, indexTrack) => {
+        return (
+          <RichList.Item key={indexTrack}>
+            <RichList.Content
+              onClick={() => {
+                Router.push({
+                  pathname: "/track/edit",
+                  query: {
+                    runnerId: id,
+                    trackId: track.id,
+                    pathwayId: pathwayId,
+                  },
+                });
+              }}
+            >
+              <RichList.Title
+                title={'Click en el track para ver "' + track.name + '"'}
+              >
+                {index + 1}.{indexTrack + 1}. {track.name}
+              </RichList.Title>
+            </RichList.Content>
+            <RichList.Addon addonType="append">
+              <Badge variant="label-info">{track.type}</Badge>
+            </RichList.Addon>
+          </RichList.Item>
+        );
+      })}
+    </RichList>
+  );
+};
 export default RunnerList;

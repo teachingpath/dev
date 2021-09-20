@@ -2,7 +2,7 @@ import { bindActionCreators } from "redux";
 import { firebaseChange } from "store/actions";
 import { connect } from "react-redux";
 import { userChange } from "store/actions";
-import { firestoreClient } from "./firebaseClient";
+import { firestoreClient, firebaseClient } from "./firebaseClient";
 import Router from "next/router";
 import nookies from "nookies";
 import jwt_decode from "jwt-decode";
@@ -34,14 +34,19 @@ function firebaseWithAuth(AuthComponent) {
       } else {
         try {
           const claims = jwt_decode(cookies.token);
-          return {
-            ...initialProps,
-            firebase: {
-              user_id: claims.user_id,
-              email: claims.email,
-              name: claims.name,
-            },
-          };
+          if(claims.user_id){
+            return {
+              ...initialProps,
+              firebase: {
+                user_id: claims.user_id,
+                email: claims.email,
+                name: claims.name,
+              },
+            };
+          } else {
+            Router.push(PAGE.loginPagePath);
+          }
+         
         } catch (error) {
           if (ctx.res) {
             ctx.res.writeHead(302, { Location: PAGE.loginPagePath });
@@ -55,24 +60,23 @@ function firebaseWithAuth(AuthComponent) {
 
     componentDidMount() {
       this.props.firebaseChange(this.props.firebase);
+      const user = firebaseClient.auth()?.currentUser;
+      const userId = this.props.firebase?.user_id || user.uid;
       firestoreClient
         .collection("users")
-        .doc(this.props.firebase?.user_id)
+        .doc(userId)
         .get()
         .then((doc) => {
           if (doc.exists) {
             this.props.userChange({
               ...doc.data(),
-              uid: this.props.firebase?.user_id,
+              uid: userId,
             });
           }
         });
     }
 
     render() {
-      if (this.props.user === null) {
-        return <Spinner className="m-5"></Spinner>;
-      }
       return <AuthComponent {...this.props} />;
     }
   }

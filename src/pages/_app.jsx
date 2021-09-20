@@ -29,11 +29,10 @@ class MyApp extends App {
     const darkModeActive = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;
-  
-  // TODO: change for window drive
+
+    // TODO: change for window drive
     this.props.pageChangeTheme("light");
   }
-
 
   componentDidUpdate(prevProps) {
     if (this.props.theme !== prevProps.theme) {
@@ -46,22 +45,12 @@ class MyApp extends App {
         document.body.classList.add("theme-light");
       }
     }
-    
   }
 
   render() {
     const { Component, pageProps } = this.props;
 
     switch (pageProps.layout) {
-      case "default":
-        return (
-          <AuthProvider>
-            <DefaultLayout>
-              <ProgressBar />
-              <Component {...pageProps} />
-            </DefaultLayout>
-          </AuthProvider>
-        );
       case "blank":
         return (
           <AuthProvider>
@@ -78,6 +67,7 @@ class MyApp extends App {
             <Component {...pageProps} />
           </PublicLayout>
         );
+      case "default":
       default:
         return (
           <AuthProvider>

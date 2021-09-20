@@ -230,7 +230,10 @@ class InfoModal extends React.Component {
                         onClick={() => this.toggleAccordion(index)}
                       >
                         <Card.Title>{group.toUpperCase()}</Card.Title>
-                        <Portlet.Addon>
+                      </Card.Header>
+
+                      <Collapse isOpen={activeCard === index}>
+                      <Portlet.Addon className="float-right">
                           <Dropdown.Uncontrolled>
                             <Dropdown.Toggle icon variant="text-secondary">
                               <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
@@ -266,14 +269,11 @@ class InfoModal extends React.Component {
                                   <FontAwesomeIcon icon={SolidIcon.faReply} />
                                 }
                               >
-                                Enviar reporte
+                                Enviar reporte a todos los aprendices
                               </Dropdown.Item>
                             </Dropdown.Menu>
                           </Dropdown.Uncontrolled>
                         </Portlet.Addon>
-                      </Card.Header>
-
-                      <Collapse isOpen={activeCard === index}>
                         {dataList[group].map((data, index) => {
                           const { name, date, progress, id, user } = data;
                           const dateUpdated = new Date(
