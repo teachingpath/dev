@@ -152,6 +152,8 @@ class Tracks extends React.Component {
                       <AttachResult
                         item={item}
                         user={user}
+                        runnerId={runnerId}
+                        pathwayId={pathwayId}
                         activityChange={activityChange}
                         journeyId={journeyId}
                         group={group}
@@ -229,6 +231,7 @@ class Tracks extends React.Component {
 }
 
 const AttachResult = (props) => {
+  console.log(props);
   return (
     <span className="float-left mr-1">
       {
@@ -248,14 +251,13 @@ const Attach = ({
   user,
   journeyId,
   group,
+  runnerId,
+  pathwayId,
   activityChange,
 }) => {
   const [att, setAtt] = useState(null);
   useEffect(() => {
-    console.log(user.uid);
-    getTracksResponseByUserId(
-      id,
-      user.uid,
+    getTracksResponseByUserId(id,  user.uid,
       (result) => {
         setAtt(result.list.length === 0);
       },
@@ -278,6 +280,8 @@ const Attach = ({
             journeyId={journeyId}
             type={type}
             user={user}
+            runnerId={runnerId}
+            pathwayId={pathwayId}
             activityChange={activityChange}
           >
             <FontAwesomeIcon icon={SolidIcon.faExclamationTriangle} />
@@ -296,6 +300,8 @@ const Attach = ({
             journeyId={journeyId}
             type={type}
             user={user}
+            runnerId={runnerId}
+            pathwayId={pathwayId}
             activityChange={activityChange}
           >
             <FontAwesomeIcon icon={SolidIcon.faCheckCircle} />

@@ -8,6 +8,7 @@ import {
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import withAuth from "components/firebase/firebaseWithAuth";
 import { firebaseClient } from "components/firebase/firebaseClient";
 import withLayout from "components/layout/withLayout";
 import Head from "next/head";
@@ -19,13 +20,16 @@ import Label from "@panely/components/Label";
 import Spinner from "@panely/components/Spinner";
 import { loadQuiz } from "consumer/evaluation";
 import { enableBadge, getJourney, updateJourney } from "consumer/journey";
+import { removePoint } from "consumer/user";
+import { userChange } from "store/actions/userAction";
 
 class QuizPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       quizTitle: "Comprueba tu conocimiento del Runner.",
-      quizSynopsis: "Bienvenido a la evaluación de conceptos de verificación del runner. Al aprobar este cuestionario, puede obtener el emblema del Runner. Resuelve el cuestionario en el menor tiempo posible. Con esta evaluación te permite asegurar el conocimiento, si por alguna razón te das cuenta que no puedes resolver el cuestionario, te invito a repasar los conceptos del Runner.",
+      quizSynopsis:
+        "Bienvenido a la evaluación de conceptos de verificación del runner. Al aprobar este cuestionario, puede obtener el emblema del Runner. Resuelve el cuestionario en el menor tiempo posible. Con esta evaluación te permite asegurar el conocimiento, si por alguna razón te das cuenta que no puedes resolver el cuestionario, te invito a repasar los conceptos del Runner.",
       questions: [],
     };
     this.onFinish = this.onFinish.bind(this);
@@ -117,7 +121,9 @@ class QuizPage extends React.Component {
       .then((doc) => {
         return updateJourney(id, data).then(() => {
           const linkResume = id
-            ? '<i><a href="/pathway/resume?id=' + id +'">' +
+            ? '<i><a href="/pathway/resume?id=' +
+              id +
+              '">' +
               user.displayName +
               "</a></i>"
             : "<i>" + user.displayName + "</i>";
@@ -126,9 +132,13 @@ class QuizPage extends React.Component {
             type: "complete_quiz",
             msn: 'Runner "' + currentRunner.name + '" está completo.',
             point: totalPoints,
-            msnForGroup:linkResume + ' ha completado el runner <b>"' +
-              currentRunner.name +   '"</b> y su nuevo progreso es: ' + 
-               data.progress.toFixed(2) + "%",
+            msnForGroup:
+              linkResume +
+              ' ha completado el runner <b>"' +
+              currentRunner.name +
+              '"</b> y su nuevo progreso es: ' +
+              data.progress.toFixed(2) +
+              "%",
             group: data.group,
           });
 
@@ -183,8 +193,9 @@ class QuizPage extends React.Component {
         variant={"outline-success"}
         icon={<FontAwesomeIcon icon={SolidIcon.faCheckCircle} />}
       >
-       <i className="far fa-check-circle"></i> 
-       ¡Felicitaciones!, pasó la validación de conceptos. Has conseguido {totalPoints} puntos que te ayudan a continuar.
+        <i className="far fa-check-circle"></i>
+        ¡Felicitaciones!, pasó la validación de conceptos. Has conseguido{" "}
+        {totalPoints} puntos que te ayudan a continuar.
         <h4 className="mt-3">Resultado</h4>
         <div>
           <Label>
@@ -209,7 +220,8 @@ class QuizPage extends React.Component {
         variant={"outline-danger"}
         icon={<FontAwesomeIcon icon={SolidIcon.faTimes} />}
       >
-       <i className="fas fa-exclamation-triangle"></i> Esta evaluación de conceptos no se aprobó, debe intentarlo de nuevo para obtener el emblema
+        <i className="fas fa-exclamation-triangle"></i> Esta evaluación de
+        conceptos no se aprobó, debe intentarlo de nuevo para obtener el emblema
         del Runner y pasar el Pathway. Anímate y vuelve a intentarlo. Te
         recomendamos volver al pathway y repasar los conceptos ahí descritos.
         <h4 className="mt-3">Result</h4>
@@ -279,11 +291,32 @@ class QuizPage extends React.Component {
                 </Col>
                 <Col md="10">
                   {this.state.questions.length > 0 && (
-                    <Quiz
-                      quiz={this.state}
-                      showDefaultResult={false}
-                      customResultPage={this.renderCustomResultPage}
-                    />
+                    <>
+                      <Alert variant={"label-info"}>
+                        ESTE QUIZ TIENE UN CAJE DE{" "}
+                        <strong>{this.state.questions.length * 2} PTS</strong>{" "}
+                        AL INICIAR EL QUIZ
+                      </Alert>
+                      <Quiz
+                        quiz={this.state}
+                        onStart={() => {
+                          const userId = this.props.user.uid;
+                          removePoint(
+                            userId,
+                            this.state.questions.length * 2
+                          ).then(() => {
+                            this.props.userChange({
+                              ...this.props.user,
+                              point:
+                                this.props.user.point -
+                                this.state.questions.length * 2,
+                            });
+                          });
+                        }}
+                        showDefaultResult={false}
+                        customResultPage={this.renderCustomResultPage}
+                      />
+                    </>
                   )}
                 </Col>
               </Row>
@@ -297,9 +330,18 @@ class QuizPage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, userChange },
     dispatch
   );
 }
 
-export default connect(null, mapDispathToProps)(withLayout(QuizPage));
+function mapStateToProps(state) {
+  return {
+    user: state.user,
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispathToProps
+)(withAuth(withLayout(QuizPage)));

@@ -39,7 +39,6 @@ class TrackModal extends React.Component {
   componentDidMount() {
     document.querySelectorAll("pre").forEach((el) => {
       hljs.configure({
-        // optionally configure hljs
         languages: ["javascript", "ruby", "python", "java"],
       });
       hljs.highlightElement(el);
@@ -55,11 +54,7 @@ class TrackModal extends React.Component {
 
   loadData() {
     const { pathwayId, runnerId, trackId } = this.props;
-    getTrack(
-      pathwayId,
-      runnerId,
-      trackId,
-      (data) => {
+    getTrack(pathwayId, runnerId,  trackId, (data) => {
         this.setState({
           isOpen: true,
           isRunning: true,

@@ -39,10 +39,10 @@ function SolutionForm({ onSave }) {
   return (
     <Form
       onSubmit={handleSubmit((data) => {
-        setLoad(true)
+        setLoad(true);
         onSave(data).then(() => {
           reset();
-          setLoad(false)
+          setLoad(false);
         });
       })}
     >
@@ -99,43 +99,48 @@ class HackingTrack extends React.Component {
   render() {
     const { data, group, journeyId } = this.props;
     const id = data.id;
-    const user = firebaseClient.auth().currentUser;
+    const user = this.props.user || firebaseClient.auth().currentUser;
     const typeContent = data?.typeContent;
     const trackName = this.props.data?.name;
     return (
       <>
-        <Card>
-          <Card.Header>Pautas</Card.Header>
-          <Card.Body>
-            <Card.Text>
-              {
+        {data.guidelines && (
+          <Card>
+            <Card.Header>Pautas</Card.Header>
+            <Card.Body>
+              <Card.Text>
                 {
-                  file: (
-                    <div
-                      dangerouslySetInnerHTML={{ __html: data.guidelines }}
-                    />
-                  ),
-                  fileCode: (
-                    <div
-                      dangerouslySetInnerHTML={{ __html: data.guidelines }}
-                    />
-                  ),
-                  video: <ReactPlayer url={data.guidelines} />,
-                  url: <DescribeURL url={data.guidelines} />,
-                }[typeContent]
-              }
-            </Card.Text>
-          </Card.Body>
-        </Card>
+                  {
+                    file: (
+                      <div
+                        dangerouslySetInnerHTML={{ __html: data.guidelines }}
+                      />
+                    ),
+                    fileCode: (
+                      <div
+                        dangerouslySetInnerHTML={{ __html: data.guidelines }}
+                      />
+                    ),
+                    video: <ReactPlayer url={data.guidelines} />,
+                    url: <DescribeURL url={data.guidelines} />,
+                  }[typeContent]
+                }
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        )}
 
-        <Card className="mt-3">
-          <Card.Header>Criterios</Card.Header>
-          <Card.Body>
-            <Card.Text>
-              <div dangerouslySetInnerHTML={{ __html: data.criteria }} />
-            </Card.Text>
-          </Card.Body>
-        </Card>
+        {data.criteria && (
+          <Card className="mt-3">
+            <Card.Header>Criterios</Card.Header>
+            <Card.Body>
+              <Card.Text>
+                <div dangerouslySetInnerHTML={{ __html: data.criteria }} />
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        )}
+
         {user && (
           <Card>
             <Card.Header>
@@ -151,11 +156,18 @@ class HackingTrack extends React.Component {
                   return saveTrackResponse(id, group, data).then(() => {
                     if (this.props.activityChange) {
                       const linkResume = journeyId
-                        ? '<i><a href="/pathway/resume?id=' +journeyId + '">' +
-                          user.displayName + "</a></i>" : "<i>" + user.displayName + "</i>";
+                        ? '<i><a href="/pathway/resume?id=' +
+                          journeyId +
+                          '">' +
+                          user.displayName +
+                          "</a></i>"
+                        : "<i>" + user.displayName + "</i>";
                       this.props.activityChange({
                         type: "new_track_response",
-                        msn:  'Respuesta de nueva Track dentro de la sala "' +  group +  '".',
+                        msn:
+                          'Respuesta de nueva Track dentro de la sala "' +
+                          group +
+                          '".',
                         msnForGroup:
                           "Nueva respuesta  por " +
                           linkResume +
@@ -164,7 +176,7 @@ class HackingTrack extends React.Component {
                           "</b>.",
                         group: group,
                       });
-                    }                    
+                    }
                     this.setState({ current: this.state.current + 1 });
                     setTimeout(() => {
                       this.componentDidMount();

@@ -102,7 +102,7 @@ class TrainingTrack extends React.Component {
       journeyId,
       group,
     } = this.props;
-    const user = firebaseClient.auth().currentUser;
+    const user = this.props.user || firebaseClient.auth().currentUser;
     const trackName = this.props.data?.name;
     return (
       <Steps current={this.state.current} direction="vertical">

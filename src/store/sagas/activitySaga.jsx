@@ -2,6 +2,8 @@ import {
   firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
+import { put, select } from "redux-saga/effects";
+import { userChange } from "store/actions/userAction";
 
 function* activitySaga({ payload }) {
   const user = firebaseClient.auth().currentUser;
@@ -40,8 +42,14 @@ function addActivity(user, payload) {
     });
 }
 
-function addPoint(user, point) {
+function* addPoint(user, point) {
   const increment = firebaseClient.firestore.FieldValue.increment(point);
+  const dataUser = yield select((state) => state.user);
+
+  yield put(userChange({
+    ...dataUser,
+    point:dataUser.point + point
+  }));
 
   firestoreClient
     .collection("users")

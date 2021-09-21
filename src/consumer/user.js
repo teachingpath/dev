@@ -1,4 +1,7 @@
-import { firestoreClient } from "components/firebase/firebaseClient";
+import {
+  firestoreClient,
+  firebaseClient,
+} from "components/firebase/firebaseClient";
 export const getUser = (leaderId, resolve, reject) => {
   firestoreClient
     .collection("users")
@@ -11,6 +14,28 @@ export const getUser = (leaderId, resolve, reject) => {
       console.log("Error getting documents: ", error);
       reject();
     });
+};
+
+export const addPoint = (userId, point) => {
+  const increment = firebaseClient.firestore.FieldValue.increment(point);
+
+  return firestoreClient
+    .collection("users")
+    .doc(userId)
+    .update({
+      point: increment,
+    })
+};
+
+export const removePoint = (userId, point) => {
+  const increment = firebaseClient.firestore.FieldValue.increment(point*-1);
+
+  return firestoreClient
+    .collection("users")
+    .doc(userId)
+    .update({
+      point: increment,
+    })
 };
 
 export const getTracksResponses = (userId, group, resolve, reject) => {

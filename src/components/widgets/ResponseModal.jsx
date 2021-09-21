@@ -4,12 +4,14 @@ import LearningTrack from "./LearningTrack";
 import Questions from "./QuestionTrack";
 import TrainingTrack from "./TrainingTrack";
 import HackingTrack from "./HackingTrack";
+import { getTrack } from "consumer/track";
 
 class ResponseModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isOpen: false,
+      data: {},
     };
   }
 
@@ -17,9 +19,34 @@ class ResponseModal extends React.Component {
     this.setState({ isOpen: !this.state.isOpen });
   };
 
+
+  componentDidMount() {
+    const { pathwayId, runnerId, id } = this.props;
+    getTrack(pathwayId,runnerId, id,(data) => {
+      console.log(data);
+        this.setState({
+          ...data,
+          id: id,
+          training: [],
+          typeContent: "",
+          guidelines: null,
+          criteria: null
+        });
+      },
+      () => {}
+    );
+  }
+
   render() {
-    const { title, type, id, children, group, journeyId, activityChange } =
-      this.props;
+    const {
+      title,
+      type,
+      children,
+      group,
+      journeyId,
+      activityChange,
+      user,
+    } = this.props;
 
     return (
       <React.Fragment>
@@ -33,7 +60,8 @@ class ResponseModal extends React.Component {
               {
                 learning: (
                   <LearningTrack
-                    data={{ id }}
+                    user={user}
+                    data={this.state}
                     group={group}
                     journeyId={journeyId}
                     activityChange={activityChange}
@@ -41,7 +69,8 @@ class ResponseModal extends React.Component {
                 ),
                 questions: (
                   <Questions
-                    data={{ id }}
+                    user={user}
+                    data={this.state}
                     group={group}
                     journeyId={journeyId}
                     activityChange={activityChange}
@@ -49,15 +78,16 @@ class ResponseModal extends React.Component {
                 ),
                 training: (
                   <TrainingTrack
-                    data={{ id }}
-                    group={group}
+                  data={this.state}
+                  group={group}
                     journeyId={journeyId}
                     activityChange={activityChange}
                   />
                 ),
                 hacking: (
                   <HackingTrack
-                    data={{ id }}
+                    user={user}
+                    data={this.state}
                     group={group}
                     journeyId={journeyId}
                     activityChange={activityChange}

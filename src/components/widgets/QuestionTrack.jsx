@@ -38,10 +38,10 @@ function QuestionForm({ onSave }) {
   return (
     <Form
       onSubmit={handleSubmit((data) => {
-        setLoad(true)
+        setLoad(true);
         onSave(data).then(() => {
           reset();
-          setLoad(false)
+          setLoad(false);
         });
       })}
     >
@@ -66,7 +66,12 @@ function QuestionForm({ onSave }) {
           </Form.Group>
         </Col>
         <Col sm="2">
-          <Button type="submit" variant="primary" className="ml-2" disabled={load}>
+          <Button
+            type="submit"
+            variant="primary"
+            className="ml-2"
+            disabled={load}
+          >
             Enviar
           </Button>
         </Col>
@@ -92,10 +97,7 @@ class Questions extends React.Component {
       group,
     } = this.props;
 
-    getTracksResponses(
-      id,
-      group,
-      (data) => {
+    getTracksResponses(id, group,  (data) => {
         this.setState({
           ...this.state,
           list: data.list,
@@ -108,11 +110,11 @@ class Questions extends React.Component {
   render() {
     const { activeCard } = this.state;
     const {
-      data: { questions, id },
+      data: { questions = [], id },
       group,
       journeyId,
     } = this.props;
-    const user = firebaseClient.auth().currentUser;
+    const user = this.props.user || firebaseClient.auth().currentUser;
     const trackName = this.props.data?.name;
     return (
       <Accordion>
@@ -131,27 +133,39 @@ class Questions extends React.Component {
                   {user && (
                     <QuestionForm
                       onSave={(data) => {
-                        return saveTrackResponse(id, group, data, question.id).then(
-                          () => {
-                            if (this.props.activityChange) {
-                              const linkResume = journeyId
-                                ? '<i><a href="/pathway/resume?id=' + journeyId +
-                                  '">' +user.displayName +"</a></i>"
-                                : "<i>" + user.displayName + "</i>";
-                              this.props.activityChange({
-                                type: "new_track_response",
-                                msn: 'Nueva respuesta dentro de la sala "' + group +'".',
-                                msnForGroup: "Nueva respuesta por " + linkResume +
-                                  " desde question track <b>" +
-                                  trackName + "</b>.",
-                                group: group,
-                              });
-                            }
-                            setTimeout(() => {
-                              this.componentDidMount();
-                            }, 500);
+                        return saveTrackResponse(
+                          id,
+                          group,
+                          data,
+                          question.id
+                        ).then(() => {
+                          if (this.props.activityChange) {
+                            const linkResume = journeyId
+                              ? '<i><a href="/pathway/resume?id=' +
+                                journeyId +
+                                '">' +
+                                user.displayName +
+                                "</a></i>"
+                              : "<i>" + user.displayName + "</i>";
+                            this.props.activityChange({
+                              type: "new_track_response",
+                              msn:
+                                'Nueva respuesta dentro de la sala "' +
+                                group +
+                                '".',
+                              msnForGroup:
+                                "Nueva respuesta por " +
+                                linkResume +
+                                " desde question track <b>" +
+                                trackName +
+                                "</b>.",
+                              group: group,
+                            });
                           }
-                        );
+                          setTimeout(() => {
+                            this.componentDidMount();
+                          }, 500);
+                        });
                       }}
                     />
                   )}
