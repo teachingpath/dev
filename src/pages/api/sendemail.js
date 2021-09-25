@@ -1,6 +1,21 @@
-const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const nodemailer = require("nodemailer");
 const Mustache = require("mustache");
+
+const transporter = nodemailer.createTransport({
+  host: "smtpout.secureserver.net",
+  secure: true,
+  secureConnection: false, // TLS requires secureConnection to be false
+  tls: {
+    ciphers: "SSLv3",
+  },
+  requireTLS: true,
+  port: 465,
+  debug: true,
+  auth: {
+    user: "assistant@teachingpath.info",
+    pass: "Rauloko250360.",
+  },
+});
 
 const templates = {
   "welcome-coach": {
@@ -66,21 +81,14 @@ async function sendemailHandler(req, res) {
     try {
       const template = templates[req.query.template];
       const output = Mustache.render(template.body, req.query);
-      sgMail
-        .send({
-          to: req.query.email,
-          from: 'Teaching Path 🎓 <assistant@teachingpath.info>',
-          subject: template.subject,
-          html:output,
-        })
-        .then(() => {
-          console.log("Email sent");
-          res.status(200).json({ result: "OK" });
-        })
-        .catch((error) => {
-          console.log(error);
-          res.send(500, error);
-        });
+
+      const info = await transporter.sendMail({
+        from: "Teaching Path 🎓 <assistant@teachingpath.info>",
+        to: req.query.email,
+        subject: template.subject,
+        html: output,
+      });
+      res.status(200).json({ result: "OK", info });
     } catch (err) {
       res.status(403).send(err.message);
     }

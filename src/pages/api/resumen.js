@@ -2,14 +2,23 @@ import "firebase/firestore";
 import * as firebaseAdmin from "firebase-admin";
 import serviceAccount from "config/firebase-service-account.json";
 import FIREBASE from "config/firebase.config";
-
-const Recipient = require("mailersend").Recipient;
-const EmailParams = require("mailersend").EmailParams;
-const MailerSend = require("mailersend");
+const nodemailer = require('nodemailer');
 const Mustache = require("mustache");
 
-const mailersend = new MailerSend({
-  api_key: "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMWJiY2RlYjcwY2ZhODYwYzMzMmE5ZmY1NTk4Y2MyZTA4M2JiYWQyOTRhODA3ZDBiMGQwMzIyYzhhMTM0MDk4OWMyODc1NGI2ZmVhYjBjZTkiLCJpYXQiOjE2MzE2MzQxNTQuMjcwMzk0LCJuYmYiOjE2MzE2MzQxNTQuMjcwMzk4LCJleHAiOjQ3ODczMDc3NTQuMjAzODY0LCJzdWIiOiIxMjM1NSIsInNjb3BlcyI6WyJlbWFpbF9mdWxsIiwiZG9tYWluc19mdWxsIiwiYWN0aXZpdHlfZnVsbCIsImFuYWx5dGljc19mdWxsIiwidG9rZW5zX2Z1bGwiLCJ3ZWJob29rc19mdWxsIiwidGVtcGxhdGVzX2Z1bGwiLCJzdXBwcmVzc2lvbnNfZnVsbCJdfQ.R4zZuu9ROy07r5v01DoMODH1dZB1lzRxlmtCDrN6hwO4pCf84_5rXkcKV4ELgNm7b_MSaZnYvQye-O7EGAXKKSBI2TyfLvAyussy--ZH8afBpu4TkqBFS-wWa7xLXXDY4tAtM1gz-jfLfDZ5b9HQLP8kkVkiuYy5a5yaaYOaRlbVS7cqg1Urdh-V8Hqm51IQ69j2xqxib49MncFMOFJEVRnP8wT_vF6jQ9IxFdq8Ss5XJG6xNB734dVwhqJoCjDva-y0JuQYeNbxsnO9fJWna2TrM41n1dXiLkoqccFI3RbAJ_XqKekYR3qsShDOIdBZ9IZ7jdwBGY7IWn35PJDwmToAdPk4KgVJ6L9xUqMHnr4DAvQtQ-yRFbPNXq9f2md7XeQXFGDEwxMg2DpXlC33GTJ01-aq4XVS7YUur2DG-5Zv7UUaRhDkAGE2kCGeMU3kYEgrrreJPpX70yr-F0t7jlK1KeBTmV-ZuGhO4pZ72_mcBW9EIHv90wjvhOCzsCejI3Mv0TVFdT7I6GlTxYC0AnNMx3IfcQ7dJ-8Ltg0A754RLwrZu2IyYbB_o6XtMJ48LvdbP0g6mNhVWokcNp02_b3midg3bPaMsK7hKBv8yZYBw4sLegGgfxWGGwT1tnRnsODc6Sc4rbt7i2Oh5dgzMYBOCHewEyeMHmDDX0e-3qw",
+const transporter = nodemailer.createTransport({
+  host: "smtpout.secureserver.net",  
+  secure: true,
+  secureConnection: false, // TLS requires secureConnection to be false
+  tls: {
+      ciphers:'SSLv3'
+  },
+  requireTLS:true,
+  port: 465,
+  debug: true,
+  auth: {
+    user: 'assistant@teachingpath.info',
+    pass: 'Rauloko250360.'
+  }
 });
 
 if (!firebaseAdmin.apps.length) {
@@ -76,17 +85,15 @@ async function resumenHandler(req, res) {
 
               });
               
-              const recipients = [
-                new Recipient(user.email, user.displayName)
-              ];
-              const emailParams = new EmailParams()
-                .setFrom("assistant@teachingpath.info")
-                .setFromName("Teaching Path 🎓 <assistant@teachingpath.info>")
-                .setRecipients(recipients)
-                .setSubject("Tu Status en Teaching Path")
-                .setHtml(output);
+               await transporter.sendMail({
+                from: 'Teaching Path 🎓 <assistant@teachingpath.info>',
+                to: user.email,
+                subject: "Tu Status de Teaching Path",
+                html: output
+              });
+            
 
-              return mailersend.send(emailParams);
+              return user.email;
             }
 
             return null;
@@ -112,6 +119,7 @@ const getUsersWithJourney = (pathwayId, resolve, reject) => {
   firestoreClient
     .collection("journeys")
     .where("pathwayId", "==", pathwayId)
+    .where("progress", "<", 100)
     .get()
     .then((querySnapshot) => {
       if (!querySnapshot.empty) {
