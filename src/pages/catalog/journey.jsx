@@ -19,6 +19,7 @@ import StatusProgress from "components/widgets/StatusProgress";
 import RunnersExecutor from "components/widgets/RunnersExecutor";
 import { getJourney } from "consumer/journey";
 import Spinner from "../../../docs/template/src/modules/components/Spinner";
+import { createSlug } from "components/helpers/mapper";
 
 class JourneyGeneralPage extends React.Component {
   state = { name: "Cargando...", trophy: {}, progress: 0, badges: [] };
@@ -89,8 +90,11 @@ class JourneyGeneralPage extends React.Component {
                           children={name?.toUpperCase()}
                         />
                         <h5>
-                          <i className="fas fa-users"></i>{" "}
-                          <Badge title="tu sala o grupo">{group}</Badge>
+  
+                          <Badge title="tu sala o grupo">
+                          <i className="fas fa-users"></i> {' '}
+                            {group? group?.replace(createSlug(name)+"-", ""): "--"}
+                            </Badge>
                         </h5>
                       </Widget1.DialogContent>
                     </Widget1.Dialog>
@@ -121,7 +125,7 @@ class JourneyGeneralPage extends React.Component {
                   <Widget1.Body style={{ marginTop: "70px" }}>
                     <Row>
                       <Col md="6">
-                        {this.state?.runners && (
+                        {(user && this.state?.runners) && (
                           <RunnersExecutor
                             user={user}
                             current={this.state.current}
@@ -132,23 +136,14 @@ class JourneyGeneralPage extends React.Component {
                             activityChange={this.props.activityChange}
                             onComplete={(data) => {
                               const linkResume = this.state.id
-                                ? '<i><a href="/pathway/resume?id=' +
-                                  this.state.id +
-                                  '">' +
-                                  user.displayName +
+                                ? '<i><a href="/pathway/resume?id=' + this.state.id +'">' +
+                                    user.displayName +
                                   "</a></i>"
                                 : "<i>" + user.displayName + "</i>";
                               this.props.activityChange({
                                 type: "complete_track",
-                                msn:
-                                  'El Track "' +
-                                  data.title +
-                                  '" está completo.',
-                                msnForGroup:
-                                  linkResume +
-                                  ' ha completado el track <b>"' +
-                                  data.title +
-                                  '"</b>',
+                                msn: 'El Track "' + data.title + '" está completo.',
+                                msnForGroup: linkResume + ' ha completado el track <b>"' + data.title + '"</b>',
                                 group: group,
                               });
                               this.setState({

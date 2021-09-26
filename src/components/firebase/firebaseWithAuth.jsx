@@ -68,9 +68,11 @@ function firebaseWithAuth(AuthComponent) {
         .get()
         .then((doc) => {
           if (doc.exists) {
+            const data = doc.data();
             this.props.userChange({
-              ...doc.data(),
+              ...data,
               uid: userId,
+              displayName: data.firstName+" "+data.lastName
             });
           }
         });

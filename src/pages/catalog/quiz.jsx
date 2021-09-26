@@ -70,9 +70,7 @@ class QuizPage extends React.Component {
   };
 
   onFinish = ({ runnerId, id, totalPoints }) => {
-    getJourney(
-      id,
-      (data) => {
+    getJourney( id, (data) => {
         if (data.progress >= 100) {
           Router.push({
             pathname: "/catalog/journey",
@@ -121,10 +119,8 @@ class QuizPage extends React.Component {
       .then((doc) => {
         return updateJourney(id, data).then(() => {
           const linkResume = id
-            ? '<i><a href="/pathway/resume?id=' +
-              id +
-              '">' +
-              user.displayName +
+            ? '<i><a href="/pathway/resume?id=' +  id +
+              '">' +  user.displayName +
               "</a></i>"
             : "<i>" + user.displayName + "</i>";
 
@@ -132,13 +128,9 @@ class QuizPage extends React.Component {
             type: "complete_quiz",
             msn: 'Runner "' + currentRunner.name + '" está completo.',
             point: totalPoints,
-            msnForGroup:
-              linkResume +
-              ' ha completado el runner <b>"' +
-              currentRunner.name +
-              '"</b> y su nuevo progreso es: ' +
-              data.progress.toFixed(2) +
-              "%",
+            msnForGroup: linkResume + ' ha completado el runner <b>"' +
+              currentRunner.name + '"</b> y su nuevo progreso es: ' +
+              data.progress.toFixed(2) + "%",
             group: data.group,
           });
 
@@ -193,9 +185,13 @@ class QuizPage extends React.Component {
         variant={"outline-success"}
         icon={<FontAwesomeIcon icon={SolidIcon.faCheckCircle} />}
       >
-        <i className="far fa-check-circle"></i>
-        ¡Felicitaciones!, pasó la validación de conceptos. Has conseguido{" "}
-        {totalPoints} puntos que te ayudan a continuar.
+        <p>
+          <i className="far fa-check-circle"></i> ¡Felicitaciones!
+        </p>
+        <p>
+          pasó la validación de conceptos. Has conseguido {totalPoints} puntos
+          que te ayudan a continuar.
+        </p>
         <h4 className="mt-3">Resultado</h4>
         <div>
           <Label>
@@ -220,10 +216,13 @@ class QuizPage extends React.Component {
         variant={"outline-danger"}
         icon={<FontAwesomeIcon icon={SolidIcon.faTimes} />}
       >
-        <i className="fas fa-exclamation-triangle"></i> Esta evaluación de
-        conceptos no se aprobó, debe intentarlo de nuevo para obtener el emblema
-        del Runner y pasar el Pathway. Anímate y vuelve a intentarlo. Te
-        recomendamos volver al pathway y repasar los conceptos ahí descritos.
+        <p>
+          <i className="fas fa-exclamation-triangle"></i> Esta evaluación de
+          conceptos no se aprobó, debe intentarlo de nuevo para obtener el
+          emblema del Runner y pasar el Pathway. Anímate y vuelve a intentarlo.
+          Te recomendamos volver al pathway y repasar los conceptos ahí
+          descritos.
+        </p>
         <h4 className="mt-3">Result</h4>
         <div>
           <Label>
@@ -302,14 +301,11 @@ class QuizPage extends React.Component {
                         onStart={() => {
                           const userId = this.props.user.uid;
                           removePoint(
-                            userId,
-                            this.state.questions.length * 2
+                            userId, this.state.questions.length * 2
                           ).then(() => {
                             this.props.userChange({
                               ...this.props.user,
-                              point:
-                                this.props.user.point -
-                                this.state.questions.length * 2,
+                              point: this.props.user.point - this.state.questions.length * 2,
                             });
                           });
                         }}

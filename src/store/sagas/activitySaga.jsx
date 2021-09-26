@@ -7,22 +7,59 @@ import { userChange } from "store/actions/userAction";
 
 function* activitySaga({ payload }) {
   const user = firebaseClient.auth().currentUser;
+  const dataUser = yield select((state) => state.user);
+  let point = 1;
   addActivity(user, payload);
   switch (payload.type) {
     case "start_pathway":
-      addPoint(user, payload.point || 1);
+       point = payload.point || 1;
+      addPoint(user, point);
+      yield put(
+        userChange({
+          ...dataUser,
+          point: dataUser.point + point,
+        })
+      );
       break;
     case "complete_track":
-      addPoint(user, payload.point || 5);
+       point = payload.point || 5;
+      addPoint(user, point);
+      yield put(
+        userChange({
+          ...dataUser,
+          point: dataUser.point + point,
+        })
+      );
       break;
     case "complete_quiz":
-      addPoint(user, payload.point || 10);
+       point = payload.point || 10;
+      addPoint(user, point);
+      yield put(
+        userChange({
+          ...dataUser,
+          point: dataUser.point + point,
+        })
+      );
       break;
     case "complete_pathway":
-      addPoint(user, payload.point || 100);
+       point = payload.point || 100;
+      addPoint(user, point);
+      yield put(
+        userChange({
+          ...dataUser,
+          point: dataUser.point + point,
+        })
+      );
       break;
     case "new_track_response":
-      addPoint(user, payload.point || 1);
+       point = payload.point || 1;
+      addPoint(user, point);
+      yield put(
+        userChange({
+          ...dataUser,
+          point: dataUser.point + point,
+        })
+      );
       break;
     default:
       break;
@@ -42,20 +79,16 @@ function addActivity(user, payload) {
     });
 }
 
-function* addPoint(user, point) {
+function addPoint(user, point) {
   const increment = firebaseClient.firestore.FieldValue.increment(point);
-  const dataUser = yield select((state) => state.user);
-
-  yield put(userChange({
-    ...dataUser,
-    point:dataUser.point + point
-  }));
-
   firestoreClient
     .collection("users")
     .doc(user.uid)
     .update({
       point: increment,
+    })
+    .then(() => {
+      console.log("add updated");
     })
     .catch((error) => {
       console.error("Error adding document in activitySaga: ", error);

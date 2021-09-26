@@ -37,7 +37,7 @@ export const loadQuiz = (runnerId, journeyId, resolve, reject) => {
           answerSelectionType: type,
           answers: answers,
           correctAnswer: correctAnswer,
-          point: "2",
+          point: "4",
         });
       });
 

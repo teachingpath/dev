@@ -37,6 +37,7 @@ class RunnersExecutor extends React.Component {
       onComplete,
       activityChange,
       user,
+      current
     } = this.props;
     return (
       <Accordion {...this.props}>
@@ -46,7 +47,6 @@ class RunnersExecutor extends React.Component {
             ?.filter((t) => t.status !== "finish")
             ?.map((t) => t.timeLimit)
             .reduce((a, b) => a + b, 0);
-
           return (
             <Card key={"runnerskys" + index}>
               <Card.Header
@@ -56,7 +56,7 @@ class RunnersExecutor extends React.Component {
                 <Card.Title>
                   <i
                     className={
-                      "fas fa-" + (activeCard === index ? "running" : "")
+                      "fas fa-" + (current === index ? "running" : totalTime == 0 ? "check": "clock")
                     }
                   ></i>{" "}
                   {item.name.toUpperCase()}
@@ -231,7 +231,6 @@ class Tracks extends React.Component {
 }
 
 const AttachResult = (props) => {
-  console.log(props);
   return (
     <span className="float-left mr-1">
       {
@@ -271,7 +270,7 @@ const Attach = ({
         <Badge
           variant="warning"
           shape="circle"
-          title="No se tiene una respuesta o feedback para ente track."
+          title="No se tiene una respuesta o feedback para ente track. Click aquí para actualizar tu respuesta."
         >
           <ResponseModal
             id={id}
@@ -291,7 +290,7 @@ const Attach = ({
         <Badge
           variant="outline-success"
           shape="circle"
-          title="Se completo con un feedback o respuesta."
+          title="Se completo con un feedback o respuesta. Click aquí para actualizar."
         >
           <ResponseModal
             id={id}

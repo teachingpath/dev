@@ -23,7 +23,6 @@ class ResponseModal extends React.Component {
   componentDidMount() {
     const { pathwayId, runnerId, id } = this.props;
     getTrack(pathwayId,runnerId, id,(data) => {
-      console.log(data);
         this.setState({
           ...data,
           id: id,

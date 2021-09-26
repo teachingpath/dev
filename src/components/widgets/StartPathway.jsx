@@ -89,6 +89,7 @@ class StartPathway extends React.Component {
         .set({
           leaderId: leaderId,
           group: groupSlug,
+          groupName: group,
           name: name,
           trophy: trophy,
           progress: 1,
