@@ -1,10 +1,10 @@
-import { Row, Col, Footer, Container } from "@panely/components"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import * as RegularIcon from "@fortawesome/free-regular-svg-icons"
-import * as SolidIcon from "@fortawesome/free-solid-svg-icons"
+import { Row, Col, Footer, Container } from "@panely/components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as RegularIcon from "@fortawesome/free-regular-svg-icons";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
 function FooterComponent() {
-  const copyrightYear = new Date().getFullYear()
+  const copyrightYear = new Date().getFullYear();
 
   return (
     <Footer>
@@ -12,20 +12,20 @@ function FooterComponent() {
         <Row>
           <Col md="6">
             <p className="text-left mb-0">
-              Copyright <FontAwesomeIcon icon={RegularIcon.faCopyright} />{" "}
-              <span>{copyrightYear}</span> Teaching Path. All rights reserved
+              Copyright {" "}
+              <i class="fas fa-copyright"></i> <span>{copyrightYear}</span>{" "}
+              Teaching Path. All rights reserved
             </p>
           </Col>
           <Col md="6" className="d-none d-md-block">
             <p className="text-right mb-0">
-               Hecho a mano y hecho con {" "}
-              <FontAwesomeIcon icon={SolidIcon.faHeart} className="text-danger" />
+              Hecho a mano y hecho con <i class="fas fa-heart"></i>
             </p>
           </Col>
         </Row>
       </Container>
     </Footer>
-  )
+  );
 }
 
-export default FooterComponent
+export default FooterComponent;
