@@ -3,6 +3,7 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  cleanPathway
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -19,20 +20,23 @@ import TrophtyListComponent from "components/widgets/TrophyList";
 import BadgeAllListComponent from "components/widgets/BadgetAllList";
 
 class DashboardPage extends React.Component {
+
   componentDidMount() {
     this.props.pageChangeHeaderTitle("Panel de Control");
     this.props.breadcrumbChange([{ text: "Home", link: "/" }]);
   }
 
+
   render() {
-    const { user } = this.props;
+    const { isCoach, isTrainee } = this.props;
+    
     return (
       <React.Fragment>
         <Head>
           <title>Pathway | Teaching Path</title>
         </Head>
         <Container fluid >
-          {user?.profile === "coach" && (
+          {isCoach === true && (
             <>
               <Row>
                 <Col xs="12"  className="bloq-description">
@@ -56,7 +60,7 @@ class DashboardPage extends React.Component {
               </Row>
             </>
           )}
-          {user?.profile === "trainee" && (
+          {isTrainee && (
             <Row portletFill="xl">
               <Col md="6">
                 <Journeys {...this.props} />
@@ -78,7 +82,7 @@ class DashboardPage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, cleanPathway },
     dispatch
   );
 }
@@ -86,6 +90,8 @@ function mapDispathToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     user: state.user,
+    isCoach: state.user?.profile === "coach",
+    isTrainee: state.user?.profile === "trainee"
   };
 }
 

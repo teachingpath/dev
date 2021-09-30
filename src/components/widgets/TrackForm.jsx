@@ -52,15 +52,16 @@ const modulesBasic = {
   ],
 };
 
-function TrackForm({ onSave, data, onExtend }) {
-  useEffect(() => {
-    document.querySelectorAll("pre").forEach((el) => {
-      hljs.configure({
-        languages: ["javascript", "ruby", "python", "java"],
-      });
-      hljs.highlightElement(el);
+function loadStyleCodeBlock(){
+  document.querySelectorAll("pre").forEach((el) => {
+    hljs.configure({
+      languages: ["javascript", "ruby", "python", "java"],
     });
+    hljs.highlightElement(el);
   });
+}
+
+function TrackForm({ onSave, data, onExtend }) {
   const [loading, setLoading] = useState(false);
   const [typeContent, setTypeContent] = useState(data?.typeContent || "file");
 
@@ -148,60 +149,7 @@ function TrackForm({ onSave, data, onExtend }) {
         });
       })}
     >
-      <Form.Group>
-        <FloatLabel>
-          <Controller
-            as={Input}
-            type="text"
-            id="name"
-            name="name"
-            control={control}
-            invalid={Boolean(errors.name)}
-            placeholder="Ingrese un nombre"
-          />
-          <Label for="name">Nombre</Label>
-          {errors.name && <Form.Feedback children={errors.name.message} />}
-        </FloatLabel>
-      </Form.Group>
-      <Form.Group>
-        <FloatLabel>
-          <Controller
-            as={Input}
-            type="textarea"
-            id="description"
-            name="description"
-            control={control}
-            invalid={Boolean(errors.description)}
-            placeholder="Ingrese una descripción"
-          />
-          <Label for="description">Descripción</Label>
-          {errors.description && (
-            <Form.Feedback children={errors.description.message} />
-          )}
-        </FloatLabel>
-      </Form.Group>
-      <Form.Group>
-        <FloatLabel>
-          <Controller
-            as={Input}
-            type="number"
-            id="timeLimit"
-            name="timeLimit"
-            control={control}
-            className="w-25"
-            invalid={Boolean(errors.timeLimit)}
-            placeholder="Inserte un límite de tiempo en horas"
-          />
-          <Label for="timeLimit">Unidad de Tiempo x 10 minutos</Label>
-          {errors.timeLimit && (
-            <Form.Feedback children={errors.timeLimit.message} />
-          )}
-          <div className="text-muted">
-            Calcular tiempo: {timeConvert(watchFields.timeLimit * 10)} para
-            terminar el Track.
-          </div>
-        </FloatLabel>
-      </Form.Group>
+     
       <Form.Group>
         <FloatLabel>
           <Label for="type">Tipo de Track</Label>
@@ -259,7 +207,10 @@ function TrackForm({ onSave, data, onExtend }) {
                               scrollingContainer="#scrolling-container"
                               name={"content"}
                               modules={modulesFull}
-                              onChange={onChange}
+                              onChange={(args) => {
+                                onChange(args);
+                                loadStyleCodeBlock();
+                              }}
                               placeholder="Redacte aquí una prosa de parendizaje..."
                               style={{ minHeight: "50rem" }}
                             />
@@ -501,6 +452,61 @@ function TrackForm({ onSave, data, onExtend }) {
           ),
         }[watchFields.type]
       }
+
+<Form.Group>
+        <FloatLabel>
+          <Controller
+            as={Input}
+            type="text"
+            id="name"
+            name="name"
+            control={control}
+            invalid={Boolean(errors.name)}
+            placeholder="Ingrese un nombre"
+          />
+          <Label for="name">Nombre</Label>
+          {errors.name && <Form.Feedback children={errors.name.message} />}
+        </FloatLabel>
+      </Form.Group>
+      <Form.Group>
+        <FloatLabel>
+          <Controller
+            as={Input}
+            type="textarea"
+            id="description"
+            name="description"
+            control={control}
+            invalid={Boolean(errors.description)}
+            placeholder="Ingrese una descripción"
+          />
+          <Label for="description">Descripción</Label>
+          {errors.description && (
+            <Form.Feedback children={errors.description.message} />
+          )}
+        </FloatLabel>
+      </Form.Group>
+      <Form.Group>
+        <FloatLabel>
+          <Controller
+            as={Input}
+            type="number"
+            id="timeLimit"
+            name="timeLimit"
+            control={control}
+            className="w-25"
+            invalid={Boolean(errors.timeLimit)}
+            placeholder="Inserte un límite de tiempo en horas"
+          />
+          <Label for="timeLimit">Unidad de Tiempo x 10 minutos</Label>
+          {errors.timeLimit && (
+            <Form.Feedback children={errors.timeLimit.message} />
+          )}
+          <div className="text-muted">
+            Calcular tiempo: {timeConvert(watchFields.timeLimit * 10)} para
+            terminar el Track.
+          </div>
+        </FloatLabel>
+      </Form.Group>
 
       <Form.Group className="scrolling-container">
         <FloatLabel>

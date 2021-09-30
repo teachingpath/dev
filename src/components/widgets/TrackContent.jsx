@@ -7,12 +7,14 @@ import Card from "@panely/components/Card";
 class TrackContent extends React.Component {
 
   componentDidMount(){
-    document.querySelectorAll("pre").forEach((el) => {
-      hljs.configure({   // optionally configure hljs
-        languages: ['javascript', 'ruby', 'python', 'java']
+    setTimeout(() => {
+      document.querySelectorAll("pre").forEach((el) => {
+        hljs.configure({   // optionally configure hljs
+          languages: ['javascript', 'ruby', 'python', 'java']
+        });
+        hljs.highlightElement(el);
       });
-      hljs.highlightElement(el);
-    });
+    }, 800);
   }
 
   render() {

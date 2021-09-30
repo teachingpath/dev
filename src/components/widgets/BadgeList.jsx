@@ -67,7 +67,7 @@ class BadgeListComponent extends React.Component {
                     <CarouselItem key={"badge-key" + index}>
                       <center title={!data.disabled && data.description}>
                         <img
-                          style={{ width: "145px" }}
+                          style={{ width: "125px" }}
                           className={
                             data.disabled
                               ? "bg-white mg-thumbnail avatar-circle p-2 border border-warning"

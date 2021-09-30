@@ -52,7 +52,9 @@ function RegisterPage() {
             <Portlet>
               <Portlet.Body>
                 <div className="text-center mt-2 mb-4">
+                <a href="/" >
                   <img src="/images/logo.png" alt="teaching path" />
+                  </a>
                 </div>
                 <p>
                   Ingrese su correo electrónico para poder enviarle un enlace a

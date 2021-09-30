@@ -13,13 +13,13 @@ function FooterComponent() {
           <Col md="6">
             <p className="text-left mb-0">
               Copyright {" "}
-              <i class="fas fa-copyright"></i> <span>{copyrightYear}</span>{" "}
+              <i className="fas fa-copyright" /> <span>{copyrightYear}</span>{" "}
               Teaching Path. All rights reserved
             </p>
           </Col>
           <Col md="6" className="d-none d-md-block">
             <p className="text-right mb-0">
-              Hecho a mano y hecho con <i class="fas fa-heart"></i>
+              Hecho a mano y hecho con <i className="fas fa-heart" />
             </p>
           </Col>
         </Row>

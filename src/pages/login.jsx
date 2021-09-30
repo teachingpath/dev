@@ -72,7 +72,9 @@ function LoginPage() {
               <Portlet>
                 <Portlet.Body className="h-100">
                   <div className="text-center mt-2 mb-4">
+                   <a href="/" >
                     <img src="/images/logo.png" alt="teaching path" />
+                    </a>
                   </div>
                   <Label>Iniciar sesión</Label>
                   <LoginForm />

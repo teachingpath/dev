@@ -75,6 +75,17 @@ export const deletePathway = (pathwayId) => {
     });
 };
 
+export const updateFollowUp = (id, isFollowUp ) => {
+  const dataUpdated = {
+    isFollowUp: isFollowUp,
+    date: new Date(),
+  };
+  return firestoreClient
+    .collection("pathways")
+    .doc(id)
+    .update(dataUpdated);
+};
+
 export const update = (id, data) => {
   const tags = data.tags.split(",").map((item) => {
     return item.trim().toLowerCase();

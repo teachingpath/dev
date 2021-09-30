@@ -190,7 +190,7 @@ class RunnerList extends React.Component {
                     </Badge>
                     <br /> <br />
                     <Collapse isOpen={activeCard === index}>
-                      <TrackList tracks={tracks} index={index} />
+                      <TrackList tracks={tracks} index={index} id={id} pathwayId={pathwayId} />
                     </Collapse>
                   </Accordion>
                 </RichList.Content>
@@ -300,7 +300,7 @@ const AddonRunner = ({ id, pathwayId }) => {
     </RichList.Addon>
   );
 };
-const TrackList = ({ tracks, index }) => {
+const TrackList = ({ tracks, index, id, pathwayId }) => {
   return (
     <RichList className=" mt-2 mb-2">
       {tracks.map((track, indexTrack) => {

@@ -63,7 +63,7 @@ class BadgeAllListComponent extends React.Component {
                               ? "bg-white mg-thumbnail avatar-circle p-2 border border-warning"
                               : "bg-yellow mg-thumbnail avatar-circle p-2 border border-success"
                           }
-                          style={{ width: "145px" }}
+                          style={{ width: "125px" }}
                           src={data.image || "/images/avatar/blank.webp"}
                           alt="Badge Image"
                         />

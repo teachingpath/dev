@@ -105,9 +105,7 @@ class StartPathway extends React.Component {
         })
         .then((doc) => {
           const linkResume = journeyId
-            ? '<i><a href="/pathway/resume?id=' +
-              journeyId +
-              '">' +
+            ? '<i><a href="/pathway/resume?id=' + journeyId + '">' +
               user.displayName +
               "</a></i>"
             : "<i>" + user.displayName + "</i>";
@@ -115,8 +113,7 @@ class StartPathway extends React.Component {
           this.props.activityChange({
             type: "start_pathway",
             msn: 'Inicia pathway "' + name + '".',
-            msnForGroup:
-              +linkResume + ' inició el pathway "<b>' + name + '</b>".',
+            msnForGroup: linkResume + ' inició el pathway "<b>' + name + '</b>".',
             group: groupSlug,
           });
 

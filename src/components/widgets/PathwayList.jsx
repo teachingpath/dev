@@ -29,11 +29,10 @@ class PathwaysComponent extends React.Component {
   }
 
   componentDidMount() {
-    getMyPathways(
-      (data) => {
+    getMyPathways((data) => {
         this.setState(data);
-      },
-      () => {}
+        this.props.cleanPathway();
+      },() => {}
     );
   }
 

@@ -81,9 +81,7 @@ class TrackPage extends React.Component {
 
   loadTracks() {
     const { runnerId, pathwayId, id } = Router.query;
-    getTracks(
-      runnerId,
-      (result) => {
+    getTracks(runnerId, (result) => {
         const list = [
           {
             title: "Tracks",

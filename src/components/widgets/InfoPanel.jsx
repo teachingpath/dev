@@ -135,7 +135,6 @@ class InfoPanelComponent extends React.Component {
                     children={
                       data.data.length ? (
                         <InfoModal
-                          key={index}
                           title={title}
                           data={data.data}
                           subtitle={subtitle}
@@ -223,7 +222,7 @@ class InfoModal extends React.Component {
               <Accordion>
                 {Object.keys(dataList).map((group, index) => {
                   return (
-                    <Card>
+                    <Card key={"accordion-"+index}>
                       <Card.Header
                         title="Click para expandir"
                         collapsed={!(activeCard === index)}
@@ -280,10 +279,9 @@ class InfoModal extends React.Component {
                             (date.seconds + date.nanoseconds * 10 ** -9) * 1000
                           );
                           return (
-                            <Card.Body className="m-0">
+                            <Card.Body className="m-0" key={"group"+index}>
                               <h5 className="mt-3">{user.displayName}</h5>
                               <RichList.Item
-                                key={index}
                                 title={"Usuario: " + user.email}
                               >
                                 <RichList.Addon addonType="prepend">

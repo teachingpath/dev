@@ -26,7 +26,7 @@ import RunnerList from "../../components/widgets/RunnerList";
 import PathwayForm from "../../components/widgets/PathwayForm";
 import Spinner from "@panely/components/Spinner";
 import React from "react";
-import { update } from "consumer/pathway";
+import { update, updateFollowUp } from "consumer/pathway";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -45,6 +45,7 @@ class FormBasePage extends React.Component {
   constructor(props) {
     super(props);
     this.onEdit = this.onEdit.bind(this);
+    this.toggleFollowUp = this.toggleFollowUp.bind(this);
   }
 
   componentDidMount() {
@@ -56,10 +57,21 @@ class FormBasePage extends React.Component {
       { text: "Home", link: "/" },
       { text: "Pathway" },
     ]);
+  }  
+
+
+  toggleFollowUp(){
+    const pathway = this.state;
+    updateFollowUp(pathway.id, !pathway?.isFollowUp).then(() => {
+      this.setState({
+        ...this.state,
+        isFollowUp: !pathway?.isFollowUp
+      });
+    })
   }
 
   onEdit(data) {
-    const pathway = this.props.pathway;
+    const pathway = this.state || this.props.pathway;
     return update(pathway.id, data)
       .then((response) => {
         toast.fire({
@@ -87,8 +99,8 @@ class FormBasePage extends React.Component {
   }
 
   render() {
-    const pathway = this.props.pathway;
-    if (!pathway) {
+    const pathway = this.state || this.props.pathway;
+    if (!pathway?.id) {
       return <Spinner>Cargando...</Spinner>;
     }
     return (
@@ -99,12 +111,13 @@ class FormBasePage extends React.Component {
         <Container fluid>
           <Row>
             <Col md="4">
-              {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Pathway | Editar</Portlet.Title>
                   <Portlet.Addon>
-                    <PathwayAddon id={pathway.id} />
+                    <PathwayAddon id={pathway.id}  
+                    toggleFollowUp={this.toggleFollowUp}  
+                    isFollowUp={pathway.isFollowUp}/>
                   </Portlet.Addon>
                 </Portlet.Header>
                 <Portlet.Body>
@@ -165,7 +178,7 @@ class FormBasePage extends React.Component {
   }
 }
 
-const PathwayAddon = ({ id }) => {
+const PathwayAddon = ({ id, toggleFollowUp,  isFollowUp}) => {
   return (
     <>
       <Dropdown.Uncontrolled>
@@ -205,6 +218,14 @@ const PathwayAddon = ({ id }) => {
             icon={<FontAwesomeIcon icon={SolidIcon.faObjectGroup} />}
           >
             Agregar Sala
+          </Dropdown.Item>
+          <Dropdown.Item
+            onClick={() => {
+              toggleFollowUp();
+            }}
+            icon={<FontAwesomeIcon icon={SolidIcon.faEye} />}
+          >
+            {isFollowUp?"Quita":"Hacer"} Seguimiento
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {

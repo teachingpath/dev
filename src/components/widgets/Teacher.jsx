@@ -19,15 +19,16 @@ class Teacher extends React.Component {
     return (
       <Card>
         <Row noGutters>
-          <Col md="4">
+          <Col md="3">
             <Card.Img
-              style={{ maxWidth: "200px" }}
+            className={"text-center"}
+              style={{ maxWidth: "150px" }}
               className=" p-3"
               src={data?.image || "/images/avatar/blank.webp"}
               alt="Profile Image"
             />
           </Col>
-          <Col md="8">
+          <Col md="9">
             <Card.Body>
               <Card.Title>
                 Teacher: {data?.firstName} {data?.lastName}

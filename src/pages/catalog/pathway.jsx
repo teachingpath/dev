@@ -34,9 +34,7 @@ class PathwayPage extends React.Component {
     if (!Router.query.id) {
       Router.push("/catalog");
     }
-    get(
-      Router.query.id,
-      (data) => {
+    get(Router.query.id,(data) => {
         this.setState(data);
       },
       () => {}
@@ -67,7 +65,7 @@ class PathwayPage extends React.Component {
               <img
                 src={this.state?.trophy?.image}
                 alt="trophy"
-                style={{maxWidth: "145px"}}
+                style={{maxWidth: "125px"}}
                 className="bg-yellow p-2 border mx-auto d-block mg-thumbnail avatar-circle"
               />
             )}

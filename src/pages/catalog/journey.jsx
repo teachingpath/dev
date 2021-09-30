@@ -103,7 +103,7 @@ class JourneyGeneralPage extends React.Component {
                         <img
                           src={trophy?.image}
                           alt="loading"
-                          style={{ width: "140px" }}
+                          style={{ width: "125px" }}
                           className="bg-yellow p-2 border mx-auto d-block mg-thumbnail avatar-circle"
                         />
                         <h4

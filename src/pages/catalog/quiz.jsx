@@ -22,6 +22,21 @@ import { loadQuiz } from "consumer/evaluation";
 import { enableBadge, getJourney, updateJourney } from "consumer/journey";
 import { removePoint } from "consumer/user";
 import { userChange } from "store/actions/userAction";
+import swalContent from "sweetalert2-react-content";
+import Swal from "@panely/sweetalert2";
+
+const ReactSwal = swalContent(Swal);
+const toast = ReactSwal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  onOpen: (toast) => {
+    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
+    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
+  },
+});
 
 class QuizPage extends React.Component {
   constructor(props) {
@@ -31,6 +46,7 @@ class QuizPage extends React.Component {
       quizSynopsis:
         "Bienvenido a la evaluación de conceptos de verificación del runner. Al aprobar este cuestionario, puede obtener el emblema del Runner. Resuelve el cuestionario en el menor tiempo posible. Con esta evaluación te permite asegurar el conocimiento, si por alguna razón te das cuenta que no puedes resolver el cuestionario, te invito a repasar los conceptos del Runner.",
       questions: [],
+      start: false
     };
     this.onFinish = this.onFinish.bind(this);
   }
@@ -70,6 +86,10 @@ class QuizPage extends React.Component {
   };
 
   onFinish = ({ runnerId, id, totalPoints }) => {
+    toast.fire({
+      icon: "success",
+      title: "Haz finalizado tu quiz, espere un momento...",
+    });
     getJourney( id, (data) => {
         if (data.progress >= 100) {
           Router.push({
@@ -277,7 +297,7 @@ class QuizPage extends React.Component {
                             ? "bg-white mg-thumbnail avatar-circle p-2 border border-warning"
                             : "bg-yellow mg-thumbnail avatar-circle p-2 border border-success"
                         }
-                        style={{ width: "160px" }}
+                        style={{ width: "140px" }}
                         src={this.state.trophy.image}
                         alt="Card Image"
                       />
@@ -291,11 +311,12 @@ class QuizPage extends React.Component {
                 <Col md="10">
                   {this.state.questions.length > 0 && (
                     <>
-                      <Alert variant={"label-info"}>
+                    {!this.state.start && <Alert variant={"label-info"}>
                         ESTE QUIZ TIENE UN CAJE DE{" "}
                         <strong>{this.state.questions.length * 2} PTS</strong>{" "}
                         AL INICIAR EL QUIZ
-                      </Alert>
+                      </Alert>}
+                      
                       <Quiz
                         quiz={this.state}
                         onStart={() => {
@@ -306,6 +327,10 @@ class QuizPage extends React.Component {
                             this.props.userChange({
                               ...this.props.user,
                               point: this.props.user.point - this.state.questions.length * 2,
+                            });
+                            this.setState({
+                              ...this.state,
+                              start: true
                             });
                           });
                         }}

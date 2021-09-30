@@ -19,8 +19,6 @@ import TrackForm from "../../components/widgets/TrackForm";
 import Spinner from "@panely/components/Spinner";
 import { getTrack, updateTrack } from "consumer/track";
 import { updateToDraft } from "consumer/pathway";
-import Alert from "../../../docs/template/src/modules/components/Alert";
-import Button from "@panely/components/Button";
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -56,42 +54,20 @@ class FormBasePage extends React.Component {
       Router.push("/pathway/create");
     }
     this.props.pageChangeHeaderTitle("Actualizar");
-    const isOwner = this.props.runner?.leaderId === this.props.user.uid;
-
-    if (isOwner) {
-      this.props.breadcrumbChange([
-        { text: "Home", link: "/" },
-        {
-          text: "Pathway",
-          link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
-        },
-        {
-          text: "Runner",
-          link:
-            "/runner/edit?pathwayId=" +
-            Router.query.pathwayId +
-            "&runnerId=" +
-            Router.query.runnerId,
-        },
-        { text: "Track" },
-      ]);
-    } else {
-      this.props.breadcrumbChange([
-        { text: "Home", link: "/" },
-        {
-          text: "Track",
-          link:
-            "/catalog/track?pathwayId=" +
-            Router.query.pathwayId +
-            "&runnerId=" +
-            Router.query.runnerId +
-            "&id=" +
-            Router.query.trackId,
-        },
-      ]);
-    }
-
     this.loadData(Router.query);
+    this.props.breadcrumbChange([
+      { text: "Home", link: "/" },
+      {
+        text: "Track",
+        link:
+          "/catalog/track?pathwayId=" +
+          Router.query.pathwayId +
+          "&runnerId=" +
+          Router.query.runnerId +
+          "&id=" +
+          Router.query.trackId,
+      },
+    ]);
   }
 
   loadData({ pathwayId, runnerId, trackId }) {
@@ -146,6 +122,27 @@ class FormBasePage extends React.Component {
       });
   }
 
+  componentDidUpdate(props){
+    if (props.isOwner) {
+      this.props.breadcrumbChange([
+        { text: "Home", link: "/" },
+        {
+          text: "Pathway",
+          link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
+        },
+        {
+          text: "Runner",
+          link:
+            "/runner/edit?pathwayId=" +
+            Router.query.pathwayId +
+            "&runnerId=" +
+            Router.query.runnerId,
+        },
+        { text: "Track" },
+      ]);
+    }
+  }
+
   toggle() {
     this.setState({
       ...this.state,
@@ -157,9 +154,6 @@ class FormBasePage extends React.Component {
     if (!this.state.saved) {
       return <Spinner>Cargando...</Spinner>;
     }
-
-    const isOwner = this.props.runner?.leaderId === this.props.user.uid;
-
     return (
       <React.Fragment>
         <Head>
@@ -171,7 +165,7 @@ class FormBasePage extends React.Component {
               <Portlet>
                 <Portlet.Header bordered>
                   <Portlet.Title>Track | Editar</Portlet.Title>
-                  {isOwner && (
+                  {this.props.isOwner && (
                     <Portlet.Addon>
                       <TrackAddon
                         extend={this.state.extend}
@@ -271,6 +265,8 @@ function mapStateToProps(state) {
   return {
     pathway: state.pathway.pathwaySeleted,
     runner: state.pathway.runnerSeleted,
+    user: state.user,
+    isOwner: state.pathway.runnerSeleted?.leaderId === state.user?.uid
   };
 }
 

@@ -12,7 +12,7 @@ function* activitySaga({ payload }) {
   addActivity(user, payload);
   switch (payload.type) {
     case "start_pathway":
-       point = payload.point || 1;
+      point = payload.point || 1;
       addPoint(user, point);
       yield put(
         userChange({
