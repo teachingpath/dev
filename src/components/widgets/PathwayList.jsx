@@ -118,7 +118,7 @@ class PathwaysComponent extends React.Component {
             )}
             {this.state.data &&
               this.state.data.map((data, index) => {
-                const { name, description, id, draft } = data;
+                const { name, description, id, draft, isFollowUp } = data;
                 return (
                   <RichList.Item key={index}>
                     <RichList.Content
@@ -129,7 +129,10 @@ class PathwaysComponent extends React.Component {
                         });
                       }}
                     >
-                      <RichList.Title children={name.toUpperCase()} />
+                      <RichList.Title children={<>
+                        {isFollowUp && <FontAwesomeIcon  className="mr-2" icon={SolidIcon.faEye} />}
+                      {name.toUpperCase()}
+                      </>} />
                       <RichList.Subtitle children={description} />
                       <RichList.Subtitle
                         children={

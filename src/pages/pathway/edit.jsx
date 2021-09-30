@@ -61,7 +61,7 @@ class FormBasePage extends React.Component {
 
 
   toggleFollowUp(){
-    const pathway = this.state;
+    const pathway = this.state || this.props.pathway;
     updateFollowUp(pathway.id, !pathway?.isFollowUp).then(() => {
       this.setState({
         ...this.state,

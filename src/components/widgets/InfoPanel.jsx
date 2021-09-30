@@ -51,7 +51,7 @@ class InfoPanelComponent extends React.Component {
       },
       {
         title: "0",
-        subtitle: "Pathways Corriendo",
+        subtitle: "Corriendo (con seguimiento)",
         avatar: () => (
           <Widget8.Avatar
             display
@@ -66,7 +66,7 @@ class InfoPanelComponent extends React.Component {
       },
       {
         title: "0",
-        subtitle: "Pathways Finalizado",
+        subtitle: "Finalizado (con seguimiento)",
         avatar: () => (
           <Widget8.Avatar display circle variant="label-danger" className="m-0">
             <FontAwesomeIcon icon={SolidIcon.faCheck} />
@@ -81,6 +81,7 @@ class InfoPanelComponent extends React.Component {
     firestoreClient
       .collection("pathways")
       .where("leaderId", "==", this.props.firebase.user_id)
+      .where("isFollowUp", "==", true)
       .get()
       .then((querySnapshot) => {
         const list = [];
@@ -285,7 +286,7 @@ class InfoModal extends React.Component {
                                 title={"Usuario: " + user.email}
                               >
                                 <RichList.Addon addonType="prepend">
-                                  <Avatar block>
+                                  <Avatar block={true}>
                                     <FontAwesomeIcon
                                       icon={SolidIcon.faUserAlt}
                                     />
