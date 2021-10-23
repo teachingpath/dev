@@ -13,35 +13,22 @@ import {
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
-import Swal from "@panely/sweetalert2";
 import Router from "next/router";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  pageShowAlert
 } from "store/actions";
 import withAuth from "components/firebase/firebaseWithAuth";
 import withLayout from "components/layout/withLayout";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import swalContent from "sweetalert2-react-content";
 import React, { useRef, useState } from "react";
 import Head from "next/head";
 import Spinner from "@panely/components/Spinner";
 import { get, updateTrophy } from "consumer/pathway";
 
-const ReactSwal = swalContent(Swal);
-const toast = ReactSwal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: (toast) => {
-    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
-    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
-  },
-});
 
 class FormBasePage extends React.Component {
   constructor(props) {
@@ -53,11 +40,13 @@ class FormBasePage extends React.Component {
     };
   }
   componentDidMount() {
+    const {pageShowAlert, pageChangeHeaderTitle, breadcrumbChange}  = this.props;
+
     if (!Router.query.pathwayId) {
       Router.push("/pathway/create");
     }
-    this.props.pageChangeHeaderTitle("Actualizar");
-    this.props.breadcrumbChange([
+    pageChangeHeaderTitle("Actualizar");
+    breadcrumbChange([
       { text: "Home", link: "/" },
       {
         text: "Pathway",
@@ -65,16 +54,10 @@ class FormBasePage extends React.Component {
       },
       { text: "Trofeo" },
     ]);
-    get(
-      Router.query.pathwayId,
-      (data) => {
+    get(Router.query.pathwayId,(data) => {
         this.setState({ ...data });
-      },
-      () => {
-        toast.fire({
-          icon: "error",
-          title: "Getting a pathway",
-        });
+      }, () => {
+        pageShowAlert("Error obteniendo el trofeo", "error");
       }
     );
   }
@@ -102,6 +85,7 @@ class FormBasePage extends React.Component {
                   <hr />
                   <TrophyForm
                     activityChange={this.props.activityChange}
+                    pageShowAlert={this.props.pageShowAlert}
                     pathwayId={this.state.id}
                     data={this.state.trophy}
                   />
@@ -115,7 +99,7 @@ class FormBasePage extends React.Component {
   }
 }
 
-function TrophyForm({ pathwayId, data, activityChange }) {
+function TrophyForm({ pathwayId, data, activityChange, pageShowAlert }) {
   const imageRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
@@ -141,10 +125,8 @@ function TrophyForm({ pathwayId, data, activityChange }) {
   const onSubmit = (data) => {
     updateTrophy(pathwayId, data)
       .then((docRef) => {
-        toast.fire({
-          icon: "success",
-          title: "El trofeo fue guardado correctamente.",
-        });
+    
+        pageShowAlert("El trofeo fue guardado correctamente.");
         activityChange({
           pathwayId: pathwayId,
           type: "edit_pathway",
@@ -153,10 +135,7 @@ function TrophyForm({ pathwayId, data, activityChange }) {
         setLoading(false);
       })
       .catch((error) => {
-        toast.fire({
-          icon: "error",
-          title: "Updating trophy",
-        });
+        pageShowAlert("Error al actualizar.", "error");
         setLoading(false);
       });
   };
@@ -240,7 +219,7 @@ function TrophyForm({ pathwayId, data, activityChange }) {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
     dispatch
   );
 }

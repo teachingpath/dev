@@ -18,6 +18,11 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import { getTracksResponses, saveTrackResponse } from "consumer/track";
 import { useState } from "react";
+import {
+  activityMapper,
+  linkGroup,
+  linkTrack,
+} from "components/helpers/mapper";
 
 function QuestionForm({ onSave }) {
   const [load, setLoad] = useState(null);
@@ -97,7 +102,10 @@ class Questions extends React.Component {
       group,
     } = this.props;
 
-    getTracksResponses(id, group,  (data) => {
+    getTracksResponses(
+      id,
+      group,
+      (data) => {
         this.setState({
           ...this.state,
           list: data.list,
@@ -115,7 +123,6 @@ class Questions extends React.Component {
       journeyId,
     } = this.props;
     const user = this.props.user || firebaseClient.auth().currentUser;
-    const trackName = this.props.data?.name;
     return (
       <Accordion>
         {questions.map((question, index) => {
@@ -140,27 +147,27 @@ class Questions extends React.Component {
                           question.id
                         ).then(() => {
                           if (this.props.activityChange) {
-                            const linkResume = journeyId
-                              ? '<i><a href="/pathway/resume?id=' +
-                                journeyId +
-                                '">' +
-                                user.displayName +
-                                "</a></i>"
-                              : "<i>" + user.displayName + "</i>";
-                            this.props.activityChange({
-                              type: "new_track_response",
-                              msn:
-                                'Nueva respuesta dentro de la sala "' +
-                                group +
-                                '".',
-                              msnForGroup:
-                                "Nueva respuesta por " +
-                                linkResume +
-                                " desde question track <b>" +
-                                trackName +
-                                "</b>.",
-                              group: group,
-                            });
+                            this.props.activityChange(
+                              activityMapper(
+                                "new_track_response",
+                                linkTrack(
+                                  this.props.data.name,
+                                  this.props.data.id,
+                                  "Nueva respuesta al questionario __LINK__ "
+                                ),
+                                linkGroup(
+                                  journeyId,
+                                  user,
+                                  linkTrack(
+                                    this.props.data.name,
+                                    this.props.data.id,
+                                    "ha escrito una nueva respuesta para el questionario __LINK__ "
+                                  )
+                                ),
+                                this.props.group,
+                                2
+                              )
+                            );
                           }
                           setTimeout(() => {
                             this.componentDidMount();

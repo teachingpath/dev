@@ -3,6 +3,7 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  pageShowAlert,
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -10,26 +11,11 @@ import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
 import Router from "next/router";
-import Swal from "@panely/sweetalert2";
-import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
-import QuizForm from "../../../components/widgets/QuestionForm";
+import QuizForm from "components/widgets/QuestionForm";
 import { getQuiz, updateQuiz } from "consumer/runner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
-
-const ReactSwal = swalContent(Swal);
-const toast = ReactSwal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: (toast) => {
-    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
-    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
-  },
-});
 
 class FormBasePage extends React.Component {
   constructor(props) {
@@ -74,16 +60,14 @@ class FormBasePage extends React.Component {
         this.setState(data);
       },
       () => {
-        toast.fire({
-          icon: "error",
-          title: "Getting a runner",
-        });
+        this.props.pageShowAlert("Error al obtener el quiz", "error");
       }
     );
   }
 
   onEdit(data) {
     const { pathwayId, runnerId, questionId } = this.state;
+    const { pageShowAlert, activityChange } = this.props;
     return updateQuiz(runnerId, questionId, data)
       .then((docRef) => {
         this.setState({
@@ -92,11 +76,10 @@ class FormBasePage extends React.Component {
           questionId,
           ...data,
         });
-        toast.fire({
-          icon: "success",
-          title: "La pregunta fue actualizada correctamente",
-        });
-        this.props.activityChange({
+
+        pageShowAlert("La pregunta fue actualizada correctamente");
+
+        activityChange({
           pathwayId: pathwayId,
           type: "edit_question",
           msn: 'La pregunta "' + data.question + '" fue actualizada.',
@@ -104,10 +87,7 @@ class FormBasePage extends React.Component {
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
-        toast.fire({
-          icon: "error",
-          title: "Update question",
-        });
+        pageShowAlert("Error al ediar el quiz", "error");
       });
   }
 
@@ -166,7 +146,7 @@ class FormBasePage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
     dispatch
   );
 }

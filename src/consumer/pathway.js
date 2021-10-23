@@ -38,12 +38,12 @@ export const create = (data) => {
       date: new Date(),
     })
     .then(async () => {
-      if(data.runners){
+      if (data.runners) {
         let level = 0;
         Object.keys(data.runners || {}).forEach(async (key) => {
           await createRunner(pathwayId, {
-              name: data.runners[key].name,
-              level: level++
+            name: data.runners[key].name,
+            level: level++,
           });
         });
       }
@@ -64,8 +64,9 @@ export const deletePathway = (pathwayId) => {
       return firestoreClient
         .collection("runners")
         .where("pathwayId", "==", pathwayId)
-        .get().then(function(querySnapshot) {
-          return querySnapshot.map(function(doc) {
+        .get()
+        .then(function (querySnapshot) {
+          return querySnapshot.map(function (doc) {
             deleteRunner(doc.id);
           });
         });
@@ -75,15 +76,12 @@ export const deletePathway = (pathwayId) => {
     });
 };
 
-export const updateFollowUp = (id, isFollowUp ) => {
+export const updateFollowUp = (id, isFollowUp) => {
   const dataUpdated = {
     isFollowUp: isFollowUp,
     date: new Date(),
   };
-  return firestoreClient
-    .collection("pathways")
-    .doc(id)
-    .update(dataUpdated);
+  return firestoreClient.collection("pathways").doc(id).update(dataUpdated);
 };
 
 export const update = (id, data) => {
@@ -105,12 +103,12 @@ export const update = (id, data) => {
     .doc(id)
     .update(dataUpdated)
     .then(async () => {
-      if(data.runners){
+      if (data.runners) {
         let level = 0;
         Object.keys(data.runners).forEach(async (key) => {
           await createRunner(pathwayId, {
-              name: data.runners[key].name,
-              level: level++
+            name: data.runners[key].name,
+            level: level++,
           });
         });
       }
@@ -212,11 +210,49 @@ export const publishPathway = (pathwayId, resolve, reject) => {
 };
 
 export const unpublushPathway = (pathwayId) => {
-  return firestoreClient
+  return firestoreClient.collection("pathways").doc(pathwayId).update({
+    draft: true,
+  });
+};
+
+export const pathwayFollowUp = (userId, resolve, reject) => {
+  firestoreClient
     .collection("pathways")
-    .doc(pathwayId)
-    .update({
-      draft: true,
+    .where("leaderId", "==", userId)
+    .where("isFollowUp", "==", true)
+    .get()
+    .then((querySnapshot) => {
+      const list = [];
+      querySnapshot.forEach((doc) => {
+        list.push(doc.id);
+      });
+      return firestoreClient
+        .collection("journeys")
+        .where("pathwayId", "in", list)
+        .orderBy("date", "desc")
+        .get()
+        .then((querySnapshot) => {
+          const finisheds = [];
+          const inRunning = [];
+          querySnapshot.forEach(async (doc) => {
+            const data = doc.data();
+            data.id = doc.id;
+            if (data.progress >= 100) {
+              finisheds.push(data);
+            } else {
+              inRunning.push(data);
+            }
+          });
+          return {finisheds, inRunning};
+        })
+        .catch((error) => {
+          console.log("Error getting documents: ", error);
+        });
+    }).then((result) => {
+      resolve(result);
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
     });
 };
 

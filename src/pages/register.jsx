@@ -26,6 +26,7 @@ import Swal from "@panely/sweetalert2";
 import Link from "next/link";
 import Head from "next/head";
 import PAGE from "config/page.config";
+import { sendNewRegister } from "consumer/sendemail";
 
 const ReactSwal = swalContent(Swal);
 
@@ -164,9 +165,7 @@ function RegisterForm() {
                         point: 5,
                       })
                       .then(() => {
-                        const template = "welcome-" + (profile === true ? "coach" : "trainee");
-                        const url ="/api/sendemail/?email=" + email +"&template=" + template+"&name="+firstName;
-                        fetch(url).then((res) => res.json());
+                        return sendNewRegister(profile, email, firstName)
                       });
                   })
                   .catch((err) => {

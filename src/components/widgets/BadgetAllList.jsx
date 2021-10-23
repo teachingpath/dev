@@ -7,10 +7,8 @@ import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
 class BadgeAllListComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { data: [] };
-  }
+  state = { data: [] };
+
   componentDidMount() {
     getBadgesByLeaderId(
       (data) => {

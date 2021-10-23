@@ -11,7 +11,6 @@ import {
   CustomInput,
 } from "@panely/components";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
-import Swal from "@panely/sweetalert2";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Router from "next/router";
@@ -19,29 +18,18 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  pageShowAlert
 } from "store/actions";
 import withAuth from "components/firebase/firebaseWithAuth";
 import withLayout from "components/layout/withLayout";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import swalContent from "sweetalert2-react-content";
-import React, { useRef, useState } from "react";
+import React, {  useState } from "react";
 import Head from "next/head";
 import Spinner from "@panely/components/Spinner";
 import { get, updateGroup } from "consumer/pathway";
 
-const ReactSwal = swalContent(Swal);
-const toast = ReactSwal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: (toast) => {
-    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
-    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
-  },
-});
+
 
 class FormBasePage extends React.Component {
   constructor(props) {
@@ -65,16 +53,12 @@ class FormBasePage extends React.Component {
       },
       { text: "Groups" },
     ]);
-    get(
-      Router.query.pathwayId,
+    get( Router.query.pathwayId,
       (data) => {
         this.setState({ ...data });
       },
       () => {
-        toast.fire({
-          icon: "error",
-          title: "Getting a pathway",
-        });
+        this.props.pageShowAlert("Error obteniendo el pathway", "error");
       }
     );
   }
@@ -102,6 +86,7 @@ class FormBasePage extends React.Component {
                   <hr />
                   <GroupForm
                     activityChange={this.props.activityChange}
+                    pageShowAlert={this.props.pageShowAlert}
                     pathwayId={this.state.id}
                     groups={this.state.groups}
                   />
@@ -116,7 +101,7 @@ class FormBasePage extends React.Component {
   }
 }
 
-function GroupForm({ pathwayId, groups, activityChange }) {
+function GroupForm({ pathwayId, groups, activityChange, pageShowAlert }) {
   const [loading, setLoading] = useState(false);
   const { control, handleSubmit, errors } = useForm({
     defaultValues: {
@@ -128,10 +113,7 @@ function GroupForm({ pathwayId, groups, activityChange }) {
     setLoading(true);
     updateGroup(pathwayId, data.groups)
       .then((docRef) => {
-        toast.fire({
-          icon: "success",
-          title: "La sala fue creado correctamente",
-        });
+        pageShowAlert("La sala fue creado correctamente");
         activityChange({
           pathwayId: pathwayId,
           type: "edit_pathway",
@@ -140,10 +122,7 @@ function GroupForm({ pathwayId, groups, activityChange }) {
         setLoading(false);
       })
       .catch((error) => {
-        toast.fire({
-          icon: "error",
-          title: "Actualizando sala",
-        });
+        pageShowAlert("Error al guardar los datos", "error");
         setLoading(false);
       });
   };
@@ -314,7 +293,7 @@ function FieldGroup({ data, onChange }) {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
     dispatch
   );
 }

@@ -1,4 +1,4 @@
-import { pageChangeHeaderTitle, pageChangeTheme } from "./pageAction";
+import { pageChangeHeaderTitle, pageChangeTheme, pageShowAlert} from "./pageAction";
 import { sidemenuToggle, sidemenuChange } from "./sidemenuAction";
 import { breadcrumbChange } from "./breadcrumbAction";
 import { firebaseChange } from "./firebaseAction";
@@ -25,5 +25,6 @@ export {
   getPathwayBy,
   getRunnerBy,
   cleanPathway,
-  cleanRunner
+  cleanRunner,
+  pageShowAlert
 };

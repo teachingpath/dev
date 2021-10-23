@@ -3,6 +3,7 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  pageShowAlert
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -12,25 +13,12 @@ import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
 import Router from "next/router";
-import Swal from "@panely/sweetalert2";
-import swalContent from "sweetalert2-react-content";
-import TrackList from "../../components/widgets/TrackList";
-import TrackForm from "../../components/widgets/TrackForm";
+import TrackList from "components/widgets/TrackList";
+import TrackForm from "components/widgets/TrackForm";
 import { create } from "consumer/track";
 import { updateToDraft } from "consumer/pathway";
 
-const ReactSwal = swalContent(Swal);
-const toast = ReactSwal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: (toast) => {
-    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
-    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
-  },
-});
+
 
 class TrackCreatePage extends React.Component {
   constructor(props) {
@@ -71,6 +59,7 @@ class TrackCreatePage extends React.Component {
 
   onCreate(data) {
     const { runnerId, pathwayId, extend } = this.state;
+    const { pageShowAlert, activityChange } = this.props;
     return create(runnerId, data)
       .then((docRef) => {
         this.setState({
@@ -80,11 +69,8 @@ class TrackCreatePage extends React.Component {
           extend,
           ...data,
         });
-        toast.fire({
-          icon: "success",
-          title: "Track fue creado correctamente",
-        });
-        this.props.activityChange({
+        pageShowAlert("Track fue creado correctamente");
+        activityChange({
           pathwayId: pathwayId,
           type: "new_track",
           msn: 'El track "' + data.name + '" fue creado.',
@@ -93,10 +79,7 @@ class TrackCreatePage extends React.Component {
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
-        toast.fire({
-          icon: "error",
-          title: "Creation track",
-        });
+        pageShowAlert("Error al crear el track", "error");
       });
   }
 
@@ -195,7 +178,7 @@ const TrackAddon = ({ extend, toggle }) => {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
     dispatch
   );
 }

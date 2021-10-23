@@ -30,10 +30,7 @@ class CatalogPage extends React.Component {
 
     this.props.pageChangeHeaderTitle("Pathways");
     this.props.breadcrumbChange([{ text: "Catálogo", link: "/catalog" }]);
-    searchPathways(
-      tags,
-      q,
-      (list) => {
+    searchPathways(tags, q,(list) => {
         this.setState(list);
       },
       () => {}
@@ -68,62 +65,7 @@ class CatalogPage extends React.Component {
                     )}
                     {this.state.data.map((data, index) => {
                       return (
-                        <Card key={"pathwayId-" + index}>
-                          <Card.Img top src={data.image} alt="Pathway Image" />
-                          <Card.Body>
-                            <Card.Title>
-                              <Link href={"/catalog/pathway?id=" + data.id}>
-                                {data.name.toUpperCase()}
-                              </Link>
-                            </Card.Title>
-                            <Card.Text>{data.description}</Card.Text>
-                            <Button
-                              className="float-right"
-                              onClick={() => {
-                                Router.push({
-                                  pathname: "/catalog/pathway",
-                                  query: {
-                                    id: data.id,
-                                  },
-                                });
-                              }}
-                            >
-                              Iniciar
-                            </Button>
-
-                            <Button
-                              className="float-right mr-2"
-                              variant={"secondary"}
-                              onClick={() => {
-                                Router.push({
-                                  pathname: "/catalog/runners",
-                                  query: {
-                                    pathwayId: data.id,
-                                  },
-                                });
-                              }}
-                            >
-                              Runners
-                            </Button>
-
-                            <Card.Text>
-                              <span className="text-muted">
-                                Tags:{" "}
-                                {data.tags.map((tag, index) => {
-                                  return (
-                                    <Badge
-                                      key={"tags-key" + index}
-                                      variant="label-info"
-                                      className="mr-1"
-                                    >
-                                      <a href={"/catalog?tag=" + tag}>{tag}</a>
-                                    </Badge>
-                                  );
-                                })}
-                              </span>
-                            </Card.Text>
-                          </Card.Body>
-                        </Card>
+                        <ItemCatalog data={data} key={"pathwayId-" + index} />
                       );
                     })}
                   </CardColumns>
@@ -136,6 +78,67 @@ class CatalogPage extends React.Component {
     );
   }
 }
+
+const ItemCatalog = ({ data }) => {
+  return (
+    <Card>
+      <Card.Img top src={data.image} alt="Pathway Image" />
+      <Card.Body>
+        <Card.Title>
+          <Link href={"/catalog/pathway?id=" + data.id}>
+            {data.name.toUpperCase()}
+          </Link>
+        </Card.Title>
+        <Card.Text>{data.description}</Card.Text>
+        <Button
+          className="float-right"
+          onClick={() => {
+            Router.push({
+              pathname: "/catalog/pathway",
+              query: {
+                id: data.id,
+              },
+            });
+          }}
+        >
+          Iniciar
+        </Button>
+
+        <Button
+          className="float-right mr-2"
+          variant={"secondary"}
+          onClick={() => {
+            Router.push({
+              pathname: "/catalog/runners",
+              query: {
+                pathwayId: data.id,
+              },
+            });
+          }}
+        >
+          Runners
+        </Button>
+
+        <Card.Text>
+          <span className="text-muted">
+            Tags:{" "}
+            {data.tags.map((tag, index) => {
+              return (
+                <Badge
+                  key={"tags-key" + index}
+                  variant="label-info"
+                  className="mr-1"
+                >
+                  <a href={"/catalog?tag=" + tag}>{tag}</a>
+                </Badge>
+              );
+            })}
+          </span>
+        </Card.Text>
+      </Card.Body>
+    </Card>
+  );
+};
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(

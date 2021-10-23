@@ -61,7 +61,9 @@ class TrackModal extends React.Component {
           ...data,
         });
       },
-      () => {}
+      () => {
+        console.log("Error al obtener el track");
+      }
     );
   }
 

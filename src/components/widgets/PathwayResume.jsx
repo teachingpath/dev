@@ -1,25 +1,51 @@
 import { Row, Col, Button } from "@panely/components";
 import Router from "next/router";
 import Card from "@panely/components/Card";
-import { firestoreClient } from "components/firebase/firebaseClient";
 import Link from "next/link";
+import { get } from "consumer/pathway";
 
 class PathwayResume extends React.Component {
-  state = { data: {} };
+  state = { data: {name: "--"} };
   componentDidMount() {
-    firestoreClient
-      .collection("pathways")
-      .doc(this.props.pathwayId)
-      .get()
-      .then((doc) => {
-        this.setState({ data: doc.data() });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
+    get(
+      this.props.pathwayId,
+      (data) => {
+        this.setState({  data });
+      },
+      () => {
+        console.log("No pudo conseguir el pathway");
+      }
+    );
   }
+
   render() {
     const { data } = this.state;
+    const renderButton = () => {
+      const journeyId = localStorage.getItem("journeyId")
+        ? localStorage.getItem("journeyId")
+        : null;
+
+      if (journeyId) {
+        return (
+          <Button
+            onClick={() => {
+              Router.push("/catalog/journey?id=" + journeyId);
+            }}
+          >
+            Ir al Journey
+          </Button>
+        );
+      }
+      return (
+        <Button
+          onClick={() => {
+            Router.push("/catalog/pathway?id=" + this.props.pathwayId);
+          }}
+        >
+          Iniciar pathway
+        </Button>
+      );
+    };
     return (
       <Card>
         <Row noGutters>
@@ -29,7 +55,7 @@ class PathwayResume extends React.Component {
                 <Card.Img
                   className="avatar-circle p-3"
                   src={data?.trophy?.image}
-                  alt="Card Image"
+                  alt="Profile Image"
                 />
               </Link>
             </Col>
@@ -48,14 +74,7 @@ class PathwayResume extends React.Component {
                 </small>
               </Card.Text>
               {data?.draft === true && <strong>Aún no disponible</strong>}
-              {data?.draft === false && 
-              <Button
-                onClick={() => {
-                  Router.push("/catalog/pathway?id=" + this.props.pathwayId);
-                }}
-              >
-                Iniciar pathway
-              </Button>}
+              {data?.draft === false && renderButton()}
             </Card.Body>
           </Col>
         </Row>

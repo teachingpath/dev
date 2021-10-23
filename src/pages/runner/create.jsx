@@ -3,7 +3,8 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
-  cleanRunner
+  cleanRunner,
+  pageShowAlert
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -11,8 +12,6 @@ import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
 import Router from "next/router";
-import Swal from "@panely/sweetalert2";
-import swalContent from "sweetalert2-react-content";
 import RunnerList from "components/widgets/RunnerList";
 import RunnerForm from "components/widgets/RunnerForm";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
@@ -22,18 +21,7 @@ import Spinner from "@panely/components/Spinner";
 import { create } from "consumer/runner";
 import { updateToDraft } from "consumer/pathway";
 
-const ReactSwal = swalContent(Swal);
-const toast = ReactSwal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: (toast) => {
-    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
-    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
-  },
-});
+
 
 class RunnerCreatePage extends React.Component {
   constructor(props) {
@@ -72,6 +60,8 @@ class RunnerCreatePage extends React.Component {
 
   onCreate(data) {
     const pathwayId = this.state.pathwayId;
+    const {pageShowAlert, activityChange}  = this.props;
+
     return create(pathwayId, data)
       .then((docRef) => {
         this.setState({
@@ -80,11 +70,8 @@ class RunnerCreatePage extends React.Component {
           runnerId: docRef.id,
           ...data,
         });
-        toast.fire({
-          icon: "success",
-          title: "El Runner guardado correctamente",
-        });
-        this.props.activityChange({
+        pageShowAlert("El Runner guardado correctamente");
+        activityChange({
           pathwayId,
           type: "new_runner",
           msn: 'El runner "' + data.name + '" fue creado.',
@@ -93,10 +80,7 @@ class RunnerCreatePage extends React.Component {
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
-        toast.fire({
-          icon: "error",
-          title: "Creation runner",
-        });
+        pageShowAlert("Error al crear el runner", "error");
       });
       
   }
@@ -202,7 +186,7 @@ class RunnerCreatePage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange,cleanRunner},
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange,cleanRunner, pageShowAlert},
     dispatch
   );
 }

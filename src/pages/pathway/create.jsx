@@ -3,7 +3,8 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
-  cleanPathway
+  cleanPathway,
+  pageShowAlert
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -11,23 +12,9 @@ import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
 import Router from "next/router";
-import Swal from "@panely/sweetalert2";
-import swalContent from "sweetalert2-react-content";
 import PathwayForm from "../../components/widgets/PathwayForm";
 import { create } from "consumer/pathway";
 
-const ReactSwal = swalContent(Swal);
-const toast = ReactSwal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: (toast) => {
-    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
-    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
-  },
-});
 
 class PathwayPage extends React.Component {
   constructor(props) {
@@ -48,6 +35,7 @@ class PathwayPage extends React.Component {
   }
 
   onCreate(data) {
+    const {pageShowAlert, activityChange}  = this.props;
     return create(data)
       .then((docRef) => {
         this.setState({
@@ -55,15 +43,11 @@ class PathwayPage extends React.Component {
           saved: true,
           ...data,
         });
-        toast.fire({
-          icon: "success",
-          title: "Pathway guadardo correctamente",
-        });
-        this.props.activityChange({
+        pageShowAlert("Pathway guadardo correctamente");
+        activityChange({
           pathwayId: docRef.id,
           type: "new_pathway",
           msn: 'El pathway "' + data.name + '"  fue creado.',
-          ...data,
         });
         Router.push({
           pathname: "/runner/create",
@@ -72,10 +56,7 @@ class PathwayPage extends React.Component {
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
-        toast.fire({
-          icon: "error",
-          title: "Creando el pathway",
-        });
+        pageShowAlert("Error al guardar los datos", "error");
       });
   }
 
@@ -116,7 +97,7 @@ class PathwayPage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange, cleanPathway },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, cleanPathway, pageShowAlert},
     dispatch
   );
 }

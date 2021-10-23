@@ -1,25 +1,32 @@
+import Toast from "./part/Toast";
+
 function withLayout(Page, layout = "default") {
   class LayoutWrapper extends React.Component {
     static async getInitialProps(ctx) {
-      let initialProps = {}
+      let initialProps = {};
 
       // Get initial properties
       if (Page.getInitialProps) {
-        initialProps = await Page.getInitialProps(ctx)
+        initialProps = await Page.getInitialProps(ctx);
       }
 
       return {
         ...initialProps,
-        layout
-      }
+        layout,
+      };
     }
 
     render() {
-      return <Page {...this.props} />
+      return (
+        <>
+          <Page {...this.props} />
+          <Toast />
+        </>
+      );
     }
   }
 
-  return LayoutWrapper
+  return LayoutWrapper;
 }
 
-export default withLayout
+export default withLayout;

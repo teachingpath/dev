@@ -1,9 +1,9 @@
 import { Col, Container, Row, Widget1, Badge } from "@panely/components";
-import { firebaseClient } from "components/firebase/firebaseClient";
 import {
   activityChange,
   breadcrumbChange,
   pageChangeHeaderTitle,
+  pageShowAlert
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -19,10 +19,20 @@ import StatusProgress from "components/widgets/StatusProgress";
 import RunnersExecutor from "components/widgets/RunnersExecutor";
 import { getJourney } from "consumer/journey";
 import Spinner from "../../../docs/template/src/modules/components/Spinner";
-import { createSlug } from "components/helpers/mapper";
+import {
+  activityMapper,
+  createSlug,
+  linkGroup,
+  linkTrack,
+} from "components/helpers/mapper";
+import DisplayTrophy from "components/widgets/DisplayTrophy";
 
 class JourneyGeneralPage extends React.Component {
   state = { name: "Cargando...", trophy: {}, progress: 0, badges: [] };
+  constructor(props) {
+    super(props);
+    this.onComplete = this.onComplete.bind(this);
+  }
 
   componentDidMount() {
     if (!Router.query.id) {
@@ -34,10 +44,11 @@ class JourneyGeneralPage extends React.Component {
       { text: "Mi Journey" },
     ]);
 
-    getJourney(
-      Router.query.id,
-      (data) => {
+    getJourney(Router.query.id, (data) => {
         data.runners = data.breadcrumbs;
+        localStorage.setItem("group", data.group);
+        localStorage.setItem("pathwayId", data.pathwayId);
+        localStorage.setItem("journeyId", data.id);
         this.setState(data);
         this.props.breadcrumbChange([
           { text: "Catálogo", link: "/catalog" },
@@ -45,146 +56,130 @@ class JourneyGeneralPage extends React.Component {
           { text: "Mi Journey" },
         ]);
       },
-      () => {}
+      () => {
+        this.props.pageShowAlert("No se pudo obtener el juorney", "error");
+      }
     );
+  }
+
+  onComplete(data) {
+    this.props.activityChange(
+      activityMapper(
+        "complete_track",
+        linkTrack(data.id, data.runnerId, data.title, "El Track __LINK__ está competado."),
+        linkGroup(
+          this.state.id,
+          this.props.user,
+          linkTrack(data.id, data.runnerId, data.title, "ha completado el track: __LINK__")
+        ),
+        this.state?.group,
+        5
+      )
+    );
+    this.setState({
+      ...this.state,
+      id: null,
+    });
+    this.componentDidMount();
   }
 
   render() {
     const { name, trophy, progress, group } = this.state;
     const user = this.props.user;
     const isFinish = progress >= 100;
+    if (!user) {
+      return <Spinner>Cargando...</Spinner>;
+    }
+
     return (
       <React.Fragment>
         <Head>
           <title>Journey | Teaching Path</title>
         </Head>
-        {!user ? (
-          <Spinner></Spinner>
-        ) : (
-          <Container fluid>
-            <Row portletFill="xl">
-              <Col xl="12">
-                <Widget1 fluid>
-                  <Widget1.Display
-                    top
-                    size="lg"
-                    className={
-                      isFinish
-                        ? "bg-success text-white mb-5"
-                        : "bg-info text-white mb-5"
-                    }
-                  >
-                    {this.state?.id && (
-                      <StatusProgress
-                        progress={this.state.progress.toFixed(2)}
-                        journeyId={this.state.id}
-                        runners={this.state?.runners}
-                        pathwayId={this.state.pathwayId}
-                      />
-                    )}
 
-                    <Widget1.Dialog>
-                      <Widget1.DialogContent>
-                        <h1
-                          className="display-5"
-                          children={name?.toUpperCase()}
+        <Container fluid>
+          <Row portletFill="xl">
+            <Col xl="12">
+              <Widget1 fluid>
+                <Widget1.Display
+                  top
+                  size="lg"
+                  className={
+                    isFinish
+                      ? "bg-success text-white mb-5"
+                      : "bg-info text-white mb-5"
+                  }
+                >
+                  {this.state?.id && (
+                    <StatusProgress
+                      progress={this.state.progress.toFixed(2)}
+                      journeyId={this.state.id}
+                      runners={this.state?.runners}
+                      pathwayId={this.state.pathwayId}
+                    />
+                  )}
+                  <TitlePathway group={group} name={name} />
+                  <DisplayTrophy isFinish={isFinish} trophy={trophy} />
+                </Widget1.Display>
+                <Widget1.Body style={{ marginTop: "70px" }}>
+                  <Row>
+                    <Col md="6">
+                      {this.state?.runners && (
+                        <RunnersExecutor
+                          user={user}
+                          current={this.state.current}
+                          runners={this.state.runners}
+                          journeyId={this.state.id}
+                          group={this.state.group}
+                          pathwayId={this.state.pathwayId}
+                          activityChange={this.props.activityChange}
+                          onComplete={this.onComplete}
                         />
-                        <h5>
-  
-                          <Badge title="tu sala o grupo">
-                          <i className="fas fa-users"></i> {' '}
-                            {group? group?.replace(createSlug(name)+"-", ""): "--"}
-                            </Badge>
-                        </h5>
-                      </Widget1.DialogContent>
-                    </Widget1.Dialog>
-                    {Object.keys(trophy).length > 0 && (
-                      <Widget1.Offset>
-                        <img
-                          src={trophy?.image}
-                          alt="loading"
-                          style={{ width: "125px" }}
-                          className="bg-yellow p-2 border mx-auto d-block mg-thumbnail avatar-circle"
-                        />
-                        <h4
-                          className={
-                            (isFinish ? "text-black " : "text-muted") +
-                            " mx-auto d-block text-center "
-                          }
-                        >
-                          {trophy?.name}
-                        </h4>
-                        <small
-                          className={" mx-auto d-block text-center text-muted"}
-                        >
-                          {isFinish ? trophy?.description : ""}
-                        </small>
-                      </Widget1.Offset>
-                    )}
-                  </Widget1.Display>
-                  <Widget1.Body style={{ marginTop: "70px" }}>
-                    <Row>
-                      <Col md="6">
-                        {(user && this.state?.runners) && (
-                          <RunnersExecutor
-                            user={user}
-                            current={this.state.current}
-                            runners={this.state.runners}
-                            journeyId={this.state.id}
-                            group={this.state.group}
-                            pathwayId={this.state.pathwayId}
-                            activityChange={this.props.activityChange}
-                            onComplete={(data) => {
-                              const linkResume = this.state.id
-                                ? '<i><a href="/pathway/resume?id=' + this.state.id +'">' +
-                                    user.displayName +
-                                  "</a></i>"
-                                : "<i>" + user.displayName + "</i>";
-                              this.props.activityChange({
-                                type: "complete_track",
-                                msn: 'El Track "' + data.title + '" está completo.',
-                                msnForGroup: linkResume + ' ha completado el track <b>"' + data.title + '"</b>',
-                                group: group,
-                              });
-                              this.setState({
-                                ...this.state,
-                                id: null,
-                              });
-                              this.componentDidMount();
-                            }}
-                          />
-                        )}
-                      </Col>
-                      <Col md="6">
-                        {this.state?.id && (
+                      )}
+                    </Col>
+                    {this.state?.id && (
+                      <>
+                        <Col md="6">
                           <ActivitiesComponent group={this.state?.group} />
-                        )}
-                      </Col>
-                      <Col md="12">
-                        {this.state?.id && (
+                        </Col>
+                        <Col md="12">
                           <BadgeList journeyId={this.state?.id} />
-                        )}
-                      </Col>
-                      <Col md="6">
-                        {this.state?.id && (
+                        </Col>
+                        <Col md="6">
                           <Teacher leaderId={this.state?.leaderId} />
-                        )}
-                      </Col>
-                    </Row>
-                  </Widget1.Body>
-                </Widget1>
-              </Col>
-            </Row>
-          </Container>
-        )}
+                        </Col>
+                      </>
+                    )}
+                  </Row>
+                </Widget1.Body>
+              </Widget1>
+            </Col>
+          </Row>
+        </Container>
       </React.Fragment>
     );
   }
 }
 
+const TitlePathway = ({ name, group }) => {
+  return (
+    <Widget1.Dialog>
+      <Widget1.DialogContent>
+        <h1 className="display-5" children={name?.toUpperCase()} />
+        <h5>
+          <Badge title="tu sala o grupo">
+            <i className="fas fa-users"></i>{" "}
+            {group ? group?.replace(createSlug(name) + "-", "") : "--"}
+          </Badge>
+        </h5>
+      </Widget1.DialogContent>
+    </Widget1.Dialog>
+  );
+};
+
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
     dispatch
   );
 }

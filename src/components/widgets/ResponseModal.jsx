@@ -32,7 +32,9 @@ class ResponseModal extends React.Component {
           criteria: null
         });
       },
-      () => {}
+      () => {
+        console.log("Error al obtener el track");
+      }
     );
   }
 

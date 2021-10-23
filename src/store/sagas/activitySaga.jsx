@@ -3,7 +3,7 @@ import {
   firebaseClient,
 } from "components/firebase/firebaseClient";
 import { put, select } from "redux-saga/effects";
-import { userChange } from "store/actions/userAction";
+import { pageShowAlert, userChange} from "store/actions";
 
 function* activitySaga({ payload }) {
   const user = firebaseClient.auth().currentUser;
@@ -14,52 +14,32 @@ function* activitySaga({ payload }) {
     case "start_pathway":
       point = payload.point || 1;
       addPoint(user, point);
-      yield put(
-        userChange({
-          ...dataUser,
-          point: dataUser.point + point,
-        })
-      );
+      yield put( userChange({ ...dataUser, point: dataUser.point + point, }) );
+      yield put(pageShowAlert("Excelente! obtuviste +"+point+" puntos por iniciar el pathway"))
       break;
     case "complete_track":
-       point = payload.point || 5;
+      point = payload.point || 5;
       addPoint(user, point);
-      yield put(
-        userChange({
-          ...dataUser,
-          point: dataUser.point + point,
-        })
-      );
+      yield put(userChange({ ...dataUser, point: dataUser.point + point,}));
+      yield put(pageShowAlert("¡Excelente! obtuviste +"+point+" puntos por completar el track"))
       break;
     case "complete_quiz":
-       point = payload.point || 10;
+      point = payload.point || 10;
       addPoint(user, point);
-      yield put(
-        userChange({
-          ...dataUser,
-          point: dataUser.point + point,
-        })
-      );
+      yield put( userChange({ ...dataUser,point: dataUser.point + point, }));
+      yield put(pageShowAlert("¡Felicidades! obtuviste +"+point+" puntos por completar el quiz"))
       break;
     case "complete_pathway":
-       point = payload.point || 100;
+      point = payload.point || 100;
       addPoint(user, point);
-      yield put(
-        userChange({
-          ...dataUser,
-          point: dataUser.point + point,
-        })
-      );
+      yield put( userChange({ ...dataUser, point: dataUser.point + point, }));
+      yield put(pageShowAlert("¡Felicidades! obtuviste +"+point+" puntos por completar el pathway"))
       break;
     case "new_track_response":
-       point = payload.point || 1;
+      point = payload.point || 1;
       addPoint(user, point);
-      yield put(
-        userChange({
-          ...dataUser,
-          point: dataUser.point + point,
-        })
-      );
+      yield put(userChange({ ...dataUser, point: dataUser.point + point}));
+      yield put(pageShowAlert("¡Muy Bien! obtuviste +"+point+" puntos por responder al track"))
       break;
     default:
       break;

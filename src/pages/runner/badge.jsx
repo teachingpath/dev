@@ -15,6 +15,7 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  pageShowAlert
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -31,21 +32,9 @@ import Spinner from "@panely/components/Spinner";
 import Router from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
-import { updateBadge, getQuestions, getRunner } from "consumer/runner";
+import { updateBadge, getQuestions } from "consumer/runner";
 
 const ReactSwal = swalContent(Swal);
-const toast = ReactSwal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: (toast) => {
-    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
-    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
-  },
-});
-
 const alert = ReactSwal.mixin({
   customClass: {
     confirmButton: "btn btn-label-success btn-wide mx-1",
@@ -54,7 +43,7 @@ const alert = ReactSwal.mixin({
   buttonsStyling: false,
 });
 
-function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
+function BadgeForm({ runnerId, data, activityChange, pathwayId, pageShowAlert}) {
   const { badge } = data;
   const imageRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -81,10 +70,7 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
   function saveBadge(data) {
     return updateBadge(runnerId, data)
       .then((docRef) => {
-        toast.fire({
-          icon: "success",
-          title: "El emblema fue guardado correctamente",
-        });
+        pageShowAlert("El emblema fue guardado correctamente");
         activityChange({
           pathwayId: pathwayId,
           type: "edit_runner",
@@ -93,10 +79,7 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId }) {
         setLoading(false);
       })
       .catch((error) => {
-        toast.fire({
-          icon: "error",
-          title: "Creation badge",
-        });
+        pageShowAlert("Error al crear el emblema", "error");
         setLoading(false);
       });
   }
@@ -249,6 +232,7 @@ class FormBasePage extends React.Component {
                   <hr />
                   {this.props?.runner?.id && <BadgeForm
                     activityChange={this.props.activityChange}
+                    pageShowAlert={this.props.pageShowAlert}
                     runnerId={this.state.runnerId}
                     pathwayId={this.state.pathwayId}
                     data={this.props?.runner}
@@ -312,7 +296,7 @@ const BadgeAddon = ({ id, pathwayId }) => {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert},
     dispatch
   );
 }

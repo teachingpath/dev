@@ -20,9 +20,31 @@ import Router from "next/router";
 import ActivitiesComponent from "components/widgets/Activities";
 import { getJourney, updateJourney } from "consumer/journey";
 import { Timeline } from "@panely/components";
-import { getTracksResponses } from "consumer/user";
+import { addFeedback, getTracksResponses, getUser } from "consumer/user";
 import Marker from "@panely/components/Marker";
-import { linkify } from "components/helpers/mapper";
+import swalContent from "sweetalert2-react-content";
+import Swal from "@panely/sweetalert2";
+import {
+  escapeHtml,
+  linkify,
+  linkRunner,
+  linkTrack,
+} from "components/helpers/mapper";
+import { Form } from "@panely/components";
+import Label from "@panely/components/Label";
+import { sendFeedback } from "consumer/sendemail";
+
+// Use SweetAlert React Content library
+const ReactSwal = swalContent(Swal);
+
+// Set SweetAlert options
+const swal = ReactSwal.mixin({
+  customClass: {
+    confirmButton: "btn btn-label-success btn-wide mx-1",
+    cancelButton: "btn btn-label-danger btn-wide mx-1",
+  },
+  buttonsStyling: false,
+});
 
 class PathwayPage extends React.Component {
   constructor(props) {
@@ -55,7 +77,9 @@ class PathwayPage extends React.Component {
   }
 
   onLoad = () => {
-    getJourney( Router.query.id, async (data) => {
+    getJourney(
+      Router.query.id,
+      async (data) => {
         this.props.breadcrumbChange([
           { text: "Home", link: "/" },
           { text: data.name },
@@ -77,19 +101,26 @@ class PathwayPage extends React.Component {
           (item) => item.status === "wait"
         ).length;
 
-        const finishTracksTitles = isCompleted ? tracks.length : tracks
-          .filter((item) => item.status === "finish")
-          .map((it) => it.name)
-          .join(", ");
+        const finishTracksTitles = isCompleted
+          ? tracks.length
+          : tracks
+              .filter((item) => item.status === "finish")
+              .map((it) => it.name)
+              .join(", ");
 
-        const runnerCurrent = (data.progress >= 100 || isCompleted) ? "PATHWAY COMPLETADO 👍"
+        const runnerCurrent =
+          data.progress >= 100 || isCompleted
+            ? "PATHWAY COMPLETADO 👍"
             : data.breadcrumbs[data.current]?.name +
-              "🏃🏻(" +(data.current + 1) + "/" + (data.breadcrumbs.length + 1) + ") [Running]";
+              "🏃🏻(" +
+              (data.current + 1) +
+              "/" +
+              (data.breadcrumbs.length + 1) +
+              ") [Running]";
 
-
-        if(isCompleted && data.progress < 100){
-          updateJourney(Router.query.id, {progress: 100});
-        } 
+        if (isCompleted && data.progress < 100) {
+          updateJourney(Router.query.id, { progress: 100 });
+        }
 
         const list = await this.getResponseByUserAndGroup(
           data.userId,
@@ -117,8 +148,8 @@ class PathwayPage extends React.Component {
             dateUpdated.toLocaleTimeString(),
         });
         this.onFilter(
-          isCompleted ? "__all__":data.breadcrumbs[data.current]?.id,
-          isCompleted ? null :data.breadcrumbs[data.current]?.name
+          isCompleted ? "__all__" : data.breadcrumbs[data.current]?.id,
+          isCompleted ? null : data.breadcrumbs[data.current]?.name
         );
       },
       () => {}
@@ -140,7 +171,11 @@ class PathwayPage extends React.Component {
       return item.tracks.map((track) => {
         trackMapper[track.id] = {
           runnerId: item.id,
-          name: "[" + track.type + "] " + track.title.trim(),
+          name: linkTrack(
+            track.id,
+            item.id,
+            "[" + track.type + "] " + track.title
+          ),
           runnerName: item.name,
         };
         return {
@@ -154,8 +189,13 @@ class PathwayPage extends React.Component {
     const response = await getTracksResponses(userId, group);
     return response.list.map((data) => {
       return {
+        date: data.date,
         response: data.result || data.feedback || data.answer || data.solution,
         track: trackMapper[data.trackId].name,
+        trackId: data.trackId,
+        id: data.id,
+        userId: data.userId,
+        review: data.review,
         runnerName: trackMapper[data.trackId].runnerName,
         runnerId: trackMapper[data.trackId].runnerId,
       };
@@ -169,10 +209,9 @@ class PathwayPage extends React.Component {
     this.setState({
       ...this.state,
       list: list,
-      runnerSelected: !runnerName ? "" :
-        "Runner [<a href='/catalog/runner?id=" + runnerId +"'rel='noopener noreferrer' target='_blank'>" +
-          runnerName +
-        "</a>]",
+      runnerSelected: !runnerName
+        ? ""
+        : linkRunner(runnerId, runnerName, "<h3>RUNNER  __LINK__</h3>"),
     });
   }
 
@@ -193,6 +232,7 @@ class PathwayPage extends React.Component {
       runnerList,
       runnerSelected,
     } = this.state;
+    const { leaderUser } = this.props;
     return (
       <React.Fragment>
         <Head>
@@ -207,10 +247,12 @@ class PathwayPage extends React.Component {
                   <Portlet.Title>Pathway | {name}</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
-                  <Widget6Component user={user} runnerCurrent={runnerCurrent} />
+                  <ResumUser user={user} runnerCurrent={runnerCurrent} />
                   <hr />
-                  <Widget7Component
+                  <ResumPathway
                     list={list}
+                    user={user}
+                    leaderUser={leaderUser}
                     runnerSelected={runnerSelected}
                     onFilter={this.onFilter}
                     runnerList={runnerList}
@@ -255,13 +297,15 @@ class PathwayPage extends React.Component {
   }
 }
 
-function Widget7Component({
+function ResumPathway({
   progress,
   waitTracks,
   dateUpdated,
   runnerList,
   finishTracksTitles,
   list,
+  user,
+  leaderUser,
   onFilter,
   runnerSelected,
 }) {
@@ -270,20 +314,20 @@ function Widget7Component({
       <Portlet.Body className="list">
         <Row>
           <Col sm="6">
-            <Widget6Display
+            <WidgetDisplay
               body={finishTracksTitles}
               title="Tracks finalizados"
               className="mb-3"
             />
-            <Widget6Display title="Ultima actualización" body={dateUpdated} />
+            <WidgetDisplay title="Ultima actualización" body={dateUpdated} />
           </Col>
           <Col sm="6">
-            <Widget7Display
+            <TrackDisplay
               title="Tracks en espera"
               highlight={waitTracks}
               className="mb-3"
             />
-            <Widget7Progress
+            <DisplayProgress
               title="Progreso del Pathway"
               highlight={progress + "%"}
               progress={progress}
@@ -291,10 +335,12 @@ function Widget7Component({
           </Col>
           <Col>
             {list && (
-              <Widget5Display
+              <DisplayContribution
                 onFilter={onFilter}
                 title={"Contribuciones "}
                 list={list}
+                user={user}
+                leaderUser={leaderUser}
                 runnerSelected={runnerSelected}
                 runnerList={runnerList}
               />
@@ -306,7 +352,7 @@ function Widget7Component({
   );
 }
 
-function Widget6Component({ user, runnerCurrent }) {
+function ResumUser({ user, runnerCurrent }) {
   return (
     <>
       <Widget4>
@@ -325,7 +371,7 @@ function Widget6Component({ user, runnerCurrent }) {
   );
 }
 
-function Widget7Display(props) {
+function TrackDisplay(props) {
   const { title, highlight, ...attributes } = props;
 
   return (
@@ -340,7 +386,7 @@ function Widget7Display(props) {
   );
 }
 
-function Widget6Display(props) {
+function WidgetDisplay(props) {
   const { title, body, ...attributes } = props;
 
   return (
@@ -355,9 +401,18 @@ function Widget6Display(props) {
   );
 }
 
-function Widget5Display(props) {
-  const { title, list, runnerList, runnerSelected, onFilter, ...attributes } =
-    props;
+function DisplayContribution(props) {
+  let flatRunnerName = "";
+  const {
+    title,
+    list,
+    runnerList,
+    runnerSelected,
+    onFilter,
+    user,
+    leaderUser,
+    ...attributes
+  } = props;
 
   const RunnersAddon = ({ list }) => {
     let statusRunning = false;
@@ -429,18 +484,44 @@ function Widget5Display(props) {
           <Timeline>
             {list.map((data, index) => {
               const { date, response, track, runnerName } = data;
-              const title =
-                runnerSelected === "" ? "[" + runnerName + "] " + track : track;
+
+              const renderTooltip = () => {
+                const fecha = new Date(date);
+                return (
+                  "Fecha de la respuesta: " +
+                  fecha.toLocaleDateString() +
+                  " " +
+                  fecha.toLocaleTimeString()
+                );
+              };
+
+              const renderTitle = () => {
+                const title = flatRunnerName !== runnerName ? runnerName : "";
+                flatRunnerName = runnerName;
+                return runnerSelected === "" ? (
+                  <>
+                    <h4>{title}</h4>
+                    <span dangerouslySetInnerHTML={{ __html: track }}></span>
+                  </>
+                ) : (
+                  <span dangerouslySetInnerHTML={{ __html: track }}></span>
+                );
+              };
               return (
                 <Timeline.Item
                   key={index}
                   date={date}
+                  title={renderTooltip()}
                   pin={<Marker type="circle" />}
                 >
-                  <strong>{title}:</strong>{" "}
+                  <strong>{renderTitle()}:</strong>{" "}
                   <i
                     dangerouslySetInnerHTML={{ __html: linkify(response) }}
                   ></i>
+                  <br />
+                  {leaderUser.profile !== "trainee" && (
+                    <Review data={data} user={user} leaderUser={leaderUser} />
+                  )}
                 </Timeline.Item>
               );
             })}
@@ -451,7 +532,62 @@ function Widget5Display(props) {
   );
 }
 
-function Widget7Progress(props) {
+class Review extends React.Component {
+  handleClick = () => {
+    swal
+      .fire({
+        title: "Hacer una realimentación",
+        input: "textarea",
+        inputValue: this.props.data.review || "",
+        inputAttributes: {
+          autocapitalize: "off",
+        },
+        showCancelButton: true,
+        confirmButtonText: "Enviar",
+        showLoaderOnConfirm: true,
+        preConfirm: (feedback) => {
+          const responseId = this.props.data.id;
+          return addFeedback(responseId, feedback)
+            .then(() => {
+              const { track, runnerName, response } = this.props.data;
+              const title = escapeHtml(runnerName + "/" + track);
+              const email = this.props.user.email;
+              const replyTo = this.props.leaderUser.email;
+              return sendFeedback(email, title, response, feedback, replyTo).then(() => {
+                return "Se envio el feedback correctamente.";
+              });
+            })
+            .catch((error) => {
+              swal.showValidationMessage(`Existe un error: ${error}`);
+            });
+        },
+        allowOutsideClick: () => !swal.isLoading(),
+      })
+      .then((result) => {
+        if (result.value) {
+          swal.fire({
+            title: result.value,
+          });
+        }
+      });
+  };
+
+  render() {
+    const { review } = this.props.data;
+    return (
+      <Button onClick={this.handleClick}>
+        Revisar
+        {review && (
+          <Button.Marker>
+            <Marker variant="dot" variant="success" />
+          </Button.Marker>
+        )}
+      </Button>
+    );
+  }
+}
+
+function DisplayProgress(props) {
   const { title, highlight, progress, ...attributes } = props;
 
   return (
@@ -476,7 +612,13 @@ function mapDispathToProps(dispatch) {
   );
 }
 
+function mapStateToProps(state) {
+  return {
+    leaderUser: state.user,
+  };
+}
+
 export default connect(
-  null,
+  mapStateToProps,
   mapDispathToProps
 )(withAuth(withLayout(PathwayPage)));

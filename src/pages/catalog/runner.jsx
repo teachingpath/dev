@@ -40,10 +40,7 @@ class RunnerList extends React.Component {
   };
 
   componentDidMount() {
-    getRunner(
-      this.props.pathwayId,
-      this.props.id,
-      async (runner) => {
+    getRunner(this.props.pathwayId, this.props.id, async (runner) => {
         const tracks = await getTracks(runner.id);
         const list = [];
         tracks.forEach((track) => {
@@ -55,7 +52,7 @@ class RunnerList extends React.Component {
             type: track.type,
           });
         });
-        
+
         const estimation = tracks
           .map((track) => track.time)
           .reduce((a, b) => a + b);
@@ -72,7 +69,12 @@ class RunnerList extends React.Component {
   }
 
   render() {
-    const { list, runnerId, pathwayId, name, description } = this.state;
+    const { list,  name, description, runnerId, pathwayId } = this.state;
+    
+    if(list && list.length === 0){
+      return  <Spinner />;
+    }
+
     return (
       <React.Fragment>
         <Widget1>
@@ -83,9 +85,6 @@ class RunnerList extends React.Component {
             <Widget1.Body>{description}</Widget1.Body>
           </Widget1.Display>
         </Widget1>
-        {list && list.length === 0 ? (
-          <Spinner />
-        ) : (
           <Portlet className="mb-2">
             <Portlet.Header bordered>
               <Portlet.Icon>
@@ -106,45 +105,48 @@ class RunnerList extends React.Component {
 
             <RichList flush>
               {list.map((data, index) => {
-                const { subtitle, title, time, type, id } = data;
-                const titleLink = (
-                  <Link
-                    href={
-                      "/catalog/track?id=" +
-                      id +
-                      "&runnerId=" +
-                      runnerId +
-                      "&pathwayId=" +
-                      pathwayId
-                    }
-                  >
-                    {index + 1 + ". " + title}
-                  </Link>
-                );
                 return (
-                  <RichList.Item key={index}>
-                    <RichList.Content>
-                      <RichList.Title children={titleLink} />
-                      <RichList.Subtitle children={subtitle} />
-                    </RichList.Content>
-                    <RichList.Addon addonType="append">
-                      <Badge className="mr-2">{type}</Badge>
-                      {timeConvert(timePowerTen(time))}
-                      <FontAwesomeIcon
-                        className={"ml-2"}
-                        icon={SolidIcon.faStopwatch}
-                      />
-                    </RichList.Addon>
-                  </RichList.Item>
+                  <RunnerItem
+                    {...data}
+                    key={"runners-" + index}
+                    runnerId={runnerId} 
+                    pathwayId={pathwayId}
+                    index={index}
+                  />
                 );
               })}
             </RichList>
           </Portlet>
-        )}
+   
       </React.Fragment>
     );
   }
 }
+
+const RunnerItem = ({ subtitle, title, time, type, id, index, pathwayId, runnerId }) => {
+  const titleLink = (
+    <Link
+      href={
+        "/catalog/track?id=" + id +  "&runnerId=" +runnerId + "&pathwayId=" +pathwayId
+      }
+    >
+      {index + 1 + ". " + title}
+    </Link>
+  );
+  return (
+    <RichList.Item key={index}>
+      <RichList.Content>
+        <RichList.Title children={titleLink} />
+        <RichList.Subtitle children={subtitle} />
+      </RichList.Content>
+      <RichList.Addon addonType="append">
+        <Badge className="mr-2">{type}</Badge>
+        {timeConvert(timePowerTen(time))}
+        <FontAwesomeIcon className={"ml-2"} icon={SolidIcon.faStopwatch} />
+      </RichList.Addon>
+    </RichList.Item>
+  );
+};
 
 class RunnerGeneralPage extends React.Component {
   state = { id: null };
@@ -157,7 +159,9 @@ class RunnerGeneralPage extends React.Component {
     if (!Router.query.id) {
       Router.push("/catalog");
     } else {
-      this.setState({ id: Router.query.id, pathwayId: Router.query.pathwayId });
+      this.setState({ 
+        id: Router.query.id, pathwayId: Router.query.pathwayId 
+      });
     }
   }
 
@@ -169,9 +173,9 @@ class RunnerGeneralPage extends React.Component {
           <script src="/script.js"></script>
         </Head>
         <Container fluid>
-          {this.state.id && <RunnerList id={this.state.id} />}
-          {this.state.pathwayId && (
-            <PathwayResume pathwayId={this.state.pathwayId} />
+          {this.state?.id && <RunnerList id={this.state?.id} />}
+          {this.state?.pathwayId && (
+            <PathwayResume pathwayId={this.state?.pathwayId} />
           )}
         </Container>
       </React.Fragment>

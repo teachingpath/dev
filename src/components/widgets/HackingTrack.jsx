@@ -17,7 +17,12 @@ import Col from "@panely/components/Col";
 import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
 import { getTracksResponses, saveTrackResponse } from "consumer/track";
-import { linkify } from "components/helpers/mapper";
+import {
+  activityMapper,
+  linkGroup,
+  linkify,
+  linkTrack,
+} from "components/helpers/mapper";
 import { useState } from "react";
 
 function SolutionForm({ onSave }) {
@@ -80,20 +85,17 @@ class HackingTrack extends React.Component {
   state = { list: [] };
 
   componentDidMount() {
-    const {
-      data: { id },
-      group,
-    } = this.props;
-    getTracksResponses(
-      id,
-      group,
-      (data) => {
+    const {data: { id }, group,} = this.props;
+    
+    getTracksResponses(id, group, (data) => {
         this.setState({
           ...this.state,
           list: data.list,
         });
       },
-      () => {}
+      () => {
+        console.log("Error al intetar conseguir las respuestas")
+      }
     );
   }
   render() {
@@ -101,7 +103,6 @@ class HackingTrack extends React.Component {
     const id = data.id;
     const user = this.props.user || firebaseClient.auth().currentUser;
     const typeContent = data?.typeContent;
-    const trackName = this.props.data?.name;
     return (
       <>
         {data.guidelines && (
@@ -155,27 +156,27 @@ class HackingTrack extends React.Component {
                 onSave={(data) => {
                   return saveTrackResponse(id, group, data).then(() => {
                     if (this.props.activityChange) {
-                      const linkResume = journeyId
-                        ? '<i><a href="/pathway/resume?id=' +
-                          journeyId +
-                          '">' +
-                          user.displayName +
-                          "</a></i>"
-                        : "<i>" + user.displayName + "</i>";
-                      this.props.activityChange({
-                        type: "new_track_response",
-                        msn:
-                          'Respuesta de nueva Track dentro de la sala "' +
-                          group +
-                          '".',
-                        msnForGroup:
-                          "Nueva respuesta  por " +
-                          linkResume +
-                          " para el hacking task <b>" +
-                          trackName +
-                          "</b>.",
-                        group: group,
-                      });
+                      this.props.activityChange(
+                        activityMapper(
+                          "new_track_response",
+                          linkTrack(
+                            this.props.data.name,
+                            this.props.data.id,
+                            "Nueva respuesta al hacking __LINK__ "
+                          ),
+                          linkGroup(
+                            journeyId,
+                            user,
+                            linkTrack(
+                              this.props.data.name,
+                              this.props.data.id,
+                              "ha escrito una nueva respuesta para el hacking __LINK__ "
+                            )
+                          ),
+                          this.props.group,
+                          5
+                        )
+                      );
                     }
                     this.setState({ current: this.state.current + 1 });
                     setTimeout(() => {

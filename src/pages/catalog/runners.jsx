@@ -9,12 +9,12 @@ import {
 import { pageChangeHeaderTitle, breadcrumbChange } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { firestoreClient } from "components/firebase/firebaseClient";
 import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
 import Spinner from "@panely/components/Spinner";
 import Link from "next/link";
+import { getRunners } from "consumer/runner";
 
 class CatalogPage extends React.Component {
   constructor(props) {
@@ -30,29 +30,16 @@ class CatalogPage extends React.Component {
       { text: "Catálogo", link: "/catalog" },
       { text: "Runners" },
     ]);
-    firestoreClient
-      .collection("runners")
-      .where("pathwayId", "==", pathwayId)
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push({
-            id: doc.id,
-            ...doc.data(),
-          });
-        });
-        this.setState({ data: list });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
-      });
+    getRunners(pathwayId, (data) => {
+      this.setState({data: data.list});
+    }, () => {})
   }
 
   render() {
     if (this.state.data === null) {
       return <Spinner className="m-5">Loading</Spinner>;
     }
+
     return (
       <React.Fragment>
         <Head>
@@ -76,12 +63,13 @@ class CatalogPage extends React.Component {
                       <p className="p-5">No hay coincidencias para mostrar.</p>
                     )}
                     {this.state.data.map((data, index) => {
+                      const title =   (index+1)+". "+data.name.toUpperCase();
                       return (
                         <Card key={"runnerId-" + index}>
                           <Card.Body>
                             <Card.Title>
                               <Link href={"/catalog/runner?id=" + data.id}>
-                                {data.name.toUpperCase()}
+                                {title}
                               </Link>
                             </Card.Title>
                             <Card.Text>{data.description}</Card.Text>

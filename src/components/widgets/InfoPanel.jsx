@@ -9,7 +9,6 @@ import {
 } from "@panely/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
-import { firestoreClient } from "../firebase/firebaseClient";
 import Button from "@panely/components/Button";
 import React from "react";
 import Progress from "@panely/components/Progress";
@@ -21,6 +20,7 @@ import Swal from "@panely/sweetalert2";
 import swalContent from "sweetalert2-react-content";
 import { deleteJourney } from "consumer/journey";
 import Router from "next/router";
+import { pathwayFollowUp } from "consumer/pathway";
 const ReactSwal = swalContent(Swal);
 const swal = ReactSwal.mixin({
   customClass: {
@@ -50,7 +50,7 @@ class InfoPanelComponent extends React.Component {
         data: [],
       },
       {
-        title: "0",
+        title: "...",
         subtitle: "Corriendo (con seguimiento)",
         avatar: () => (
           <Widget8.Avatar
@@ -65,7 +65,7 @@ class InfoPanelComponent extends React.Component {
         data: [],
       },
       {
-        title: "0",
+        title: "...",
         subtitle: "Finalizado (con seguimiento)",
         avatar: () => (
           <Widget8.Avatar display circle variant="label-danger" className="m-0">
@@ -77,49 +77,19 @@ class InfoPanelComponent extends React.Component {
     ],
   };
 
-  componentDidMount() {
-    firestoreClient
-      .collection("pathways")
-      .where("leaderId", "==", this.props.firebase.user_id)
-      .where("isFollowUp", "==", true)
-      .get()
-      .then((querySnapshot) => {
-        const list = [];
-        querySnapshot.forEach((doc) => {
-          list.push(doc.id);
-        });
-        firestoreClient
-          .collection("journeys")
-          .where("pathwayId", "in", list)
-          .orderBy("date", "desc")
-          .get()
-          .then((querySnapshot) => {
-            const finisheds = [];
-            const inRunning = [];
-            querySnapshot.forEach(async (doc) => {
-              const data = doc.data();
-              data.id = doc.id;
-              if (data.progress >= 100) {
-                finisheds.push(data);
-              } else {
-                inRunning.push(data);
-              }
-              const dataSummary = this.state.data;
-              dataSummary[1].data = inRunning;
-              dataSummary[2].data = finisheds;
-
-              this.setState({
-                data: dataSummary,
-              });
-            });
-          })
-          .catch((error) => {
-            console.log("Error getting documents: ", error);
-          });
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
+  componentDidMount() {    
+    pathwayFollowUp(this.props.firebase.user_id, (result) => {
+      const dataSummary = this.state.data;
+      dataSummary[1].data = result.inRunning;
+      dataSummary[2].data = result.finisheds;
+      dataSummary[1].title = result.inRunning.length;
+      dataSummary[2].title = result.finisheds.length;
+      this.setState({
+        data: dataSummary,
+        loading: false,
       });
+    })
+   
   }
 
   render() {
@@ -160,14 +130,10 @@ class InfoPanelComponent extends React.Component {
 }
 
 class InfoModal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isOpen: false,
-      activeCard: -1,
-    };
-  }
-
+  state = {
+    isOpen: false,
+    activeCard: -1,
+  };
   toggle = () => {
     this.setState({ isOpen: !this.state.isOpen });
   };
@@ -236,7 +202,7 @@ class InfoModal extends React.Component {
                       <Portlet.Addon className="float-right">
                           <Dropdown.Uncontrolled>
                             <Dropdown.Toggle icon variant="text-secondary">
-                              <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
+                              <FontAwesomeIcon icon={SolidIcon.faCog} />
                             </Dropdown.Toggle>
                             <Dropdown.Menu right animated>
                               <Dropdown.Item

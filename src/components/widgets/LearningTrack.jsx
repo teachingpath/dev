@@ -17,7 +17,12 @@ import Col from "@panely/components/Col";
 import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
 import { getTracksResponses, saveTrackResponse } from "consumer/track";
-import { linkify } from "components/helpers/mapper";
+import {
+  activityMapper,
+  linkGroup,
+  linkify,
+  linkTrack,
+} from "components/helpers/mapper";
 import { useState } from "react";
 
 function FeedbackForm({ onSave }) {
@@ -38,10 +43,10 @@ function FeedbackForm({ onSave }) {
   return (
     <Form
       onSubmit={handleSubmit((data) => {
-        setLoad(true)
+        setLoad(true);
         onSave(data).then(() => {
           reset();
-          setLoad(false)
+          setLoad(false);
         });
       })}
     >
@@ -79,17 +84,22 @@ class LearningTrack extends React.Component {
   state = { list: [] };
 
   componentDidMount() {
-    const {data: { id }, group, } = this.props;
-    getTracksResponses( id, group, (data) => {
+    const {
+      data: { id },
+      group,
+    } = this.props;
+    getTracksResponses(id,group,(data) => {
         this.setState({
           ...this.state,
           list: data.list,
         });
       },
-      () => {}
+      () => {
+        console.log("Error al obtener la respuesta");
+      }
     );
   }
-  
+
   render() {
     const { data, group, journeyId } = this.props;
     const user = firebaseClient.auth().currentUser;
@@ -126,22 +136,27 @@ class LearningTrack extends React.Component {
                 onSave={(data) => {
                   return saveTrackResponse(id, group, data).then(() => {
                     if (this.props.activityChange) {
-                      const linkResume = journeyId
-                        ? '<i><a href="/pathway/resume?id=' + journeyId +'">' +
-                          user.displayName +
-                          "</a></i>"  : "<i>" + user.displayName + "</i>";
-
-                      this.props.activityChange({
-                        type: "new_track_response",
-                        msn:'Respuesta de nuevo Track dentro de la sala "' + group + '".',
-                        msnForGroup:
-                          "Respuesta de nueva por " +
-                          linkResume +
-                          " desde learning task <b>" +
-                          trackName +
-                          "</b>.",
-                        group: group,
-                      });
+                      this.props.activityChange(
+                        activityMapper(
+                          "new_track_response",
+                          linkTrack(
+                            this.props.data.name,
+                            this.props.data.id,
+                            "Nueva respuesta al learning __LINK__ "
+                          ),
+                          linkGroup(
+                            journeyId,
+                            user,
+                            linkTrack(
+                              this.props.data.name,
+                              this.props.data.id,
+                              "ha escrito una nueva respuesta para el learning __LINK__ "
+                            )
+                          ),
+                          this.props.group,
+                          2
+                        )
+                      );
                     }
                     this.setState({ current: this.state.current + 1 });
                     setTimeout(() => {

@@ -12,6 +12,7 @@ import {
   breadcrumbChange,
   activityChange,
   asideToggle,
+  pageShowAlert
 } from "store/actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
@@ -30,53 +31,55 @@ import Badge from "../../../docs/template/src/modules/components/Badge";
 import { timePowerTen, timeShortConvert } from "components/helpers/time";
 
 class TrackPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { trackId: null, runnerId: null, trackList: null };
-  }
-
+  state = { trackId: null, runnerId: null, trackList: null }
   componentDidMount() {
     if (!Router.query.id || !Router.query.runnerId) {
       Router.push("/catalog");
     }
     this.props.pageChangeHeaderTitle("Pathway");
+    this.loadBreadcrumbChange();
+    this.loadCurrentTrack();
+  }
 
-    if (Router.query.journeyId) {
-      this.props.breadcrumbChange([
+  loadBreadcrumbChange() {
+    const {journeyId, pathwayId, runnerId} = Router.query;
+    let configure = [
+      { text: "Catálogo", link: "/catalog" },
+      { text: "Runner", link: "/catalog/runner?id=" + runnerId },
+      { text: "Track" },
+    ];
+
+    if (journeyId) {
+      configure = [
         { text: "Catálogo", link: "/catalog" },
         {
           text: "Pathway",
-          link: "/catalog/pathway?id=" + Router.query.pathwayId,
+          link: "/catalog/pathway?id=" +pathwayId,
         },
         {
           text: "Mi Journey",
-          link: "/catalog/journey?id=" + Router.query.journeyId,
+          link: "/catalog/journey?id=" + journeyId,
         },
         { text: "Track" },
-      ]);
-      if (Router.query.pathwayId) {
+      ];
+      if (pathwayId) {
         this.loadTracks();
       }
-    } else if (Router.query.pathwayId) {
-      this.props.breadcrumbChange([
+    } else if (pathwayId) {
+      configure = [
         { text: "Catálogo", link: "/catalog" },
         {
           text: "Pathway",
-          link: "/catalog/pathway?id=" + Router.query.pathwayId,
+          link: "/catalog/pathway?id=" + pathwayId,
         },
-        { text: "Runner", link: "/catalog/runner?id=" + Router.query.runnerId },
+        { text: "Runner", link: "/catalog/runner?id=" + runnerId },
 
         { text: "Track" },
-      ]);
+      ];
       this.loadTracks();
-    } else {
-      this.props.breadcrumbChange([
-        { text: "Catálogo", link: "/catalog" },
-        { text: "Runner", link: "/catalog/runner?id=" + Router.query.runnerId },
-        { text: "Track" },
-      ]);
     }
-    this.loadCurrentTrack();
+
+    this.props.breadcrumbChange(configure);
   }
 
   loadTracks() {
@@ -114,16 +117,21 @@ class TrackPage extends React.Component {
 
   loadCurrentTrack() {
     const { pathwayId, runnerId, id } = Router.query;
+    const {pageShowAlert}  = this.props;
+
     getTrack(pathwayId, runnerId, id, (data) => {
       this.setState({
         ...this.state,
         ...data,
         pathwayId,
       });
+    }, () => {
+      pageShowAlert("Error al obtener el track", "error");
     });
   }
 
   loadRunners(pathwayId, trackList) {
+    const {pageShowAlert}  = this.props;
     getRunners(pathwayId, (result) => {
       const list = trackList;
       list.push({
@@ -151,6 +159,8 @@ class TrackPage extends React.Component {
         }
       });
       this.setState({ ...this.state, trackList: list, pathwayId });
+    }, () => {
+       pageShowAlert("Error al obtener los runners", "error");
     });
   }
 
@@ -172,81 +182,18 @@ class TrackPage extends React.Component {
           {trackList && <Aside menuList={trackList} />}
           <Row>
             <Col md="12">
-              <Widget1>
-                <Widget1.Display
-                  top
-                  size="sm"
-                  className="bg-primary text-white"
-                >
-                  <Widget1.Addon>
-                    <DemoWrapper>
-                      <Button
-                        icon
-                        circle
-                        variant="flat-primary"
-                        className="mr-2"
-                        onClick={asideToggle}
-                      >
-                        <FontAwesomeIcon icon={SolidIcon.faBars} />
-                      </Button>
-                      <Button
-                        icon
-                        circle
-                        variant="flat-primary"
-                        className="mr-2"
-                        onClick={() => {
-                          Router.push({
-                            pathname: "/track/edit",
-                            query: {
-                              trackId: this.state.id,
-                              runnerId: this.state.runnerId,
-                              pathwayId: this.state.pathwayId,
-                            },
-                          });
-                        }}
-                      >
-                        <FontAwesomeIcon icon={SolidIcon.faEdit} />
-                      </Button>
-                    </DemoWrapper>
-                  </Widget1.Addon>
-
-                  <Widget1.Body>
-                    <h1 className="display-4" children={this.state.name} />
-                  </Widget1.Body>
-                  <Widget1.Body>
-                    {this.state.description}
-                    <div className="text-right">
-                      <small>
-                        <i>
-                          Ultima actualización:{" "}
-                          {new Date(this.state.date).toDateString()}
-                        </i>
-                      </small>
-                    </div>
-                    <Badge>
-                      Duración:   {timeShortConvert(timePowerTen(this.state.timeLimit))}
-                      <FontAwesomeIcon
-                        className="ml-2"
-                        icon={SolidIcon.faClock}
-                      />
-                    </Badge>
-                    <Badge  className="ml-2">
-                      {this.state.type}
-                      <FontAwesomeIcon
-                        className="ml-2"
-                        icon={SolidIcon.faUserGraduate}
-                      />
-                    </Badge>
-                  </Widget1.Body>
-                </Widget1.Display>
-              </Widget1>
+              <DisplayTrackTitle
+                track={this.state}
+                asideToggle={asideToggle}
+                runnerId={runnerId}
+                pathwayId={pathwayId}
+              />
               <Portlet>
                 <Portlet.Body>
                   <div className="content-track">
                     <TrackContent {...this.state} />
                   </div>
                 </Portlet.Body>
-
                 <Portlet.Footer>
                   {pathwayId && <PathwayResume pathwayId={pathwayId} />}
                 </Portlet.Footer>
@@ -259,9 +206,70 @@ class TrackPage extends React.Component {
   }
 }
 
+
+const DisplayTrackTitle = ({ asideToggle, runnerId, pathwayId, track }) => {
+  return (
+    <Widget1>
+      <Widget1.Display top size="sm" className="bg-primary text-white">
+        <Widget1.Addon>
+          <DemoWrapper>
+            <Button
+              icon
+              circle
+              variant="flat-primary"
+              className="mr-2"
+              onClick={asideToggle}
+            >
+              <FontAwesomeIcon icon={SolidIcon.faBars} />
+            </Button>
+            <Button
+              icon
+              circle
+              variant="flat-primary"
+              className="mr-2"
+              onClick={() => {
+                Router.push({
+                  pathname: "/track/edit",
+                  query: {
+                    trackId: track.id,
+                    runnerId,
+                    pathwayId,
+                  },
+                });
+              }}
+            >
+              <FontAwesomeIcon icon={SolidIcon.faEdit} />
+            </Button>
+          </DemoWrapper>
+        </Widget1.Addon>
+
+        <Widget1.Body>
+          <h1 className="display-4" children={track.name} />
+        </Widget1.Body>
+        <Widget1.Body>
+          {track.description}
+          <div className="text-right">
+            <small>
+              <i>Ultima actualización: {new Date(track.date).toDateString()}</i>
+            </small>
+          </div>
+          <Badge>
+            Duración: {timeShortConvert(timePowerTen(track.timeLimit))}
+            <FontAwesomeIcon className="ml-2" icon={SolidIcon.faClock} />
+          </Badge>
+          <Badge className="ml-2">
+            {track.type}
+            <FontAwesomeIcon className="ml-2" icon={SolidIcon.faUserGraduate} />
+          </Badge>
+        </Widget1.Body>
+      </Widget1.Display>
+    </Widget1>
+  );
+};
+
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange, asideToggle },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, asideToggle, pageShowAlert },
     dispatch
   );
 }

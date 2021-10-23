@@ -12,6 +12,9 @@ import {
   publishPathway,
   unpublushPathway,
 } from "consumer/pathway";
+import { bindActionCreators } from "redux";
+import { connect } from "react-redux";
+import { pageShowAlert } from "store/actions";
 
 const ReactSwal = swalContent(Swal);
 const swal = ReactSwal.mixin({
@@ -29,14 +32,22 @@ class PathwaysComponent extends React.Component {
   }
 
   componentDidMount() {
-    getMyPathways((data) => {
+    const {pageShowAlert}  = this.props;
+    getMyPathways(
+      (data) => {
         this.setState(data);
         this.props.cleanPathway();
-      },() => {}
+      },
+      () => {
+        pageShowAlert("Error en obtener el pathway", "error");
+      }
     );
   }
 
   onPublishPathway(pathwayId) {
+    const {pageShowAlert}  = this.props;
+
+    pageShowAlert("Publicando pathway, espere un momento...");
     publishPathway(
       pathwayId,
       (data) => {
@@ -48,18 +59,19 @@ class PathwaysComponent extends React.Component {
         });
       },
       (error) => {
-        swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: error,
-        });
+        pageShowAlert("Error en la publicación", "error");
       }
     );
   }
 
   onUnpublishPathway(pathwayId) {
+    const {pageShowAlert}  = this.props;
+
+    pageShowAlert("Despublicando pathway, espere un momento...");
     unpublushPathway(pathwayId).then(() => {
       this.componentDidMount();
+    }).catch(() => {
+      pageShowAlert("Error en la despublicación", "error");
     });
   }
 
@@ -76,10 +88,11 @@ class PathwaysComponent extends React.Component {
       })
       .then((result) => {
         if (result.value) {
+          const {pageShowAlert, activityChange}  = this.props;
           deletePathway(pathwayId)
             .then(() => {
               this.componentDidMount();
-              this.props.activityChange({
+              activityChange({
                 type: "delete_pathway",
                 pathwayId: pathwayId,
                 msn: "El pathway fue eliminado.",
@@ -87,6 +100,7 @@ class PathwaysComponent extends React.Component {
             })
             .catch((error) => {
               console.error("Error removing document: ", error);
+              pageShowAlert("Error al tratar de eliminar el pathway", "error");
             });
         }
       });
@@ -129,10 +143,19 @@ class PathwaysComponent extends React.Component {
                         });
                       }}
                     >
-                      <RichList.Title children={<>
-                        {isFollowUp && <FontAwesomeIcon  className="mr-2" icon={SolidIcon.faEye} />}
-                      {name.toUpperCase()}
-                      </>} />
+                      <RichList.Title
+                        children={
+                          <>
+                            {isFollowUp && (
+                              <FontAwesomeIcon
+                                className="mr-2"
+                                icon={SolidIcon.faEye}
+                              />
+                            )}
+                            {name.toUpperCase()}
+                          </>
+                        }
+                      />
                       <RichList.Subtitle children={description} />
                       <RichList.Subtitle
                         children={
@@ -162,7 +185,7 @@ class PathwaysComponent extends React.Component {
         {/* BEGIN Dropdown */}
         <Dropdown.Uncontrolled>
           <Dropdown.Toggle icon variant="text-secondary">
-            <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
+            <FontAwesomeIcon icon={SolidIcon.faCog} />
           </Dropdown.Toggle>
           <Dropdown.Menu right animated>
             <Dropdown.Item
@@ -234,19 +257,19 @@ class PathwaysComponent extends React.Component {
               </Dropdown.Item>
             )}
 
-            {draft === false &&  (
-                <Dropdown.Item
-                  onClick={() => {
-                    Router.push({
-                      pathname: "/catalog/pathway/",
-                      query: { id: id },
-                    });
-                  }}
-                  icon={<FontAwesomeIcon icon={SolidIcon.faThList} />}
-                >
-                  Catálogo
-                </Dropdown.Item>
-              )}
+            {draft === false && (
+              <Dropdown.Item
+                onClick={() => {
+                  Router.push({
+                    pathname: "/catalog/pathway/",
+                    query: { id: id },
+                  });
+                }}
+                icon={<FontAwesomeIcon icon={SolidIcon.faThList} />}
+              >
+                Catálogo
+              </Dropdown.Item>
+            )}
           </Dropdown.Menu>
         </Dropdown.Uncontrolled>
       </>
@@ -254,4 +277,8 @@ class PathwaysComponent extends React.Component {
   }
 }
 
-export default PathwaysComponent;
+function mapDispathToProps(dispatch) {
+  return bindActionCreators({ pageShowAlert }, dispatch);
+}
+
+export default connect(null, mapDispathToProps)(PathwaysComponent);

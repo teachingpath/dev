@@ -3,6 +3,7 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  pageShowAlert,
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -13,25 +14,11 @@ import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
 import Router from "next/router";
-import Swal from "@panely/sweetalert2";
-import swalContent from "sweetalert2-react-content";
-import TrackForm from "../../components/widgets/TrackForm";
+import TrackForm from "components/widgets/TrackForm";
 import Spinner from "@panely/components/Spinner";
 import { getTrack, updateTrack } from "consumer/track";
 import { updateToDraft } from "consumer/pathway";
 
-const ReactSwal = swalContent(Swal);
-const toast = ReactSwal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: (toast) => {
-    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
-    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
-  },
-});
 
 class FormBasePage extends React.Component {
   constructor(props) {
@@ -71,6 +58,7 @@ class FormBasePage extends React.Component {
   }
 
   loadData({ pathwayId, runnerId, trackId }) {
+    const { pageShowAlert } = this.props;
     return getTrack(
       pathwayId,
       runnerId,
@@ -82,16 +70,14 @@ class FormBasePage extends React.Component {
         });
       },
       () => {
-        toast.fire({
-          icon: "error",
-          title: "Getting a runner",
-        });
+        pageShowAlert("Error al obtener el track", "error");
       }
     );
   }
 
   onEdit(data) {
     const { pathwayId, runnerId, trackId, extend } = this.state;
+    const { pageShowAlert, activityChange } = this.props;
 
     return updateTrack(runnerId, trackId, data)
       .then((docRef) => {
@@ -102,11 +88,10 @@ class FormBasePage extends React.Component {
           extend,
           ...data,
         });
-        toast.fire({
-          icon: "success",
-          title: "Track fue actualizado correctamente",
-        });
-        this.props.activityChange({
+
+        pageShowAlert("Track fue actualizado correctamente");
+
+        activityChange({
           pathwayId: pathwayId,
           type: "edit_track",
           msn: 'El track "' + data.name + '"  fue actualizado.',
@@ -115,14 +100,11 @@ class FormBasePage extends React.Component {
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
-        toast.fire({
-          icon: "error",
-          title: "Update track",
-        });
+        pageShowAlert("Error en actualizar el track", "error");
       });
   }
 
-  componentDidUpdate(props){
+  componentDidUpdate(props) {
     if (props.isOwner) {
       this.props.breadcrumbChange([
         { text: "Home", link: "/" },
@@ -256,7 +238,7 @@ const TrackAddon = ({ extend, toggle, runnerId, id, pathwayId }) => {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
     dispatch
   );
 }
@@ -266,7 +248,7 @@ function mapStateToProps(state) {
     pathway: state.pathway.pathwaySeleted,
     runner: state.pathway.runnerSeleted,
     user: state.user,
-    isOwner: state.pathway.runnerSeleted?.leaderId === state.user?.uid
+    isOwner: state.pathway.runnerSeleted?.leaderId === state.user?.uid,
   };
 }
 

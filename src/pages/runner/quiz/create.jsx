@@ -3,6 +3,7 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  pageShowAlert
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -10,8 +11,6 @@ import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
 import Router from "next/router";
-import Swal from "@panely/sweetalert2";
-import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
 import QuizForm from "../../../components/widgets/QuestionForm";
 import QuestionList from "../../../components/widgets/QuestionList";
@@ -19,18 +18,6 @@ import { createQuiz } from "consumer/runner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
-const ReactSwal = swalContent(Swal);
-const toast = ReactSwal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: (toast) => {
-    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
-    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
-  },
-});
 
 class FormBasePage extends React.Component {
   constructor(props) {
@@ -68,6 +55,7 @@ class FormBasePage extends React.Component {
   }
 
   onCreate(data) {
+    const { pageShowAlert, activityChange } = this.props;
     return createQuiz(this.state.runnerId, data)
       .then((docRef) => {
         this.setState({
@@ -76,11 +64,8 @@ class FormBasePage extends React.Component {
           questionId: docRef.id,
           ...data,
         });
-        toast.fire({
-          icon: "success",
-          title: "La pregunta fue guardad correctamente.",
-        });
-        this.props.activityChange({
+        pageShowAlert("La pregunta fue guardad correctamente.");
+        activityChange({
           pathwayId: this.state.pathwayId,
           type: "new_question",
           msn: 'La pregunta "' + data.question + '" fue creada.',
@@ -88,10 +73,7 @@ class FormBasePage extends React.Component {
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
-        toast.fire({
-          icon: "error",
-          title: "Creation question",
-        });
+        pageShowAlert("Error al crear el quiz", "error");
       });
   }
 
@@ -172,7 +154,7 @@ class FormBasePage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
     dispatch
   );
 }

@@ -16,7 +16,7 @@ import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import { getTracksResponses, saveTrackResponse } from "consumer/track";
-import { linkify } from "components/helpers/mapper";
+import { activityMapper, linkGroup, linkify, linkTrack } from "components/helpers/mapper";
 import { useState } from "react";
 
 function SolutionForm({ onSave }) {
@@ -103,7 +103,6 @@ class TrainingTrack extends React.Component {
       group,
     } = this.props;
     const user = this.props.user || firebaseClient.auth().currentUser;
-    const trackName = this.props.data?.name;
     return (
       <Steps current={this.state.current} direction="vertical">
         {training?.map((item, index) => {
@@ -148,29 +147,29 @@ class TrainingTrack extends React.Component {
                     <SolutionForm
                       onSave={(data) => {
                         return saveTrackResponse(id, group, data).then(() => {
+                        
                           if (this.props.activityChange) {
-                            const linkResume = journeyId
-                              ? '<i><a href="/pathway/resume?id=' +
-                                journeyId +
-                                '">' +
-                                user.displayName +
-                                "</a></i>"
-                              : "<i>" + user.displayName + "</i>";
-
-                            this.props.activityChange({
-                              type: "new_track_response",
-                              msn:
-                                'Nueva respuesta dentro del group "' +
-                                group +
-                                '".',
-                              msnForGroup:
-                                "Nueva respuesta por " +
-                                linkResume +
-                                " desde el training task <b>" +
-                                trackName +
-                                "</b>.",
-                              group: group,
-                            });
+                            this.props.activityChange(
+                              activityMapper(
+                                "new_track_response",
+                                linkTrack(
+                                  this.props.data.name,
+                                  this.props.data.id,
+                                  "Nueva respuesta al training __LINK__ "
+                                ),
+                                linkGroup(
+                                  journeyId,
+                                  user,
+                                  linkTrack(
+                                    this.props.data.name,
+                                    this.props.data.id,
+                                    "ha escrito una nueva respuesta para el training __LINK__ "
+                                  )
+                                ),
+                                this.props.group,
+                                2
+                              )
+                            );
                           }
                           this.setState({ current: this.state.current + 1 });
 

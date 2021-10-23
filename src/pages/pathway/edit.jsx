@@ -20,26 +20,13 @@ import Head from "next/head";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import Router from "next/router";
-import Swal from "@panely/sweetalert2";
-import swalContent from "sweetalert2-react-content";
 import RunnerList from "../../components/widgets/RunnerList";
 import PathwayForm from "../../components/widgets/PathwayForm";
 import Spinner from "@panely/components/Spinner";
 import React from "react";
 import { update, updateFollowUp } from "consumer/pathway";
+import { pageShowAlert } from "store/actions/pageAction";
 
-const ReactSwal = swalContent(Swal);
-const toast = ReactSwal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: (toast) => {
-    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
-    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
-  },
-});
 
 class FormBasePage extends React.Component {
   constructor(props) {
@@ -72,29 +59,23 @@ class FormBasePage extends React.Component {
 
   onEdit(data) {
     const pathway = this.state || this.props.pathway;
+    const {pageShowAlert, loadPathway, activityChange}  = this.props;
     return update(pathway.id, data)
       .then((response) => {
-        toast.fire({
-          icon: "success",
-          title: "Pathway actualizado correctamente",
-        });
-        this.props.loadPathway({
+        pageShowAlert("Pathway actualizado correctamente");
+        loadPathway({
           pathwayId: pathway.id,
           ...response,
         });
-        this.props.activityChange({
+        activityChange({
           pathwayId: pathway.id,
           type: "edit_pathway",
           msn: 'El pathway "' + data.name + '"  fue cambiado.',
-          ...response,
         });
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
-        toast.fire({
-          icon: "error",
-          title: "Actualizado el pathway",
-        });
+        pageShowAlert("Existe problemas en la actualización", "error");
       });
   }
 
@@ -199,6 +180,7 @@ const PathwayAddon = ({ id, toggleFollowUp,  isFollowUp}) => {
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
+
               Router.push({
                 pathname: "/pathway/trophy",
                 query: { pathwayId: id },
@@ -248,7 +230,7 @@ const PathwayAddon = ({ id, toggleFollowUp,  isFollowUp}) => {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, loadPathway, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, loadPathway, activityChange, pageShowAlert },
     dispatch
   );
 }

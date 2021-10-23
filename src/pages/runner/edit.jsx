@@ -4,7 +4,6 @@ import {
   Container,
   Dropdown,
   Portlet,
-  RichList,
   Row,
 } from "@panely/components";
 import {
@@ -12,6 +11,7 @@ import {
   breadcrumbChange,
   pageChangeHeaderTitle,
   loadRunner,
+  pageShowAlert,
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -19,8 +19,6 @@ import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
 import Router from "next/router";
-import Swal from "@panely/sweetalert2";
-import swalContent from "sweetalert2-react-content";
 import Spinner from "@panely/components/Spinner";
 import RunnerForm from "../../components/widgets/RunnerForm";
 import TrackList from "../../components/widgets/TrackList";
@@ -29,19 +27,6 @@ import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import React from "react";
 import { update } from "consumer/runner";
 import { updateToDraft } from "consumer/pathway";
-
-const ReactSwal = swalContent(Swal);
-const toast = ReactSwal.mixin({
-  toast: true,
-  position: "top-end",
-  showConfirmButton: false,
-  timer: 3000,
-  timerProgressBar: true,
-  onOpen: (toast) => {
-    toast.addEventListener("mouseenter", ReactSwal.stopTimer);
-    toast.addEventListener("mouseleave", ReactSwal.resumeTimer);
-  },
-});
 
 class FormBasePage extends React.Component {
   constructor(props) {
@@ -71,18 +56,17 @@ class FormBasePage extends React.Component {
 
   onEdit(data) {
     const { runnerId, pathwayId } = this.props.runner;
+    const { pageShowAlert, loadRunner, activityChange } = this.props;
+
     return update(runnerId, data)
       .then((docRef) => {
-        toast.fire({
-          icon: "success",
-          title: "Runner fue guadado correctamente",
-        });
-        this.props.activityChange({
+        pageShowAlert("Runner fue guadado correctamente");
+        activityChange({
           pathwayId,
           type: "edit_runner",
           msn: 'El runner "' + data.name + '" fue actualizado.',
         });
-        this.props.loadRunner({
+        loadRunner({
           trackId: null,
           runnerId,
           pathwayId,
@@ -93,10 +77,7 @@ class FormBasePage extends React.Component {
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
-        toast.fire({
-          icon: "error",
-          title: "Creation runner",
-        });
+        pageShowAlert("Error al editar el runner", "error");
       });
   }
 
@@ -262,7 +243,13 @@ const RunnerAddon = ({ id, pathwayId }) => {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange, loadRunner },
+    {
+      pageChangeHeaderTitle,
+      breadcrumbChange,
+      activityChange,
+      loadRunner,
+      pageShowAlert,
+    },
     dispatch
   );
 }

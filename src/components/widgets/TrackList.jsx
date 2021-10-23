@@ -146,7 +146,7 @@ class TrackList extends React.Component {
                 <RichList.Addon addonType="append">
                   <Dropdown.Uncontrolled>
                     <Dropdown.Toggle icon variant="text-secondary">
-                      <FontAwesomeIcon icon={SolidIcon.faEllipsisH} />
+                      <FontAwesomeIcon icon={SolidIcon.faCog} />
                     </Dropdown.Toggle>
                     <Dropdown.Menu right animated>
                       <Dropdown.Item

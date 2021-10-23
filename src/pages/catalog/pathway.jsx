@@ -1,15 +1,22 @@
-import { Row, Col, Container, Portlet, Widget1, Badge } from "@panely/components";
+import {
+  Row,
+  Col,
+  Container,
+  Portlet,
+  Widget1,
+  Badge,
+} from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
+  pageShowAlert
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import Router from "next/router";
-import Spinner from "@panely/components/Spinner";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
@@ -17,16 +24,16 @@ import StartPathway from "components/widgets/StartPathway";
 import Teacher from "components/widgets/Teacher";
 import RunnerTab from "components/widgets/RunnerTab";
 import { get } from "consumer/pathway";
+import DisplayTrophy from "components/widgets/DisplayTrophy";
 
 class PathwayPage extends React.Component {
+  state = {
+    name: "Cargando...",
+    id: null,
+    draft: true,
+  };
   constructor(props) {
     super(props);
-
-    this.state = {
-      name: "Cargando...",
-      id: null,
-      draft: true,
-    };
     this.runnersRef = React.createRef();
   }
 
@@ -34,10 +41,12 @@ class PathwayPage extends React.Component {
     if (!Router.query.id) {
       Router.push("/catalog");
     }
+    const {pageShowAlert} = this.props
     get(Router.query.id,(data) => {
         this.setState(data);
-      },
-      () => {}
+      },  () => {
+        pageShowAlert("Existe un problema al consultar el pathway", "error");
+      }
     );
   }
 
@@ -51,6 +60,7 @@ class PathwayPage extends React.Component {
               pathwayId={id}
               {...this.state}
               activityChange={this.props.activityChange}
+              pageShowAlert={this.props.pageShowAlert}
               runnersRef={this.runnersRef}
             />
           )}
@@ -59,17 +69,9 @@ class PathwayPage extends React.Component {
               <h1 className="display-5" children={name.toUpperCase()} />
             </Widget1.DialogContent>
           </Widget1.Dialog>
-          {draft === false &&  <Widget1.Offset>
-            {!this.state?.trophy?.image && <Spinner />}
-            {this.state?.trophy?.image && (
-              <img
-                src={this.state?.trophy?.image}
-                alt="trophy"
-                style={{maxWidth: "125px"}}
-                className="bg-yellow p-2 border mx-auto d-block mg-thumbnail avatar-circle"
-              />
-            )}
-          </Widget1.Offset>}
+          {draft === false && (
+            <DisplayTrophy trophy={this.state.trophy} />
+          )}
           {draft === true && <Badge>Aún no esta disponible este Pathway</Badge>}
         </Widget1.Display>
         <Widget1.Body className="pt-5">
@@ -125,7 +127,7 @@ class PathwayGeneralPage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange },
+    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
     dispatch
   );
 }

@@ -158,7 +158,7 @@ class Tracks extends React.Component {
                         journeyId={journeyId}
                         group={group}
                       />
-                      <Link href={extarnalLink}>{item.title}</Link>
+                      <Link href={extarnalLink} shallow>{item.title}</Link>
                     </>
                   ) : (
                     item.title
@@ -183,6 +183,7 @@ class Tracks extends React.Component {
                       isRunning={item.isRunning || false}
                       runners={runners}
                       onComplete={() => {
+                        item.runnerId = runnerId;
                         onComplete(item);
                       }}
                       journeyId={journeyId}

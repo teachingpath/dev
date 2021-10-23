@@ -13,3 +13,18 @@ export function pageChangeTheme(payload) {
     payload: payload
   }
 }
+
+export function pageShowAlert(msn, icon="success") {
+  return {
+    type: TYPES.SHOW_TOAST,
+    payload: {msn, icon}
+  }
+}
+
+export function pageCloseAlert() {
+  return {
+    type: TYPES.SHOW_TOAST,
+    payload: undefined
+  }
+}
+

@@ -2,13 +2,73 @@ import {
   firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
-export const getUser = (leaderId, resolve, reject) => {
-  firestoreClient
+import { escapeHtml } from "components/helpers/mapper";
+
+export const getUser = (userId, resolve, reject) => {
+  return firestoreClient
     .collection("users")
-    .doc(leaderId)
+    .doc(userId)
     .get()
     .then((doc) => {
-      resolve({ data: doc.data() });
+      if (resolve) {
+        resolve({ data: doc.data() });
+      } else {
+        return { data: doc.data() };
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+      if (reject) {
+        reject();
+      }
+    });
+};
+
+export const addPoint = (userId, point) => {
+  const increment = firebaseClient.firestore.FieldValue.increment(point);
+
+  return firestoreClient.collection("users").doc(userId).update({
+    point: increment,
+  });
+};
+
+export const removePoint = (userId, point) => {
+  const increment = firebaseClient.firestore.FieldValue.increment(point * -1);
+
+  return firestoreClient.collection("users").doc(userId).update({
+    point: increment,
+  });
+};
+
+export const getActivitiesForGroup = (group, resolve, reject) => {
+  firestoreClient
+    .collection("activities")
+    .where("group", "==", group)
+    .orderBy("date", "desc")
+    .limit(30)
+    .get()
+    .then((querySnapshot) => {
+      const list = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const time = new Date(data.date.seconds * 1000).toLocaleTimeString(
+          "es-ES",
+          { hour12: false }
+        );
+
+        list.push({
+          time: time.substr(0, time.lastIndexOf(":")),
+          date: new Date(data.date.seconds * 1000),
+          color: data.color || "info",
+          content: () => (
+            <p
+              className="mb-0"
+              dangerouslySetInnerHTML={{ __html: data.msnForGroup }}
+            ></p>
+          ),
+        });
+      });
+      resolve({ data: list });
     })
     .catch((error) => {
       console.log("Error getting documents: ", error);
@@ -16,26 +76,41 @@ export const getUser = (leaderId, resolve, reject) => {
     });
 };
 
-export const addPoint = (userId, point) => {
-  const increment = firebaseClient.firestore.FieldValue.increment(point);
+export const getActivities = (userId, group, resolve, reject) => {
+  let activities = firestoreClient.collection("activities");
+  if (group) {
+    activities = activities
+      .where("leaderId", "==", userId)
+      .where("group", "==", group);
+  } else {
+    activities = activities.where("leaderId", "==", userId);
+  }
+  activities
+    .orderBy("date", "desc")
+    .limit(25)
+    .get()
+    .then((querySnapshot) => {
+      const list = [];
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const time = new Date(data.date.seconds * 1000).toLocaleTimeString(
+          "es-ES",
+          { hour12: false }
+        );
 
-  return firestoreClient
-    .collection("users")
-    .doc(userId)
-    .update({
-      point: increment,
+        list.push({
+          time: time.substr(0, time.lastIndexOf(":")),
+          date: new Date(data.date.seconds * 1000),
+          color: data.color || "info",
+          content: () => <p className="mb-0">{escapeHtml(data.msn)}</p>,
+        });
+      });
+      resolve({ data: list });
     })
-};
-
-export const removePoint = (userId, point) => {
-  const increment = firebaseClient.firestore.FieldValue.increment(point*-1);
-
-  return firestoreClient
-    .collection("users")
-    .doc(userId)
-    .update({
-      point: increment,
-    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+      reject();
+    });
 };
 
 export const getTracksResponses = (userId, group, resolve, reject) => {
@@ -55,7 +130,7 @@ export const getTracksResponses = (userId, group, resolve, reject) => {
       if (!querySnapshot.empty) {
         const list = [];
         querySnapshot.forEach((doc) => {
-          list.push(doc.data());
+          list.push({ ...doc.data(), id: doc.id });
         });
         return { list };
       } else {
@@ -65,4 +140,10 @@ export const getTracksResponses = (userId, group, resolve, reject) => {
     .catch((error) => {
       console.log("Error getting documents: ", error);
     });
+};
+
+export const addFeedback = (responseId, feedback) => {
+  return firestoreClient.collection("track-response").doc(responseId).update({
+    review: feedback,
+  });
 };

@@ -1,25 +1,30 @@
-import TYPES from "store/types"
+import TYPES from "store/types";
 
 const initialState = {
   theme: "light",
-  headerTitle: "Loading"
-}
+  headerTitle: "Loading",
+};
 
 function pageReducer(state = initialState, action) {
   switch (action.type) {
     case TYPES.PAGE_CHANGE_HEADER_TITLE:
       return {
         ...state,
-        headerTitle: action.payload
-      }
+        headerTitle: action.payload,
+      };
     case TYPES.PAGE_CHANGE_THEME:
       return {
         ...state,
-        theme: action.payload
-      }
+        theme: action.payload,
+      };
+    case TYPES.SHOW_TOAST:
+      return {
+        ...state,
+        alert: action.payload,
+      };
     default:
-      return state
+      return state;
   }
 }
 
-export default pageReducer
+export default pageReducer;
