@@ -295,7 +295,7 @@ function RegisterForm() {
               type="switch"
               size="lg"
               id="profile"
-              label="Active como Teacher"
+              label="Active como Mentor"
               invalid={Boolean(errors.profile)}
               onBlur={onBlur}
               onChange={(e) => onChange(e.target.checked)}

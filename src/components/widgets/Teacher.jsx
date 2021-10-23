@@ -31,7 +31,7 @@ class Teacher extends React.Component {
           <Col md="9">
             <Card.Body>
               <Card.Title>
-                Teacher: {data?.firstName} {data?.lastName}
+                Mentor: {data?.firstName} {data?.lastName}
               </Card.Title>
               <Card.Text>
                 <small className="text-muted">{data?.specialty}</small>
@@ -49,7 +49,7 @@ class Teacher extends React.Component {
                 <ReactWhatsapp
                   className="ml-2 btn btn-primary"
                   number={data?.phone}
-                  message="Hola Maestro, te hablo desde Teaching Path."
+                  message="Hola Mentor, te hablo desde Teaching Path."
                 >
                   <i className="fab fa-whatsapp"></i> Chat
                 </ReactWhatsapp>

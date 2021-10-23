@@ -10,7 +10,7 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
-  pageShowAlert
+  pageShowAlert,
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -41,10 +41,13 @@ class PathwayPage extends React.Component {
     if (!Router.query.id) {
       Router.push("/catalog");
     }
-    const {pageShowAlert} = this.props
-    get(Router.query.id,(data) => {
+    const { pageShowAlert } = this.props;
+    get(
+      Router.query.id,
+      (data) => {
         this.setState(data);
-      },  () => {
+      },
+      () => {
         pageShowAlert("Existe un problema al consultar el pathway", "error");
       }
     );
@@ -69,9 +72,7 @@ class PathwayPage extends React.Component {
               <h1 className="display-5" children={name.toUpperCase()} />
             </Widget1.DialogContent>
           </Widget1.Dialog>
-          {draft === false && (
-            <DisplayTrophy trophy={this.state.trophy} />
-          )}
+          {draft === false && <DisplayTrophy trophy={this.state.trophy} />}
           {draft === true && <Badge>Aún no esta disponible este Pathway</Badge>}
         </Widget1.Display>
         <Widget1.Body className="pt-5">
@@ -116,7 +117,10 @@ class PathwayGeneralPage extends React.Component {
         <Container fluid>
           <Row portletFill="xl">
             <Col xl="12">
-              <PathwayPage activityChange={this.props.activityChange} />
+              <PathwayPage
+                activityChange={this.props.activityChange}
+                pageShowAlert={this.props.pageShowAlert}
+              />
             </Col>
           </Row>
         </Container>
