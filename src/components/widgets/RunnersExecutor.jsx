@@ -12,6 +12,7 @@ import { timeShortPowerTen } from "components/helpers/time";
 import { useEffect } from "react";
 import { getTracksResponseByUserId } from "consumer/track";
 import ResponseModal from "./ResponseModal";
+import Alert from "@panely/components/Alert";
 
 class RunnersExecutor extends React.Component {
   constructor(props) {
@@ -139,6 +140,7 @@ class Tracks extends React.Component {
               key={item.id}
               index={item.id}
               status={item.status}
+              className={item.status === "process" ? "bg-light" : ""}
               title={
                 <>
                   {(item.status === "process" || item.status === "wait") && (
@@ -204,10 +206,9 @@ class Tracks extends React.Component {
                 {activeQuiz && (
                   <div dangerouslySetInnerHTML={{ __html: feedback }} />
                 )}
-                <p>
-                  Presentar Quiz para validar conocimientos y finalizar este
-                  Runner.
-                </p>
+                <Alert variant={"label-info"}>
+                  Presentar Quiz para validar conocimientos y obtener el emblema.
+                </Alert>
                 <Button
                   disabled={!activeQuiz}
                   onClick={() => {
@@ -270,7 +271,6 @@ const Attach = ({
       {att === true ? (
         <Badge
           variant="warning"
-          shape="circle"
           title="No se tiene una respuesta o feedback para ente track. Click aquí para actualizar tu respuesta."
         >
           <ResponseModal
@@ -290,7 +290,6 @@ const Attach = ({
       ) : (
         <Badge
           variant="outline-success"
-          shape="circle"
           title="Se completo con un feedback o respuesta. Click aquí para actualizar."
         >
           <ResponseModal

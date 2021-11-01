@@ -125,6 +125,7 @@ class Questions extends React.Component {
     const user = this.props.user || firebaseClient.auth().currentUser;
     return (
       <Accordion>
+        <p>En este Track debes responder a las siguientes preguntas:</p>
         {questions.map((question, index) => {
           return (
             <Card>
@@ -151,16 +152,18 @@ class Questions extends React.Component {
                               activityMapper(
                                 "new_track_response",
                                 linkTrack(
-                                  this.props.data.name,
                                   this.props.data.id,
+                                  this.props.data.runnerId,
+                                  this.props.data.name,
                                   "Nueva respuesta al questionario __LINK__ "
                                 ),
                                 linkGroup(
                                   journeyId,
                                   user,
                                   linkTrack(
-                                    this.props.data.name,
                                     this.props.data.id,
+                                    this.props.data.runnerId,
+                                    this.props.data.name,
                                     "ha escrito una nueva respuesta para el questionario __LINK__ "
                                   )
                                 ),

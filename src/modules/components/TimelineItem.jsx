@@ -41,10 +41,13 @@ const TimelineItem = props => {
   const contentClasses = mapToCssModules(classNames("timeline-content", className), cssModule)
   const timeClasses = mapToCssModules(classNames("timeline-time", className), cssModule)
   const pinClasses = mapToCssModules(classNames("timeline-pin", className), cssModule)
-
+  let m = "";
+  if(date.getHours){
+    m = date.getHours() >= 12? "PM":"AM"
+  }
   return (
     <Tag {...attributes} className={containerClasses}>
-      {time ? <TimeTag className={timeClasses} title={date?.toLocaleString()|| ""}>{time}</TimeTag> : null}
+      {time ? <TimeTag className={timeClasses} title={date?.toLocaleString()|| ""}>{time} {m}</TimeTag> : null}
       {pin ? <PinTag className={pinClasses}>{pin}</PinTag> : null}
       <ContentTag className={contentClasses}>{children}</ContentTag>
     </Tag>

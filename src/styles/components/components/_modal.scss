@@ -253,9 +253,12 @@
   }
 }
 @include media-breakpoint-up(lg) {
-  .modal-lg,
-  .modal-xl {
+  .modal-lg{
     max-width: $modal-lg;
+  }
+
+  .modal-xl {
+    max-width: $modal-xl;
   }
 }
 @include media-breakpoint-up(xl) {

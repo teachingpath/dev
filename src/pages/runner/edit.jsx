@@ -86,10 +86,11 @@ class FormBasePage extends React.Component {
     if (!runner) {
       return <Spinner>Cargando...</Spinner>;
     }
+    console.log(runner);
     return (
       <React.Fragment>
         <Head>
-          <title>Runner | Update</title>
+          <title>{runner.name || "Editar"}</title>
         </Head>
         <Container fluid>
           <Row>
@@ -97,7 +98,7 @@ class FormBasePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Runner | Editar</Portlet.Title>
+                  <Portlet.Title title={runner.name || "Editar"}>{runner.name || "Editar"}</Portlet.Title>
                   <Portlet.Addon>
                     <RunnerAddon
                       id={runner.runnerId}

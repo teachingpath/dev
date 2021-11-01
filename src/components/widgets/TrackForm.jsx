@@ -23,7 +23,6 @@ import Spinner from "@panely/components/Spinner";
 import { timeConvert } from "components/helpers/time";
 import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
-import { useEffect } from "react";
 
 const modulesFull = {
   toolbar: [
@@ -594,7 +593,17 @@ function TrackForm({ onSave, data, onExtend }) {
         type="button"
         className="ml-2"
         onClick={() => {
-          Router.back();
+          if(data?.pathwayId && data?.runnerId){
+            Router.replace({
+              pathname: "/runner/edit",
+              query: {
+                pathwayId: data?.pathwayId,
+                runnerId: data?.runnerId,
+              },
+            });
+          } else {
+            Router.replace("/");
+          }
         }}
       >
         Cancelar

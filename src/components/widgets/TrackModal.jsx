@@ -37,12 +37,14 @@ class TrackModal extends React.Component {
   }
 
   componentDidMount() {
-    document.querySelectorAll("pre").forEach((el) => {
-      hljs.configure({
-        languages: ["javascript", "ruby", "python", "java"],
+    setTimeout(() => {
+      document.querySelectorAll("pre").forEach((el) => {
+        hljs.configure({
+          languages: ["javascript", "ruby", "python", "java"],
+        });
+        hljs.highlightElement(el);
       });
-      hljs.highlightElement(el);
-    });
+    }, 600);
   }
 
   toggle = () => {
@@ -115,8 +117,8 @@ class TrackModal extends React.Component {
         });
         swal
           .fire({
-            title: "¿Quieres agregar 5 minutos mas para completar el track?",
-            text: "¡Tu tiempo ha terminado!",
+            title: "¡Tu tiempo ha terminado!",
+            text: "¿Quieres agregar 5 minutos mas para completar el track?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -200,7 +202,7 @@ class TrackModal extends React.Component {
       : Date.now() + time;
 
     return (
-      <React.Fragment>
+      <React.Fragment >
         <Button title={titleButton} onClick={this.toggle}>
           {(isRunning && (
             <Countdown
@@ -211,7 +213,7 @@ class TrackModal extends React.Component {
           )) ||
             (this.state.wait ? <>Stop [00:00:00 h]</> : <>Iniciar</>)}
         </Button>
-        <Modal scrollable isOpen={this.state.isOpen} className="modal-xl">
+        <Modal centered isOpen={this.state.isOpen} className="modal-xl">
           <Progress
             striped
             variant="primary"

@@ -24,7 +24,6 @@ import { removePoint } from "consumer/user";
 import { userChange } from "store/actions/userAction";
 import swalContent from "sweetalert2-react-content";
 import Swal from "@panely/sweetalert2";
-import DisplayTrophy from "components/widgets/DisplayTrophy";
 import {
   activityMapper,
   linkGroup,
@@ -55,6 +54,7 @@ class QuizPage extends React.Component {
         "Bienvenido a la evaluación de conceptos de verificación del runner. Al aprobar este cuestionario, puede obtener el emblema del Runner. Resuelve el cuestionario en el menor tiempo posible. Con esta evaluación te permite asegurar el conocimiento, si por alguna razón te das cuenta que no puedes resolver el cuestionario, te invito a repasar los conceptos del Runner.",
       questions: [],
       start: false,
+      loading: false,
     };
     this.onFinish = this.onFinish.bind(this);
   }
@@ -73,10 +73,7 @@ class QuizPage extends React.Component {
   }
 
   onLoad = ({ runnerId, id }) => {
-    loadQuiz(
-      runnerId,
-      id,
-      (data) => {
+    loadQuiz(runnerId, id, (data) => {
         this.setState({
           ...this.state,
           ...data,
@@ -94,38 +91,41 @@ class QuizPage extends React.Component {
   };
 
   onFinish = ({ runnerId, id, totalPoints }) => {
-    toast
-      .fire({
-        icon: "success",
-        title: "Haz finalizado tu quiz, espere un momento...",
-      })
-      .then(() => {
-        getJourney(
-          id,
-          (data) => {
-            if (data.progress >= 100) {
-              Router.push({
-                pathname: "/catalog/journey",
-                query: {
-                  id: id,
-                },
-              });
-            } else {
-              this.processQuiz(data, runnerId, id, totalPoints);
-            }
-          },
-          () => {
-            toast.fire({
-              icon: "error",
-              title: "Se ha presentado un problema, vuelva a intentar.",
+    toast.fire({
+      icon: "success",
+      title: "Haz finalizado tu quiz, espere un momento...",
+    });
+    this.setState({
+      ...this.state,
+      loading: true,
+    });
+    getJourney(id, (data) => {
+        if (data.progress >= 100) {
+          Router.push({
+            pathname: "/catalog/journey",
+            query: {
+              id: id,
+            },
+          });
+        } else {
+          this.processQuiz(data, runnerId, id, totalPoints).then(() => {
+            this.setState({
+              ...this.state,
+              loading: false,
             });
-          }
-        );
-      });
+          });
+        }
+      },
+      () => {
+        toast.fire({
+          icon: "error",
+          title: "Se ha presentado un problema, vuelva a intentar.",
+        });
+      }
+    );
   };
 
   processQuiz = (data, runnerId, id, totalPoints) => {
-    const user = firebaseClient.auth().currentUser;
     let tracksCompleted = data.current + 1;
     let tracksTotal = data.breadcrumbs.length;
     data.breadcrumbs.forEach((runner) => {
@@ -138,7 +138,6 @@ class QuizPage extends React.Component {
         });
       }
     });
-
     data.progress = (tracksCompleted / tracksTotal) * 100;
 
     const currentRunner = data.breadcrumbs[data.current];
@@ -153,29 +152,31 @@ class QuizPage extends React.Component {
     } catch (e) {
       console.log("There are no more runners, complete pathway");
     }
-    this.completeQuiz(id, runnerId, totalPoints, user);
+    return this.completeQuiz(data, id, runnerId, totalPoints);
   };
 
-  completeQuiz(id, runnerId, totalPoints, user) {
-    enableBadge(id, runnerId, totalPoints)
+  completeQuiz(data, id, runnerId, totalPoints) {
+    const user = firebaseClient.auth().currentUser;
+    const currentRunner = data.breadcrumbs[data.current-1];
+    return enableBadge(id, runnerId, totalPoints)
       .then((doc) => {
         return updateJourney(id, data).then(() => {
-          if (data.progress >= 100) {
+          if (data.progress >= 100) {//finish pathway
             sendFinishPathway(user.email, data.name);
             this.props.activityChange(
               activityMapper(
                 "complete_pathway",
                 linkPathway(
-                  data.name,
                   data.id,
+                  data.name,
                   "El Pathway __LINK__ está competado."
                 ),
                 linkGroup(
                   id,
                   user,
                   linkPathway(
-                    data.name,
                     data.id,
+                    data.name,
                     "ha completado el pathway: __LINK__, su nuevo progreso es: 100%"
                   )
                 ),
@@ -183,22 +184,22 @@ class QuizPage extends React.Component {
                 totalPoints
               )
             );
-          } else {
+          } else {//finshi runner
             sendFinishRunner(user.email, currentRunner.name);
             this.props.activityChange(
               activityMapper(
                 "complete_quiz",
                 linkRunner(
-                  currentRunner.name,
                   currentRunner.id,
+                  currentRunner.name,
                   "El Runner __LINK__ está competado."
                 ),
                 linkGroup(
                   id,
                   user,
                   linkRunner(
-                    currentRunner.name,
                     currentRunner.id,
+                    currentRunner.name,
                     "ha completado el runner: __LINK__, su nuevo progreso es: " +
                       data.progress.toFixed(2) +
                       "%"
@@ -219,7 +220,10 @@ class QuizPage extends React.Component {
         });
       })
       .catch((error) => {
-        console.error("Error adding document: ", error);
+        toast.fire({
+          icon: "error",
+          title: "Se ha presentado un problema, vuelva a intentar.",
+        });
       });
   }
 
@@ -237,14 +241,10 @@ class QuizPage extends React.Component {
               </Portlet.Title>
             </Portlet.Header>
             <Portlet.Body>
-              <Row>
-                <Col md="2">
+              {this.state.loading && <Spinner></Spinner>}
+              {this.state.loading === false && (
+                <>
                   {this.state.questions.length === 0 && <Spinner></Spinner>}
-                  {this.state.trophy && (
-                    <DisplayTrophy isFinish={true} trophy={this.state.trophy} />
-                  )}
-                </Col>
-                <Col md="10">
                   {this.state.questions.length > 0 && (
                     <>
                       {!this.state.start && (
@@ -283,8 +283,8 @@ class QuizPage extends React.Component {
                       />
                     </>
                   )}
-                </Col>
-              </Row>
+                </>
+              )}
             </Portlet.Body>
           </Portlet>
         </Container>

@@ -146,7 +146,7 @@ class RunnerList extends React.Component {
                   <RichList.Title
                     title={'Click en el runner para ver "' + title + '"'}
                     onClick={() => {
-                      Router.push({
+                      Router.replace({
                         pathname: "/runner/edit",
                         query: {
                           runnerId: id,
@@ -232,7 +232,7 @@ const AddonRunner = ({ id, pathwayId }) => {
         <Dropdown.Menu right animated>
           <Dropdown.Item
             onClick={() => {
-              Router.push({
+              Router.replace({
                 pathname: "/runner/edit",
                 query: {
                   runnerId: id,

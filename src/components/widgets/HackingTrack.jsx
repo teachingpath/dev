@@ -149,7 +149,7 @@ class HackingTrack extends React.Component {
             </Card.Header>
             <Card.Body>
               <Card.Text>
-                Agregue aquí su respuesta de piratería, agregue enlaces,
+                Agregue aquí su respuesta del Hacking, agregue enlaces,
                 repositorios o comentarios.
               </Card.Text>
               <SolutionForm
@@ -160,16 +160,18 @@ class HackingTrack extends React.Component {
                         activityMapper(
                           "new_track_response",
                           linkTrack(
-                            this.props.data.name,
                             this.props.data.id,
+                            this.props.data.runnerId,
+                            this.props.data.name,
                             "Nueva respuesta al hacking __LINK__ "
                           ),
                           linkGroup(
                             journeyId,
                             user,
                             linkTrack(
-                              this.props.data.name,
                               this.props.data.id,
+                              this.props.data.runnerId,
+                              this.props.data.name,
                               "ha escrito una nueva respuesta para el hacking __LINK__ "
                             )
                           ),

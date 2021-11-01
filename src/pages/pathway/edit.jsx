@@ -52,8 +52,14 @@ class FormBasePage extends React.Component {
     updateFollowUp(pathway.id, !pathway?.isFollowUp).then(() => {
       this.setState({
         ...this.state,
+        ...pathway,
         isFollowUp: !pathway?.isFollowUp
       });
+      if(!pathway?.isFollowUp){
+        this.props.pageShowAlert("Pathway con seguimiento");
+      } else {
+        this.props.pageShowAlert("Pathway sin seguimiento");
+      }
     })
   }
 
@@ -94,7 +100,7 @@ class FormBasePage extends React.Component {
             <Col md="4">
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Pathway | Editar</Portlet.Title>
+                  <Portlet.Title title={pathway.name || "Editar"}>{pathway.name || "Editar"}</Portlet.Title>
                   <Portlet.Addon>
                     <PathwayAddon id={pathway.id}  
                     toggleFollowUp={this.toggleFollowUp}  

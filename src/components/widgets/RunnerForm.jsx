@@ -154,7 +154,17 @@ function RunnerForm({ onSave, data }) {
         className="ml-2"
         size="lg"
         onClick={() => {
-          Router.back();
+          if(data?.pathwayId){
+            Router.replace({
+              pathname: "/runner/create",
+              query: {
+                pathwayId: data?.pathwayId,
+              },
+            });
+          } else {
+            Router.replace("/");
+          }
+          
         }}
       >
         Cancelar

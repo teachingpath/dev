@@ -146,7 +146,7 @@ class FormBasePage extends React.Component {
             <Col md={this.state.extend ? "12" : "6"}>
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Track | Editar</Portlet.Title>
+                  <Portlet.Title>Track | {this.state.name || "Editar"}</Portlet.Title>
                   {this.props.isOwner && (
                     <Portlet.Addon>
                       <TrackAddon

@@ -57,7 +57,7 @@ const templates = {
     <p> Tener en cuenta que este pathway puedes apoyarte de tu Mentor para acelerar el proceso de aprendizaje. Sigue todas las recomendaciones y las instrucciones dentro del pathway de eso depende el exito del pathway.
     </p>
     <h3>¡Felicidades, vas por buen camino! 👏🥳🥳</h3>
-    <blockquote>Ya iniciaste este viaje dedicale un tiempo prudente y continuo a este proceso de crecimineto profesional, saca algunas horas al dia para trabajar este pathway, recuerda que puedes también comunicarte con el Mentor de este pathway, ¡exitos!.</blockquote>
+    <blockquote>Ya iniciaste este viaje, dedicale un tiempo prudente y continuo a este proceso de crecimineto profesional, saca algunas horas al dia para trabajar este pathway, recuerda que puedes también comunicarte con el Mentor de este pathway, ¡exitos!.</blockquote>
     `,
   },
   "finish-runner": {

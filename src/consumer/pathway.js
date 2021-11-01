@@ -268,7 +268,6 @@ async function publishPathwayFor(doc, pathwayId, resolve, reject) {
     const runners = await getRunners(pathwayId);
     for (const key in runners) {
       if (!Object.keys(runners[key].badge || {}).length) {
-        console.log(runners[key]);
         reject(
           'The runner "' +
             runners[key].name +

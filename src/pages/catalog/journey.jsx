@@ -123,7 +123,7 @@ class JourneyGeneralPage extends React.Component {
                 </Widget1.Display>
                 <Widget1.Body style={{ marginTop: "70px" }}>
                   <Row>
-                    <Col md="6">
+                    <Col md="8">
                       {this.state?.runners && (
                         <RunnersExecutor
                           user={user}
@@ -139,7 +139,7 @@ class JourneyGeneralPage extends React.Component {
                     </Col>
                     {this.state?.id && (
                       <>
-                        <Col md="6">
+                        <Col md="4">
                           <ActivitiesComponent group={this.state?.group} />
                         </Col>
                         <Col md="12">

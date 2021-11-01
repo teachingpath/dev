@@ -88,7 +88,10 @@ class LearningTrack extends React.Component {
       data: { id },
       group,
     } = this.props;
-    getTracksResponses(id,group,(data) => {
+    getTracksResponses(
+      id,
+      group,
+      (data) => {
         this.setState({
           ...this.state,
           list: data.list,
@@ -104,7 +107,6 @@ class LearningTrack extends React.Component {
     const { data, group, journeyId } = this.props;
     const user = firebaseClient.auth().currentUser;
     const id = data.id;
-    const trackName = this.props.data?.name;
     const typeContent = data.typeContent;
     return (
       <>
@@ -126,45 +128,54 @@ class LearningTrack extends React.Component {
         {user && (
           <Card>
             <Card.Header>
-              <h3 className="mt-3">Feedback</h3>
+              <h3 className="mt-3">Retroalimentación</h3>
             </Card.Header>
             <Card.Body>
               <Card.Text>
-                Escribe un feedback sobre lo que aprendiste.
+                Responder alguna de estas preguntas:{" "}
+                <i>
+                  ¿Qué aprendizte con este contenido? ¿Cuál es tu apreciación?,
+                  ¿Qué opinas?, ¿10 elementos claves?
+                </i>
               </Card.Text>
-              <FeedbackForm
-                onSave={(data) => {
-                  return saveTrackResponse(id, group, data).then(() => {
-                    if (this.props.activityChange) {
-                      this.props.activityChange(
-                        activityMapper(
-                          "new_track_response",
-                          linkTrack(
-                            this.props.data.name,
-                            this.props.data.id,
-                            "Nueva respuesta al learning __LINK__ "
-                          ),
-                          linkGroup(
-                            journeyId,
-                            user,
+              {id && (
+                <FeedbackForm
+                  onSave={(data) => {
+                    return saveTrackResponse(id, group, data).then(() => {
+                      if (this.props.activityChange) {
+                        this.props.activityChange(
+                          activityMapper(
+                            "new_track_response",
                             linkTrack(
-                              this.props.data.name,
                               this.props.data.id,
-                              "ha escrito una nueva respuesta para el learning __LINK__ "
-                            )
-                          ),
-                          this.props.group,
-                          2
-                        )
-                      );
-                    }
-                    this.setState({ current: this.state.current + 1 });
-                    setTimeout(() => {
-                      this.componentDidMount();
-                    }, 500);
-                  });
-                }}
-              />
+                              this.props.data.runnerId,
+                              this.props.data.name,
+                              "Nueva respuesta al learning __LINK__ "
+                            ),
+                            linkGroup(
+                              journeyId,
+                              user,
+                              linkTrack(
+                                this.props.data.id,
+                                this.props.data.runnerId,
+                                this.props.data.name,
+                                "ha escrito una nueva respuesta para el learning __LINK__ "
+                              )
+                            ),
+                            this.props.group,
+                            2
+                          )
+                        );
+                      }
+                      this.setState({ current: this.state.current + 1 });
+                      setTimeout(() => {
+                        this.componentDidMount();
+                      }, 500);
+                    });
+                  }}
+                />
+              )}
+
               <Timeline>
                 {this.state.list.map((data, index) => {
                   const { date, feedback } = data;
