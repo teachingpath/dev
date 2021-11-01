@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import HeaderBreadcrumb from "./HeaderBreadcrumb";
 import HeaderSearch from "./HeaderSearch";
 import Sticky from "react-stickynode";
-import HeaderUser from "./HeaderUser";
 import HeaderNav from "./HeaderNav";
 
 function HeaderComponent(props) {
@@ -37,7 +36,6 @@ function HeaderComponent(props) {
             </Header.Wrap>
             <Header.Wrap>
               <HeaderNav />
-              <HeaderUser />
             </Header.Wrap>
           </Header.Container>
         </Header.Holder>
@@ -58,9 +56,7 @@ function HeaderComponent(props) {
             <Header.Wrap block>
               <HeaderSearch />
             </Header.Wrap>
-            <Header.Wrap>
-              <HeaderUser />
-            </Header.Wrap>
+           
           </Header.Container>
         </Header.Holder>
       </Sticky>

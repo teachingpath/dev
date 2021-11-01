@@ -57,7 +57,7 @@ class TrackPage extends React.Component {
           link: "/catalog/pathway?id=" +pathwayId,
         },
         {
-          text: "Mi Journey",
+          text: "Journey",
           link: "/catalog/journey?id=" + journeyId,
         },
         { text: "Track" },

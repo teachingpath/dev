@@ -82,6 +82,7 @@ function HeaderComponent(props) {
               >
                 <FontAwesomeIcon icon={SolidIcon.faCog} />
               </Button>
+              
               <HeaderUser user={props.user} />
             </Header.Wrap>
           </Header.Container>

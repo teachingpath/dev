@@ -41,7 +41,7 @@ class JourneyGeneralPage extends React.Component {
     this.props.pageChangeHeaderTitle("Pathways");
     this.props.breadcrumbChange([
       { text: "Catálogo", link: "/catalog" },
-      { text: "Mi Journey" },
+      { text: "Journey" },
     ]);
 
     getJourney(Router.query.id, (data) => {
@@ -53,7 +53,7 @@ class JourneyGeneralPage extends React.Component {
         this.props.breadcrumbChange([
           { text: "Catálogo", link: "/catalog" },
           { text: "Pathway", link: "/catalog/pathway?id=" + data.pathwayId },
-          { text: "Mi Journey" },
+          { text: "Journey" },
         ]);
       },
       () => {

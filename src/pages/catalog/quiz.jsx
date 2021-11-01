@@ -66,7 +66,7 @@ class QuizPage extends React.Component {
     this.props.pageChangeHeaderTitle("Pathway");
     this.props.breadcrumbChange([
       { text: "Catálogo", link: "/catalog" },
-      { text: "Mi Journey", link: "/catalog/journey?id=" + Router.query.id },
+      { text: "Journey", link: "/catalog/journey?id=" + Router.query.id },
       { text: "Quiz" },
     ]);
     this.onLoad(Router.query);
