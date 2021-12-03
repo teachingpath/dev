@@ -28,11 +28,11 @@ function RunnerForm({ onSave, data }) {
     name: yup
       .string()
       .min(5, "Ingrese al menos 5 caracteres")
-      .required("Por favor, ingrese el nombre del runner"),
+      .required("Por favor, ingrese el nombre de la ruta"),
     description: yup
       .string()
       .min(5, "Ingrese al menos 5 caracteres")
-      .required("Por favor, ingrese la descripción del runner"),
+      .required("Por favor, ingrese la descripción de la ruta"),
   });
 
   const { control, errors, handleSubmit, reset } = useForm({
@@ -131,7 +131,7 @@ function RunnerForm({ onSave, data }) {
           <Label for="feedback">Resumen/feedback</Label>
           <Form.Text>
             Escriba un resumen o feedback para que el aprendiz sepa lo que
-            aprendió después de completar el Runner.
+            aprendió después de completar la Ruta.
           </Form.Text>
           {errors.feedback && (
             <Form.Feedback children={errors.feedback.message} />
@@ -214,7 +214,7 @@ function FieldGroup({ data, onChange }) {
                         value={value || ""}
                         id={`tracks_${index}_.name`}
                         name={`tracks[${index}].name`}
-                        placeholder="Ingrese el nombre del track"
+                        placeholder="Ingrese el nombre de la lección"
                         onChange={onChange}
                         onBlur={onBlur}
                         onKeyUp={(data) => {
@@ -230,7 +230,7 @@ function FieldGroup({ data, onChange }) {
                     )}
                   />
                   <Label for={`groups_${index}_.name`}>
-                    Track#{index + 1}
+                    Lección#{index + 1}
                   </Label>
                 </FloatLabel>
               </Form.Group>
@@ -258,7 +258,7 @@ function FieldGroup({ data, onChange }) {
             optionsAppend({});
           }}
         >
-          Agregar Track <FontAwesomeIcon icon={SolidIcon.faPlus} />
+          Agregar lección <FontAwesomeIcon icon={SolidIcon.faPlus} />
         </Button>
       </p>
     </Form>

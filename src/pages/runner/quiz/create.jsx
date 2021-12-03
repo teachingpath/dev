@@ -2,7 +2,6 @@ import { Container, Row, Col, Button, Portlet } from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
-  activityChange,
   pageShowAlert
 } from "store/actions";
 import { bindActionCreators } from "redux";
@@ -43,7 +42,7 @@ class FormBasePage extends React.Component {
         link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
       },
       {
-        text: "Runner",
+        text: "Ruta",
         link: "/runner/edit?pathwayId=" + Router.query.pathwayId+"&runnerId="+Router.query.runnerId,
       },
       { text: "Quiz" },
@@ -55,7 +54,7 @@ class FormBasePage extends React.Component {
   }
 
   onCreate(data) {
-    const { pageShowAlert, activityChange } = this.props;
+    const { pageShowAlert } = this.props;
     return createQuiz(this.state.runnerId, data)
       .then((docRef) => {
         this.setState({
@@ -65,11 +64,6 @@ class FormBasePage extends React.Component {
           ...data,
         });
         pageShowAlert("La pregunta fue guardad correctamente.");
-        activityChange({
-          pathwayId: this.state.pathwayId,
-          type: "new_question",
-          msn: 'La pregunta "' + data.question + '" fue creada.',
-        });
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
@@ -96,7 +90,7 @@ class FormBasePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                  Agregue todas las preguntas relacionadas con este Runner.
+                  Agregue todas las preguntas relacionadas con este Ruta.
                      Las preguntas deberían ayudar a validar el conocimiento. <a
                       target="_blank"
                       rel="noopener noreferrer"
@@ -154,7 +148,7 @@ class FormBasePage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
+    { pageChangeHeaderTitle, breadcrumbChange, pageShowAlert },
     dispatch
   );
 }

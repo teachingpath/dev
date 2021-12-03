@@ -12,7 +12,7 @@ import {
   breadcrumbChange,
   activityChange,
   asideToggle,
-  pageShowAlert
+  pageShowAlert,
 } from "store/actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
@@ -29,9 +29,10 @@ import { Widget1 } from "@panely/components";
 import PathwayResume from "components/widgets/PathwayResume";
 import Badge from "../../../docs/template/src/modules/components/Badge";
 import { timePowerTen, timeShortConvert } from "components/helpers/time";
+import { firebaseClient } from "components/firebase/firebaseClient";
 
 class TrackPage extends React.Component {
-  state = { trackId: null, runnerId: null, trackList: null }
+  state = { trackId: null, runnerId: null, trackList: null };
   componentDidMount() {
     if (!Router.query.id || !Router.query.runnerId) {
       Router.push("/catalog");
@@ -42,11 +43,11 @@ class TrackPage extends React.Component {
   }
 
   loadBreadcrumbChange() {
-    const {journeyId, pathwayId, runnerId} = Router.query;
+    const { journeyId, pathwayId, runnerId } = Router.query;
     let configure = [
       { text: "Catálogo", link: "/catalog" },
-      { text: "Runner", link: "/catalog/runner?id=" + runnerId },
-      { text: "Track" },
+      { text: "Ruta", link: "/catalog/runner?id=" + runnerId },
+      { text: "Lección" },
     ];
 
     if (journeyId) {
@@ -54,13 +55,13 @@ class TrackPage extends React.Component {
         { text: "Catálogo", link: "/catalog" },
         {
           text: "Pathway",
-          link: "/catalog/pathway?id=" +pathwayId,
+          link: "/catalog/pathway?id=" + pathwayId,
         },
         {
           text: "Journey",
           link: "/catalog/journey?id=" + journeyId,
         },
-        { text: "Track" },
+        { text: "Lección" },
       ];
       if (pathwayId) {
         this.loadTracks();
@@ -72,9 +73,9 @@ class TrackPage extends React.Component {
           text: "Pathway",
           link: "/catalog/pathway?id=" + pathwayId,
         },
-        { text: "Runner", link: "/catalog/runner?id=" + runnerId },
+        { text: "Ruta", link: "/catalog/runner?id=" + runnerId },
 
-        { text: "Track" },
+        { text: "Lección" },
       ];
       this.loadTracks();
     }
@@ -84,22 +85,23 @@ class TrackPage extends React.Component {
 
   loadTracks() {
     const { runnerId, pathwayId, id } = Router.query;
-    getTracks(runnerId, (result) => {
+    getTracks(
+      runnerId,
+      (result) => {
         const list = [
           {
-            title: "Tracks",
+            title: "Lecciones",
             section: true,
           },
         ];
-        result.list.forEach((data) => {
-          const level = data.level;
+        result.list.forEach((data, index) => {
           list.push({
             title: data.name,
             current: id === data.id,
             icon: () => (
               <div className="rc-steps-item rc-steps-item-process">
                 <div className="rc-steps-item-icon">
-                  <span className="rc-steps-icon">{level + 1}</span>
+                  <span className="rc-steps-icon">{index + 1}</span>
                 </div>
               </div>
             ),
@@ -111,57 +113,66 @@ class TrackPage extends React.Component {
         });
         this.loadRunners(pathwayId, list);
       },
-      () => {}
+      () => {
+        console.log("Tracks empty or errors");
+      }
     );
   }
 
   loadCurrentTrack() {
     const { pathwayId, runnerId, id } = Router.query;
-    const {pageShowAlert}  = this.props;
+    const { pageShowAlert } = this.props;
 
-    getTrack(pathwayId, runnerId, id, (data) => {
-      this.setState({
-        ...this.state,
-        ...data,
-        pathwayId,
-      });
-    }, () => {
-      pageShowAlert("Error al obtener el track", "error");
-    });
+    getTrack(
+      pathwayId,
+      runnerId,
+      id,
+      (data) => {
+        this.setState({
+          ...this.state,
+          ...data,
+          pathwayId,
+        });
+      },
+      () => {
+        pageShowAlert("Error al obtener La lección", "error");
+      }
+    );
   }
 
   loadRunners(pathwayId, trackList) {
-    const {pageShowAlert}  = this.props;
+    const { pageShowAlert } = this.props;
     getRunners(pathwayId, (result) => {
-      const list = trackList;
-      list.push({
-        title: "Runners relacionados",
-        section: true,
-      });
-      result.list.forEach((data) => {
-        const level = data.level;
-        if (Router.query.runnerId !== data.id) {
-          list.push({
-            title: data.name,
-            current: false,
-            icon: () => (
-              <div className="rc-steps-item rc-steps-item-process">
-                <div className="rc-steps-item-icon">
-                  <span className="rc-steps-icon">{level + 1}</span>
+        const list = trackList;
+        list.push({
+          title: "Rutas relacionados",
+          section: true,
+        });
+        result.list.forEach((data, index) => {
+          if (Router.query.runnerId !== data.id) {
+            list.push({
+              title: data.name,
+              current: false,
+              icon: () => (
+                <div className="rc-steps-item rc-steps-item-process">
+                  <div className="rc-steps-item-icon">
+                    <span className="rc-steps-icon">{index + 1}</span>
+                  </div>
                 </div>
-              </div>
-            ),
-            link: {
-              pathname: "/catalog/runner",
-              query: { ...Router.query, id: data.id },
-            },
-          });
-        }
-      });
-      this.setState({ ...this.state, trackList: list, pathwayId });
-    }, () => {
-       pageShowAlert("Error al obtener los runners", "error");
-    });
+              ),
+              link: {
+                pathname: "/catalog/runner",
+                query: { ...Router.query, id: data.id },
+              },
+            });
+          }
+        });
+        this.setState({ ...this.state, trackList: list, pathwayId });
+      },
+      () => {
+        pageShowAlert("Error al obtener los runners", "error");
+      }
+    );
   }
 
   render() {
@@ -169,23 +180,34 @@ class TrackPage extends React.Component {
       this.loadCurrentTrack();
     });
     const { asideToggle } = this.props;
-    const { trackId, runnerId, trackList, pathwayId } = this.state;
+    const { trackId, runnerId, trackList, pathwayId, leaderId } = this.state;
     if (trackId === null || runnerId == null) {
       return <Spinner>Cargando...</Spinner>;
     }
     return (
       <React.Fragment>
         <Head>
-          <title>Track | {this.state.name}</title>
+          <title>Lección | {this.state.name}</title>
+          <meta
+            property="og:title"
+            content={"Lección | " + this.state.name}
+            key="title"
+          />
+          <meta
+            name="viewport"
+            content="initial-scale=1.0, width=device-width"
+          />
+          <meta name="description" content={this.state.description}></meta>
         </Head>
         <Container fluid>
           {trackList && <Aside menuList={trackList} />}
-          <Row>
+          <Row portletFill="xl" style={{margin: "-15px"}}>
             <Col md="12">
               <DisplayTrackTitle
                 track={this.state}
                 asideToggle={asideToggle}
                 runnerId={runnerId}
+                leaderId={leaderId}
                 pathwayId={pathwayId}
               />
               <Portlet>
@@ -194,7 +216,7 @@ class TrackPage extends React.Component {
                     <TrackContent {...this.state} />
                   </div>
                 </Portlet.Body>
-                <Portlet.Footer>
+                <Portlet.Footer className="p-0 pt-2 pb-2">
                   {pathwayId && <PathwayResume pathwayId={pathwayId} />}
                 </Portlet.Footer>
               </Portlet>
@@ -206,8 +228,15 @@ class TrackPage extends React.Component {
   }
 }
 
-
-const DisplayTrackTitle = ({ asideToggle, runnerId, pathwayId, track }) => {
+const DisplayTrackTitle = ({
+  asideToggle,
+  runnerId,
+  pathwayId,
+  track,
+  leaderId,
+}) => {
+  const user = firebaseClient.auth().currentUser;
+  const enabledEdit = user.uid === leaderId;
   return (
     <Widget1>
       <Widget1.Display top size="sm" className="bg-primary text-white">
@@ -227,6 +256,7 @@ const DisplayTrackTitle = ({ asideToggle, runnerId, pathwayId, track }) => {
               circle
               variant="flat-primary"
               className="mr-2"
+              disabled={!enabledEdit}
               onClick={() => {
                 Router.push({
                   pathname: "/track/edit",
@@ -269,7 +299,13 @@ const DisplayTrackTitle = ({ asideToggle, runnerId, pathwayId, track }) => {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange, asideToggle, pageShowAlert },
+    {
+      pageChangeHeaderTitle,
+      breadcrumbChange,
+      activityChange,
+      asideToggle,
+      pageShowAlert,
+    },
     dispatch
   );
 }

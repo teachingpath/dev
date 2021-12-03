@@ -316,14 +316,14 @@ function ResumPathway({
           <Col sm="6">
             <WidgetDisplay
               body={finishTracksTitles}
-              title="Tracks finalizados"
+              title="Lecciones finalizadas"
               className="mb-3"
             />
             <WidgetDisplay title="Ultima actualización" body={dateUpdated} />
           </Col>
           <Col sm="6">
             <TrackDisplay
-              title="Tracks en espera"
+              title="Lecciones en espera"
               highlight={waitTracks}
               className="mb-3"
             />

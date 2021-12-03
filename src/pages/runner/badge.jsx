@@ -14,15 +14,14 @@ import {
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
-  activityChange,
-  pageShowAlert
+  pageShowAlert,
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import withAuth from "components/firebase/firebaseWithAuth";
-import { useForm, Controller, useFieldArray } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
 import Swal from "@panely/sweetalert2";
@@ -43,7 +42,11 @@ const alert = ReactSwal.mixin({
   buttonsStyling: false,
 });
 
-function BadgeForm({ runnerId, data, activityChange, pathwayId, pageShowAlert}) {
+function BadgeForm({
+  runnerId,
+  data,
+  pageShowAlert,
+}) {
   const { badge } = data;
   const imageRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -71,11 +74,6 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId, pageShowAlert}) 
     return updateBadge(runnerId, data)
       .then((docRef) => {
         pageShowAlert("El emblema fue guardado correctamente");
-        activityChange({
-          pathwayId: pathwayId,
-          type: "edit_runner",
-          msn: 'El emblema "' + data.name + '" fue creado o actualizado.',
-        });
         setLoading(false);
       })
       .catch((error) => {
@@ -103,13 +101,14 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId, pageShowAlert}) 
     <Form
       onSubmit={handleSubmit((data) => {
         setLoading(true);
-        imageRef.current.getImage().then((url) => {
+        const path = "badges/"+runnerId;
+        imageRef.current.getImage(path).then((url) => {
           onSubmit({ ...data, image: url });
         });
       })}
     >
       <Form.Group>
-        <ImageEditor ref={imageRef} image={badge?.image}  />
+        <ImageEditor ref={imageRef} image={badge?.image} radius={100} />
       </Form.Group>
       <Row>
         <Col xs="12">
@@ -151,7 +150,7 @@ function BadgeForm({ runnerId, data, activityChange, pathwayId, pageShowAlert}) 
         </Col>
       </Row>
       <Button type="submit" variant="label-primary" size="lg" width="widest">
-        {loading && <Spinner className="mr-2" />} Save
+        {loading && <Spinner className="mr-2" />} Guardar
       </Button>
       <Button
         type="button"
@@ -192,8 +191,12 @@ class FormBasePage extends React.Component {
         link: "/pathway/edit?pathwayId=" + pathwayId,
       },
       {
-        text: "Runner",
-        link: "/runner/edit?pathwayId=" + Router.query.pathwayId+"&runnerId="+Router.query.runnerId,
+        text: "Ruta",
+        link:
+          "/runner/edit?pathwayId=" +
+          Router.query.pathwayId +
+          "&runnerId=" +
+          Router.query.runnerId,
       },
       { text: "Emblema" },
     ]);
@@ -203,7 +206,7 @@ class FormBasePage extends React.Component {
     return (
       <React.Fragment>
         <Head>
-          <title>Runner | Badge</title>
+          <title>Ruta | Badge</title>
         </Head>
         <Container fluid>
           <Row>
@@ -220,8 +223,9 @@ class FormBasePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                  Este emblema se otorga al aprendiz si tiene éxito
-                     al completar el Quiz. <a
+                    Este emblema se otorga al aprendiz si tiene éxito al
+                    completar el Quiz.{" "}
+                    <a
                       target="_blank"
                       rel="noopener noreferrer"
                       href="https://docs.teachingpath.info/concepts/runner#badges"
@@ -230,33 +234,33 @@ class FormBasePage extends React.Component {
                     </a>{" "}
                   </p>
                   <hr />
-                  {this.props?.runner?.id && <BadgeForm
-                    activityChange={this.props.activityChange}
-                    pageShowAlert={this.props.pageShowAlert}
-                    runnerId={this.state.runnerId}
-                    pathwayId={this.state.pathwayId}
-                    data={this.props?.runner}
-                  />}
+                  {this.props?.runner?.id && (
+                    <BadgeForm
+                      pageShowAlert={this.props.pageShowAlert}
+                      runnerId={this.state.runnerId}
+                      pathwayId={this.state.pathwayId}
+                      data={this.props?.runner}
+                    />
+                  )}
                 </Portlet.Body>
                 <Portlet.Footer>
-                 
-                 <Button
-                   type="button"
-                   className="float-right mr-2"
-                   onClick={() => {
-                     Router.push({
-                       pathname: "/runner/quiz/create",
-                       query: {
-                         runnerId: this.props?.runner.runnerId,
-                         pathwayId: this.props?.runner.pathwayId,
-                       },
-                     });
-                   }}
-                 >
-                   Agregar Quiz
-                   <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
-                 </Button> 
-               </Portlet.Footer>
+                  <Button
+                    type="button"
+                    className="float-right mr-2"
+                    onClick={() => {
+                      Router.push({
+                        pathname: "/runner/quiz/create",
+                        query: {
+                          runnerId: this.props?.runner.runnerId,
+                          pathwayId: this.props?.runner.pathwayId,
+                        },
+                      });
+                    }}
+                  >
+                    Agregar Quiz
+                    <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
+                  </Button>
+                </Portlet.Footer>
               </Portlet>
             </Col>
           </Row>
@@ -296,7 +300,7 @@ const BadgeAddon = ({ id, pathwayId }) => {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert},
+    { pageChangeHeaderTitle, breadcrumbChange, pageShowAlert },
     dispatch
   );
 }

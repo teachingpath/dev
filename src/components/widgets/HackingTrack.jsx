@@ -16,7 +16,11 @@ import Row from "@panely/components/Row";
 import Col from "@panely/components/Col";
 import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
-import { getTracksResponses, saveTrackResponse } from "consumer/track";
+import {
+  deleteResponseById,
+  getTracksResponses,
+  saveTrackResponse,
+} from "consumer/track";
 import {
   activityMapper,
   linkGroup,
@@ -24,6 +28,20 @@ import {
   linkTrack,
 } from "components/helpers/mapper";
 import { useState } from "react";
+import { getUser } from "consumer/user";
+import swalContent from "sweetalert2-react-content";
+import Swal from "@panely/sweetalert2";
+import { Avatar } from "@panely/components";
+import { Badge } from "@panely/components";
+import { sendNotifyResponseHacking } from "consumer/sendemail";
+const ReactSwal = swalContent(Swal);
+const swal = ReactSwal.mixin({
+  customClass: {
+    confirmButton: "btn btn-label-success btn-wide mx-1",
+    cancelButton: "btn btn-label-danger btn-wide mx-1",
+  },
+  buttonsStyling: false,
+});
 
 function SolutionForm({ onSave }) {
   const [load, setLoad] = useState(null);
@@ -85,29 +103,58 @@ class HackingTrack extends React.Component {
   state = { list: [] };
 
   componentDidMount() {
-    const {data: { id }, group,} = this.props;
-    
-    getTracksResponses(id, group, (data) => {
+    const {
+      data: { id },
+      group,
+    } = this.props;
+
+    getTracksResponses(
+      id,
+      group,
+      (data) => {
         this.setState({
           ...this.state,
           list: data.list,
         });
       },
       () => {
-        console.log("Error al intetar conseguir las respuestas")
+        console.log("Error al intetar conseguir las respuestas");
       }
     );
+  }
+
+  onDelete(id) {
+    swal
+      .fire({
+        title: "¿Estas seguro/segura?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "¡Sí, bórralo!",
+      })
+      .then((result) => {
+        if (result.value) {
+          deleteResponseById(id).then(() => {
+            this.componentDidMount();
+          });
+        }
+      });
   }
   render() {
     const { data, group, journeyId } = this.props;
     const id = data.id;
+    const leaderId = data.leaderId;
+    const trackName = data.name;
     const user = this.props.user || firebaseClient.auth().currentUser;
     const typeContent = data?.typeContent;
+    console.log(this.props);
     return (
       <>
         {data.guidelines && (
           <Card>
-            <Card.Header>Pautas</Card.Header>
+            <Card.Header> Pautas</Card.Header>
             <Card.Body>
               <Card.Text>
                 {
@@ -154,54 +201,90 @@ class HackingTrack extends React.Component {
               </Card.Text>
               <SolutionForm
                 onSave={(data) => {
-                  return saveTrackResponse(id, group, data).then(() => {
-                    if (this.props.activityChange) {
-                      this.props.activityChange(
-                        activityMapper(
-                          "new_track_response",
-                          linkTrack(
-                            this.props.data.id,
-                            this.props.data.runnerId,
-                            this.props.data.name,
-                            "Nueva respuesta al hacking __LINK__ "
-                          ),
-                          linkGroup(
-                            journeyId,
-                            user,
-                            linkTrack(
-                              this.props.data.id,
-                              this.props.data.runnerId,
-                              this.props.data.name,
-                              "ha escrito una nueva respuesta para el hacking __LINK__ "
+                  return getUser(user.uid).then((dataUser) => {
+                    data.user = {
+                      displayName: user.displayName,
+                      email: dataUser.data.email,
+                      image: dataUser.data.image,
+                    };
+                    return saveTrackResponse(id, group, data).then(() => {
+                      if (this.props.activityChange) {
+                        getUser(leaderId).then((leaderData) => {
+                          this.props.activityChange(
+                            activityMapper(
+                              "new_track_response",
+                              linkTrack(
+                                this.props.data.id,
+                                this.props.data.runnerId,
+                                this.props.data.name,
+                                "Nueva respuesta al hacking __LINK__ "
+                              ),
+                              linkGroup(
+                                journeyId,
+                                user,
+                                linkTrack(
+                                  this.props.data.id,
+                                  this.props.data.runnerId,
+                                  this.props.data.name,
+                                  "ha escrito una nueva respuesta para el hacking __LINK__ "
+                                )
+                              ),
+                              this.props.group,
+                              8
                             )
-                          ),
-                          this.props.group,
-                          5
-                        )
-                      );
-                    }
-                    this.setState({ current: this.state.current + 1 });
-                    setTimeout(() => {
-                      this.componentDidMount();
-                    }, 500);
+                          );
+
+                          return sendNotifyResponseHacking(
+                            journeyId,
+                            user.email,
+                            user.displayName,
+                            leaderData.data.email,
+                            trackName
+                          );
+                        });
+                      }
+                      this.setState({ current: this.state.current + 1 });
+                      setTimeout(() => {
+                        this.componentDidMount();
+                      }, 400);
+                    });
                   });
                 }}
               />
               <Timeline>
                 {this.state.list.map((data, index) => {
-                  const { date, solution } = data;
+                  const { date, solution, userId, id } = data;
 
                   return (
                     <Timeline.Item
                       key={"timeline" + index}
                       date={date}
-                      pin={<Marker type="dot" />}
+                      pin={
+                        <Avatar circle display>
+                          <img
+                            src={data.user.image}
+                            alt="Avatar image"
+                            title={data.user.displayName}
+                          />
+                        </Avatar>
+                      }
                     >
                       <div
                         dangerouslySetInnerHTML={{
                           __html: linkify(solution),
                         }}
                       />
+
+                      {user.uid === userId && (
+                        <Badge
+                          href="javascript:void(0)"
+                          onClick={() => {
+                            this.onDelete(id);
+                          }}
+                        >
+                          Eliminar
+                        </Badge>
+                      )}
                     </Timeline.Item>
                   );
                 })}

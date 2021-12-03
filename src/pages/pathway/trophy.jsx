@@ -17,7 +17,6 @@ import Router from "next/router";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
-  activityChange,
   pageShowAlert
 } from "store/actions";
 import withAuth from "components/firebase/firebaseWithAuth";
@@ -84,7 +83,6 @@ class FormBasePage extends React.Component {
                   <p>Este es el trofeo que que conseguirá el aprendiz al finalizar el pathway. </p>
                   <hr />
                   <TrophyForm
-                    activityChange={this.props.activityChange}
                     pageShowAlert={this.props.pageShowAlert}
                     pathwayId={this.state.id}
                     data={this.state.trophy}
@@ -99,7 +97,7 @@ class FormBasePage extends React.Component {
   }
 }
 
-function TrophyForm({ pathwayId, data, activityChange, pageShowAlert }) {
+function TrophyForm({ pathwayId, data, pageShowAlert }) {
   const imageRef = useRef(null);
   const [loading, setLoading] = useState(false);
 
@@ -125,13 +123,7 @@ function TrophyForm({ pathwayId, data, activityChange, pageShowAlert }) {
   const onSubmit = (data) => {
     updateTrophy(pathwayId, data)
       .then((docRef) => {
-    
         pageShowAlert("El trofeo fue guardado correctamente.");
-        activityChange({
-          pathwayId: pathwayId,
-          type: "edit_pathway",
-          msn: 'El trofeo "' + data.name + '" fue cambiado.',
-        });
         setLoading(false);
       })
       .catch((error) => {
@@ -144,13 +136,14 @@ function TrophyForm({ pathwayId, data, activityChange, pageShowAlert }) {
     <Form
       onSubmit={handleSubmit((data) => {
         setLoading(true);
-        imageRef.current.getImage().then((url) => {
+        const path = "tropthies/"+pathwayId;
+        imageRef.current.getImage(path).then((url) => {
           onSubmit({ ...data, image: url });
         });
       })}
     >
       <Form.Group>
-        <ImageEditor ref={imageRef} image={data?.image}  />
+        <ImageEditor  ref={imageRef} image={data?.image}  radius={100}/>
       </Form.Group>
       <Row>
         <Col xs="12">
@@ -219,7 +212,7 @@ function TrophyForm({ pathwayId, data, activityChange, pageShowAlert }) {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
+    { pageChangeHeaderTitle, breadcrumbChange, pageShowAlert },
     dispatch
   );
 }

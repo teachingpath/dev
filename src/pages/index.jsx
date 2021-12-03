@@ -22,10 +22,9 @@ import BadgeAllListComponent from "components/widgets/BadgetAllList";
 class DashboardPage extends React.Component {
 
   componentDidMount() {
-    this.props.pageChangeHeaderTitle("Panel de Control");
+    this.props.pageChangeHeaderTitle("Mi Tablero");
     this.props.breadcrumbChange([{ text: "Home", link: "/" }]);
   }
-
 
   render() {
     const { isCoach, isTrainee } = this.props;

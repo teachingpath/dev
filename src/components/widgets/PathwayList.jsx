@@ -11,6 +11,7 @@ import {
   getMyPathways,
   publishPathway,
   unpublushPathway,
+  updateFollowUp,
 } from "consumer/pathway";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -32,7 +33,7 @@ class PathwaysComponent extends React.Component {
   }
 
   componentDidMount() {
-    const {pageShowAlert}  = this.props;
+    const { pageShowAlert } = this.props;
     getMyPathways(
       (data) => {
         this.setState(data);
@@ -45,34 +46,42 @@ class PathwaysComponent extends React.Component {
   }
 
   onPublishPathway(pathwayId) {
-    const {pageShowAlert}  = this.props;
+    const { pageShowAlert } = this.props;
 
-    pageShowAlert("Publicando pathway, espere un momento...");
     publishPathway(
       pathwayId,
-      (data) => {
+      (dta) => {
         this.componentDidMount();
-        this.props.activityChange({
-          type: "publish_pathway",
-          pathwayId: pathwayId,
-          msn: 'El pathway "' + data.name + '" está publicado.',
-        });
+        pageShowAlert("Pathway publicado correctamente.");
       },
       (error) => {
-        pageShowAlert("Error en la publicación", "error");
+        pageShowAlert(error, "error");
       }
     );
   }
 
+  toggleFollowUp(pathway) {
+    updateFollowUp(pathway.id, !pathway?.isFollowUp).then(() => {
+      this.componentDidMount();
+      if (!pathway?.isFollowUp) {
+        this.props.pageShowAlert("Pathway con seguimiento");
+      } else {
+        this.props.pageShowAlert("Pathway sin seguimiento");
+      }
+    });
+  }
+
   onUnpublishPathway(pathwayId) {
-    const {pageShowAlert}  = this.props;
+    const { pageShowAlert } = this.props;
 
     pageShowAlert("Despublicando pathway, espere un momento...");
-    unpublushPathway(pathwayId).then(() => {
-      this.componentDidMount();
-    }).catch(() => {
-      pageShowAlert("Error en la despublicación", "error");
-    });
+    unpublushPathway(pathwayId)
+      .then(() => {
+        this.componentDidMount();
+      })
+      .catch(() => {
+        pageShowAlert("Error en la despublicación", "error");
+      });
   }
 
   onDelete(pathwayId) {
@@ -88,15 +97,10 @@ class PathwaysComponent extends React.Component {
       })
       .then((result) => {
         if (result.value) {
-          const {pageShowAlert, activityChange}  = this.props;
+          const { pageShowAlert } = this.props;
           deletePathway(pathwayId)
             .then(() => {
               this.componentDidMount();
-              activityChange({
-                type: "delete_pathway",
-                pathwayId: pathwayId,
-                msn: "El pathway fue eliminado.",
-              });
             })
             .catch((error) => {
               console.error("Error removing document: ", error);
@@ -128,7 +132,12 @@ class PathwaysComponent extends React.Component {
           <RichList bordered action>
             {this.state.data === null && <Spinner />}
             {this.state.data && this.state.data.length === 0 && (
-              <p className="text-center">No hay pathways aún.</p>
+              <p className="text-center">
+                No hay pathways.
+                <br />
+                Te invito a crear tu primer pathway{" "}
+                <a href="/pathway/create">aquí</a>
+              </p>
             )}
             {this.state.data &&
               this.state.data.map((data, index) => {
@@ -168,7 +177,7 @@ class PathwaysComponent extends React.Component {
                       />
                     </RichList.Content>
                     <RichList.Addon addonType="append">
-                      {this.getAddon(id, draft)}
+                      {this.getAddon(id, data)}
                     </RichList.Addon>
                   </RichList.Item>
                 );
@@ -179,7 +188,7 @@ class PathwaysComponent extends React.Component {
     );
   }
 
-  getAddon(id, draft) {
+  getAddon(id, pathway) {
     return (
       <>
         {/* BEGIN Dropdown */}
@@ -217,7 +226,7 @@ class PathwaysComponent extends React.Component {
               }}
               icon={<FontAwesomeIcon icon={SolidIcon.faRunning} />}
             >
-              Agregar Runner
+              Agregar Ruta
             </Dropdown.Item>
             <Dropdown.Item
               onClick={() => {
@@ -241,7 +250,7 @@ class PathwaysComponent extends React.Component {
             >
               Agregar Sala
             </Dropdown.Item>
-            {draft ? (
+            {pathway.draft ? (
               <Dropdown.Item
                 onClick={() => this.onPublishPathway(id)}
                 icon={<FontAwesomeIcon icon={SolidIcon.faShareSquare} />}
@@ -256,8 +265,26 @@ class PathwaysComponent extends React.Component {
                 Despublicar
               </Dropdown.Item>
             )}
+            {pathway.draft === false && (
+              <Dropdown.Item
+                onClick={() => {
+                  this.toggleFollowUp(pathway);
+                }}
+                icon={
+                  <FontAwesomeIcon
+                    icon={
+                      pathway.isFollowUp
+                        ? SolidIcon.faEyeSlash
+                        : SolidIcon.faEye
+                    }
+                  />
+                }
+              >
+                { pathway.isFollowUp ? "Quitar seguimiento" :"Seguimiento"}
+              </Dropdown.Item>
+            )}
 
-            {draft === false && (
+            {pathway.draft === false && (
               <Dropdown.Item
                 onClick={() => {
                   Router.push({

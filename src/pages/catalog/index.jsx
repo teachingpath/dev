@@ -30,7 +30,10 @@ class CatalogPage extends React.Component {
 
     this.props.pageChangeHeaderTitle("Pathways");
     this.props.breadcrumbChange([{ text: "Catálogo", link: "/catalog" }]);
-    searchPathways(tags, q,(list) => {
+    searchPathways(
+      tags,
+      q,
+      (list) => {
         this.setState(list);
       },
       () => {}
@@ -83,15 +86,28 @@ const ItemCatalog = ({ data }) => {
   return (
     <Card>
       <Card.Img top src={data.image} alt="Pathway Image" />
+
       <Card.Body>
         <Card.Title>
           <Link href={"/catalog/pathway?id=" + data.id}>
             {data.name.toUpperCase()}
           </Link>
         </Card.Title>
-        <Card.Text>{data.description}</Card.Text>
+        <Card.Subtitle>
+          <Badge  variant="outline-primary" className="mr-1">
+            {{
+              "beginner": "Nivel: Principiante",
+              "middle": "Nivel: Intermedio",
+              "advanced": "Nivel: Avanzado"
+            }[data.level]}
+          </Badge>
+          <Badge href={"/catalog/runners/?pathwayId="+data.id} variant="outline-success" className="mr-1">
+           Ver rutuas
+          </Badge>
+        </Card.Subtitle>
+        <Card.Text className="mt-2">{data.description}</Card.Text>
         <Button
-          className="float-right"
+          className="float-right mb-2"
           onClick={() => {
             Router.push({
               pathname: "/catalog/pathway",
@@ -102,21 +118,6 @@ const ItemCatalog = ({ data }) => {
           }}
         >
           Iniciar
-        </Button>
-
-        <Button
-          className="float-right mr-2"
-          variant={"secondary"}
-          onClick={() => {
-            Router.push({
-              pathname: "/catalog/runners",
-              query: {
-                pathwayId: data.id,
-              },
-            });
-          }}
-        >
-          Runners
         </Button>
 
         <Card.Text>

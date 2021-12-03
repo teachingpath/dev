@@ -53,20 +53,19 @@ function RegisterPage() {
             <Portlet>
               <Portlet.Body>
                 <div className="text-center mt-2 mb-4">
-                 <a href="/" >
-                  <img src="/images/logo.png" alt="teaching path" />
+                  <a href="/">
+                    <img src="/images/logo.png" alt="teaching path" />
                   </a>
                 </div>
                 <RegisterForm />
               </Portlet.Body>
             </Portlet>
-            <Portlet.Footer>
               <Link href="/catalog">
-                <Button pill size="lg" width="widest">
+                <Button pill width="widest"  className="mt-2">
+                  <i className="mr-2 fas fa-book-open"></i>
                   Ver catálogo de pathways
                 </Button>
               </Link>
-            </Portlet.Footer>
           </Col>
         </Row>
       </Container>
@@ -81,11 +80,11 @@ function RegisterForm() {
   const schema = yup.object().shape({
     firstName: yup
       .string()
-      .min(5, "Ingrese al menos 5 caracteres")
+      .min(3, "Ingrese al menos 3 caracteres")
       .required("Por favor ingrese su apellido"),
     lastName: yup
       .string()
-      .min(5, "Ingrese al menos 5 caracteres")
+      .min(3, "Ingrese al menos 3 caracteres")
       .required("Por favor ingrese su apellido"),
     email: yup
       .string()
@@ -149,11 +148,12 @@ function RegisterForm() {
                 return user
                   .reauthenticateWithCredential(credential)
                   .then(() => {
-                    Router.push(
-                      Router.query.redirect || PAGE.dashboardPagePath
-                    );
+                    return fetch(
+                      "https://gitlab.com/api/v4/avatar?email=" + email)
+                      .then(resposen => resposen.json())
+                      .then((res) =>res.avatar_url );
                   })
-                  .then(() => {
+                  .then((photoURL) => {
                     return firestoreClient
                       .collection("users")
                       .doc(user.uid)
@@ -163,10 +163,16 @@ function RegisterForm() {
                         firstName: firstName,
                         lastName: lastName,
                         point: 5,
+                        image: photoURL,
                       })
                       .then(() => {
-                        return sendNewRegister(profile, email, firstName)
+                        return sendNewRegister(profile, email, firstName);
                       });
+                  })
+                  .then(() => {
+                    Router.push(
+                      Router.query.redirect || PAGE.dashboardPagePath
+                    );
                   })
                   .catch((err) => {
                     swal.fire({ text: err.message, icon: "error" });
@@ -192,10 +198,9 @@ function RegisterForm() {
       <Row>
         <Col xs="6">
           <Form.Group>
-            <FloatLabel size="lg">
+            <FloatLabel>
               <Controller
                 as={Input}
-                size="lg"
                 type="text"
                 id="first-name"
                 name="firstName"
@@ -214,10 +219,9 @@ function RegisterForm() {
         <Col xs="6">
           {/* BEGIN Form Group */}
           <Form.Group>
-            <FloatLabel size="lg">
+            <FloatLabel>
               <Controller
                 as={Input}
-                size="lg"
                 type="text"
                 id="last-name"
                 name="lastName"
@@ -234,13 +238,12 @@ function RegisterForm() {
         </Col>
       </Row>
       <Form.Group>
-        <FloatLabel size="lg">
+        <FloatLabel>
           <Controller
             as={Input}
             type="email"
             id="email"
             name="email"
-            size="lg"
             control={control}
             invalid={Boolean(errors.email)}
             placeholder="Por favor, ingrese su email"
@@ -251,10 +254,9 @@ function RegisterForm() {
       </Form.Group>
 
       <Form.Group>
-        <FloatLabel size="lg">
+        <FloatLabel>
           <Controller
             as={Input}
-            size="lg"
             type="password"
             id="password"
             name="password"
@@ -269,10 +271,9 @@ function RegisterForm() {
         </FloatLabel>
       </Form.Group>
       <Form.Group>
-        <FloatLabel size="lg">
+        <FloatLabel>
           <Controller
             as={Input}
-            size="lg"
             type="password"
             id="passwordRepeat"
             name="passwordRepeat"
@@ -293,7 +294,6 @@ function RegisterForm() {
           render={({ onChange, onBlur, value, name, ref }) => (
             <CustomInput
               type="switch"
-              size="lg"
               id="profile"
               label="Active como Mentor"
               invalid={Boolean(errors.profile)}
@@ -313,7 +313,6 @@ function RegisterForm() {
             render={({ onChange, onBlur, value, name, ref }) => (
               <CustomInput
                 type="checkbox"
-                size="lg"
                 id="agreement"
                 label="Aceptar acuerdo"
                 invalid={Boolean(errors.agreement)}
@@ -333,7 +332,6 @@ function RegisterForm() {
         <Button
           type="submit"
           variant="label-primary"
-          size="lg"
           width="widest"
           disabled={loading}
         >

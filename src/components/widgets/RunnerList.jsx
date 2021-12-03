@@ -22,7 +22,6 @@ import {
   timeShortPowerTen,
 } from "components/helpers/time";
 import Accordion from "@panely/components/Accordion";
-import Card from "@panely/components/Card";
 import Collapse from "@panely/components/Collapse";
 
 const ReactSwal = swalContent(Swal);
@@ -108,7 +107,13 @@ class RunnerList extends React.Component {
       <RichList bordered action>
         {this.state.loaded === false && <Spinner />}
         {this.state.loaded === true && this.state.data.length === 0 && (
-          <p className="text-center">Aún no hay runeers</p>
+          <p className="text-center">
+            Aún no hay rutas. <br /> Te invito a crear la primera RUTA para este
+            pathway{" "}
+            <a href={"/runner/create?pathwayId=" + this.props.pathwayId}>
+              aquí
+            </a>
+          </p>
         )}
         {this.state.data.length >= 1 && (
           <p>
@@ -144,7 +149,7 @@ class RunnerList extends React.Component {
                 </RichList.Addon>
                 <RichList.Content>
                   <RichList.Title
-                    title={'Click en el runner para ver "' + title + '"'}
+                    title={'Click en la ruta para ver "' + title + '"'}
                     onClick={() => {
                       Router.replace({
                         pathname: "/runner/edit",
@@ -185,16 +190,21 @@ class RunnerList extends React.Component {
                       title="Click para expandir o ocultar"
                       onClick={() => this.toggleAccordion(index)}
                     >
-                      {!(activeCard === index) ? "Ver" : "Ocultar"} los tracks (
-                      {tracks.length})
+                      {!(activeCard === index) ? "Ver" : "Ocultar"} las
+                      lecciones ({tracks.length})
                     </Badge>
                     <br /> <br />
                     <Collapse isOpen={activeCard === index}>
-                      <TrackList tracks={tracks} index={index} id={id} pathwayId={pathwayId} />
+                      <TrackList
+                        tracks={tracks}
+                        index={index}
+                        id={id}
+                        pathwayId={pathwayId}
+                      />
                     </Collapse>
                   </Accordion>
                 </RichList.Content>
-                <AddonRunner />
+                <AddonRunner pathwayId={pathwayId} id={id} />
               </RichList.Item>
             );
           })}
@@ -293,7 +303,7 @@ const AddonRunner = ({ id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
           >
-            Agrgar Track
+            Agregar lección
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>
@@ -319,7 +329,7 @@ const TrackList = ({ tracks, index, id, pathwayId }) => {
               }}
             >
               <RichList.Title
-                title={'Click en el track para ver "' + track.name + '"'}
+                title={'Click en La lección para ver "' + track.name + '"'}
               >
                 {index + 1}.{indexTrack + 1}. {track.name}
               </RichList.Title>

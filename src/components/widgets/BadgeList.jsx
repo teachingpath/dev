@@ -57,9 +57,8 @@ class BadgeListComponent extends React.Component {
         <Portlet.Body className="list">
           <div className="mt-4">
             {this.state.data.length === 0 && (
-              <p className="text-center text-muted">No hay emblemas aún.</p>
+              <p className="text-center text-muted">No hay emblemas para este pathway.</p>
             )}
-
             {this.state.data.length !== 0 && (
               <Carousel slidesToShow={this.state.data.length >= 4? 4: this.state.data.length}>
                 {this.state.data.map((data, index) => {

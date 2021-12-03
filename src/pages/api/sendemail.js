@@ -61,10 +61,10 @@ const templates = {
     `,
   },
   "finish-runner": {
-    subject: "Has completado con exito el Runner 💪",
+    subject: "Has completado con exito la Ruta 💪",
     body: ` 
-    <h2>Excelente trabajo, has culminado el Runner <i>{{name}}</i> de forma exitosa</h2>
-    <p>Ahora debes continuar con el siguiente Runner y finalizar el Pathway</p>
+    <h2>Excelente trabajo, has culminado la Ruta <i>{{name}}</i> de forma exitosa</h2>
+    <p>Ahora debes continuar con el siguiente Ruta y finalizar el Pathway</p>
     <h3>¡Felicidades, vas por buen camino! 👏🥳🥳</h3>
     <blockquote>Si no has terminado el pathway te invito a continuar con el siguiente runner.</blockquote>
     `,
@@ -73,7 +73,7 @@ const templates = {
     subject: "Te hicieron una revisión",
     body: `
     <p>Saludo Aprendiz, te han realizado una retroalimentación a una respuesta tuya dentro de teachingpath.co.</p>
-    <p>El Mentor te reviso el track: <h2>{{track}}:</h2></p>
+    <p>El Mentor te reviso la lección: <h2>{{track}}:</h2></p>
     <p><i>{{resp}}</i></p>
     <h3>Retroalimentación:</h3>
     <p><i>- {{feedback}}</i></p>
@@ -89,6 +89,24 @@ const templates = {
     <blockquote>Es lo que esperaba de ti, que pudieras lograr este pathway ahora puedes ver dentro de tu panel de usuario el trofeo que pudiste conseguir, ¡te felicito!.</blockquote>
     `,
   },
+
+  "new-member-to-pathway": {
+    subject: "Nuevo aprendiz dentro del pathway",
+    body: ` 
+    <h2>Tienes un nuevo aprendiz dentro del pathway</h2>
+    <p><b>{{name}}</b> ha iniciado el pathway <i>{{pathway}}</i></p>
+    <blockquote>¡Felicidades! poco a pocos vas teniendo mas aprendices y así facilitarles el proceso formativo gracias a tu esperiencia</blockquote>
+    `,
+  },
+
+  "new-response-to-hacking": {
+    subject: "Nueva respuesta al hacking",
+    body: ` 
+    <h2>Hay un respuesta al hacking</h2>
+    <p><b>{{name}}</b> ha respondido al hacking <u>{{hackingName}}</u></p>
+    <p>Puede ver el resultado dentro del resumen del aprendiz entrando <a href="//{{host}}/pathway/resume?id={{id}}">AQUÍ</a></p>
+    `,
+  }
 };
 
 async function sendemailHandler(req, res) {

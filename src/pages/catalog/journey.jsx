@@ -1,9 +1,16 @@
-import { Col, Container, Row, Widget1, Badge } from "@panely/components";
+import {
+  Col,
+  Container,
+  Row,
+  Widget1,
+  Badge,
+  AvatarGroup,
+} from "@panely/components";
 import {
   activityChange,
   breadcrumbChange,
   pageChangeHeaderTitle,
-  pageShowAlert
+  pageShowAlert,
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -11,14 +18,16 @@ import withLayout from "components/layout/withLayout";
 import Head from "next/head";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Router from "next/router";
-import BadgeList from "../../components/widgets/BadgeList";
+import BadgeList from "components/widgets/BadgeList";
 import React from "react";
 import ActivitiesComponent from "components/widgets/ActivitiesGroup";
 import Teacher from "components/widgets/Teacher";
 import StatusProgress from "components/widgets/StatusProgress";
 import RunnersExecutor from "components/widgets/RunnersExecutor";
 import { getJourney } from "consumer/journey";
-import Spinner from "../../../docs/template/src/modules/components/Spinner";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Spinner from "@panely/components/Spinner";
 import {
   activityMapper,
   createSlug,
@@ -26,6 +35,7 @@ import {
   linkTrack,
 } from "components/helpers/mapper";
 import DisplayTrophy from "components/widgets/DisplayTrophy";
+import TraineeGroup from "components/widgets/TraineeGroup";
 
 class JourneyGeneralPage extends React.Component {
   state = { name: "Cargando...", trophy: {}, progress: 0, badges: [] };
@@ -44,7 +54,9 @@ class JourneyGeneralPage extends React.Component {
       { text: "Journey" },
     ]);
 
-    getJourney(Router.query.id, (data) => {
+    getJourney(
+      Router.query.id,
+      (data) => {
         data.runners = data.breadcrumbs;
         localStorage.setItem("group", data.group);
         localStorage.setItem("pathwayId", data.pathwayId);
@@ -66,11 +78,21 @@ class JourneyGeneralPage extends React.Component {
     this.props.activityChange(
       activityMapper(
         "complete_track",
-        linkTrack(data.id, data.runnerId, data.title, "El Track __LINK__ está competado."),
+        linkTrack(
+          data.id,
+          data.runnerId,
+          data.title,
+          "La lección __LINK__ está competado."
+        ),
         linkGroup(
           this.state.id,
           this.props.user,
-          linkTrack(data.id, data.runnerId, data.title, "ha completado el track: __LINK__")
+          linkTrack(
+            data.id,
+            data.runnerId,
+            data.title,
+            "ha completado La lección: __LINK__"
+          )
         ),
         this.state?.group,
         5
@@ -84,7 +106,7 @@ class JourneyGeneralPage extends React.Component {
   }
 
   render() {
-    const { name, trophy, progress, group } = this.state;
+    const { name, trophy, progress, group, groupName, isFollowUp } = this.state;
     const user = this.props.user;
     const isFinish = progress >= 100;
     if (!user) {
@@ -98,7 +120,7 @@ class JourneyGeneralPage extends React.Component {
         </Head>
 
         <Container fluid>
-          <Row portletFill="xl">
+        <Row portletFill="xl" style={{margin: "-15px"}}>
             <Col xl="12">
               <Widget1 fluid>
                 <Widget1.Display
@@ -118,7 +140,7 @@ class JourneyGeneralPage extends React.Component {
                       pathwayId={this.state.pathwayId}
                     />
                   )}
-                  <TitlePathway group={group} name={name} />
+                  <TitlePathway group={groupName} name={name} level={this.state.level} />
                   <DisplayTrophy isFinish={isFinish} trophy={trophy} />
                 </Widget1.Display>
                 <Widget1.Body style={{ marginTop: "70px" }}>
@@ -140,7 +162,14 @@ class JourneyGeneralPage extends React.Component {
                     {this.state?.id && (
                       <>
                         <Col md="4">
-                          <ActivitiesComponent group={this.state?.group} />
+                          <TraineeGroup
+                            pathwayId={this.state?.pathwayId}
+                            group={groupName}
+                          />
+                          <ActivitiesComponent
+                            group={this.state?.group}
+                            pathwayId={this.state?.pathwayId}
+                          />
                         </Col>
                         <Col md="12">
                           <BadgeList journeyId={this.state?.id} />
@@ -161,15 +190,25 @@ class JourneyGeneralPage extends React.Component {
   }
 }
 
-const TitlePathway = ({ name, group }) => {
+const TitlePathway = ({ name, group, level }) => {
   return (
     <Widget1.Dialog>
       <Widget1.DialogContent>
         <h1 className="display-5" children={name?.toUpperCase()} />
         <h5>
-          <Badge title="tu sala o grupo">
-            <i className="fas fa-users"></i>{" "}
+          <Badge title="tu sala o grupo" variant="outline-light">
+           <FontAwesomeIcon className="mr-2" icon={SolidIcon.faUsers} />
             {group ? group?.replace(createSlug(name) + "-", "") : "--"}
+          </Badge>
+          <Badge variant="outline-light" className="ml-1">
+            <FontAwesomeIcon className="mr-2" icon={SolidIcon.faHiking} />
+            {
+              {
+                beginner: "Nivel: Principiante",
+                middle: "Nivel: Intermedio",
+                advanced: "Nivel: Avanzado",
+              }[level]
+            }
           </Badge>
         </h5>
       </Widget1.DialogContent>

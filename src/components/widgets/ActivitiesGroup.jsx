@@ -8,8 +8,7 @@ class ActivitiesComponent extends React.Component {
   state = { data: null };
 
   componentDidMount() {
-    getActivitiesForGroup(
-      this.props.group,
+    getActivitiesForGroup( this.props.group,
       (data) => {
         this.setState(data);
       },

@@ -9,7 +9,7 @@ function FooterComponent() {
         <Row>
           <Col md="6">
             <p className="text-left mb-0">
-              Copyright <i className="fas fa-copyright" />{" "}
+              Copyright <i className="fas fa-copyright"  />{" "}
               <span>{copyrightYear}</span> Teaching Path.{" "}
               <a
                 target="_blank"

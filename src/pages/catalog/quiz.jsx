@@ -19,18 +19,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Label from "@panely/components/Label";
 import Spinner from "@panely/components/Spinner";
 import { loadQuiz } from "consumer/evaluation";
-import { enableBadge, getJourney, updateJourney } from "consumer/journey";
+import { enableBadge, getJourney, processFinish, processJourney, updateJourney } from "consumer/journey";
 import { removePoint } from "consumer/user";
 import { userChange } from "store/actions/userAction";
 import swalContent from "sweetalert2-react-content";
 import Swal from "@panely/sweetalert2";
-import {
-  activityMapper,
-  linkGroup,
-  linkPathway,
-  linkRunner,
-} from "components/helpers/mapper";
-import { sendFinishPathway, sendFinishRunner } from "consumer/sendemail";
+
 
 const ReactSwal = swalContent(Swal);
 const toast = ReactSwal.mixin({
@@ -49,9 +43,9 @@ class QuizPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      quizTitle: "Comprueba tu conocimiento del Runner.",
+      quizTitle: "Comprueba tu conocimiento de la Ruta.",
       quizSynopsis:
-        "Bienvenido a la evaluación de conceptos de verificación del runner. Al aprobar este cuestionario, puede obtener el emblema del Runner. Resuelve el cuestionario en el menor tiempo posible. Con esta evaluación te permite asegurar el conocimiento, si por alguna razón te das cuenta que no puedes resolver el cuestionario, te invito a repasar los conceptos del Runner.",
+        "Bienvenido a la evaluación de conceptos de verificación de la ruta. Al aprobar este cuestionario, puede obtener el emblema de la Ruta. Resuelve el cuestionario en el menor tiempo posible. Con esta evaluación te permite asegurar el conocimiento, si por alguna razón te das cuenta que no puedes resolver el cuestionario, te invito a repasar los conceptos de la Ruta.",
       questions: [],
       start: false,
       loading: false,
@@ -126,33 +120,7 @@ class QuizPage extends React.Component {
   };
 
   processQuiz = (data, runnerId, id, totalPoints) => {
-    let tracksCompleted = data.current + 1;
-    let tracksTotal = data.breadcrumbs.length;
-    data.breadcrumbs.forEach((runner) => {
-      if (runner.tracks) {
-        runner.tracks.forEach((track) => {
-          tracksTotal++;
-          if (track.status === "finish" || track.status === null) {
-            tracksCompleted++;
-          }
-        });
-      }
-    });
-    data.progress = (tracksCompleted / tracksTotal) * 100;
-
-    const currentRunner = data.breadcrumbs[data.current];
-    currentRunner.current = null;
-    currentRunner.tracks.forEach((track) => {
-      track.status = null;
-    });
-    data.current = data.current + 1;
-    try {
-      data.breadcrumbs[data.current].current = 0;
-      data.breadcrumbs[data.current].tracks[0].status = "process";
-    } catch (e) {
-      console.log("There are no more runners, complete pathway");
-    }
-    return this.completeQuiz(data, id, runnerId, totalPoints);
+    return this.completeQuiz(processJourney(data), id, runnerId, totalPoints);
   };
 
   completeQuiz(data, id, runnerId, totalPoints) {
@@ -161,56 +129,7 @@ class QuizPage extends React.Component {
     return enableBadge(id, runnerId, totalPoints)
       .then((doc) => {
         return updateJourney(id, data).then(() => {
-          if (data.progress >= 100) {//finish pathway
-            sendFinishPathway(user.email, data.name);
-            this.props.activityChange(
-              activityMapper(
-                "complete_pathway",
-                linkPathway(
-                  data.id,
-                  data.name,
-                  "El Pathway __LINK__ está competado."
-                ),
-                linkGroup(
-                  id,
-                  user,
-                  linkPathway(
-                    data.id,
-                    data.name,
-                    "ha completado el pathway: __LINK__, su nuevo progreso es: 100%"
-                  )
-                ),
-                data.group,
-                totalPoints
-              )
-            );
-          } else {//finshi runner
-            sendFinishRunner(user.email, currentRunner.name);
-            this.props.activityChange(
-              activityMapper(
-                "complete_quiz",
-                linkRunner(
-                  currentRunner.id,
-                  currentRunner.name,
-                  "El Runner __LINK__ está competado."
-                ),
-                linkGroup(
-                  id,
-                  user,
-                  linkRunner(
-                    currentRunner.id,
-                    currentRunner.name,
-                    "ha completado el runner: __LINK__, su nuevo progreso es: " +
-                      data.progress.toFixed(2) +
-                      "%"
-                  )
-                ),
-                data.group,
-                totalPoints
-              )
-            );
-          }
-
+          processFinish(data, user, id, currentRunner, totalPoints, this.props.activityChange);
           Router.push({
             pathname: "/catalog/journey",
             query: {
@@ -306,7 +225,7 @@ const QuizFail = ({ numberOfCorrectAnswers, numberOfQuestions }) => (
     <p>
       <i className="fas fa-exclamation-triangle"></i> Esta evaluación de
       conceptos no se aprobó, debe intentarlo de nuevo para obtener el emblema
-      del Runner y pasar el Pathway. Anímate y vuelve a intentarlo. Te
+      de la Ruta y pasar el Pathway. Anímate y vuelve a intentarlo. Te
       recomendamos volver al pathway y repasar los conceptos ahí descritos.
     </p>
     <h4 className="mt-3">Result</h4>

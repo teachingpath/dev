@@ -13,7 +13,8 @@ import Swal from "@panely/sweetalert2";
 import Modal from "@panely/components/Modal";
 import RichList from "@panely/components/RichList";
 import { createSlug } from "components/helpers/mapper";
-import { sendStartPathway } from "consumer/sendemail";
+import { sendStartPathway, sendNotifyNewMember } from "consumer/sendemail";
+import { getUser } from "consumer/user";
 const ReactSwal = swalContent(Swal);
 
 const swal = ReactSwal.mixin({
@@ -56,13 +57,24 @@ class StartPathway extends React.Component {
     }
   }
 
-  onCreateJourney(leaderId, pathwayId, journeyId, trophy, name, group) {
-    const user = firebaseClient.auth().currentUser;
+  onCreateJourney(
+    leaderId,
+    pathwayId,
+    journeyId,
+    trophy,
+    name,
+    group,
+    level,
+    isFollowUp
+  ) {
+    const user = this.props.user;
     const tabs = this.props.runnersRef.current.state.tabs;
     const breadcrumbs = this.createBreadcrumbsBy(tabs, journeyId);
     return this.createJourney(
       leaderId,
       group,
+      level,
+      isFollowUp,
       breadcrumbs,
       journeyId,
       name,
@@ -75,6 +87,8 @@ class StartPathway extends React.Component {
   createJourney(
     leaderId,
     group,
+    level,
+    isFollowUp,
     breadcrumbs,
     journeyId,
     name,
@@ -84,6 +98,7 @@ class StartPathway extends React.Component {
   ) {
     return Promise.all(breadcrumbs).then((dataResolved) => {
       const groupSlug = createSlug(name + " " + group);
+      const displayName = user.firstName + " " + user.lastName;
       return firestoreClient
         .collection("journeys")
         .doc(journeyId)
@@ -92,13 +107,16 @@ class StartPathway extends React.Component {
           group: groupSlug,
           groupName: group,
           name: name,
+          level: level,
           trophy: trophy,
           progress: 1,
+          isFollowUp: isFollowUp,
           pathwayId: pathwayId,
           userId: user.uid,
           user: {
             email: user.email,
-            displayName: user.displayName,
+            displayName: displayName,
+            image: user.image,
           },
           date: new Date(),
           current: 0,
@@ -109,9 +127,9 @@ class StartPathway extends React.Component {
             ? '<i><a href="/pathway/resume?id=' +
               journeyId +
               '">' +
-              user.displayName +
+              displayName +
               "</a></i>"
-            : "<i>" + user.displayName + "</i>";
+            : "<i>" + displayName + "</i>";
 
           this.props.activityChange({
             type: "start_pathway",
@@ -137,8 +155,9 @@ class StartPathway extends React.Component {
   createBreadcrumbsBy(tabs, journeyId) {
     const breadcrumbs = tabs.map(async (data, runnerIndex) => {
       const quiz = await this.getQuizFromRunner(data);
-      await this.saveJourneyForBadge(journeyId, data);
-
+      if(data.badge){
+        await this.saveJourneyForBadge(journeyId, data);
+      }
       return {
         id: data.id,
         name: data.title,
@@ -191,11 +210,10 @@ class StartPathway extends React.Component {
   }
 
   render() {
-    const user = firebaseClient.auth().currentUser;
-    const { pathwayId, trophy, name, leaderId } = this.props;
+    const { pathwayId, trophy, name, leaderId, isFollowUp, level, user } =
+      this.props;
     const { loading } = this.state;
     const journeyId = uuid();
-
     if (!user) {
       return <Login />;
     }
@@ -214,16 +232,31 @@ class StartPathway extends React.Component {
             ...this.state,
             loading: true,
           });
-          sendStartPathway(user.email, name).then(() => {
-            this.onCreateJourney(
-              leaderId,
-              pathwayId,
-              journeyId,
-              trophy,
-              name,
-              group
-            );
-          });
+          sendStartPathway(user.email, name)
+            .then(() => {
+              return this.onCreateJourney(
+                leaderId,
+                pathwayId,
+                journeyId,
+                trophy,
+                name,
+                group,
+                level,
+                isFollowUp
+              );
+            })
+            .then(() => {
+              if (isFollowUp) {
+                return getUser(leaderId, ({ data }) => {
+                  return sendNotifyNewMember(
+                    user.email,
+                    user.firstName + " " + user.lastName,
+                    data.email,
+                    name
+                  );
+                });
+              }
+            });
         }}
       />
     );

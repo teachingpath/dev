@@ -92,7 +92,10 @@ class JourneyListComponent extends React.Component {
           {/* BEGIN Rich List */}
           <RichList bordered action>
             {this.state.data.length === 0 && (
-              <p className="text-center">No hay pathways.</p>
+              <p className="text-center">
+                No hay pathways iniciados. <br />Te invito a buscar dentro del
+                catalogo de pathways <a href="/catalog">aquí</a>
+              </p>
             )}
             {this.state.data.map((data, index) => {
               const { name, description, progress, id, pathwayId } = data;

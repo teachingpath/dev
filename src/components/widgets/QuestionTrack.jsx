@@ -16,13 +16,26 @@ import { firebaseClient } from "components/firebase/firebaseClient";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
-import { getTracksResponses, saveTrackResponse } from "consumer/track";
+import { deleteResponseById, getTracksResponses, saveTrackResponse } from "consumer/track";
 import { useState } from "react";
 import {
   activityMapper,
   linkGroup,
   linkTrack,
 } from "components/helpers/mapper";
+import { getUser } from "consumer/user";
+import swalContent from "sweetalert2-react-content";
+import Swal from "@panely/sweetalert2";
+import { Avatar } from "@panely/components";
+import { Badge } from "@panely/components";
+const ReactSwal = swalContent(Swal);
+const swal = ReactSwal.mixin({
+  customClass: {
+    confirmButton: "btn btn-label-success btn-wide mx-1",
+    cancelButton: "btn btn-label-danger btn-wide mx-1",
+  },
+  buttonsStyling: false,
+});
 
 function QuestionForm({ onSave }) {
   const [load, setLoad] = useState(null);
@@ -111,10 +124,31 @@ class Questions extends React.Component {
           list: data.list,
         });
       },
-      () => {}
+      () => {
+        console.log("Error al obtener la respuesta");
+      }
     );
   }
 
+  onDelete(id) {
+    swal
+      .fire({
+        title: "¿Estas seguro/segura?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "¡Sí, bórralo!",
+      })
+      .then((result) => {
+        if (result.value) {
+          deleteResponseById(id).then(() => {
+            this.componentDidMount();
+          });
+        }
+      });
+  }
   render() {
     const { activeCard } = this.state;
     const {
@@ -125,10 +159,10 @@ class Questions extends React.Component {
     const user = this.props.user || firebaseClient.auth().currentUser;
     return (
       <Accordion>
-        <p>En este Track debes responder a las siguientes preguntas:</p>
+        <p>En esta lección debes responder a las siguientes preguntas:</p>
         {questions.map((question, index) => {
           return (
-            <Card>
+            <Card key={"myquestions" + index}>
               <Card.Header
                 title="Click para expandir y ver el formulario de respuesta"
                 collapsed={!(activeCard === index)}
@@ -141,40 +175,52 @@ class Questions extends React.Component {
                   {user && (
                     <QuestionForm
                       onSave={(data) => {
-                        return saveTrackResponse(
-                          id,
-                          group,
-                          data,
-                          question.id
-                        ).then(() => {
-                          if (this.props.activityChange) {
-                            this.props.activityChange(
-                              activityMapper(
-                                "new_track_response",
-                                linkTrack(
-                                  this.props.data.id,
-                                  this.props.data.runnerId,
-                                  this.props.data.name,
-                                  "Nueva respuesta al questionario __LINK__ "
-                                ),
-                                linkGroup(
-                                  journeyId,
-                                  user,
+                        return getUser(user.uid).then((dataUser) => {
+                          data.name = question.name;
+                          data.user = {
+                            displayName:
+                              dataUser.data.firstName +
+                              " " +
+                              dataUser.data.lastName,
+                            email: dataUser.data.email,
+                            image: dataUser.data.image,
+                          };
+                          data.index = index;
+                          return saveTrackResponse(
+                            id,
+                            group,
+                            data,
+                            question.id
+                          ).then(() => {
+                            if (this.props.activityChange) {
+                              this.props.activityChange(
+                                activityMapper(
+                                  "new_track_response",
                                   linkTrack(
                                     this.props.data.id,
                                     this.props.data.runnerId,
                                     this.props.data.name,
-                                    "ha escrito una nueva respuesta para el questionario __LINK__ "
-                                  )
-                                ),
-                                this.props.group,
-                                2
-                              )
-                            );
-                          }
-                          setTimeout(() => {
-                            this.componentDidMount();
-                          }, 500);
+                                    "Nueva respuesta al questionario __LINK__ "
+                                  ),
+                                  linkGroup(
+                                    journeyId,
+                                    user,
+                                    linkTrack(
+                                      this.props.data.id,
+                                      this.props.data.runnerId,
+                                      this.props.data.name,
+                                      "ha escrito una nueva respuesta para el questionario __LINK__ "
+                                    )
+                                  ),
+                                  this.props.group,
+                                  2
+                                )
+                              );
+                            }
+                            setTimeout(() => {
+                              this.componentDidMount();
+                            }, 400);
+                          });
                         });
                       }}
                     />
@@ -182,17 +228,35 @@ class Questions extends React.Component {
 
                   <Timeline>
                     {this.state.list
-                      .filter((q) => q.id === index)
+                      .filter((q) => q.index === index)
                       .map((data, index) => {
-                        const { date, answer } = data;
-
+                        const { date, answer, userId, id } = data;
                         return (
                           <Timeline.Item
                             key={index}
                             date={date}
-                            pin={<Marker type="circle" />}
+                            pin={
+                              <Avatar circle display>
+                                <img
+                                  src={data.user.image}
+                                  alt="Avatar image"
+                                  title={data.user.displayName}
+                                />
+                              </Avatar>
+                            }
                           >
-                            {answer}
+                            <p> {answer}</p>
+                          {user.uid === userId && (
+                                <p> <Badge
+                                href="javascript:void(0)"
+                                onClick={() => {
+                                  this.onDelete(id);
+                                }}
+                              >
+                                Eliminar
+                              </Badge></p>
+                            )}
+                           
                           </Timeline.Item>
                         );
                       })}

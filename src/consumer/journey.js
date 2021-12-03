@@ -2,6 +2,35 @@ import {
   firestoreClient,
   firebaseClient,
 } from "components/firebase/firebaseClient";
+import {
+  activityMapper,
+  linkGroup,
+  linkPathway,
+  linkResume,
+  linkRunner,
+} from "components/helpers/mapper";
+import { i } from "react-dom-factories";
+import { sendFinishPathway, sendFinishRunner } from "./sendemail";
+
+export const getJourneyByPathwayId = (pathwayId, resolve, reject) => {
+  firestoreClient
+    .collection("journeys")
+    .where("pathwayId", "==", pathwayId)
+    .get()
+    .then(async (querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const list = [];
+        querySnapshot.forEach((doc) => {
+          list.push(doc.data());
+        });
+        resolve({ data: list });
+      }
+    })
+    .catch((error) => {
+      console.log("Error getting documents: ", error);
+      reject();
+    });
+};
 
 export const getBadges = (journeyId, resolve, reject) => {
   firestoreClient
@@ -141,7 +170,10 @@ export const getBadgesByUser = (resolve, reject) => {
               .then((querySnapshot) => {
                 if (!querySnapshot.empty) {
                   querySnapshot.forEach((doc) => {
-                    dataList.push(doc.data());
+                    const data = doc.data();
+                    if (data) {
+                      dataList.push(data);
+                    }
                   });
                 }
                 return dataList;
@@ -232,4 +264,90 @@ export const deleteJourney = (journeyId) => {
     .catch((error) => {
       console.error("Error adding document: ", error);
     });
+};
+
+export const processFinish = (
+  data,
+  user,
+  journeyId,
+  currentRunner,
+  totalPoints,
+  activityChange
+) => {
+  if (data.progress >= 100) {
+    //finish pathway
+    sendFinishPathway(user.email, data.name);
+    activityChange(
+      activityMapper(
+        "complete_pathway",
+        linkPathway(data.pathwayId, data.name, "El Pathway __LINK__ está competado."),
+        linkGroup(
+          journeyId,
+          user,
+          linkPathway(
+            data.id,
+            data.name,
+            "ha completado el pathway: __LINK__, su nuevo progreso es: 100%"
+          )
+        ),
+        data.group,
+        totalPoints
+      )
+    );
+  } else {
+    //finshi runner
+    sendFinishRunner(user.email, currentRunner.name);
+    activityChange(
+      activityMapper(
+        "complete_quiz",
+        linkRunner(
+          currentRunner.id,
+          currentRunner.name,
+          "La Ruta __LINK__ está competado."
+        ),
+        linkGroup(
+          journeyId,
+          user,
+          linkRunner(
+            currentRunner.id,
+            currentRunner.name,
+            "ha completado la ruta: __LINK__, su nuevo progreso es: " +
+              data.progress.toFixed(2) +
+              "%"
+          )
+        ),
+        data.group,
+        totalPoints
+      )
+    );
+  }
+};
+export const processJourney = (data) => {
+  let tracksCompleted = data.current + 1;
+  let tracksTotal = data.breadcrumbs.length;
+  data.breadcrumbs.forEach((runner) => {
+    if (runner.tracks) {
+      runner.tracks.forEach((track) => {
+        tracksTotal++;
+        if (track.status === "finish" || track.status === null) {
+          tracksCompleted++;
+        }
+      });
+    }
+  });
+  data.progress = (tracksCompleted / tracksTotal) * 100;
+
+  const currentRunner = data.breadcrumbs[data.current];
+  currentRunner.current = null;
+  currentRunner.tracks.forEach((track) => {
+    track.status = null;
+  });
+  data.current = data.current + 1;
+  try {
+    data.breadcrumbs[data.current].current = 0;
+    data.breadcrumbs[data.current].tracks[0].status = "process";
+  } catch (e) {
+    console.log("There are no more runners, complete pathway");
+  }
+  return data;
 };

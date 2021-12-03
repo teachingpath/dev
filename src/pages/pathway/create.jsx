@@ -2,7 +2,6 @@ import { Container, Row, Col, Portlet } from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
-  activityChange,
   cleanPathway,
   pageShowAlert
 } from "store/actions";
@@ -35,7 +34,7 @@ class PathwayPage extends React.Component {
   }
 
   onCreate(data) {
-    const {pageShowAlert, activityChange}  = this.props;
+    const {pageShowAlert}  = this.props;
     return create(data)
       .then((docRef) => {
         this.setState({
@@ -44,11 +43,6 @@ class PathwayPage extends React.Component {
           ...data,
         });
         pageShowAlert("Pathway guadardo correctamente");
-        activityChange({
-          pathwayId: docRef.id,
-          type: "new_pathway",
-          msn: 'El pathway "' + data.name + '"  fue creado.',
-        });
         Router.push({
           pathname: "/runner/create",
           query: { pathwayId: this.state.id },
@@ -76,8 +70,8 @@ class PathwayPage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <div>
-                  Después de crear el Pathway, debe crear los Runners para
-                     agreguar los tracks de aprendizaje. <a target="_blank" rel="noopener noreferrer" href="https://docs.teachingpath.info/concepts/pathway">Ver más información</a> acerca de los pathways
+                  Después de crear el Pathway, debe crear las RUTAS para
+                     agreguar las lecciones de aprendizaje. <a target="_blank" rel="noopener noreferrer" href="https://docs.teachingpath.info/concepts/pathway">Ver más información</a> acerca de los pathways
                   </div>
                   <hr />
                   <PathwayForm
@@ -97,7 +91,7 @@ class PathwayPage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange, cleanPathway, pageShowAlert},
+    { pageChangeHeaderTitle, breadcrumbChange, cleanPathway, pageShowAlert},
     dispatch
   );
 }

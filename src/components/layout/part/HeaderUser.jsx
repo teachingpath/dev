@@ -34,7 +34,7 @@ class HeaderUser extends React.Component {
     avatar: ({ image }) => (
       <Avatar variant="label-light" display circle>
         {image ? (
-          <img src={image} alt="profile image" />
+          <img src={image.replace("https:", "")} alt="profile image" />
         ) : (
           <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
         )}

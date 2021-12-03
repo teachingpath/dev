@@ -28,7 +28,7 @@ class CatalogPage extends React.Component {
     this.props.pageChangeHeaderTitle("Pathways");
     this.props.breadcrumbChange([
       { text: "Catálogo", link: "/catalog" },
-      { text: "Runners" },
+      { text: "Rutas" },
     ]);
     getRunners(pathwayId, (data) => {
       this.setState({data: data.list});
@@ -43,7 +43,7 @@ class CatalogPage extends React.Component {
     return (
       <React.Fragment>
         <Head>
-          <title>Runners | Teaching Path</title>
+          <title>Rutas | Teaching Path</title>
           <script src="/script.js"></script>
         </Head>
         <Container fluid>
@@ -51,11 +51,11 @@ class CatalogPage extends React.Component {
             <Col md="12">
               <div>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Runners disponibles </Portlet.Title>
+                  <Portlet.Title>Rutas disponibles </Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                  Puedes ver los Runners aquí pero para postularte debes
+                  Puedes ver las RUTAS aquí pero para postularte debes
                      tener una cuenta de usuario.
                   </p>
                   <CardColumns>

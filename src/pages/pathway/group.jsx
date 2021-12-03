@@ -17,7 +17,6 @@ import Router from "next/router";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
-  activityChange,
   pageShowAlert
 } from "store/actions";
 import withAuth from "components/firebase/firebaseWithAuth";
@@ -85,7 +84,6 @@ class FormBasePage extends React.Component {
                   <p>Puede crear salas para dividir el proceso de aprendizaje como grupo, y también crear salas privados para un acompañamiento más personalizado.</p>
                   <hr />
                   <GroupForm
-                    activityChange={this.props.activityChange}
                     pageShowAlert={this.props.pageShowAlert}
                     pathwayId={this.state.id}
                     groups={this.state.groups}
@@ -101,7 +99,7 @@ class FormBasePage extends React.Component {
   }
 }
 
-function GroupForm({ pathwayId, groups, activityChange, pageShowAlert }) {
+function GroupForm({ pathwayId, groups, pageShowAlert }) {
   const [loading, setLoading] = useState(false);
   const { control, handleSubmit, errors } = useForm({
     defaultValues: {
@@ -114,11 +112,6 @@ function GroupForm({ pathwayId, groups, activityChange, pageShowAlert }) {
     updateGroup(pathwayId, data.groups)
       .then((docRef) => {
         pageShowAlert("La sala fue creado correctamente");
-        activityChange({
-          pathwayId: pathwayId,
-          type: "edit_pathway",
-          msn: 'La sala "' + data.name + '" fue actualizado o creado.',
-        });
         setLoading(false);
       })
       .catch((error) => {
@@ -293,7 +286,7 @@ function FieldGroup({ data, onChange }) {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
+    { pageChangeHeaderTitle, breadcrumbChange, pageShowAlert },
     dispatch
   );
 }

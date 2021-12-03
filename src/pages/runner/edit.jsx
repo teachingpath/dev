@@ -7,7 +7,6 @@ import {
   Row,
 } from "@panely/components";
 import {
-  activityChange,
   breadcrumbChange,
   pageChangeHeaderTitle,
   loadRunner,
@@ -36,8 +35,11 @@ class FormBasePage extends React.Component {
 
   componentDidMount() {
     const { pathwayId, runnerId } = Router.query;
-    if (!pathwayId || !runnerId) {
+    if (!pathwayId || !runnerId || pathwayId === "undefined" || runnerId=="undefined") {
       Router.push("/pathway/create");
+    }
+    if (pathwayId === "undefined" || runnerId=="undefined") {
+      Router.push("/");
     }
     this.props.pageChangeHeaderTitle("Actualizar");
     this.props.breadcrumbChange([
@@ -47,7 +49,7 @@ class FormBasePage extends React.Component {
         link: "/pathway/edit?pathwayId=" + pathwayId,
       },
       {
-        text: "Runner",
+        text: "Ruta",
         link: "/runner/create?pathwayId=" + pathwayId,
       },
       { text: "Editar" },
@@ -56,16 +58,11 @@ class FormBasePage extends React.Component {
 
   onEdit(data) {
     const { runnerId, pathwayId } = this.props.runner;
-    const { pageShowAlert, loadRunner, activityChange } = this.props;
+    const { pageShowAlert, loadRunner } = this.props;
 
     return update(runnerId, data)
       .then((docRef) => {
-        pageShowAlert("Runner fue guadado correctamente");
-        activityChange({
-          pathwayId,
-          type: "edit_runner",
-          msn: 'El runner "' + data.name + '" fue actualizado.',
-        });
+        pageShowAlert("Ruta fue guadado correctamente");
         loadRunner({
           trackId: null,
           runnerId,
@@ -77,7 +74,7 @@ class FormBasePage extends React.Component {
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
-        pageShowAlert("Error al editar el runner", "error");
+        pageShowAlert("Error al editar la ruta", "error");
       });
   }
 
@@ -86,7 +83,6 @@ class FormBasePage extends React.Component {
     if (!runner) {
       return <Spinner>Cargando...</Spinner>;
     }
-    console.log(runner);
     return (
       <React.Fragment>
         <Head>
@@ -108,8 +104,8 @@ class FormBasePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                    Después de crear el Pathway, debe crear los Runners para
-                    agregue Tracks de aprendizaje.
+                    Después de crear el Pathway, debe crear las RUTAS para
+                    agregue Lecciones de aprendizaje.
                   </p>
                   <hr />
                   <RunnerForm onSave={this.onEdit} data={runner} />
@@ -137,7 +133,7 @@ class FormBasePage extends React.Component {
             <Col md="8">
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Tracks</Portlet.Title>
+                  <Portlet.Title>Lecciones</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <TrackList
@@ -160,7 +156,7 @@ class FormBasePage extends React.Component {
                       });
                     }}
                   >
-                    Agrega Tracks
+                    Agrega Lecciones
                     <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
                   </Button>
                 </Portlet.Footer>
@@ -221,7 +217,7 @@ const RunnerAddon = ({ id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
           >
-            Agregar Tracks
+            Agregar lección
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
@@ -247,7 +243,6 @@ function mapDispathToProps(dispatch) {
     {
       pageChangeHeaderTitle,
       breadcrumbChange,
-      activityChange,
       loadRunner,
       pageShowAlert,
     },

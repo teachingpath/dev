@@ -33,7 +33,7 @@ class ResponseModal extends React.Component {
         });
       },
       () => {
-        console.log("Error al obtener el track");
+        console.log("Error al obtener La lección");
       }
     );
   }
@@ -48,7 +48,6 @@ class ResponseModal extends React.Component {
       activityChange,
       user,
     } = this.props;
-
     return (
       <React.Fragment>
         <span style={{ cursor: "pointer" }} onClick={this.toggle}>

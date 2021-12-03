@@ -90,7 +90,7 @@ class RunnerList extends React.Component {
               <Portlet.Icon>
                 <FontAwesomeIcon icon={SolidIcon.faRoad} />
               </Portlet.Icon>
-              <Portlet.Title>Tracks</Portlet.Title>
+              <Portlet.Title>Lecciones</Portlet.Title>
               <Portlet.Addon>
                 Estimación:{" "}
                 <strong>
@@ -154,7 +154,7 @@ class RunnerGeneralPage extends React.Component {
     this.props.pageChangeHeaderTitle("Pathways");
     this.props.breadcrumbChange([
       { text: "Catálogo", link: "/catalog" },
-      { text: "Runner" },
+      { text: "Ruta" },
     ]);
     if (!Router.query.id) {
       Router.push("/catalog");
@@ -169,7 +169,7 @@ class RunnerGeneralPage extends React.Component {
     return (
       <React.Fragment>
         <Head>
-          <title>Runner | Teaching Path</title>
+          <title>Ruta | Teaching Path</title>
           <script src="/script.js"></script>
         </Head>
         <Container fluid>

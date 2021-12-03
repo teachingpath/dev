@@ -64,7 +64,7 @@ class TrackModal extends React.Component {
         });
       },
       () => {
-        console.log("Error al obtener el track");
+        console.log("Error al obtener La lección");
       }
     );
   }
@@ -104,8 +104,7 @@ class TrackModal extends React.Component {
   };
 
   renderer = ({ hours, minutes, seconds, completed, total }) => {
-    const { runnerIndex, trackIndex, journeyId, runners, onComplete } =
-      this.props;
+    const { runnerIndex, trackIndex, journeyId, runners } = this.props;
 
     if (completed) {
       if (this.minutes == 0) {
@@ -118,7 +117,7 @@ class TrackModal extends React.Component {
         swal
           .fire({
             title: "¡Tu tiempo ha terminado!",
-            text: "¿Quieres agregar 5 minutos mas para completar el track?",
+            text: "¿Quieres agregar 5 minutos mas para completar La lección?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -196,7 +195,7 @@ class TrackModal extends React.Component {
     const time = this.state.time || this.props.time;
     const titleButton = timeLimit
       ? "Tiempo limite[" + timeShortPowerTen(timeLimit) + "]"
-      : "Inicia el Track";
+      : "Inicia la lección";
     const date = this.countdownRef?.current?.props?.date
       ? this.countdownRef?.current?.props?.date
       : Date.now() + time;
@@ -284,7 +283,7 @@ class TrackModal extends React.Component {
             <Button
               variant="primary"
               className="mr-2"
-              title={"He completado este Track"}
+              title={"He completado este Lección"}
               onClick={() => {
                 this.complete().then(() => {
                   onComplete();

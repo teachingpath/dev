@@ -10,13 +10,14 @@ function pathwayReducer(state = initialState, action) {
     case TYPES.PATHWAY_LOAD:
       if(action.payload === null) {
         return {
-          ...state,
           pathwaySeleted: null,
+          runnerSeleted: null
         };
       }
       return {
         ...state,
         pathwaySeleted: { ...(state.pathwaySeleted || {}), ...action.payload },
+        
       };
     case TYPES.RUNNER_LOAD:
       if(action.payload === null) {

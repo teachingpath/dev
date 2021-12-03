@@ -17,7 +17,7 @@ class TrackContent extends React.Component {
         });
         hljs.highlightElement(el);
       });
-    }, 800);
+    }, 600);
   }
 
   render() {

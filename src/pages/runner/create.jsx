@@ -2,7 +2,6 @@ import { Container, Row, Col, Button, Portlet } from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
-  activityChange,
   cleanRunner,
   pageShowAlert
 } from "store/actions";
@@ -48,7 +47,7 @@ class RunnerCreatePage extends React.Component {
         text: "Pathway",
         link: "/pathway/edit?pathwayId=" + pathwayId,
       },
-      { text: "Runner" },
+      { text: "Ruta" },
     ]);
     this.setState({
       ...this.state,
@@ -60,7 +59,7 @@ class RunnerCreatePage extends React.Component {
 
   onCreate(data) {
     const pathwayId = this.state.pathwayId;
-    const {pageShowAlert, activityChange}  = this.props;
+    const {pageShowAlert}  = this.props;
 
     return create(pathwayId, data)
       .then((docRef) => {
@@ -70,17 +69,12 @@ class RunnerCreatePage extends React.Component {
           runnerId: docRef.id,
           ...data,
         });
-        pageShowAlert("El Runner guardado correctamente");
-        activityChange({
-          pathwayId,
-          type: "new_runner",
-          msn: 'El runner "' + data.name + '" fue creado.',
-        });
+        pageShowAlert("La Ruta guardado correctamente");
         return updateToDraft(pathwayId);
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
-        pageShowAlert("Error al crear el runner", "error");
+        pageShowAlert("Error al crear la ruta", "error");
       });
       
   }
@@ -92,7 +86,7 @@ class RunnerCreatePage extends React.Component {
     return (
       <React.Fragment>
         <Head>
-          <title>Runner | Create</title>
+          <title>Ruta | Create</title>
         </Head>
         <Container fluid>
           <Row>
@@ -100,13 +94,13 @@ class RunnerCreatePage extends React.Component {
               {/* BEGIN Portlet */}
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Runner | Crear</Portlet.Title>
+                  <Portlet.Title>Ruta | Crear</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <p>
-                  Los Runners son los objetivos que contienen tareas o tracks
-                     para lograr una base de conocimiento, cada Runner debe crearse un Quiz para validar conocimientos.
-                      <a target="_blank" rel="noopener noreferrer" href="https://docs.teachingpath.info/concepts/runner">Ver más información</a> acerca de los runners
+                  Las RUTAS son los objetivos que contienen tareas o lecciones
+                     para lograr una base de conocimiento, cada Ruta puede crearse un Quiz para validar conocimientos.
+                      <a target="_blank" rel="noopener noreferrer" href="https://docs.teachingpath.info/concepts/runner">Ver más información</a> acerca de las rutas de aprendizaje.
                   </p>
                   <hr />
                   <RunnerForm onSave={this.onCreate} />
@@ -117,7 +111,7 @@ class RunnerCreatePage extends React.Component {
                       variant="outline-info"
                       icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
                     >
-                       <p>Agregue el Quiz o Track de la Runner creado.</p>
+                       <p>Agregue el Quiz o Lección de la Ruta creado.</p>
                       <Button
                         type="button"
                         disabled={!this.state.saved}
@@ -152,9 +146,9 @@ class RunnerCreatePage extends React.Component {
                           });
                         }}
                       >
-                        Agregar Tracks
+                        Agregar lencción
                         <FontAwesomeIcon
-                          className="ml-2"
+                          className="ml-2 mt-2"
                           icon={SolidIcon.faPlus}
                         />
                       </Button>
@@ -167,7 +161,7 @@ class RunnerCreatePage extends React.Component {
             <Col md="8">
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Runners</Portlet.Title>
+                   <Portlet.Title>Rutas</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <RunnerList
@@ -186,7 +180,7 @@ class RunnerCreatePage extends React.Component {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange,cleanRunner, pageShowAlert},
+    { pageChangeHeaderTitle, breadcrumbChange,cleanRunner, pageShowAlert},
     dispatch
   );
 }

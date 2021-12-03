@@ -1,3 +1,6 @@
+import { linkResume } from "components/helpers/mapper";
+import journey from "pages/catalog/journey";
+
 export function sendFinishPathway(email, name) {
   const url =
     "/api/sendemail/?email=" + email + "&template=finish-pathway&name=" + name;
@@ -15,6 +18,48 @@ export function sendFinishRunner(email, name) {
 export function sendStartPathway(email, name) {
   const sendeamil =
     "/api/sendemail/?email=" + email + "&template=start-pathway&name=" + name;
+  return fetch(sendeamil).then((res) => res.json());
+}
+
+export function sendNotifyNewMember(
+  email,
+  memberName,
+  leaderEmail,
+  pathwayName
+) {
+  const sendeamil =
+    "/api/sendemail/?email=" +
+    leaderEmail +
+    "&template=new-member-to-pathway&name=" +
+    memberName +
+    "&pathway=" +
+    pathwayName +
+    "&replyTo=" +
+    email;
+  return fetch(sendeamil).then((res) => res.json());
+}
+
+export function sendNotifyResponseHacking(
+  journeyId,
+  email,
+  memberName,
+  leaderEmail,
+  hackingName
+) {
+  const host = window.location.host;
+  const sendeamil =
+    "/api/sendemail/?email=" +
+    leaderEmail +
+    "&template=new-response-to-hacking&name=" +
+    memberName +
+    "&hackingName=" +
+    hackingName +
+    "&replyTo=" +
+    email +
+    "&id=" +
+    journeyId +
+    "&host=" +
+    host;
   return fetch(sendeamil).then((res) => res.json());
 }
 

@@ -12,7 +12,11 @@ import {
 } from "@panely/components";
 import { useForm, Controller } from "react-hook-form";
 import nookies from "nookies";
-import { firebaseClient } from "components/firebase/firebaseClient";
+import {
+  firebaseClient,
+  firestoreClient,
+} from "components/firebase/firebaseClient";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { yupResolver } from "@hookform/resolvers";
 import * as yup from "yup";
 import withLayout from "components/layout/withLayout";
@@ -22,10 +26,14 @@ import Swal from "@panely/sweetalert2";
 import Link from "next/link";
 import Head from "next/head";
 import PAGE from "config/page.config";
-import InfoSyncCarousel from "components/widgets/InfoSyncCarousel";
+import { getUser } from "consumer/user";
+import { sendNewRegister } from "consumer/sendemail";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 
 // Use SweetAlert React Content library
 const ReactSwal = swalContent(Swal);
+const auth = firebaseClient.auth();
 
 // Set SweetAlert options
 const swal = ReactSwal.mixin({
@@ -37,6 +45,36 @@ const swal = ReactSwal.mixin({
 });
 
 function LoginPage() {
+  const [user] = useAuthState(auth);
+
+  if (user) {
+    getUser(user.uid).then(({ data }) => {
+      if (!data) {
+        const { email, displayName, phoneNumber, photoURL } = user;
+        firestoreClient
+          .collection("users")
+          .doc(user.uid)
+          .set({
+            profile: "trainee",
+            email: email,
+            firstName: displayName,
+            lastName: "",
+            point: 5,
+            image: photoURL,
+            phone: phoneNumber,
+          })
+          .then(() => {
+            return sendNewRegister(trainee, email, displayName);
+          })
+          .then(() => {
+            Router.push("/");
+          });
+      } else {
+        Router.push("/");
+      }
+    });
+  }
+
   return (
     <React.Fragment>
       <Head>
@@ -53,7 +91,10 @@ function LoginPage() {
               <Portlet.Body className="d-flex flex-column justify-content-center align-items-start h-100 bg-primary text-white">
                 <h2>¡Bienvenido/Bienvenida!</h2>
                 <p>
-                En este sitio puedes encontrar los mejores pathway de ciencia y tecnología, aprender programación, inglés y cálculo, etc. También crea tus pathway y ayuda a otros a seguir tu camino hacia el conocimiento.
+                  En este sitio puedes encontrar los mejores pathway de ciencia
+                  y tecnología, aprender programación, inglés y cálculo, etc.
+                  También crea tus pathway y ayuda a otros a seguir tu camino
+                  hacia el conocimiento.
                 </p>
 
                 <Link
@@ -62,7 +103,8 @@ function LoginPage() {
                   rel="noopener noreferrer"
                 >
                   <Button pill variant="outline-light" size="lg" width="widest">
-                   Ver más información
+                    <i className="fas fa-info-circle mr-2"></i>
+                    Ver más información
                   </Button>
                 </Link>
               </Portlet.Body>
@@ -72,16 +114,21 @@ function LoginPage() {
               <Portlet>
                 <Portlet.Body className="h-100">
                   <div className="text-center mt-2 mb-4">
-                   <a href="/" >
-                    <img src="/images/logo.png" alt="teaching path" />
+                    <a href="/">
+                      <img src="/images/logo.png" alt="teaching path" />
                     </a>
                   </div>
-                  <Label>Iniciar sesión</Label>
+                  <h6>Iniciar sesión</h6>
+                  <div className="pb-3">
+                    <SignIn />
+                  </div>
+                  <h6>Con usuario/contraseña</h6>
                   <LoginForm />
                 </Portlet.Body>
                 <Portlet.Footer>
                   <Link href="/catalog">
                     <Button pill size="lg" width="widest">
+                      <i className="mr-2 fas fa-book-open"></i>
                       Ver catálogo de pathways
                     </Button>
                   </Link>
@@ -121,8 +168,7 @@ function LoginForm() {
   const onSubmit = async ({ email, password }) => {
     setLoading(true);
 
-    await firebaseClient
-      .auth()
+    await auth
       .signInWithEmailAndPassword(email, password)
       .then((ref) => {
         Router.push(Router.query.redirect || PAGE.dashboardPagePath);
@@ -171,10 +217,10 @@ function LoginForm() {
         </FloatLabel>
       </Form.Group>
       {/* END Form Group */}
-     <Link href="/forget"> ¿Olvido usuario/contraseña? </Link>
+      <Link href="/forget"> ¿Olvido usuario/contraseña? </Link>
       <div className="d-flex align-items-center justify-content-between">
         <span>
-        ¿No tienes una cuenta? <Link href="/register">Crear Cuenta</Link>
+          ¿No tienes una cuenta? <Link href="/register">Crear Cuenta</Link>
         </span>
         <Button
           type="submit"
@@ -187,6 +233,18 @@ function LoginForm() {
         </Button>
       </div>
     </Form>
+  );
+}
+
+function SignIn() {
+  const signInWithGoogle = () => {
+    const provider = new firebaseClient.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
+  };
+  return (
+    <Button className="button right" onClick={signInWithGoogle}>
+      Iniciar con Google <i className="fab fa-google ml-2" />
+    </Button>
   );
 }
 

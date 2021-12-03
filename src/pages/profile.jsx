@@ -18,42 +18,40 @@ import { connect } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
 import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
-import {
-  firebaseClient,
-  firestoreClient,
-} from "components/firebase/firebaseClient";
+import { firestoreClient } from "components/firebase/firebaseClient";
 import { yupResolver } from "@hookform/resolvers";
 import * as yup from "yup";
 import Head from "next/head";
 import Col from "../../docs/template/src/modules/components/Col";
 import { ImageEditor } from "@panely/components";
 import { useRef } from "react";
+import { getUser } from "consumer/user";
 
 class ProfilePage extends React.Component {
   state = { data: {}, id: null };
 
   componentDidMount() {
-    const user = firebaseClient.auth().currentUser;
     this.props.pageChangeHeaderTitle("Profile");
     this.props.breadcrumbChange([
       { text: "Home", link: "/" },
       { text: "Perfil" },
     ]);
+  }
 
-    firestoreClient
-      .collection("users")
-      .doc(user.uid)
-      .get()
-      .then((doc) => {
-        console.log(doc.data());
-        this.setState({ data: doc.data(), id: user.uid });
-        this.props.pageChangeHeaderTitle(
-          this.state.data?.firstName.toUpperCase() || "Perfil"
-        );
-      })
-      .catch((error) => {
-        console.log("Error getting documents: ", error);
+  componentDidUpdate(prevProps, prevState) {
+    if (!prevState.id) {
+      getUser(this.props.user.uid).then(({ data, id }) => {
+        if (data) {
+          console.log(data);
+          this.setState({ data: data, id: id });
+          this.props.pageChangeHeaderTitle(
+            data.firstName.toUpperCase() || "Perfil"
+          );
+        } else {
+          console.log("No found user");
+        }
       });
+    }
   }
 
   render() {
@@ -84,17 +82,25 @@ function ProfileForm({ data, id }) {
   const schema = yup.object().shape({
     specialty: yup
       .string()
-      .min(6, "Por favor ingrese al menos 6 caracteres")
-      .required("Por favor proporcione su especialidad"),
+      .min(6, "Por favor ingrese al menos 6 caracteres"),
+    lastName: yup
+      .string()
+      .min(3, "Por favor ingrese al menos 3 caracteres")
+      .required("Por favor proporcione su segundo nombre"),
+    firstName: yup
+      .string()
+      .min(3, "Por favor ingrese al menos 3 caracteres")
+      .required("Por favor proporcione su primer nombre"),
     bio: yup
       .string()
       .min(6, "Por favor ingrese al menos 6 caracteres")
-      .required("Por favor proporcione su biografía"),
   });
 
   const { control, handleSubmit, errors } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
+      firstName: data?.firstName || "",
+      lastName: data?.lastName || "",
       specialty: data?.specialty || "",
       bio: data?.bio || "",
       phone: data?.phone || "",
@@ -119,7 +125,7 @@ function ProfileForm({ data, id }) {
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Form.Group>
-        <ImageEditor ref={imageRef} image={data?.image}  />
+        <ImageEditor ref={imageRef} image={data?.image} />
       </Form.Group>
       <Form.Group>
         <Label>
@@ -127,13 +133,46 @@ function ProfileForm({ data, id }) {
         </Label>
       </Form.Group>
       <Form.Group>
-        <FloatLabel size="lg">
+        <FloatLabel>
+          <Controller
+            as={Input}
+            type="text"
+            id="firstName"
+            name="firstName"
+            control={control}
+            invalid={Boolean(errors.firstName)}
+            placeholder="Por favor inserte su primer nombre"
+          />
+          <Label for="firstName">Primer nombre</Label>
+          {errors.firstName && (
+            <Form.Feedback children={errors.firstName.message} />
+          )}
+        </FloatLabel>
+      </Form.Group>
+      <Form.Group>
+        <FloatLabel>
+          <Controller
+            as={Input}
+            type="text"
+            id="lastName"
+            name="lastName"
+            control={control}
+            invalid={Boolean(errors.lastName)}
+            placeholder="Por favor inserte su apellido"
+          />
+          <Label for="lastName">Apellido</Label>
+          {errors.lastName && (
+            <Form.Feedback children={errors.lastName.message} />
+          )}
+        </FloatLabel>
+      </Form.Group>
+      <Form.Group>
+        <FloatLabel>
           <Controller
             as={Input}
             type="text"
             id="specialty"
             name="specialty"
-            size="lg"
             control={control}
             invalid={Boolean(errors.specialty)}
             placeholder="Por favor inserte su especialidad"
@@ -145,15 +184,14 @@ function ProfileForm({ data, id }) {
         </FloatLabel>
       </Form.Group>
       <Form.Group>
-        <FloatLabel size="lg">
+        <FloatLabel>
           <Controller
             as={Input}
             type="number"
             id="phone"
             name="phone"
-            size="lg"
             control={control}
-            invalid={Boolean(errors.specialty)}
+            invalid={Boolean(errors.phone)}
             placeholder="Por favor inserte su teléfono"
           />
           <Label for="specialty">Teléfono</Label>
@@ -161,13 +199,12 @@ function ProfileForm({ data, id }) {
         </FloatLabel>
       </Form.Group>
       <Form.Group>
-        <FloatLabel size="lg">
+        <FloatLabel>
           <Controller
             as={Input}
             type="textarea"
             id="bio"
             name="bio"
-            size="lg"
             control={control}
             invalid={Boolean(errors.bio)}
             placeholder="Por favor inserte su biografía"
@@ -180,7 +217,6 @@ function ProfileForm({ data, id }) {
         <Button
           type="submit"
           variant="label-primary"
-          size="lg"
           width="widest"
           disabled={loading}
         >

@@ -9,7 +9,6 @@ import {
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
-  activityChange,
   loadPathway,
 } from "store/actions";
 import { bindActionCreators } from "redux";
@@ -24,7 +23,7 @@ import RunnerList from "../../components/widgets/RunnerList";
 import PathwayForm from "../../components/widgets/PathwayForm";
 import Spinner from "@panely/components/Spinner";
 import React from "react";
-import { update, updateFollowUp } from "consumer/pathway";
+import { publishPathway, update, updateFollowUp } from "consumer/pathway";
 import { pageShowAlert } from "store/actions/pageAction";
 
 
@@ -32,7 +31,10 @@ class FormBasePage extends React.Component {
   constructor(props) {
     super(props);
     this.onEdit = this.onEdit.bind(this);
+    this.onEdit = this.onEdit.bind(this);
+    this.onPublishPathway = this.onPublishPathway.bind(this);
     this.toggleFollowUp = this.toggleFollowUp.bind(this);
+
   }
 
   componentDidMount() {
@@ -65,7 +67,10 @@ class FormBasePage extends React.Component {
 
   onEdit(data) {
     const pathway = this.state || this.props.pathway;
-    const {pageShowAlert, loadPathway, activityChange}  = this.props;
+    const {pageShowAlert, loadPathway}  = this.props;
+    if(data.draft === false){
+      this.onPublishPathway(pathway.id);
+    }
     return update(pathway.id, data)
       .then((response) => {
         pageShowAlert("Pathway actualizado correctamente");
@@ -73,16 +78,22 @@ class FormBasePage extends React.Component {
           pathwayId: pathway.id,
           ...response,
         });
-        activityChange({
-          pathwayId: pathway.id,
-          type: "edit_pathway",
-          msn: 'El pathway "' + data.name + '"  fue cambiado.',
-        });
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
         pageShowAlert("Existe problemas en la actualización", "error");
       });
+  }
+
+  onPublishPathway(pathwayId) {
+    const {pageShowAlert}  = this.props;
+    publishPathway(pathwayId,(dta) => {
+        this.componentDidMount();
+      },
+      (error) => {
+        pageShowAlert(error, "error");
+      }
+    );
   }
 
   render() {
@@ -135,7 +146,7 @@ class FormBasePage extends React.Component {
             <Col md="8">
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Runners</Portlet.Title>
+                  <Portlet.Title>Rutas</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <RunnerList pathwayId={pathway.id} />
@@ -152,7 +163,7 @@ class FormBasePage extends React.Component {
                       });
                     }}
                   >
-                    Agregar Runner
+                    Agregar Ruta
                     <FontAwesomeIcon className="ml-2" icon={SolidIcon.faPlus} />
                   </Button>
                 </Portlet.Footer>
@@ -182,7 +193,7 @@ const PathwayAddon = ({ id, toggleFollowUp,  isFollowUp}) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faRunning} />}
           >
-            Agregar Runner
+            Agregar Ruta
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {
@@ -236,7 +247,7 @@ const PathwayAddon = ({ id, toggleFollowUp,  isFollowUp}) => {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, loadPathway, activityChange, pageShowAlert },
+    { pageChangeHeaderTitle, breadcrumbChange, loadPathway, pageShowAlert },
     dispatch
   );
 }

@@ -1,6 +1,8 @@
 import React from "react";
 import AvatarEditor from "react-avatar-editor";
 import Dropzone from "react-dropzone";
+import { firebaseClient } from "components/firebase/firebaseClient";
+
 import Row from "./Row";
 import Col from "./Col";
 
@@ -17,16 +19,24 @@ class ImageEditor extends React.Component {
 
   setEditorRef = (editor) => (this.editor = editor);
 
-  getImage = () => {
-    const canvas = this.editor.getImageScaledToCanvas().toDataURL();
-    return fetch(canvas).then((blob) => {
-      this.setState({ image: blob.url });
-      return blob.url;
-    });
+  getImage = (path) => {
+    try {
+      const canvas = this.editor.getImageScaledToCanvas().toDataURL();
+      const storageRef = firebaseClient.storage().ref();
+      const imagesRef = storageRef.child(path);
+      return fetch(canvas).then(res => res.blob()).then(blob => {
+        return imagesRef.put(blob).then(function (snapshot) {
+          return snapshot.ref.getDownloadURL();
+        });
+     });
+    } catch (error) {
+      return Promise.resolve(this.props.image);
+    }
+  
+    
   };
 
   render() {
-
     return (
       <Row>
         {this.props.withPreview ? (
@@ -40,7 +50,6 @@ class ImageEditor extends React.Component {
                 getImage={this.getImage}
               />
             </Col>
-            
           </>
         ) : (
           <Col xs="12">
@@ -59,23 +68,24 @@ class ImageEditor extends React.Component {
 }
 
 const DropDownImage = (props) => {
-  const { handleDrop, width, height, setEditorRef, image, getImage } = props;
+  const { handleDrop, width, height, setEditorRef, image, radius } = props;
   return (
     <>
       <Dropzone
         onDrop={handleDrop}
         noClick
         noKeyboard
-        style={{ maxWidth: width || "150px", maxHeight: height || "150px" }}
+        style={{ minWidth: width || "150px", minHeight: height || "150px" }}
       >
         {({ getRootProps, getInputProps }) => (
           <div {...getRootProps()}>
             <AvatarEditor
               ref={setEditorRef}
-              width={width || 180}
-              height={height || 180}
+              width={width || 210}
+              height={height || 210}
               scale={1.0}
-              border={5}
+              border={3}
+              borderRadius={radius || 0}
               className="mg-thumbnail"
               image={image}
             />
@@ -89,21 +99,20 @@ const DropDownImage = (props) => {
         accept="image/*"
         onChange={(e) => {
           handleDrop(e.target.files);
-          getImage().then();
         }}
       />
       <p>
         <small className="text-muted">
-          Tamaño requerido {width || 135}x{height || 135}px. 
-          {" "}
-          Para crear un   {" "}
+          Tamaño requerido {width || 135}x{height || 135}px. Para crear un{" "}
           <a
             target="_blank"
             rel="noopener noreferrer"
             href="https://badge.design/"
           >
             emblema
-          </a> o si necesitas crear un    {" "}<a
+          </a>{" "}
+          o si necesitas crear un{" "}
+          <a
             target="_blank"
             rel="noopener noreferrer"
             href="https://www.canva.com/"

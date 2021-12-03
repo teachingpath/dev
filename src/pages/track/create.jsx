@@ -2,7 +2,6 @@ import { Container, Row, Dropdown, Col, Portlet } from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
-  activityChange,
   pageShowAlert
 } from "store/actions";
 import { bindActionCreators } from "redux";
@@ -46,20 +45,20 @@ class TrackCreatePage extends React.Component {
         link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
       },
       {
-        text: "Runner",
+        text: "Ruta",
         link:
           "/runner/edit?pathwayId=" +
           Router.query.pathwayId +
           "&runnerId=" +
           Router.query.runnerId,
       },
-      { text: "Track" },
+      { text: "Lección" },
     ]);
   }
 
   onCreate(data) {
     const { runnerId, pathwayId, extend } = this.state;
-    const { pageShowAlert, activityChange } = this.props;
+    const { pageShowAlert } = this.props;
     return create(runnerId, data)
       .then((docRef) => {
         this.setState({
@@ -69,17 +68,12 @@ class TrackCreatePage extends React.Component {
           extend,
           ...data,
         });
-        pageShowAlert("Track fue creado correctamente");
-        activityChange({
-          pathwayId: pathwayId,
-          type: "new_track",
-          msn: 'El track "' + data.name + '" fue creado.',
-        });
+        pageShowAlert("Lección fue creado correctamente");
         return updateToDraft(pathwayId);
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
-        pageShowAlert("Error al crear el track", "error");
+        pageShowAlert("Error al crear La lección", "error");
       });
   }
 
@@ -94,14 +88,14 @@ class TrackCreatePage extends React.Component {
     return (
       <React.Fragment>
         <Head>
-          <title>Track | Create</title>
+          <title>Lección | Create</title>
         </Head>
         <Container fluid={!this.state.extend}>
           <Row>
             <Col md={this.state.extend ? "12" : "4"}>
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Track | Nuevo</Portlet.Title>
+                  <Portlet.Title>Lección | Nuevo</Portlet.Title>
                   <Portlet.Addon>
                     <TrackAddon
                       extend={this.state.extend}
@@ -111,8 +105,7 @@ class TrackCreatePage extends React.Component {
                 </Portlet.Header>
                 <Portlet.Body>
                   <div>
-                    Cree cada track para evaluar las competencias dentro del
-                    runner.{" "}
+                    Cree cada lección para evaluar las competencias dentro de la ruta.{" "}
                     <a
                       target="_blank"
                       rel="noopener noreferrer"
@@ -120,7 +113,7 @@ class TrackCreatePage extends React.Component {
                     >
                       Ver más información
                     </a>{" "}
-                    acerca de los tracks
+                    acerca de las lecciones
                   </div>
                   <hr />
                   <TrackForm
@@ -138,7 +131,7 @@ class TrackCreatePage extends React.Component {
             <Col md={this.state.extend ? "12" : "8"}>
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Tracks</Portlet.Title>
+                  <Portlet.Title>Lecciones</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
                   <TrackList
@@ -178,7 +171,7 @@ const TrackAddon = ({ extend, toggle }) => {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
+    { pageChangeHeaderTitle, breadcrumbChange, pageShowAlert },
     dispatch
   );
 }

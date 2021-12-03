@@ -129,7 +129,7 @@ export const saveTrackResponse = (trackId, group, data, id = 1) => {
 export const getTracksResponses = (trackId, group, resolve, reject) => {
   let db = firestoreClient
     .collection("track-response")
-    .orderBy("date", 'desc')
+    .orderBy("date", "desc")
     .where("trackId", "==", trackId);
 
   if (group) {
@@ -142,7 +142,7 @@ export const getTracksResponses = (trackId, group, resolve, reject) => {
       if (!querySnapshot.empty) {
         const list = [];
         querySnapshot.forEach((doc) => {
-          list.push(doc.data());
+          list.push({ ...doc.data(), id: doc.id });
         });
         resolve({ list });
       } else {
@@ -153,6 +153,10 @@ export const getTracksResponses = (trackId, group, resolve, reject) => {
       console.log("Error getting documents: ", error);
       reject();
     });
+};
+
+export const deleteResponseById = (id) => {
+  return firestoreClient.collection("track-response").doc(id).delete();
 };
 
 export const getTracksResponseByUserId = (trackId, userId, resolve, reject) => {
@@ -166,7 +170,7 @@ export const getTracksResponseByUserId = (trackId, userId, resolve, reject) => {
       if (!querySnapshot.empty) {
         const list = [];
         querySnapshot.forEach((doc) => {
-          list.push(doc.data());
+          list.push({ ...doc.data(), id: doc.id });
         });
         resolve({ list });
       } else {

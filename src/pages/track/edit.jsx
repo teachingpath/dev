@@ -2,7 +2,6 @@ import { Container, Row, Dropdown, Col, Portlet } from "@panely/components";
 import {
   pageChangeHeaderTitle,
   breadcrumbChange,
-  activityChange,
   pageShowAlert,
 } from "store/actions";
 import { bindActionCreators } from "redux";
@@ -40,12 +39,15 @@ class FormBasePage extends React.Component {
     if (!Router.query.runnerId || !Router.query.trackId) {
       Router.push("/pathway/create");
     }
+    if (Router.query.runnerId === "undefined" || Router.query.trackId === "undefined") {
+      Router.push("/");
+    }
     this.props.pageChangeHeaderTitle("Actualizar");
     this.loadData(Router.query);
     this.props.breadcrumbChange([
       { text: "Home", link: "/" },
       {
-        text: "Track",
+        text: "Lección",
         link:
           "/catalog/track?pathwayId=" +
           Router.query.pathwayId +
@@ -70,14 +72,14 @@ class FormBasePage extends React.Component {
         });
       },
       () => {
-        pageShowAlert("Error al obtener el track", "error");
+        pageShowAlert("Error al obtener La lección", "error");
       }
     );
   }
 
   onEdit(data) {
     const { pathwayId, runnerId, trackId, extend } = this.state;
-    const { pageShowAlert, activityChange } = this.props;
+    const { pageShowAlert } = this.props;
 
     return updateTrack(runnerId, trackId, data)
       .then((docRef) => {
@@ -89,18 +91,12 @@ class FormBasePage extends React.Component {
           ...data,
         });
 
-        pageShowAlert("Track fue actualizado correctamente");
-
-        activityChange({
-          pathwayId: pathwayId,
-          type: "edit_track",
-          msn: 'El track "' + data.name + '"  fue actualizado.',
-        });
+        pageShowAlert("Lección fue actualizado correctamente");
         return updateToDraft(pathwayId);
       })
       .catch((error) => {
         console.error("Error adding document: ", error);
-        pageShowAlert("Error en actualizar el track", "error");
+        pageShowAlert("Error en actualizar La lección", "error");
       });
   }
 
@@ -113,14 +109,14 @@ class FormBasePage extends React.Component {
           link: "/pathway/edit?pathwayId=" + Router.query.pathwayId,
         },
         {
-          text: "Runner",
+          text: "Ruta",
           link:
             "/runner/edit?pathwayId=" +
             Router.query.pathwayId +
             "&runnerId=" +
             Router.query.runnerId,
         },
-        { text: "Track" },
+        { text: "Lección" },
       ]);
     }
   }
@@ -139,14 +135,14 @@ class FormBasePage extends React.Component {
     return (
       <React.Fragment>
         <Head>
-          <title>Track | Edit</title>
+          <title>Lección | Edit</title>
         </Head>
         <Container fluid={!this.state.extend}>
           <Row>
             <Col md={this.state.extend ? "12" : "6"}>
               <Portlet>
                 <Portlet.Header bordered>
-                  <Portlet.Title>Track | {this.state.name || "Editar"}</Portlet.Title>
+                  <Portlet.Title>Lección | {this.state.name || "Editar"}</Portlet.Title>
                   {this.props.isOwner && (
                     <Portlet.Addon>
                       <TrackAddon
@@ -163,8 +159,8 @@ class FormBasePage extends React.Component {
                 <>
                   <Portlet.Body>
                     <p>
-                      Cree cada track para evaluar las competencias dentro del
-                      runner.
+                      Cree cada lección para evaluar las competencias dentro de la
+                      ruta.
                     </p>
                     <hr />
                     <TrackForm
@@ -228,7 +224,7 @@ const TrackAddon = ({ extend, toggle, runnerId, id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
           >
-            Nuevo Track
+            Nuevo Lección
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>
@@ -238,7 +234,7 @@ const TrackAddon = ({ extend, toggle, runnerId, id, pathwayId }) => {
 
 function mapDispathToProps(dispatch) {
   return bindActionCreators(
-    { pageChangeHeaderTitle, breadcrumbChange, activityChange, pageShowAlert },
+    { pageChangeHeaderTitle, breadcrumbChange, pageShowAlert },
     dispatch
   );
 }

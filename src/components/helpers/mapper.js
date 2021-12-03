@@ -24,8 +24,9 @@ export function escapeHtml(html) {
 }
 
 export function linkResume(id, user) {
+  const host = window.location.host;
   return id
-    ? '<i><a href="/pathway/resume?id=' +
+    ? '<i><a href="/'+host+'/pathway/resume?id=' +
         id +
         '" rel="noopener noreferrer" target="_blank">' +
         user.displayName +

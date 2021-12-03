@@ -51,7 +51,7 @@ const modulesBasic = {
   ],
 };
 
-function loadStyleCodeBlock(){
+function loadStyleCodeBlock() {
   document.querySelectorAll("pre").forEach((el) => {
     hljs.configure({
       languages: ["javascript", "ruby", "python", "java"],
@@ -68,7 +68,7 @@ function TrackForm({ onSave, data, onExtend }) {
     name: yup
       .string()
       .min(5, "Ingrese al menos 5 caracteres")
-      .required("Por favor, igrese el nombre del Track"),
+      .required("Por favor, igrese el nombre de la lección"),
     description: yup
       .string()
       .min(5, "Ingrese al menos 5 caracteres")
@@ -148,10 +148,9 @@ function TrackForm({ onSave, data, onExtend }) {
         });
       })}
     >
-     
       <Form.Group>
         <FloatLabel>
-          <Label for="type">Tipo de Track</Label>
+          <Label for="type">Tipo de Lección</Label>
           <Controller
             as={CustomInput}
             type="select"
@@ -452,7 +451,7 @@ function TrackForm({ onSave, data, onExtend }) {
         }[watchFields.type]
       }
 
-<Form.Group>
+      <Form.Group>
         <FloatLabel>
           <Controller
             as={Input}
@@ -502,7 +501,7 @@ function TrackForm({ onSave, data, onExtend }) {
           )}
           <div className="text-muted">
             Calcular tiempo: {timeConvert(watchFields.timeLimit * 10)} para
-            terminar el Track.
+            terminar la lección.
           </div>
         </FloatLabel>
       </Form.Group>
@@ -593,7 +592,7 @@ function TrackForm({ onSave, data, onExtend }) {
         type="button"
         className="ml-2"
         onClick={() => {
-          if(data?.pathwayId && data?.runnerId){
+          if (data?.pathwayId && data?.runnerId) {
             Router.replace({
               pathname: "/runner/edit",
               query: {
@@ -742,7 +741,7 @@ function TrainingForm({ data, onChange }) {
     <>
       <Portlet>
         <Portlet.Header bordered>
-          <Portlet.Title>Step-by-step</Portlet.Title>
+          <Portlet.Title>Paso a paso</Portlet.Title>
         </Portlet.Header>
         <Portlet.Body>
           <Form>
@@ -783,7 +782,7 @@ function TrainingForm({ data, onChange }) {
                           )}
                         />
                         <Label for={`options_${index}_.name`}>
-                          Step#{index + 1}
+                          Paso#{index + 1}
                         </Label>
                       </FloatLabel>
                     </Form.Group>
@@ -814,7 +813,7 @@ function TrainingForm({ data, onChange }) {
                   optionsAppend({});
                 }}
               >
-                Add Step <FontAwesomeIcon icon={SolidIcon.faPlus} />
+                Agregar paso <FontAwesomeIcon icon={SolidIcon.faPlus} />
               </Button>
             </div>
 
@@ -923,7 +922,7 @@ function QuestionForm({ data, onChange }) {
                   optionsAppend({});
                 }}
               >
-                Agregar Pregunta <FontAwesomeIcon icon={SolidIcon.faPlus} />
+                Agregar pregunta <FontAwesomeIcon icon={SolidIcon.faPlus} />
               </Button>
             </p>
 

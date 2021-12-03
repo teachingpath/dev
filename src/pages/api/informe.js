@@ -22,11 +22,11 @@ const template = `<div>
 <h3>{{pathwayName}}</h3>
 <table width="300">
   <tr>
-    <th>Runners</th>
+    <th>Rutas</th>
     <td>{{runnersComplente}} / {{runnersTotal}}</td>
   </tr>
   <tr>
-    <th>Tracks</th>
+    <th>Lecciones</th>
     <td>{{tracksComplete}} / {{tracksTotal}}</td>
   </tr>
   <tr>
@@ -39,7 +39,7 @@ const template = `<div>
 <h3>Reporte de actividades</h3>
 {{&reportList}}
 <h3>¡Te animo a que sigas adelante! 💪 </h3>
-<p>Puedes alcanzar tus metas y conseguir mas logros en la medida que completes los tracks de aprendizaje</p>
+<p>Puedes alcanzar tus metas y conseguir mas logros en la medida que completes las lecciones de aprendizaje</p>
 </div>`;
 
 async function resumenHandler(req, res) {

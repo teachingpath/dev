@@ -11,9 +11,9 @@ export const getUser = (userId, resolve, reject) => {
     .get()
     .then((doc) => {
       if (resolve) {
-        resolve({ data: doc.data() });
+        resolve({ data: doc.data(), id: doc.id  });
       } else {
-        return { data: doc.data() };
+        return { data: doc.data(), id: doc.id };
       }
     })
     .catch((error) => {
@@ -102,7 +102,12 @@ export const getActivities = (userId, group, resolve, reject) => {
           time: time.substr(0, time.lastIndexOf(":")),
           date: new Date(data.date.seconds * 1000),
           color: data.color || "info",
-          content: () => <p className="mb-0">{escapeHtml(data.msn)}</p>,
+          content: () => (
+            <p
+              className="mb-0"
+              dangerouslySetInnerHTML={{ __html: data.msn }}
+            ></p>
+          )
         });
       });
       resolve({ data: list });

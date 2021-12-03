@@ -16,7 +16,11 @@ import Row from "@panely/components/Row";
 import Col from "@panely/components/Col";
 import ReactPlayer from "react-player";
 import DescribeURL from "@panely/components/DescribePage";
-import { getTracksResponses, saveTrackResponse } from "consumer/track";
+import {
+  deleteResponseById,
+  getTracksResponses,
+  saveTrackResponse,
+} from "consumer/track";
 import {
   activityMapper,
   linkGroup,
@@ -24,6 +28,21 @@ import {
   linkTrack,
 } from "components/helpers/mapper";
 import { useState } from "react";
+import Badge from "@panely/components/Badge";
+import { getUser } from "consumer/user";
+import Avatar from "@panely/components/Avatar";
+
+import swalContent from "sweetalert2-react-content";
+import Swal from "@panely/sweetalert2";
+const ReactSwal = swalContent(Swal);
+const swal = ReactSwal.mixin({
+  customClass: {
+    confirmButton: "btn btn-label-success btn-wide mx-1",
+    cancelButton: "btn btn-label-danger btn-wide mx-1",
+  },
+  buttonsStyling: false,
+});
+
 
 function FeedbackForm({ onSave }) {
   const [load, setLoad] = useState(null);
@@ -103,6 +122,26 @@ class LearningTrack extends React.Component {
     );
   }
 
+  onDelete(id) {
+    swal
+      .fire({
+        title: "¿Estas seguro/segura?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "¡Sí, bórralo!",
+      })
+      .then((result) => {
+        if (result.value) {
+          deleteResponseById(id).then(() => {
+            this.componentDidMount();
+          });
+        }
+      });
+  }
+
   render() {
     const { data, group, journeyId } = this.props;
     const user = firebaseClient.auth().currentUser;
@@ -134,43 +173,53 @@ class LearningTrack extends React.Component {
               <Card.Text>
                 Responder alguna de estas preguntas:{" "}
                 <i>
-                  ¿Qué aprendizte con este contenido? ¿Cuál es tu apreciación?,
+                  ¿Qué aprendiste con este contenido? ¿Cuál es tu apreciación?,
                   ¿Qué opinas?, ¿10 elementos claves?
                 </i>
               </Card.Text>
               {id && (
                 <FeedbackForm
                   onSave={(data) => {
-                    return saveTrackResponse(id, group, data).then(() => {
-                      if (this.props.activityChange) {
-                        this.props.activityChange(
-                          activityMapper(
-                            "new_track_response",
-                            linkTrack(
-                              this.props.data.id,
-                              this.props.data.runnerId,
-                              this.props.data.name,
-                              "Nueva respuesta al learning __LINK__ "
-                            ),
-                            linkGroup(
-                              journeyId,
-                              user,
+                    return getUser(user.uid).then((dataUser) => {
+                      data.user = {
+                        displayName:
+                          dataUser.data.firstName +
+                          " " +
+                          dataUser.data.lastName,
+                        email: dataUser.data.email,
+                        image: dataUser.data.image,
+                      };
+                      return saveTrackResponse(id, group, data).then(() => {
+                        if (this.props.activityChange) {
+                          this.props.activityChange(
+                            activityMapper(
+                              "new_track_response",
                               linkTrack(
                                 this.props.data.id,
                                 this.props.data.runnerId,
                                 this.props.data.name,
-                                "ha escrito una nueva respuesta para el learning __LINK__ "
-                              )
-                            ),
-                            this.props.group,
-                            2
-                          )
-                        );
-                      }
-                      this.setState({ current: this.state.current + 1 });
-                      setTimeout(() => {
-                        this.componentDidMount();
-                      }, 500);
+                                "Nueva respuesta al learning __LINK__ "
+                              ),
+                              linkGroup(
+                                journeyId,
+                                user,
+                                linkTrack(
+                                  this.props.data.id,
+                                  this.props.data.runnerId,
+                                  this.props.data.name,
+                                  "ha escrito una nueva respuesta para el learning __LINK__ "
+                                )
+                              ),
+                              this.props.group,
+                              2
+                            )
+                          );
+                        }
+                        this.setState({ current: this.state.current + 1 });
+                        setTimeout(() => {
+                          this.componentDidMount();
+                        }, 400);
+                      });
                     });
                   }}
                 />
@@ -178,19 +227,37 @@ class LearningTrack extends React.Component {
 
               <Timeline>
                 {this.state.list.map((data, index) => {
-                  const { date, feedback } = data;
+                  const { date, feedback, userId, id } = data;
 
                   return (
                     <Timeline.Item
                       date={date}
                       key={"timeline" + index}
-                      pin={<Marker type="dot" />}
+                      pin={
+                        <Avatar  circle display>
+                          <img
+                            src={data.user.image}
+                            alt="Avatar image"
+                            title={data.user.displayName}
+                          />
+                        </Avatar>
+                      }
                     >
                       <div
                         dangerouslySetInnerHTML={{
                           __html: linkify(feedback),
                         }}
                       />
+                      {user.uid === userId && (
+                        <Badge
+                          href="javascript:void(0)"
+                          onClick={() => {
+                            this.onDelete(id);
+                          }}
+                        >
+                          Eliminar
+                        </Badge>
+                      )}
                     </Timeline.Item>
                   );
                 })}

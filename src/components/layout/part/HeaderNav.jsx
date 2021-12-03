@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { getStatsByUser } from "consumer/journey";
-import Badge from "../../../../docs/template/src/modules/components/Badge";
+import Badge from "@panely/components/Badge";
 
 function HeaderNav({user}) {
   const [stat, setStat] = useState({
@@ -61,7 +61,7 @@ function HeaderNav({user}) {
                   <GridNav.Item
                     icon={<FontAwesomeIcon icon={SolidIcon.faRoad} />}
                   >
-                    Runners ({stat.completeRunners.length}/
+                    Rutas ({stat.completeRunners.length}/
                     {stat.incompleteRunners.length +
                       stat.completeRunners.length}
                     )
@@ -69,7 +69,7 @@ function HeaderNav({user}) {
                   <GridNav.Item
                     icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
                   >
-                    Tracks ({stat.completeTracks.length}/
+                    Lecciones ({stat.completeTracks.length}/
                     {stat.incompleteTracks.length + stat.completeTracks.length})
                   </GridNav.Item>
                 </GridNav.Row>
@@ -77,7 +77,7 @@ function HeaderNav({user}) {
                   <GridNav.Item
                     icon={<FontAwesomeIcon icon={SolidIcon.faTrophy} />}
                   >
-                    Trophies ({stat.completeTrophes.length}/
+                    Trofeos ({stat.completeTrophes.length}/
                     {stat.incompletePathways.length +
                       stat.completeTrophes.length}
                     )
@@ -85,13 +85,13 @@ function HeaderNav({user}) {
                   <GridNav.Item
                     icon={<FontAwesomeIcon icon={SolidIcon.faRibbon} />}
                   >
-                    Badges ({stat.completeBadges.length}/
+                    Emblemas ({stat.completeBadges.length}/
                     {stat.incompleteBadges.length + stat.completeBadges.length})
                   </GridNav.Item>
                   <GridNav.Item
                     icon={<FontAwesomeIcon icon={SolidIcon.faFlagCheckered} />}
                   >
-                    Targets (0/0)
+                    Objetivos (0/0)
                   </GridNav.Item>
                 </GridNav.Row>
               </GridNav>

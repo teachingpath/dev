@@ -25,12 +25,14 @@ import Teacher from "components/widgets/Teacher";
 import RunnerTab from "components/widgets/RunnerTab";
 import { get } from "consumer/pathway";
 import DisplayTrophy from "components/widgets/DisplayTrophy";
+import { getUser } from "consumer/user";
+import { firebaseClient } from "components/firebase/firebaseClient";
 
 class PathwayPage extends React.Component {
   state = {
     name: "Cargando...",
     id: null,
-    draft: true,
+    draft: null,
   };
   constructor(props) {
     super(props);
@@ -42,23 +44,36 @@ class PathwayPage extends React.Component {
       Router.push("/catalog");
     }
     const { pageShowAlert } = this.props;
-    get(
-      Router.query.id,
-      (data) => {
+    get(Router.query.id, async(data) => {
         this.setState(data);
+        const currentUser  = firebaseClient.auth().currentUser;
+        if(currentUser){
+          const user = await getUser(currentUser.uid);
+          if(user){
+            this.setState({
+              ...this.state,
+              user: {...user.data, uid: user.id}
+            });
+          }
+         
+        }
+       
       },
       () => {
         pageShowAlert("Existe un problema al consultar el pathway", "error");
+        setTimeout(() => {
+          window.location.reload();
+        }, 800);
       }
     );
   }
 
   render() {
-    const { name, id, leaderId, draft } = this.state;
+    const { name, id, leaderId, draft, isFollowUp } = this.state;
     return (
       <Widget1>
         <Widget1.Display top size="lg" className="bg-dark text-white">
-          {draft === false && (
+          {(draft === false) && (
             <StartPathway
               pathwayId={id}
               {...this.state}
@@ -69,7 +84,27 @@ class PathwayPage extends React.Component {
           )}
           <Widget1.Dialog>
             <Widget1.DialogContent>
-              <h1 className="display-5" children={name.toUpperCase()} />
+              <h1 className="display-5">{name.toUpperCase()}</h1>
+              <Badge variant="outline-light" className="mr-1">
+                <FontAwesomeIcon
+                  className="mr-2"
+                  icon={SolidIcon.faHiking}
+                />
+                {
+                  {
+                    beginner: "Nivel: Principiante",
+                    middle: "Nivel: Intermedio",
+                    advanced: "Nivel: Avanzado",
+                  }[this.state.level]
+                }
+              </Badge>
+              <Badge variant="outline-light" className="mr-1">
+                <FontAwesomeIcon
+                  className="mr-2"
+                  icon={!isFollowUp ? SolidIcon.faEyeSlash : SolidIcon.faEye}
+                />
+                {isFollowUp ? "Con seguimiento": "Sin seguimiento"}
+              </Badge>
             </Widget1.DialogContent>
           </Widget1.Dialog>
           {draft === false && <DisplayTrophy trophy={this.state.trophy} />}
@@ -77,15 +112,24 @@ class PathwayPage extends React.Component {
         </Widget1.Display>
         <Widget1.Body className="pt-5">
           <Portlet className="mt-4">
+            <Portlet.Body>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: this.state?.longDescription,
+                }}
+              />
+            </Portlet.Body>
             <Portlet.Header>
               <Portlet.Icon>
                 <FontAwesomeIcon icon={SolidIcon.faRoute} />
               </Portlet.Icon>
-              <Portlet.Title>Runners</Portlet.Title>
+              <Portlet.Title>Rutas</Portlet.Title>
             </Portlet.Header>
             <Portlet.Body>
               {id && (
-                <RunnerTab ref={this.runnersRef} pathwayId={this.state.id} />
+                <>
+                  <RunnerTab ref={this.runnersRef} pathwayId={this.state.id} />
+                </>
               )}
             </Portlet.Body>
             <Portlet.Footer>
@@ -115,7 +159,7 @@ class PathwayGeneralPage extends React.Component {
           <script src="/script.js"></script>
         </Head>
         <Container fluid>
-          <Row portletFill="xl">
+          <Row portletFill="xl" style={{margin: "-15px"}}>
             <Col xl="12">
               <PathwayPage
                 activityChange={this.props.activityChange}
@@ -135,6 +179,8 @@ function mapDispathToProps(dispatch) {
     dispatch
   );
 }
+
+
 
 export default connect(
   null,

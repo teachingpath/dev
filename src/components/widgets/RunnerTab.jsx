@@ -98,7 +98,7 @@ class RunnerTab extends React.Component {
             <Tab.Pane key={index} tabId={index}>
               <Portlet className="mb-0">
                 <Portlet.Header bordered>
-                  <Portlet.Title>Tracks</Portlet.Title>
+                  <Portlet.Title>Lecciones</Portlet.Title>
                   <Portlet.Addon>
                     Estimación:{" "}
                     <strong>

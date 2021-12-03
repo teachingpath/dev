@@ -18,8 +18,11 @@ export const create = (data) => {
     .collection("pathways")
     .doc(pathwayId)
     .set({
+      longDescription: data.longDescription,
       description: data.description,
       image: data.image,
+      level: data.level,
+      isFollowUp: false,
       name: data.name,
       slug: createSlug(data.name),
       searchTypes: searchTypes,
@@ -92,6 +95,8 @@ export const update = (id, data) => {
   const dataUpdated = {
     ...data,
     draft: true,
+    longDescription: data.longDescription,
+    level: data.level,
     name: data.name,
     slug: createSlug(data.name),
     tags: tags,
@@ -201,8 +206,8 @@ export const publishPathway = (pathwayId, resolve, reject) => {
     .collection("pathways")
     .doc(pathwayId)
     .get()
-    .then(async (doc) => {
-      await publishPathwayFor(doc, pathwayId, resolve, reject);
+    .then( (doc) => {
+      return publishPathwayFor(doc, pathwayId, resolve, reject);
     })
     .catch((error) => {
       console.log("Error getting documents: ", error);
@@ -237,18 +242,23 @@ export const pathwayFollowUp = (userId, resolve, reject) => {
           querySnapshot.forEach(async (doc) => {
             const data = doc.data();
             data.id = doc.id;
+            data.groupName = data.group.replace(
+              createSlug(data.name) + "-",
+              ""
+            );
             if (data.progress >= 100) {
               finisheds.push(data);
             } else {
               inRunning.push(data);
             }
           });
-          return {finisheds, inRunning};
+          return { finisheds, inRunning };
         })
         .catch((error) => {
           console.log("Error getting documents: ", error);
         });
-    }).then((result) => {
+    })
+    .then((result) => {
       resolve(result);
     })
     .catch((error) => {
@@ -257,31 +267,23 @@ export const pathwayFollowUp = (userId, resolve, reject) => {
 };
 
 async function publishPathwayFor(doc, pathwayId, resolve, reject) {
+  console.log("publish pathway for =>"+pathwayId);
   if (doc.exists) {
     const data = doc.data();
 
     if (!Object.keys(data.trophy || {}).length) {
-      reject("The pathway requires a trophy to publish it.");
+      reject("El PATHWAY requiere un trofeo para publicarlo");
       return;
     }
 
     const runners = await getRunners(pathwayId);
     for (const key in runners) {
-      if (!Object.keys(runners[key].badge || {}).length) {
-        reject(
-          'The runner "' +
-            runners[key].name +
-            '" requires a badge to publish this pathway.'
-        );
-        return;
-      }
-
       const tracks = await getTracks(runners[key].id);
       if (tracks.length < 2) {
         reject(
-          'The runner "' +
+          'La RUTA "' +
             runners[key].name +
-            '" requires a minimum of 3 tracks to be able to publish the pathway.'
+            '" requiere un mínimo de 3 pistas para poder publicar la ruta.'
         );
         return;
       }

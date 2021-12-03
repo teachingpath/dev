@@ -7,6 +7,7 @@ import {
   Button,
   FloatLabel,
   ImageEditor,
+  CustomInput,
 } from "@panely/components";
 import { useRef, useState } from "react";
 import * as yup from "yup";
@@ -16,6 +17,21 @@ import Spinner from "@panely/components/Spinner";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
+import { createSlug } from "components/helpers/mapper";
+import Quill from "@panely/quill";
+
+const modulesBasic = {
+  toolbar: [
+    ["bold", "italic"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    ["clean"],
+  ],
+};
 
 function PathwayForm({ onSave, data }) {
   const [loading, setLoading] = useState(false);
@@ -26,6 +42,7 @@ function PathwayForm({ onSave, data }) {
       .string()
       .min(5, "Ingrese al menos 5 caracteres")
       .required("Por favor, escriba el nombre"),
+    level: yup.string().required("Seleccione un nivel"),
     description: yup
       .string()
       .min(5, "Ingrese al menos 5 caracteres")
@@ -35,7 +52,10 @@ function PathwayForm({ onSave, data }) {
     resolver: yupResolver(schema),
     defaultValues: {
       name: data?.name || "",
+      level: data?.level || "",
+      draft: data?.draft || true,
       description: data?.description || "",
+      longDescription: data?.longDescription || "",
       tags: data?.tags ? data?.tags.join(",") : "",
     },
   });
@@ -44,7 +64,8 @@ function PathwayForm({ onSave, data }) {
     <Form
       onSubmit={handleSubmit((data) => {
         setLoading(true);
-        imageRef.current.getImage().then((url) => {
+        const path = "pathways/" + createSlug(data.name);
+        imageRef.current.getImage(path).then((url) => {
           onSave({ ...data, image: url }).then(() => {
             if (isNew) {
               reset();
@@ -57,9 +78,10 @@ function PathwayForm({ onSave, data }) {
       <Form.Group>
         <ImageEditor
           ref={imageRef}
+          path={"trophy/"}
           image={data?.image}
-          width={360}
-          height={180}
+          width={370}
+          height={190}
         />
       </Form.Group>
       <Row>
@@ -81,6 +103,27 @@ function PathwayForm({ onSave, data }) {
           </Form.Group>
           <Form.Group>
             <FloatLabel>
+              <Label for="level">Nivel</Label>
+              <Controller
+                as={CustomInput}
+                type="select"
+                name="level"
+                id="level"
+                control={control}
+                invalid={Boolean(errors.level)}
+              >
+                <option value="default">Seleccione un nivel</option>
+                <option value="beginner">Principiante</option>
+                <option value="middle">Intermedio</option>
+                <option value="advanced">Avanzado</option>
+              </Controller>
+              {errors.level && (
+                <Form.Feedback children={errors.level.message} />
+              )}
+            </FloatLabel>
+          </Form.Group>
+          <Form.Group>
+            <FloatLabel>
               <Controller
                 as={Input}
                 type="textarea"
@@ -96,6 +139,75 @@ function PathwayForm({ onSave, data }) {
               )}
             </FloatLabel>
           </Form.Group>
+          <Form.Group>
+            <FloatLabel>
+              <Controller
+                name={`longDescription`}
+                control={control}
+                render={({ onChange, onBlur, value, name, ref }) => (
+                  <Quill
+                    innerRef={ref}
+                    onBlur={onBlur}
+                    theme="snow"
+                    value={value}
+                    id="longDescription"
+                    name={"longDescription"}
+                    placeholder="Ingrese el detalle del pathway"
+                    modules={modulesBasic}
+                    onChange={onChange}
+                    style={{ minHeight: "15rem" }}
+                  />
+                )}
+              />
+              <Label for="longDescription">Detalle del pathway</Label>
+
+              {errors.lognDescription && (
+                <Form.Feedback children={errors.lognDescription.message} />
+              )}
+            </FloatLabel>
+          </Form.Group>
+
+          <Form.Group>
+            <FloatLabel>
+              <Controller
+                as={Input}
+                type="text"
+                id="tags"
+                name="tags"
+                control={control}
+                placeholder="Inserta tus etiquetas separadas por comas"
+              />
+              <Label for="tags">Tags</Label>
+            </FloatLabel>
+            <Form.Text>Separa las etiquetas con comas.</Form.Text>
+          </Form.Group>
+          {!isNew && (
+            <Form.Group>
+              <FloatLabel>
+                <Controller
+                  control={control}
+                  name="draft"
+                  render={({ onChange, onBlur, value, name, ref }) => (
+                    <CustomInput
+                      type="checkbox"
+                      size="lg"
+                      id="draft"
+                      label="¿Esta en borrador?"
+                      invalid={Boolean(errors.draft)}
+                      onBlur={onBlur}
+                      onChange={(e) => onChange(e.target.checked)}
+                      checked={value}
+                      innerRef={ref}
+                    />
+                  )}
+                />
+              </FloatLabel>
+              <Form.Text>
+                Cuando esta en borrador no se publica en el catalago de pathways
+              </Form.Text>
+            </Form.Group>
+          )}
+
           {isNew && (
             <Form.Group>
               <FloatLabel>
@@ -119,21 +231,6 @@ function PathwayForm({ onSave, data }) {
               </FloatLabel>
             </Form.Group>
           )}
-
-          <Form.Group>
-            <FloatLabel>
-              <Controller
-                as={Input}
-                type="text"
-                id="tags"
-                name="tags"
-                control={control}
-                placeholder="Inserta tus etiquetas separadas por comas"
-              />
-              <Label for="tags">Tags</Label>
-            </FloatLabel>
-            <Form.Text>Separa las etiquetas con comas.</Form.Text>
-          </Form.Group>
         </Col>
       </Row>
       <Button
@@ -204,7 +301,7 @@ function FieldGroup({ data, onChange }) {
                         id={`runners_${index}_.name`}
                         name={`runners[${index}].name`}
                         onChange={onChange}
-                        placeholder="Ingrese el nombre del runner"
+                        placeholder="Ingrese el nombre de la ruta"
                         onBlur={onBlur}
                         onKeyUp={(data) => {
                           if (value?.name) {
@@ -218,9 +315,7 @@ function FieldGroup({ data, onChange }) {
                       />
                     )}
                   />
-                  <Label for={`groups_${index}_.name`}>
-                    Runner#{index + 1}
-                  </Label>
+                  <Label for={`groups_${index}_.name`}>Ruta#{index + 1}</Label>
                 </FloatLabel>
               </Form.Group>
             </Col>
@@ -247,7 +342,7 @@ function FieldGroup({ data, onChange }) {
             optionsAppend({});
           }}
         >
-          Agregar Runner <FontAwesomeIcon icon={SolidIcon.faPlus} />
+          Agregar Ruta <FontAwesomeIcon icon={SolidIcon.faPlus} />
         </Button>
       </p>
     </Form>

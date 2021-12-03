@@ -13,6 +13,8 @@ import { useEffect } from "react";
 import { getTracksResponseByUserId } from "consumer/track";
 import ResponseModal from "./ResponseModal";
 import Alert from "@panely/components/Alert";
+import { getJourney, processFinish, processJourney, updateJourney } from "consumer/journey";
+import { Spinner } from "@panely/components";
 
 class RunnersExecutor extends React.Component {
   constructor(props) {
@@ -38,7 +40,7 @@ class RunnersExecutor extends React.Component {
       onComplete,
       activityChange,
       user,
-      current
+      current,
     } = this.props;
     return (
       <Accordion {...this.props}>
@@ -57,7 +59,12 @@ class RunnersExecutor extends React.Component {
                 <Card.Title>
                   <i
                     className={
-                      "fas fa-" + (current === index ? "running" : totalTime == 0 ? "check": "clock")
+                      "fas fa-" +
+                      (current === index
+                        ? "running"
+                        : totalTime == 0
+                        ? "check"
+                        : "clock")
                     }
                   ></i>{" "}
                   {item.name.toUpperCase()}
@@ -65,7 +72,7 @@ class RunnersExecutor extends React.Component {
                 {totalTime > 0 ? (
                   <Portlet.Addon>
                     Limite de tiempo:{" "}
-                    <strong>{timeShortPowerTen(totalTime)} + Quiz</strong>
+                    <strong>{timeShortPowerTen(totalTime)} {item.badge && "+ Quiz"}</strong>
                   </Portlet.Addon>
                 ) : (
                   <Portlet.Addon>
@@ -76,7 +83,7 @@ class RunnersExecutor extends React.Component {
               <Collapse isOpen={activeCard === index}>
                 <Card.Body>{item.description}</Card.Body>
                 <Card.Body>
-                  <Tracks
+                  <Lecciones
                     onComplete={(track) => {
                       onComplete(track);
                     }}
@@ -86,7 +93,7 @@ class RunnersExecutor extends React.Component {
                     pathwayId={pathwayId}
                     runnerIndex={index}
                     tracks={item.tracks}
-                    quiz={item.quiz}
+                    badge={item.badge}
                     runnerId={item.id}
                     journeyId={journeyId}
                     current={item.current}
@@ -103,7 +110,8 @@ class RunnersExecutor extends React.Component {
   }
 }
 
-class Tracks extends React.Component {
+class Lecciones extends React.Component {
+  state = {isProcess: false}
   render() {
     const {
       tracks,
@@ -112,17 +120,22 @@ class Tracks extends React.Component {
       runnerIndex,
       journeyId,
       runners,
-      quiz,
       feedback,
       pathwayId,
       onComplete,
       group,
+      badge,
       activityChange,
       user,
     } = this.props;
     const activeQuiz = tracks.every((track) => {
       return track.status === "finish";
     });
+
+    if(!journeyId){
+      return <Spinner>Loading</Spinner>
+    }
+    
     return (
       <Steps current={current} direction="vertical" index={runnerId}>
         {tracks.map((item, index) => {
@@ -140,7 +153,7 @@ class Tracks extends React.Component {
               key={item.id}
               index={item.id}
               status={item.status}
-              className={item.status === "process" ? "bg-light" : ""}
+              className={item.status === "process" ? "bg-light p-2" : ""}
               title={
                 <>
                   {(item.status === "process" || item.status === "wait") && (
@@ -160,7 +173,9 @@ class Tracks extends React.Component {
                         journeyId={journeyId}
                         group={group}
                       />
-                      <Link href={extarnalLink} shallow>{item.title}</Link>
+                      <Link href={extarnalLink} shallow>
+                        {item.title}
+                      </Link>
                     </>
                   ) : (
                     item.title
@@ -197,32 +212,61 @@ class Tracks extends React.Component {
           );
         })}
 
-        {quiz && current !== null && (
+        {current !== null && (
           <Steps.Step
             status={activeQuiz ? "process" : "wait"}
-            title={"Preguntas de repaso"}
+            title={"Fin de la ruta"}
             description={
               <div>
                 {activeQuiz && (
                   <div dangerouslySetInnerHTML={{ __html: feedback }} />
                 )}
-                <Alert variant={"label-info"}>
-                  Presentar Quiz para validar conocimientos y obtener el emblema.
-                </Alert>
-                <Button
-                  disabled={!activeQuiz}
-                  onClick={() => {
-                    Router.push({
-                      pathname: "/catalog/quiz",
-                      query: {
-                        id: journeyId,
-                        runnerId: runnerId,
-                      },
-                    });
-                  }}
-                >
-                  Tomar Emblema
-                </Button>
+
+                {badge && (
+                  <>
+                    <Alert variant={"label-info"}>
+                      Presentar Quiz para validar conocimientos y obtener el
+                      emblema.
+                    </Alert>
+                    <Button
+                      disabled={!activeQuiz}
+                      onClick={() => {
+                        Router.push({
+                          pathname: "/catalog/quiz",
+                          query: {
+                            id: journeyId,
+                            runnerId: runnerId,
+                          },
+                        });
+                      }}
+                    >
+                      Tomar Emblema
+                    </Button>
+                  </>
+                )}
+                {!badge && (
+                  <Button
+                    disabled={!activeQuiz || this.state.isProcess}
+                    onClick={() => {
+                      getJourney(journeyId, (data) => {
+                          this.setState({isProcess: true});
+                          if (data.progress < 100) {
+                            return updateJourney(journeyId, processJourney(data)).then(() => {
+                              const currentRunner = data.breadcrumbs[data.current-1];
+                              processFinish(data, user, journeyId, currentRunner, 10, activityChange);
+                            });
+                          } 
+                          window.location.reload();
+                        },
+                        () => {
+                          console.log("Error en processo pathway");
+                        }
+                      );
+                    }}
+                  >
+                    Continuar
+                  </Button>
+                )}
               </div>
             }
           />
@@ -239,8 +283,6 @@ const AttachResult = (props) => {
         {
           training: <Attach {...props} />,
           hacking: <Attach {...props} />,
-          questions: <Attach {...props} />,
-          learning: <Attach {...props} />,
         }[props.item.type]
       }
     </span>
@@ -258,7 +300,9 @@ const Attach = ({
 }) => {
   const [att, setAtt] = useState(null);
   useEffect(() => {
-    getTracksResponseByUserId(id,  user.uid,
+    getTracksResponseByUserId(
+      id,
+      user.uid,
       (result) => {
         setAtt(result.list.length === 0);
       },
