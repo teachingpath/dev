@@ -30,9 +30,9 @@ import {
   linkRunner,
   linkTrack,
 } from "components/helpers/mapper";
-import { Form } from "@panely/components";
-import Label from "@panely/components/Label";
 import { sendFeedback } from "consumer/sendemail";
+import Badge from "@panely/components/Badge";
+import { deleteResponseById } from "consumer/track";
 
 // Use SweetAlert React Content library
 const ReactSwal = swalContent(Swal);
@@ -152,7 +152,9 @@ class PathwayPage extends React.Component {
           isCompleted ? null : data.breadcrumbs[data.current]?.name
         );
       },
-      () => {}
+      () => {
+        console.log("Error getting journey");
+      }
     );
   };
 
@@ -176,6 +178,8 @@ class PathwayPage extends React.Component {
             item.id,
             "[" + track.type + "] " + track.title
           ),
+          trackName: "[" + track.type + "] " + track.title,
+          type: track.type,
           runnerName: item.name,
         };
         return {
@@ -188,10 +192,15 @@ class PathwayPage extends React.Component {
   async getResponseByUserAndGroup(userId, group, trackMapper) {
     const response = await getTracksResponses(userId, group);
     return response.list.map((data) => {
+      const trackTitle = data.name
+        ? trackMapper[data.trackId].name + "<br /><i>" + data.name + "</i>"
+        : trackMapper[data.trackId].name;
       return {
         date: data.date,
         response: data.result || data.feedback || data.answer || data.solution,
-        track: trackMapper[data.trackId].name,
+        track: trackTitle,
+        trackName: trackMapper[data.trackId].trackName,
+        type: trackMapper[data.trackId].type,
         trackId: data.trackId,
         id: data.id,
         userId: data.userId,
@@ -463,6 +472,26 @@ function DisplayContribution(props) {
     );
   };
 
+  const onDelete = (id) => {
+    swal
+      .fire({
+        title: "¿Estas seguro/segura?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "¡Sí, bórralo!",
+      })
+      .then((result) => {
+        if (result.value) {
+          deleteResponseById(id).then(() => {
+            window.location.reload();
+          });
+        }
+      });
+  };
+
   return (
     <Widget4 {...attributes}>
       <Widget4.Group>
@@ -483,8 +512,7 @@ function DisplayContribution(props) {
 
           <Timeline>
             {list.map((data, index) => {
-              const { date, response, track, runnerName } = data;
-
+              const { date, response, track, runnerName, type, id } = data;
               const renderTooltip = () => {
                 const fecha = new Date(date);
                 return (
@@ -520,8 +548,49 @@ function DisplayContribution(props) {
                   ></i>
                   <br />
                   {leaderUser.profile !== "trainee" && (
-                    <Review data={data} user={user} leaderUser={leaderUser} />
+                    <Button
+                      size={"sm"}
+                      variant={"secondary"}
+                      className="float-right ml-2"
+                      href="javascript:void(0)"
+                      onClick={() => {
+                        onDelete(id);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={SolidIcon.faTrash} />
+                    </Button>
                   )}
+                  {leaderUser.profile &&
+                    {
+                      hacking: (
+                        <Calification
+                          data={data}
+                          user={user}
+                          leaderUser={leaderUser}
+                        />
+                      ),
+                      training: (
+                        <Calification
+                          data={data}
+                          user={user}
+                          leaderUser={leaderUser}
+                        />
+                      ),
+                      learning: (
+                        <Review
+                          data={data}
+                          user={user}
+                          leaderUser={leaderUser}
+                        />
+                      ),
+                      questions: (
+                        <Review
+                          data={data}
+                          user={user}
+                          leaderUser={leaderUser}
+                        />
+                      ),
+                    }[type]}
                 </Timeline.Item>
               );
             })}
@@ -532,13 +601,15 @@ function DisplayContribution(props) {
   );
 }
 
-class Review extends React.Component {
-  handleClick = () => {
+class Calification extends React.Component {
+  handleClick = (score, title) => {
+    const { review, id, trackName } = this.props.data;
     swal
       .fire({
-        title: "Hacer una realimentación",
+        title: trackName.toUpperCase(),
+        text: title,
         input: "textarea",
-        inputValue: this.props.data.review || "",
+        inputValue: review || "",
         inputAttributes: {
           autocapitalize: "off",
         },
@@ -546,14 +617,139 @@ class Review extends React.Component {
         confirmButtonText: "Enviar",
         showLoaderOnConfirm: true,
         preConfirm: (feedback) => {
-          const responseId = this.props.data.id;
+          const responseId = id;
+          return addFeedback(responseId, feedback, score)
+            .then(() => {
+              const { track, runnerName, response } = this.props.data;
+              const title = escapeHtml(runnerName + "/" + track);
+              const email = this.props.user.email;
+              const replyTo = this.props.leaderUser.email;
+              return sendFeedback(
+                email,
+                title,
+                response,
+                feedback,
+                replyTo,
+                score
+              ).then(() => {
+                return "Se envio el feedback correctamente.";
+              });
+            })
+            .catch((error) => {
+              swal.showValidationMessage(`Existe un error: ${error}`);
+            });
+        },
+        allowOutsideClick: () => !swal.isLoading(),
+      })
+      .then((result) => {
+        if (result.value) {
+          swal.fire({
+            title: result.value,
+          });
+        }
+      });
+  };
+  render() {
+    const { review } = this.props.data;
+
+    return (
+      <div>
+        <Dropdown.Uncontrolled>
+          <Dropdown.Toggle caret size="sm" className="float-right">
+            Calificar como:
+            {review && (
+              <Button.Marker>
+                <Marker variant="dot" variant="success" />
+              </Button.Marker>
+            )}
+          </Dropdown.Toggle>
+          <Dropdown.Menu>
+            <Dropdown.Item
+              href={() => {}}
+              onClick={() => {
+                this.handleClick(
+                  "insufficient",
+                  "Calificación INSUFICIENTE +10pts"
+                );
+              }}
+            >
+              <span>Insuficiente</span>
+              <span className="float-right">⭐️</span>
+            </Dropdown.Item>
+            <Dropdown.Item
+              href={() => {}}
+              onClick={() => {
+                this.handleClick("regular", "Calificación REGULAR +20pts");
+              }}
+            >
+              <span>Regular</span>
+              <span className="float-right">⭐️⭐️</span>
+            </Dropdown.Item>
+            <Dropdown.Item
+              href={() => {}}
+              onClick={() => {
+                this.handleClick("acceptable", "Calificación ACEPTABLE +30pts");
+              }}
+            >
+              <span>Aceptable</span>
+
+              <span className="float-right">⭐️⭐️⭐️</span>
+            </Dropdown.Item>
+            <Dropdown.Item
+              href={() => {}}
+              onClick={() => {
+                this.handleClick("good", "Calificación BIEN +40pts");
+              }}
+            >
+              <span>Bien</span>
+              <span className="float-right">⭐️⭐️⭐️⭐️</span>
+            </Dropdown.Item>
+            <Dropdown.Item
+              href={() => {}}
+              onClick={() => {
+                this.handleClick("excellent", "Calificación EXCELENTE +50pts");
+              }}
+            >
+              <span className="mr-3">Excelente</span>
+              <span className="float-right">⭐️⭐️⭐️⭐️⭐️</span>
+            </Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown.Uncontrolled>
+      </div>
+    );
+  }
+}
+
+class Review extends React.Component {
+  handleClick = () => {
+    const { review, id, trackName } = this.props.data;
+    swal
+      .fire({
+        title: trackName.toUpperCase(),
+        text: "Realizar una retroalimentación",
+        input: "textarea",
+        inputValue: review || "",
+        inputAttributes: {
+          autocapitalize: "off",
+        },
+        showCancelButton: true,
+        confirmButtonText: "Enviar",
+        showLoaderOnConfirm: true,
+        preConfirm: (feedback) => {
+          const responseId = id;
           return addFeedback(responseId, feedback)
             .then(() => {
               const { track, runnerName, response } = this.props.data;
               const title = escapeHtml(runnerName + "/" + track);
               const email = this.props.user.email;
               const replyTo = this.props.leaderUser.email;
-              return sendFeedback(email, title, response, feedback, replyTo).then(() => {
+              return sendFeedback(
+                email,
+                title,
+                response,
+                feedback,
+                replyTo
+              ).then(() => {
                 return "Se envio el feedback correctamente.";
               });
             })
@@ -575,8 +771,8 @@ class Review extends React.Component {
   render() {
     const { review } = this.props.data;
     return (
-      <Button onClick={this.handleClick}>
-        Revisar
+      <Button onClick={this.handleClick} size={"sm"} className="float-right">
+        Hacer retroalimentación
         {review && (
           <Button.Marker>
             <Marker variant="dot" variant="success" />

@@ -63,7 +63,14 @@ export function sendNotifyResponseHacking(
   return fetch(sendeamil).then((res) => res.json());
 }
 
-export function sendFeedback(email, track, resp, feedback, replyTo) {
+export function sendFeedback(
+  email,
+  track,
+  resp,
+  feedback,
+  replyTo,
+  score = "none"
+) {
   const sendeamil =
     "/api/sendemail/?email=" +
     email +
@@ -74,7 +81,9 @@ export function sendFeedback(email, track, resp, feedback, replyTo) {
     "&replyTo=" +
     replyTo +
     "&resp=" +
-    resp;
+    resp +
+    "&score=" +
+    score;
   return fetch(sendeamil).then((res) => res.json());
 }
 

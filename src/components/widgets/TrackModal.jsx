@@ -117,7 +117,7 @@ class TrackModal extends React.Component {
         swal
           .fire({
             title: "¡Tu tiempo ha terminado!",
-            text: "¿Quieres agregar 5 minutos mas para completar La lección?",
+            text: "¿Quieres agregar 5 minutos mas para completar la lección?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",

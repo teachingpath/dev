@@ -118,7 +118,7 @@ export const getActivities = (userId, group, resolve, reject) => {
     });
 };
 
-export const getTracksResponses = (userId, group, resolve, reject) => {
+export const getTracksResponses = (userId, group) => {
   let db = firestoreClient
     .collection("track-response")
     .orderBy("date", "desc")
@@ -147,8 +147,9 @@ export const getTracksResponses = (userId, group, resolve, reject) => {
     });
 };
 
-export const addFeedback = (responseId, feedback) => {
+export const addFeedback = (responseId, feedback, calification="none") => {
   return firestoreClient.collection("track-response").doc(responseId).update({
     review: feedback,
+    calification: calification,
   });
 };

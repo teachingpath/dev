@@ -116,7 +116,7 @@ class TrainingTrack extends React.Component {
             return (
               <Steps.Step
                 key={index}
-                title={"Step#" + (index + 1)}
+                title={"Paso#" + (index + 1)}
                 description={
                   <>
                     {this.state.current === index && (

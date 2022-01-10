@@ -253,10 +253,13 @@ class Lecciones extends React.Component {
                           if (data.progress < 100) {
                             return updateJourney(journeyId, processJourney(data)).then(() => {
                               const currentRunner = data.breadcrumbs[data.current-1];
-                              processFinish(data, user, journeyId, currentRunner, 10, activityChange);
+                              processFinish(data, user, journeyId, currentRunner, 10, activityChange);                              Router.reload();
+                              Router.reload();
                             });
+                          } else {
+                            Router.reload();
                           } 
-                          window.location.reload();
+                         
                         },
                         () => {
                           console.log("Error en processo pathway");

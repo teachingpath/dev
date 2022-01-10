@@ -22,4 +22,4 @@ const FIREBASE_STAGING = {
   appId: "1:667433665675:web:208d05fab102f03d03008e",
 };
 
-export default FIREBASE_STAGING;
+export default FIREBASE;

@@ -77,6 +77,7 @@ const templates = {
     <p><i>{{resp}}</i></p>
     <h3>Retroalimentación:</h3>
     <p><i>- {{feedback}}</i></p>
+    <h3>Calificación: {{score}</h3>
     <blockquote>Responder a este correo para conseguir mas información</blockquote>
     `,
   },
