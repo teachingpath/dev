@@ -258,7 +258,7 @@ function FieldGroup({ data, onChange }) {
             optionsAppend({});
           }}
         >
-          Agregar lección <FontAwesomeIcon icon={SolidIcon.faPlus} />
+          Agregar Lección <FontAwesomeIcon icon={SolidIcon.faPlus} />
         </Button>
       </p>
     </Form>

@@ -52,7 +52,7 @@ class BadgeAllListComponent extends React.Component {
                     <CarouselItem key={"badge-key" + index}>
                       <center
                         title={
-                          !data.complete ? "No disponible" : data.description
+                          !data.complete ? "NO DIPONIBLE" : data.description
                         }
                       >
                         <img

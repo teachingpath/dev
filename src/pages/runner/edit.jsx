@@ -217,7 +217,7 @@ const RunnerAddon = ({ id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
           >
-            Agregar lección
+            Agregar Lección
           </Dropdown.Item>
           <Dropdown.Item
             onClick={() => {

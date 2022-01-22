@@ -51,22 +51,39 @@ class BadgeListComponent extends React.Component {
           </Portlet.Icon>
           <Portlet.Title>
             Emblemas{" "}
-            {this.props.journeyId ? "(" + inComplete + "/" + tolta + ")" : "("+tolta+")"}
+            {this.props.journeyId
+              ? "(" + inComplete + "/" + tolta + ")"
+              : "(" + tolta + ")"}
           </Portlet.Title>
         </Portlet.Header>
         <Portlet.Body className="list">
           <div className="mt-4">
             {this.state.data.length === 0 && (
-              <p className="text-center text-muted">No hay emblemas para este pathway.</p>
+              <p className="text-center text-muted">
+                No hay emblemas para este pathway.
+              </p>
             )}
             {this.state.data.length !== 0 && (
-              <Carousel slidesToShow={this.state.data.length >= 4? 4: this.state.data.length}>
+              <Carousel
+                slidesToShow={
+                  this.state.data.length >= 4 ? 4 : this.state.data.length
+                }
+              >
                 {this.state.data.map((data, index) => {
                   return (
                     <CarouselItem key={"badge-key" + index}>
-                      <center title={!data.disabled && data.description}>
+                      <center
+                        title={!data.disabled && data.description}
+                        style={{
+                          background: data.disabled ? "#f5f5f5" : "#fff",
+                        }}
+                        className={"p-2"}
+                      >
                         <img
-                          style={{ width: "125px" }}
+                          style={{
+                            width: "125px",
+                            opacity: data.disabled ? "0.3" : "1",
+                          }}
                           className={
                             data.disabled
                               ? "bg-white mg-thumbnail avatar-circle p-2 border border-warning"
@@ -75,7 +92,11 @@ class BadgeListComponent extends React.Component {
                           src={data.image}
                           alt="Badge Image"
                         />
-                        <p>{data.disabled ? "No disponible" : data.name}</p>
+                        <p>
+                          <strong>
+                            {data.disabled ? "NO DISPONIBLE" : data.name}
+                          </strong>
+                        </p>
                       </center>
                     </CarouselItem>
                   );

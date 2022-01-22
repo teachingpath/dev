@@ -42,6 +42,7 @@ class RunnersExecutor extends React.Component {
       user,
       current,
     } = this.props;
+
     return (
       <Accordion {...this.props}>
         {runners.map((item, index) => {
@@ -50,6 +51,7 @@ class RunnersExecutor extends React.Component {
             ?.filter((t) => t.status !== "finish")
             ?.map((t) => t.timeLimit)
             .reduce((a, b) => a + b, 0);
+
           return (
             <Card key={"runnerskys" + index}>
               <Card.Header
@@ -93,7 +95,7 @@ class RunnersExecutor extends React.Component {
                     pathwayId={pathwayId}
                     runnerIndex={index}
                     tracks={item.tracks}
-                    badge={item.badge}
+                    hasQuiz={item.quiz.length > 0}
                     runnerId={item.id}
                     journeyId={journeyId}
                     current={item.current}
@@ -124,10 +126,11 @@ class Lecciones extends React.Component {
       pathwayId,
       onComplete,
       group,
-      badge,
+      hasQuiz,
       activityChange,
       user,
     } = this.props;
+
     const activeQuiz = tracks.every((track) => {
       return track.status === "finish";
     });
@@ -222,10 +225,10 @@ class Lecciones extends React.Component {
                   <div dangerouslySetInnerHTML={{ __html: feedback }} />
                 )}
 
-                {badge && (
+                {hasQuiz && (
                   <>
                     <Alert variant={"label-info"}>
-                      Presentar Quiz para validar conocimientos y obtener el
+                      Presentar evaluación para validar conocimientos y obtener el
                       emblema.
                     </Alert>
                     <Button
@@ -244,7 +247,7 @@ class Lecciones extends React.Component {
                     </Button>
                   </>
                 )}
-                {!badge && (
+                {!hasQuiz && (
                   <Button
                     disabled={!activeQuiz || this.state.isProcess}
                     onClick={() => {

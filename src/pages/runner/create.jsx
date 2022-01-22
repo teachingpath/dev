@@ -146,7 +146,7 @@ class RunnerCreatePage extends React.Component {
                           });
                         }}
                       >
-                        Agregar lencción
+                        Agregar Lencción
                         <FontAwesomeIcon
                           className="ml-2 mt-2"
                           icon={SolidIcon.faPlus}

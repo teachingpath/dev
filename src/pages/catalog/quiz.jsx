@@ -45,7 +45,7 @@ class QuizPage extends React.Component {
     this.state = {
       quizTitle: "Comprueba tu conocimiento de la Ruta.",
       quizSynopsis:
-        "Bienvenido a la evaluación de conceptos de verificación de la ruta. Al aprobar este cuestionario, puede obtener el emblema de la Ruta. Resuelve el cuestionario en el menor tiempo posible. Con esta evaluación te permite asegurar el conocimiento, si por alguna razón te das cuenta que no puedes resolver el cuestionario, te invito a repasar los conceptos de la Ruta.",
+        "Bienvenido a la evaluación de conceptos de verificación de la ruta. Al aprobar este quiz, puede reclamar el emblema de la RUTA. Responda el quiz en el menor tiempo posible. Con esta evaluación te permite asegurar el conocimiento, si por alguna razón te das cuenta que no puedes resolver el quiz, te invito a repasar los conceptos previos. IMPORTANTE, para presentar el quiz debes canjear puntos de tu bolsa de puntos. ¡Muchas suerte en tu evaluación!",
       questions: [],
       start: false,
       loading: false,
@@ -266,12 +266,11 @@ const QuizSuccess = ({
     variant={"outline-success"}
     icon={<FontAwesomeIcon icon={SolidIcon.faCheckCircle} />}
   >
+    <h4>
+      <i className="far fa-check-circle"></i> ¡Felicitaciones! lo hiciste 👍 
+    </h4>
     <p>
-      <i className="far fa-check-circle"></i> ¡Felicitaciones!
-    </p>
-    <p>
-      pasó la validación de conceptos. Has conseguido {totalPoints} puntos que
-      te ayudan a continuar.
+      Pasó la validación de conceptos. Has conseguido {totalPoints} puntos FELICIDADES.<br />Ahora puedes continuar con la siguiente ruta o finalizar el pathway.
     </p>
     <h4 className="mt-3">Resultado</h4>
     <div>
@@ -288,7 +287,7 @@ const QuizSuccess = ({
           onFinish({ ...Router.query, totalPoints });
         }}
       >
-        Finalizar
+        Tomar el emblema 
       </Button>
     </p>
   </Alert>
