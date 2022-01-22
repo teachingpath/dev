@@ -31,7 +31,6 @@ import {
   linkTrack,
 } from "components/helpers/mapper";
 import { sendFeedback } from "consumer/sendemail";
-import Badge from "@panely/components/Badge";
 import { deleteResponseById } from "consumer/track";
 
 // Use SweetAlert React Content library
@@ -256,7 +255,11 @@ class PathwayPage extends React.Component {
                   <Portlet.Title>Pathway | {name}</Portlet.Title>
                 </Portlet.Header>
                 <Portlet.Body>
-                  <ResumUser user={user} runnerCurrent={runnerCurrent} />
+                  <ResumUser
+                    user={user}
+                    runnerCurrent={runnerCurrent}
+                    leaderUser={leaderUser}
+                  />
                   <hr />
                   <ResumPathway
                     list={list}
@@ -361,14 +364,17 @@ function ResumPathway({
   );
 }
 
-function ResumUser({ user, runnerCurrent }) {
+function ResumUser({ user, runnerCurrent, leaderUser }) {
   return (
     <>
       <Widget4>
         <Widget4.Group>
           <Widget4.Display>
+            <img src={user.image} className="float-left mr-3"></img>
             <Widget4.Title children={user.displayName} />
-            <Widget4.Subtitle children={user.email} />
+            {leaderUser.profile !== "trainee" && (
+              <Widget4.Subtitle children={user.email} />
+            )}
             <Widget4.Subtitle children={<strong>{runnerCurrent}</strong>} />
           </Widget4.Display>
           <Widget4.Addon>

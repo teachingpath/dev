@@ -64,7 +64,7 @@ const templates = {
     subject: "Has completado con exito la Ruta 💪",
     body: ` 
     <h2>Excelente trabajo, has culminado la Ruta <i>{{name}}</i> de forma exitosa</h2>
-    <p>Ahora debes continuar con el siguiente Ruta y finalizar el Pathway</p>
+    <p>Ahora debes continuar con la siguiente Ruta y finalizar el Pathway</p>
     <h3>¡Felicidades, vas por buen camino! 👏🥳🥳</h3>
     <blockquote>Si no has terminado el pathway te invito a continuar con el siguiente runner.</blockquote>
     `,
@@ -72,7 +72,7 @@ const templates = {
   "feedback": {
     subject: "Te hicieron una revisión",
     body: `
-    <p>Saludo Aprendiz, te han realizado una retroalimentación a una respuesta tuya dentro de teachingpath.co.</p>
+    <p>Saludo Aprendiz, te han realizado una retroalimentación a una respuesta tuya dentro de teachingpath.dev.</p>
     <p>El Mentor te reviso la lección: <h2>{{track}}:</h2></p>
     <p><i>{{resp}}</i></p>
     <h3>Retroalimentación:</h3>

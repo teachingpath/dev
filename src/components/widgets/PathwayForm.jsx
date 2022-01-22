@@ -20,18 +20,19 @@ import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
 import { createSlug } from "components/helpers/mapper";
 import Quill from "@panely/quill";
 
+
 const modulesBasic = {
   toolbar: [
-    ["bold", "italic"],
-    [
-      { list: "ordered" },
-      { list: "bullet" },
-      { indent: "-1" },
-      { indent: "+1" },
-    ],
+    ["bold", "italic", "underline", "strike"],
+    ["blockquote"],
+    [{ header: [2, 3, 4, 5, 6, false] }],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ align: [] }],
     ["clean"],
   ],
+  syntax: true,
 };
+
 
 function PathwayForm({ onSave, data }) {
   const [loading, setLoading] = useState(false);

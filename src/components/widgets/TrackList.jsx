@@ -94,7 +94,7 @@ class TrackList extends React.Component {
       <RichList bordered action className="list">
         {this.state.loaded === false && <Spinner>loading...</Spinner>}
         {this.state.loaded === true && this.state.data.length === 0 && (
-          <p className="text-center">No hay tracks.<br />Te invito a crear tu primera lección de aprendizaje.</p>
+          <p className="text-center">No hay lecciones.<br />Te invito a crear tu primera lección de aprendizaje.</p>
         )}
         {this.state.data.length >= 1 && (
           <p>

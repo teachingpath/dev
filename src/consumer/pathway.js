@@ -283,7 +283,7 @@ async function publishPathwayFor(doc, pathwayId, resolve, reject) {
         reject(
           'La RUTA "' +
             runners[key].name +
-            '" requiere un mínimo de 3 pistas para poder publicar la ruta.'
+            '" requiere un mínimo de 2 lecciones para publicar.'
         );
         return;
       }

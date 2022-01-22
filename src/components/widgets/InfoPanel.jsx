@@ -22,6 +22,7 @@ import { deleteJourney } from "consumer/journey";
 import Router from "next/router";
 import { pathwayFollowUp } from "consumer/pathway";
 import { createSlug } from "components/helpers/mapper";
+import Col from "@panely/components/Col";
 const ReactSwal = swalContent(Swal);
 const swal = ReactSwal.mixin({
   customClass: {
@@ -225,16 +226,16 @@ const ListItemGroup = ({ dataList, onDelete, activeCard, toggleAccordion }) => {
       <Accordion>
         {Object.keys(dataList).map((group, index) => {
           return (
-            <Card key={createSlug(group)+"-" + index}>
+            <Card key={createSlug(group) + "-" + index}>
               <Card.Header
                 title="Click para expandir"
-                collapsed={!(activeCard === createSlug(group)+"-" + index)}
-                onClick={() => toggleAccordion(createSlug(group)+"-" + index)}
+                collapsed={!(activeCard === createSlug(group) + "-" + index)}
+                onClick={() => toggleAccordion(createSlug(group) + "-" + index)}
               >
                 <Card.Title>{group.toUpperCase()}</Card.Title>
               </Card.Header>
 
-              <Collapse isOpen={activeCard === createSlug(group)+"-" + index}>
+              <Collapse isOpen={activeCard === createSlug(group) + "-" + index}>
                 <Portlet.Addon className="float-right">
                   <Dropdown.Uncontrolled>
                     <Dropdown.Toggle icon variant="text-secondary">
@@ -281,57 +282,59 @@ const ListItemGroup = ({ dataList, onDelete, activeCard, toggleAccordion }) => {
                     (date.seconds + date.nanoseconds * 10 ** -9) * 1000
                   );
                   return (
-                    <Card.Body className="m-0" key={"group" + index}>
-                      <h5 className="mt-3">{user.displayName}</h5>
-                      <RichList.Item title={"Usuario: " + user.email}>
-                        <RichList.Addon addonType="prepend">
-                          <Avatar block={true}>
-                            <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
-                          </Avatar>
-                        </RichList.Addon>
-                        <RichList.Content>
-                          <RichList.Title
-                            onClick={() => {
-                              Router.push("/pathway/resume?id=" + id);
-                            }}
-                            children={
-                              <Progress
-                                striped
-                                className="mr-2 mb-2"
-                                value={progress.toFixed(2)}
-                              >
-                                {progress.toFixed(2)}%
-                              </Progress>
-                            }
-                          />
+                    <Col sm="4" >
+                      <Card.Body className="m-0" key={"group" + index}>
+                        <h5 className="mt-3">{user.displayName}</h5>
+                        <RichList.Item title={"Usuario: " + user.email}>
+                          <RichList.Addon addonType="prepend">
+                            <Avatar block={true}>
+                              <FontAwesomeIcon icon={SolidIcon.faUserAlt} />
+                            </Avatar>
+                          </RichList.Addon>
+                          <RichList.Content >
+                            <RichList.Title
+                              onClick={() => {
+                                Router.push("/pathway/resume?id=" + id);
+                              }}
+                              children={
+                                <Progress
+                                  striped
+                                  className="mr-2 mb-2"
+                                  value={progress.toFixed(2)}
+                                >
+                                  {progress.toFixed(2)}%
+                                </Progress>
+                              }
+                            />
 
-                          <RichList.Title
-                            children={name}
-                            onClick={() => {
-                              Router.push("/pathway/resume?id=" + id);
-                            }}
-                          />
-                          <RichList.Subtitle
-                            children={
-                              "Fecha: " +
-                              dateUpdated.toLocaleDateString() +
-                              " " +
-                              dateUpdated.toLocaleTimeString()
-                            }
-                          />
-                        </RichList.Content>
-                        <RichList.Addon addonType="prepend">
-                          <Button
-                            type="button"
-                            onClick={() => {
-                              onDelete(id);
-                            }}
-                          >
-                            <FontAwesomeIcon icon={SolidIcon.faTrash} />
-                          </Button>
-                        </RichList.Addon>
-                      </RichList.Item>
-                    </Card.Body>
+                            <RichList.Title
+                              children={name}
+                              onClick={() => {
+                                Router.push("/pathway/resume?id=" + id);
+                              }}
+                            />
+                            <RichList.Subtitle
+                              children={
+                                "Fecha: " +
+                                dateUpdated.toLocaleDateString() +
+                                " " +
+                                dateUpdated.toLocaleTimeString()
+                              }
+                            />
+                          </RichList.Content>
+                          <RichList.Addon addonType="prepend">
+                            <Button
+                              type="button"
+                              onClick={() => {
+                                onDelete(id);
+                              }}
+                            >
+                              <FontAwesomeIcon icon={SolidIcon.faTrash} />
+                            </Button>
+                          </RichList.Addon>
+                        </RichList.Item>
+                      </Card.Body>
+                    </Col>
                   );
                 })}
               </Collapse>

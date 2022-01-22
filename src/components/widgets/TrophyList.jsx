@@ -20,7 +20,7 @@ class TrophtyListComponent extends React.Component {
   }
   render() {
     return (
-      <Portlet className="mt-4">
+      <Portlet>
         <Portlet.Header>
           <Portlet.Icon>
             <FontAwesomeIcon icon={SolidIcon.faTrophy} />

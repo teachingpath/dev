@@ -110,7 +110,7 @@ class TrainingTrack extends React.Component {
     const user = this.props.user || firebaseClient.auth().currentUser;
     return (
       <div>
-        <p>En este Lección sigue todos los pasos y complenta por tu cuenta, al final entrega el resultado del este Training.</p>
+        <p>En esta lección sigue todos los pasos y complenta por tu cuenta, al final entrega el resultado del este Training.</p>
         <Steps current={this.state.current} direction="vertical">
           {training?.map((item, index) => {
             return (

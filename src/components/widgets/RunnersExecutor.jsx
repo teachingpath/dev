@@ -286,6 +286,7 @@ const AttachResult = (props) => {
         {
           training: <Attach {...props} />,
           hacking: <Attach {...props} />,
+          questions: <Attach {...props} />,
         }[props.item.type]
       }
     </span>
@@ -318,7 +319,7 @@ const Attach = ({
       {att === true ? (
         <Badge
           variant="warning"
-          title="No se tiene una respuesta o feedback para ente track. Click aquí para actualizar tu respuesta."
+          title="No se tiene una respuesta o feedback para esta lección. Click aquí para actualizar tu respuesta."
         >
           <ResponseModal
             id={id}
