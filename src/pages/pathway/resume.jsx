@@ -219,7 +219,7 @@ class PathwayPage extends React.Component {
       list: list,
       runnerSelected: !runnerName
         ? ""
-        : linkRunner(runnerId, runnerName, "<h3>RUNNER  __LINK__</h3>"),
+        : linkRunner(runnerId, runnerName, "<h3>RUTA ACTUAL  __LINK__</h3>"),
     });
   }
 
