@@ -165,10 +165,11 @@ class HackingTrack extends React.Component {
                     ),
                     fileCode: (
                       <div
+                        className="center"
                         dangerouslySetInnerHTML={{ __html: data.guidelines }}
                       />
                     ),
-                    video: <ReactPlayer url={data.guidelines} />,
+                    video: <div className="center"><ReactPlayer url={data.guidelines} /></div>,
                     url: <DescribeURL url={data.guidelines} />,
                   }[typeContent]
                 }

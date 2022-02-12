@@ -17,6 +17,8 @@ import withLayout from "components/layout/withLayout";
 import withAuth from "components/firebase/firebaseWithAuth";
 import Head from "next/head";
 import Router from "next/router";
+import Link from "next/link";
+
 import ActivitiesComponent from "components/widgets/Activities";
 import { getJourney, updateJourney } from "consumer/journey";
 import { Timeline } from "@panely/components";
@@ -257,6 +259,7 @@ class PathwayPage extends React.Component {
                 <Portlet.Body>
                   <ResumUser
                     user={user}
+                    userId={userId}
                     runnerCurrent={runnerCurrent}
                     leaderUser={leaderUser}
                   />
@@ -364,14 +367,17 @@ function ResumPathway({
   );
 }
 
-function ResumUser({ user, runnerCurrent, leaderUser }) {
+function ResumUser({ user, runnerCurrent, userId, leaderUser }) {
+  if(!leaderUser?.profile){
+    return <span>...</span>
+  }
   return (
     <>
       <Widget4>
         <Widget4.Group>
           <Widget4.Display>
-            <img src={user.image} className="float-left mr-3"></img>
-            <Widget4.Title children={user.displayName} />
+            <img src={user.image} className="float-left mr-3  avatar-circle"></img>
+            <Widget4.Title children={<Link href={"/user?uid="+userId}>{user.displayName}</Link>} />
             {leaderUser.profile !== "trainee" && (
               <Widget4.Subtitle children={user.email} />
             )}

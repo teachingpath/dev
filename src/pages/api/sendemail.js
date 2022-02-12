@@ -73,11 +73,11 @@ const templates = {
     subject: "Te hicieron una revisión",
     body: `
     <p>Saludo Aprendiz, te han realizado una retroalimentación a una respuesta tuya dentro de teachingpath.dev.</p>
-    <p>El Mentor te reviso la lección: <h2>{{track}}:</h2></p>
+    <p>El Mentor te reviso la lección: <b>{{track}}</b></p>
     <p><i>{{resp}}</i></p>
     <h3>Retroalimentación:</h3>
-    <p><i>- {{feedback}}</i></p>
-    <h3>Calificación: {{score}</h3>
+    <p><i>{{feedback}}</i></p>
+    <h3>Calificación: {{score}}</h3>
     <blockquote>Responder a este correo para conseguir mas información</blockquote>
     `,
   },
@@ -125,6 +125,7 @@ async function sendemailHandler(req, res) {
       });
       res.status(200).json({ result: "OK", info });
     } catch (err) {
+      console.error(req.query, err);
       res.status(403).send(err.message);
     }
   }

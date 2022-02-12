@@ -13,8 +13,15 @@ import { useEffect } from "react";
 import { getTracksResponseByUserId } from "consumer/track";
 import ResponseModal from "./ResponseModal";
 import Alert from "@panely/components/Alert";
-import { getJourney, processFinish, processJourney, updateJourney } from "consumer/journey";
+import {
+  getJourney,
+  processFinish,
+  processJourney,
+  updateJourney,
+} from "consumer/journey";
 import { Spinner } from "@panely/components";
+import Timeline from "@panely/components/Timeline";
+import Marker from "@panely/components/Marker";
 
 class RunnersExecutor extends React.Component {
   constructor(props) {
@@ -69,12 +76,14 @@ class RunnersExecutor extends React.Component {
                         : "clock")
                     }
                   ></i>{" "}
-                  {item.name.toUpperCase()}
+                  {index + 1 + ". " + item.name.toUpperCase()}
                 </Card.Title>
                 {totalTime > 0 ? (
                   <Portlet.Addon>
                     Limite de tiempo:{" "}
-                    <strong>{timeShortPowerTen(totalTime)} {item.badge && "+ Quiz"}</strong>
+                    <strong>
+                      {timeShortPowerTen(totalTime)} {item.badge && "+ Quiz"}
+                    </strong>
                   </Portlet.Addon>
                 ) : (
                   <Portlet.Addon>
@@ -113,7 +122,7 @@ class RunnersExecutor extends React.Component {
 }
 
 class Lecciones extends React.Component {
-  state = {isProcess: false}
+  state = { isProcess: false, reviews: {} };
   render() {
     const {
       tracks,
@@ -135,10 +144,10 @@ class Lecciones extends React.Component {
       return track.status === "finish";
     });
 
-    if(!journeyId){
-      return <Spinner>Loading</Spinner>
+    if (!journeyId) {
+      return <Spinner>Loading</Spinner>;
     }
-    
+
     return (
       <Steps current={current} direction="vertical" index={runnerId}>
         {tracks.map((item, index) => {
@@ -175,19 +184,44 @@ class Lecciones extends React.Component {
                         activityChange={activityChange}
                         journeyId={journeyId}
                         group={group}
+                        addReview={(reviews) => {
+                          const prev = this.state.reviews;
+                          prev[item.id] = reviews;
+                          this.setState({ ...this.state, reviews: prev });
+                        }}
                       />
                       <Link href={extarnalLink} shallow>
-                        {item.title}
+                        {runnerIndex +
+                          1 +
+                          "." +
+                          (index + 1) +
+                          ". " +
+                          item.title}
                       </Link>
                     </>
                   ) : (
-                    item.title
+                    runnerIndex + 1 + "." + (index + 1) + ". " + item.title
                   )}
                 </>
               }
               description={
                 <div>
                   <p>{item.subtitle}</p>
+                  {this.state.reviews[item.id] && <h5>Feedback</h5>}
+                  <Timeline>
+                    {this.state.reviews[item.id] &&
+                      this.state.reviews[item.id].map((data, index) => {
+                        return (
+                          <Timeline.Item
+                            key={index}
+                            date={new Date()}
+                            pin={<Marker type="dot" />}
+                          >
+                            {data}
+                          </Timeline.Item>
+                        );
+                      })}
+                  </Timeline>
                   {item.status === "process" && (
                     <TrackModal
                       activityChange={activityChange}
@@ -228,8 +262,8 @@ class Lecciones extends React.Component {
                 {hasQuiz && (
                   <>
                     <Alert variant={"label-info"}>
-                      Presentar evaluación para validar conocimientos y obtener el
-                      emblema.
+                      Presentar evaluación para validar conocimientos y obtener
+                      el emblema.
                     </Alert>
                     <Button
                       disabled={!activeQuiz}
@@ -251,18 +285,31 @@ class Lecciones extends React.Component {
                   <Button
                     disabled={!activeQuiz || this.state.isProcess}
                     onClick={() => {
-                      getJourney(journeyId, (data) => {
-                          this.setState({isProcess: true});
+                      getJourney(
+                        journeyId,
+                        (data) => {
+                          this.setState({ isProcess: true });
                           if (data.progress < 100) {
-                            return updateJourney(journeyId, processJourney(data)).then(() => {
-                              const currentRunner = data.breadcrumbs[data.current-1];
-                              processFinish(data, user, journeyId, currentRunner, 10, activityChange);                              Router.reload();
+                            return updateJourney(
+                              journeyId,
+                              processJourney(data)
+                            ).then(() => {
+                              const currentRunner =
+                                data.breadcrumbs[data.current - 1];
+                              processFinish(
+                                data,
+                                user,
+                                journeyId,
+                                currentRunner,
+                                10,
+                                activityChange
+                              );
+                              Router.reload();
                               Router.reload();
                             });
                           } else {
                             Router.reload();
-                          } 
-                         
+                          }
                         },
                         () => {
                           console.log("Error en processo pathway");
@@ -304,14 +351,38 @@ const Attach = ({
   runnerId,
   pathwayId,
   activityChange,
+  addReview,
 }) => {
-  const [att, setAtt] = useState(null);
+  const [att, setAtt] = useState({ has: false, reviews: [] });
+  const califications = {
+    insufficient: "⭐️",
+    regular: "⭐️⭐️",
+    acceptable: "⭐️⭐️⭐️",
+    good: "⭐️⭐️⭐️⭐️",
+    excellent: "⭐️⭐️⭐️⭐️⭐️",
+  };
   useEffect(() => {
     getTracksResponseByUserId(
       id,
       user.uid,
       (result) => {
-        setAtt(result.list.length === 0);
+        console.log(result.list);
+        addReview(
+          result.list
+            .filter((resp) => {
+              return resp?.review;
+            })
+            .map((resp) => {
+              if (resp.calification) {
+                return resp.review + " " + califications[resp.calification];
+              }
+              return resp.review;
+            })
+        );
+
+        setAtt({
+          has: result.list.length > 0,
+        });
       },
       () => {}
     );
@@ -319,7 +390,7 @@ const Attach = ({
 
   return (
     <>
-      {att === true ? (
+      {att.has !== true ? (
         <Badge
           variant="warning"
           title="No se tiene una respuesta o feedback para esta lección. Click aquí para actualizar tu respuesta."

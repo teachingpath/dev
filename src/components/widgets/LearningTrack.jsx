@@ -153,10 +153,10 @@ class LearningTrack extends React.Component {
           {
             file: <div dangerouslySetInnerHTML={{ __html: data.content }} />,
             fileCode: (
-              <div dangerouslySetInnerHTML={{ __html: data.content }} />
+              <div dangerouslySetInnerHTML={{ __html: data.content }} className="center"/>
             ),
             video: (
-              <p className="pt-2">
+              <p className="pt-2 center">
                 <ReactPlayer url={data.content} />
               </p>
             ),

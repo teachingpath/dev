@@ -303,7 +303,7 @@ const AddonRunner = ({ id, pathwayId }) => {
             }}
             icon={<FontAwesomeIcon icon={SolidIcon.faListOl} />}
           >
-            Agregar lección
+            Agregar Lección
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown.Uncontrolled>

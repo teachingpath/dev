@@ -239,7 +239,7 @@ class Questions extends React.Component {
                               <Avatar circle display>
                                 <img
                                   src={data.user.image}
-                                  alt="Avatar image"
+                                  alt={data.user.displayName || "user"}
                                   title={data.user.displayName}
                                 />
                               </Avatar>
