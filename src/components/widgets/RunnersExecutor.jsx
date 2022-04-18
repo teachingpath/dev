@@ -207,8 +207,13 @@ class Lecciones extends React.Component {
               description={
                 <div>
                   <p>{item.subtitle}</p>
-                  {this.state.reviews[item.id] && <h5>Feedback</h5>}
-                  <Timeline>
+                  {(!this.state.reviews[item.id]?.length && this.state.reviews[item.id]) ? <>
+                    <h5>Feedback</h5>
+                    <p className="muted">Sin respuesta</p>
+                  </>: <></>}
+                  {this.state.reviews[item.id]?.length ? <>
+                    <h5>Feedback</h5>
+                    <Timeline>
                     {this.state.reviews[item.id] &&
                       this.state.reviews[item.id].map((data, index) => {
                         return (
@@ -222,6 +227,8 @@ class Lecciones extends React.Component {
                         );
                       })}
                   </Timeline>
+                  </>: <></>}
+                  
                   {item.status === "process" && (
                     <TrackModal
                       activityChange={activityChange}
@@ -262,7 +269,7 @@ class Lecciones extends React.Component {
                 {hasQuiz && (
                   <>
                     <Alert variant={"label-info"}>
-                      Presentar evaluación para validar conocimientos y obtener
+                      Presentar la evaluación para validar conocimientos y obtener
                       el emblema.
                     </Alert>
                     <Button

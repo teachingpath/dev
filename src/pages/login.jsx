@@ -48,7 +48,7 @@ function LoginPage() {
   const [user] = useAuthState(auth);
 
   if (user) {
-    getUser(user.uid).then(({ data }) => {
+    getUser(user.uid).then(({ data = null }) => {
       if (!data) {
         const { email, displayName, phoneNumber, photoURL } = user;
         firestoreClient

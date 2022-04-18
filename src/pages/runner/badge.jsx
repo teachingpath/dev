@@ -171,7 +171,7 @@ function BadgeForm({
 class FormBasePage extends React.Component {
   constructor(props) {
     super(props);
-    if (!Router.query.runnerId) {
+    if (!Router.query?.runnerId) {
       Router.push("/pathway/create");
     }
     this.state = {

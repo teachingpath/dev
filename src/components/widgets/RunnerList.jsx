@@ -204,7 +204,9 @@ class RunnerList extends React.Component {
                     </Collapse>
                   </Accordion>
                 </RichList.Content>
-                <AddonRunner pathwayId={pathwayId} id={id} />
+                <AddonRunner pathwayId={pathwayId} id={id} update={() => {
+                  this.componentDidMount()
+                }} />
               </RichList.Item>
             );
           })}
@@ -213,7 +215,7 @@ class RunnerList extends React.Component {
     );
   }
 }
-const AddonRunner = ({ id, pathwayId }) => {
+const AddonRunner = ({ id, pathwayId, update }) => {
   const onDelete = (runnerId) => {
     swal
       .fire({
@@ -228,7 +230,7 @@ const AddonRunner = ({ id, pathwayId }) => {
       .then((result) => {
         if (result.value) {
           deleteRunner(runnerId).then(() => {
-            this.componentDidMount();
+            update(pathwayId);
           });
         }
       });

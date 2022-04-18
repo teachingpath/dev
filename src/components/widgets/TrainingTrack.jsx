@@ -15,7 +15,7 @@ import { firebaseClient } from "components/firebase/firebaseClient";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers";
-import { getTracksResponses, saveTrackResponse } from "consumer/track";
+import { deleteResponseById, getTracksResponses, saveTrackResponse } from "consumer/track";
 import {
   activityMapper,
   linkGroup,
@@ -23,6 +23,17 @@ import {
   linkTrack,
 } from "components/helpers/mapper";
 import { useState } from "react";
+import swalContent from "sweetalert2-react-content";
+import Swal from "@panely/sweetalert2";
+import { Badge } from "@panely/components";
+const ReactSwal = swalContent(Swal);
+const swal = ReactSwal.mixin({
+  customClass: {
+    confirmButton: "btn btn-label-success btn-wide mx-1",
+    cancelButton: "btn btn-label-danger btn-wide mx-1",
+  },
+  buttonsStyling: false,
+});
 
 function SolutionForm({ onSave }) {
   const [load, setLoad] = useState(null);
@@ -101,6 +112,26 @@ class TrainingTrack extends React.Component {
     );
   }
 
+  onDelete(id) {
+    swal
+      .fire({
+        title: "¿Estas seguro/segura?",
+        text: "¡No podrás revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "¡Sí, bórralo!",
+      })
+      .then((result) => {
+        if (result.value) {
+          deleteResponseById(id).then(() => {
+            this.componentDidMount();
+          });
+        }
+      });
+  }
+
   render() {
     const {
       data: { training, id },
@@ -109,8 +140,11 @@ class TrainingTrack extends React.Component {
     } = this.props;
     const user = this.props.user || firebaseClient.auth().currentUser;
     return (
-      <div>
-        <p>En esta lección sigue todos los pasos y complenta por tu cuenta, al final entrega el resultado del este Training.</p>
+      <div className="m-2">
+        <p>
+          En esta lección sigue todos los pasos y complenta por tu cuenta, al
+          final entrega el resultado del este Training.
+        </p>
         <Steps current={this.state.current} direction="vertical">
           {training?.map((item, index) => {
             return (
@@ -191,7 +225,7 @@ class TrainingTrack extends React.Component {
 
                     <Timeline>
                       {this.state.list.map((data, index) => {
-                        const { date, result } = data;
+                        const { date, result, userId, id } = data;
 
                         return (
                           <Timeline.Item
@@ -204,6 +238,17 @@ class TrainingTrack extends React.Component {
                                 __html: linkify(result),
                               }}
                             />
+
+                            {user.uid === userId && (
+                              <Badge
+                                href="javascript:void(0)"
+                                onClick={() => {
+                                  this.onDelete(id);
+                                }}
+                              >
+                                Eliminar
+                              </Badge>
+                            )}
                           </Timeline.Item>
                         );
                       })}

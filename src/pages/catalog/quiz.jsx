@@ -156,7 +156,7 @@ class QuizPage extends React.Component {
           <Portlet>
             <Portlet.Header bordered>
               <Portlet.Title>
-                {this.state?.trophy?.name || "Validar runner"}
+                {this.state?.trophy?.name || "Cargando evaluación..."}
               </Portlet.Title>
             </Portlet.Header>
             <Portlet.Body>
@@ -223,17 +223,17 @@ const QuizFail = ({ numberOfCorrectAnswers, numberOfQuestions }) => (
     icon={<FontAwesomeIcon icon={SolidIcon.faTimes} />}
   >
     <p>
-      <i className="fas fa-exclamation-triangle"></i> Esta evaluación de
+      <i className="fas fa-exclamation-triangle"></i> Está evaluación de
       conceptos no se aprobó, debe intentarlo de nuevo para obtener el emblema
-      de la Ruta y pasar el Pathway. Anímate y vuelve a intentarlo. Te
-      recomendamos volver al pathway y repasar los conceptos ahí descritos.
+      de la ruta y pasar el Pathway. Anímate y vuelve a intentarlo. Te
+      recomendamos volver al pathway y repasar los conceptos allí descritos.
     </p>
-    <h4 className="mt-3">Result</h4>
+    <h4 className="mt-3">RESULTADO</h4>
     <div>
       <Label>
         Número de respuestas correctas:{" "}
         <strong>
-          {numberOfCorrectAnswers} / {numberOfQuestions}
+          {numberOfCorrectAnswers}/{numberOfQuestions}
         </strong>
       </Label>
     </div>

@@ -111,7 +111,7 @@ class RunnerCreatePage extends React.Component {
                       variant="outline-info"
                       icon={<FontAwesomeIcon icon={SolidIcon.faInfoCircle} />}
                     >
-                       <p>Agregue el Quiz o Lección de la Ruta creado.</p>
+                       <p>Agregue el Quiz o Lección de la ruta creado.</p>
                       <Button
                         type="button"
                         disabled={!this.state.saved}

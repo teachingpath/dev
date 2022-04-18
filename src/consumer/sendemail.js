@@ -1,5 +1,3 @@
-import { linkResume } from "components/helpers/mapper";
-import journey from "pages/catalog/journey";
 
 export function sendFinishPathway(email, name) {
   const url =

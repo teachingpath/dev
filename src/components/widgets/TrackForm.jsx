@@ -139,7 +139,11 @@ function TrackForm({ onSave, data, onExtend }) {
     <Form
       onSubmit={handleSubmit((data) => {
         setLoading(true);
-        data.typeContent = typeContent;
+        if(data.type === "questions"){
+          data.typeContent = "file";
+        } else {
+          data.typeContent = typeContent;
+        }
         onSave(data).then(() => {
           if (isNew) {
             reset();
@@ -891,7 +895,7 @@ function QuestionForm({ data, onChange }) {
                           )}
                         />
                         <Label for={`options_${index}_.name`}>
-                          Question#{index + 1}
+                          Pregunta#{index + 1}
                         </Label>
                       </FloatLabel>
                     </Form.Group>

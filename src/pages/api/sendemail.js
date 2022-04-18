@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
   debug: true,
   auth: {
     user: "assistant@teachingpath.info",
-    pass: "Rauloko250360.",
+    pass: "Loschuchis88.",
   },
 });
 
@@ -61,7 +61,7 @@ const templates = {
     `,
   },
   "finish-runner": {
-    subject: "Has completado con exito la Ruta 💪",
+    subject: "Has completado con exito la ruta 💪",
     body: ` 
     <h2>Excelente trabajo, has culminado la Ruta <i>{{name}}</i> de forma exitosa</h2>
     <p>Ahora debes continuar con la siguiente Ruta y finalizar el Pathway</p>

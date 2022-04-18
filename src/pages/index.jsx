@@ -3,7 +3,7 @@ import {
   pageChangeHeaderTitle,
   breadcrumbChange,
   activityChange,
-  cleanPathway
+  cleanPathway,
 } from "store/actions";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -20,7 +20,6 @@ import TrophtyListComponent from "components/widgets/TrophyList";
 import BadgeAllListComponent from "components/widgets/BadgetAllList";
 
 class DashboardPage extends React.Component {
-
   componentDidMount() {
     this.props.pageChangeHeaderTitle("Mi Tablero");
     this.props.breadcrumbChange([{ text: "Home", link: "/" }]);
@@ -28,31 +27,32 @@ class DashboardPage extends React.Component {
 
   render() {
     const { isCoach, isTrainee } = this.props;
-    
+
     return (
       <React.Fragment>
         <Head>
           <title>Pathway | Teaching Path</title>
         </Head>
-        <Container fluid >
+        <Container fluid>
           {isCoach === true && (
             <>
               <Row>
-                <Col xs="12"  className="bloq-description">
+                <Col xs="12" className="bloq-description">
                   <InfoPanel {...this.props} />
                 </Col>
               </Row>
-              <Row portletFill="xl" >
+              <Row portletFill="xl">
                 <Col xl="8">
                   <Row portletFill="md">
-                    <Col md="6" >
+                    <Col md="6">
                       <Pathways {...this.props} />
 
                       <Activities {...this.props} />
                     </Col>
                     <Col md="6">
-                      <BadgeAllListComponent />
+                      <br />
                       <InfoSyncCarousel {...this.props} />
+                      <BadgeAllListComponent />
                     </Col>
                   </Row>
                 </Col>
@@ -65,6 +65,7 @@ class DashboardPage extends React.Component {
                 <Journeys {...this.props} />
               </Col>
               <Col md="6">
+                <InfoSyncCarousel {...this.props} />
                 <TrophtyListComponent />
                 <BadgeList />
               </Col>
@@ -90,7 +91,7 @@ function mapStateToProps(state) {
   return {
     user: state.user,
     isCoach: state.user?.profile === "coach",
-    isTrainee: state.user?.profile === "trainee"
+    isTrainee: state.user?.profile === "trainee",
   };
 }
 

@@ -142,6 +142,7 @@ class HackingTrack extends React.Component {
         }
       });
   }
+  
   render() {
     const { data, group, journeyId } = this.props;
     const id = data.id;

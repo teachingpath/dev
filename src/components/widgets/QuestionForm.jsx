@@ -177,7 +177,7 @@ function QuizForm({ onSave, data }) {
         size="lg"
         width="widest"
       >
-        {loading && <Spinner className="mr-2" />} Save
+        {loading && <Spinner className="mr-2" />} Guardar
       </Button>
       <Button
         type="button"
