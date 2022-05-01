@@ -6,6 +6,7 @@ import {
   Widget10,
   Widget8,
   Dropdown,
+  Row,
 } from "@panely/components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import * as SolidIcon from "@fortawesome/free-solid-svg-icons";
@@ -276,6 +277,7 @@ const ListItemGroup = ({ dataList, onDelete, activeCard, toggleAccordion }) => {
                     </Dropdown.Menu>
                   </Dropdown.Uncontrolled>
                 </Portlet.Addon>
+                <Row>
                 {dataList[group].map((data, index) => {
                   const { name, date, progress, id, user } = data;
                   const dateUpdated = new Date(
@@ -308,7 +310,7 @@ const ListItemGroup = ({ dataList, onDelete, activeCard, toggleAccordion }) => {
                             />
 
                             <RichList.Title
-                              children={name}
+                              children={user.email}
                               onClick={() => {
                                 Router.push("/pathway/resume?id=" + id);
                               }}
@@ -337,6 +339,8 @@ const ListItemGroup = ({ dataList, onDelete, activeCard, toggleAccordion }) => {
                     </Col>
                   );
                 })}
+                </Row>
+               
               </Collapse>
             </Card>
           );

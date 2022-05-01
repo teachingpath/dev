@@ -139,10 +139,27 @@ class QuizPage extends React.Component {
         });
       })
       .catch((error) => {
-        toast.fire({
-          icon: "error",
-          title: "Se ha presentado un problema, vuelva a intentar.",
-        });
+        if(error.message.startsWith("No document to update:")){
+          toast.fire({
+            icon: "success",
+            title: "Este pathway no tiene emblema, pero puede continuar.",
+          });
+          return updateJourney(id, data).then(() => {
+            processFinish(data, user, id, currentRunner, totalPoints, this.props.activityChange);
+            Router.push({
+              pathname: "/catalog/journey",
+              query: {
+                id: id,
+              },
+            });
+          });
+        } else {
+          toast.fire({
+            icon: "error",
+            title: "Se ha presentado un problema, vuelva a intentar.",
+          });
+        }
+      
       });
   }
 

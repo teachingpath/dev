@@ -49,10 +49,11 @@ class RunnersExecutor extends React.Component {
       user,
       current,
     } = this.props;
-
     return (
       <Accordion {...this.props}>
         {runners.map((item, index) => {
+
+
           const totalTime = item.tracks
             ?.filter((t) => t.status !== null)
             ?.filter((t) => t.status !== "finish")
@@ -82,7 +83,7 @@ class RunnersExecutor extends React.Component {
                   <Portlet.Addon>
                     Limite de tiempo:{" "}
                     <strong>
-                      {timeShortPowerTen(totalTime)} {item.badge && "+ Quiz"}
+                      {timeShortPowerTen(totalTime)} { "+ Quiz"}
                     </strong>
                   </Portlet.Addon>
                 ) : (

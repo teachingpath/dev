@@ -9,7 +9,6 @@ import {
   linkResume,
   linkRunner,
 } from "components/helpers/mapper";
-import { i } from "react-dom-factories";
 import { sendFinishPathway, sendFinishRunner } from "./sendemail";
 
 export const getJourneyByPathwayId = (pathwayId, resolve, reject) => {
